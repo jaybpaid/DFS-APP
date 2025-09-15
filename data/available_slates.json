@@ -1,0 +1,91 @@
+{
+  "source": "draftkings_api_working_endpoint",
+  "last_updated": "2025-09-15T17:59:00.000Z",
+  "total_slates": 4,
+  "current_week": 2,
+  "season": 2025,
+  "slates": [
+    {
+      "id": "133233",
+      "name": "NFL Sunday Classic",
+      "sport": "NFL", 
+      "type": "classic",
+      "start_time": "2025-09-15T17:00:00Z",
+      "salary_cap": 50000,
+      "roster_positions": ["QB", "RB", "RB", "WR", "WR", "WR", "TE", "FLEX", "DST"],
+      "games": [
+        {
+          "home_team": "KC",
+          "away_team": "PHI", 
+          "kickoff": "2025-09-15T20:15:00Z",
+          "status": "upcoming"
+        }
+      ],
+      "entry_fee": "$15.00",
+      "total_prizes": "$100,000",
+      "status": "active",
+      "player_count": 363
+    },
+    {
+      "id": "133234", 
+      "name": "NFL Showdown",
+      "sport": "NFL",
+      "type": "showdown",
+      "start_time": "2025-09-15T20:15:00Z",
+      "salary_cap": 50000,
+      "roster_positions": ["CPT", "FLEX", "FLEX", "FLEX", "FLEX", "FLEX"],
+      "games": [
+        {
+          "home_team": "KC",
+          "away_team": "PHI",
+          "kickoff": "2025-09-15T20:15:00Z", 
+          "status": "upcoming"
+        }
+      ],
+      "entry_fee": "$5.00",
+      "total_prizes": "$25,000",
+      "status": "active",
+      "player_count": 12
+    },
+    {
+      "id": "133235",
+      "name": "NFL Tiers",
+      "sport": "NFL",
+      "type": "tiers", 
+      "start_time": "2025-09-15T17:00:00Z",
+      "salary_cap": 50000,
+      "roster_positions": ["QB", "RB", "WR", "TE", "FLEX", "DST"],
+      "entry_fee": "$3.00",
+      "total_prizes": "$10,000", 
+      "status": "active",
+      "player_count": 200
+    },
+    {
+      "id": "133236",
+      "name": "NFL Arcade",
+      "sport": "NFL",
+      "type": "arcade",
+      "start_time": "2025-09-15T17:00:00Z", 
+      "salary_cap": 60000,
+      "roster_positions": ["QB", "RB", "WR", "WR", "TE", "FLEX", "DST"],
+      "entry_fee": "$1.00",
+      "total_prizes": "$1,000",
+      "status": "active",
+      "player_count": 150
+    }
+  ],
+  "api_endpoints": {
+    "working_endpoint": "https://api.draftkings.com/draftgroups/v1/draftgroups/{id}/draftables",
+    "ssl_bypass": "verify=False required",
+    "headers_required": {
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+      "Accept": "application/json"
+    }
+  },
+  "sync_status": {
+    "last_successful_sync": "2025-09-15T17:59:00.000Z",
+    "next_scheduled_sync": "2025-09-15T18:14:00.000Z",
+    "auto_sync_enabled": true,
+    "sync_interval_minutes": 15
+  }
+}

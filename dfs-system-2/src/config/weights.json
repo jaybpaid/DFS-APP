@@ -1,0 +1,159 @@
+{
+  "NFL": {
+    "feature_groups": {
+      "historical_stats": {
+        "weight": 0.25,
+        "features": ["targets_per_game", "carries_per_game", "red_zone_touches", "air_yards_share"]
+      },
+      "vegas_context": {
+        "weight": 0.3,
+        "features": ["team_total", "spread", "player_props", "game_total"]
+      },
+      "matchup_context": {
+        "weight": 0.2,
+        "features": ["dvp_rank", "pace", "pass_rate", "target_share"]
+      },
+      "injury_depth": {
+        "weight": 0.15,
+        "features": ["injury_status", "depth_chart_rank", "snap_share"]
+      },
+      "weather": {
+        "weight": 0.1,
+        "features": ["wind_speed", "precipitation", "temperature", "dome_factor"]
+      }
+    },
+    "model_ensemble": {
+      "baseline_rules": 0.3,
+      "xgboost_model": 0.4,
+      "linear_model": 0.2,
+      "distribution_fit": 0.1
+    },
+    "position_weights": {
+      "QB": {
+        "passing_yards": 0.35,
+        "passing_tds": 0.25,
+        "rushing_yards": 0.15,
+        "rushing_tds": 0.15,
+        "interceptions": -0.1
+      },
+      "RB": {
+        "rushing_yards": 0.4,
+        "rushing_tds": 0.3,
+        "receiving_yards": 0.2,
+        "receiving_tds": 0.1
+      },
+      "WR": {
+        "receiving_yards": 0.45,
+        "receiving_tds": 0.35,
+        "receptions": 0.2
+      },
+      "TE": {
+        "receiving_yards": 0.4,
+        "receiving_tds": 0.35,
+        "receptions": 0.25
+      },
+      "DST": {
+        "points_allowed": 0.3,
+        "sacks": 0.25,
+        "turnovers": 0.25,
+        "defensive_tds": 0.2
+      }
+    }
+  },
+  "NBA": {
+    "feature_groups": {
+      "historical_stats": {
+        "weight": 0.3,
+        "features": ["minutes_per_game", "usage_rate", "assist_rate", "rebound_rate"]
+      },
+      "vegas_context": {
+        "weight": 0.25,
+        "features": ["team_total", "spread", "player_props", "game_total"]
+      },
+      "matchup_context": {
+        "weight": 0.2,
+        "features": ["pace", "defensive_rating", "offensive_rating", "back_to_back"]
+      },
+      "injury_rotation": {
+        "weight": 0.15,
+        "features": ["injury_status", "rotation_rank", "minutes_share"]
+      },
+      "rest_schedule": {
+        "weight": 0.1,
+        "features": ["days_rest", "travel_distance", "altitude_change"]
+      }
+    },
+    "model_ensemble": {
+      "baseline_rules": 0.25,
+      "xgboost_model": 0.45,
+      "linear_model": 0.2,
+      "distribution_fit": 0.1
+    },
+    "position_weights": {
+      "PG": {
+        "points": 0.35,
+        "assists": 0.3,
+        "rebounds": 0.15,
+        "steals": 0.1,
+        "turnovers": -0.1
+      },
+      "SG": {
+        "points": 0.4,
+        "rebounds": 0.2,
+        "assists": 0.2,
+        "steals": 0.1,
+        "turnovers": -0.1
+      },
+      "SF": {
+        "points": 0.35,
+        "rebounds": 0.25,
+        "assists": 0.2,
+        "steals": 0.1,
+        "turnovers": -0.1
+      },
+      "PF": {
+        "points": 0.35,
+        "rebounds": 0.3,
+        "assists": 0.15,
+        "blocks": 0.1,
+        "turnovers": -0.1
+      },
+      "C": {
+        "points": 0.3,
+        "rebounds": 0.35,
+        "blocks": 0.15,
+        "assists": 0.1,
+        "turnovers": -0.1
+      }
+    }
+  },
+  "correlation_matrices": {
+    "NFL": {
+      "qb_wr_correlation": 0.65,
+      "qb_te_correlation": 0.45,
+      "rb_def_correlation": -0.3,
+      "game_total_correlation": 0.4,
+      "weather_correlation": -0.2
+    },
+    "NBA": {
+      "teammate_correlation": 0.3,
+      "opponent_correlation": -0.2,
+      "pace_correlation": 0.5,
+      "blowout_correlation": -0.4
+    }
+  },
+  "learning_to_rank": {
+    "NFL": {
+      "pairwise_margin": 0.1,
+      "ndcg_weight": 0.7,
+      "map_weight": 0.3,
+      "regularization": 0.01
+    },
+    "NBA": {
+      "pairwise_margin": 0.1,
+      "ndcg_weight": 0.7,
+      "map_weight": 0.3,
+      "regularization": 0.01
+    }
+  }
+}

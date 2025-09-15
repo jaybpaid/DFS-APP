@@ -1,0 +1,15 @@
+pandas
+pyarrow
+pydantic
+requests
+tenacity
+python-dotenv
+numpy
+scipy
+xgboost
+scikit-learn
+ortools
+pulp
+FastAPI
+Jinja
+pytest

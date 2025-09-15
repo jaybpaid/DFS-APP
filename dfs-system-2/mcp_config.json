@@ -1,0 +1,120 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "enabled": true
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@brave/brave-search-mcp-server"],
+      "enabled": true,
+      "env": {
+        "BRAVE_API_KEY": "brave BSAy-rn_ERP0d7uLpeiDv_tmabkSW-r"
+      }
+    },
+    "browser-use": {
+      "command": "npx",
+      "args": ["-y", "@agent-infra/mcp-server-browser"],
+      "enabled": true
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "enabled": false,
+      "env": {
+        "GITHUB_TOKEN": "your_personal_access_token_here"
+      }
+    },
+    "calculator": {
+      "command": "npx",
+      "args": ["-y", "calculator-mcp"],
+      "enabled": true
+    },
+    "read-website-fast": {
+      "command": "npx",
+      "args": ["-y", "@just-every/mcp-read-website-fast"],
+      "enabled": true
+    },
+    "screenshot-website-fast": {
+      "command": "npx",
+      "args": ["-y", "@just-every/mcp-read-website-fast"],
+      "enabled": true
+    },
+    "firecrawl": {
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "enabled": true,
+      "env": {
+        "FIRECRAWL_API_KEY": "fc-2c3c6c3c4c5c6c7c8c9c0c1c2c3c4c5c"
+      }
+    },
+    "google-maps": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-google-maps"],
+      "enabled": false,
+      "env": {
+        "GOOGLE_MAPS_API_KEY": "your_google_maps_api_key_here"
+      }
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "enabled": false
+    },
+    "time": {
+      "command": "npx",
+      "args": ["-y", "time-mcp"],
+      "enabled": true
+    },
+    "shell": {
+      "command": "npx",
+      "args": ["-y", "super-shell-mcp"],
+      "enabled": false
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@cyanheads/git-mcp-server"],
+      "enabled": true
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@kirkdeam/puppeteer-mcp-server"],
+      "enabled": true
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "mcp-fetch"],
+      "enabled": true
+    },
+    "sentry": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sentry"],
+      "enabled": false,
+      "env": {
+        "SENTRY_AUTH_TOKEN": "your_sentry_token_if_used"
+      }
+    },
+    "gitlab": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-gitlab"],
+      "enabled": false,
+      "env": {
+        "GITLAB_TOKEN": "your_gitlab_token_if_used"
+      }
+    },
+    "apify": {
+      "command": "npx",
+      "args": ["-y", "@apify/actors-mcp-server"],
+      "enabled": true,
+      "env": {
+        "APIFY_TOKEN": "apify_api_XLmZ2o8h1qTD1txGrwJElRacEZ3kxM1PvlYy"
+      }
+    },
+    "graphlit": {
+      "command": "npx",
+      "args": ["-y", "graphlit-mcp-server"],
+      "enabled": true
+    }
+  }
+}

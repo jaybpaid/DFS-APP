@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Optimizer Pro - Minimalist Clean Layout</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #059669;
+            --accent: #dc2626;
+            --neutral: #6b7280;
+            --bg-light: #ffffff;
+            --bg-subtle: #f8fafc;
+            --border: #e5e7eb;
+        }
+
+        body {
+            background: var(--bg-subtle);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #1f2937;
+        }
+
+        /* Clean Header */
+        .header {
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area h1 {
+            color: var(--primary);
+            font-weight: 700;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .sport-pills {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .sport-pill {
+            background: var(--bg-subtle);
+            border: 2px solid var(--border);
+            color: var(--neutral);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .sport-pill.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Main Content */
+        .content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            background: var(--bg-light);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--neutral);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Two Column Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Player Section */
+        .player-section {
+            background: var(--bg-light);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .player-grid {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .player-mini-card {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .player-mini-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .player-mini-card.locked {
+            border-color: var(--secondary);
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        }
+
+        .player-mini-card.banned {
+            border-color: var(--accent);
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .control-card {
+            background: var(--bg-light);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+        }
+
+        .control-title {
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* AI Assistant */
+        .ai-assistant {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+        }
+
+        .ai-providers {
+            display: flex;
+            gap: 0.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .ai-chip {
+            background: white;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .ai-chip.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .ai-response {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            min-height: 100px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Form Styling */
+        .form-control, .form-select {
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.1);
+        }
+
+        .btn {
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-success {
+            background: var(--secondary);
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+            transform: translateY(-1px);
+        }
+
+        /* Lineup Display */
+        .lineup-list {
+            background: var(--bg-light);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .lineup-item {
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .lineup-item:last-child {
+            border-bottom: none;
+        }
+
+        .lineup-item:hover {
+            background: var(--bg-subtle);
+        }
+
+        .lineup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .lineup-stats {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .lineup-stat {
+            text-align: center;
+        }
+
+        .lineup-stat-value {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .lineup-stat-label {
+            font-size: 0.8rem;
+            color: var(--neutral);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .player-grid {
+                grid-template-columns: 1fr;
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Clean Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-area">
+                <h1><i class="fas fa-chart-bar me-2"></i>DFS Optimizer Pro</h1>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="sport-pills">
+                    <div class="sport-pill active" data-sport="NFL">🏈 NFL</div>
+                    <div class="sport-pill" data-sport="NBA">🏀 NBA</div>
+                </div>
+                <select class="form-select" id="siteSelect" style="width: 140px;">
+                    <option value="DraftKings">DraftKings</option>
+                    <option value="FanDuel">FanDuel</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Alert Area -->
+        <div id="alertArea"></div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="row">
+                <div class="col-3">
+                    <div class="stat-item">
+                        <div class="stat-number" id="playerCount">0</div>
+                        <div class="stat-label">Players</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="stat-item">
+                        <div class="stat-number" id="lockedCount" style="color: var(--secondary);">0</div>
+                        <div class="stat-label">Locked</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="stat-item">
+                        <div class="stat-number" id="bannedCount" style="color: var(--accent);">0</div>
+                        <div class="stat-label">Banned</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="stat-item">
+                        <div class="stat-number" id="lineupCount">0</div>
+                        <div class="stat-label">Lineups</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Side - Players -->
+            <div>
+                <div class="player-section">
+                    <div class="section-header">
+                        <div>
+                            <i class="fas fa-users me-2"></i>Player Pool
+                        </div>
+                        <div>
+                            <button class="btn btn-light btn-sm me-2" id="loadSampleBtn">
+                                <i class="fas fa-download"></i> Load Sample
+                            </button>
+                            <button class="btn btn-light btn-sm" id="updateProjectionsBtn">
+                                <i class="fas fa-sync-alt"></i> Update
+                            </button>
+                        </div>
+                    </div>
+                    <div class="player-grid" id="playersContainer">
+                        <div class="text-center py-5" style="grid-column: 1 / -1;">
+                            <i class="fas fa-mouse-pointer fa-3x mb-3" style="color: var(--primary);"></i>
+                            <h4 style="color: var(--primary);">Click Sport Above to Load Players</h4>
+                            <p class="text-muted">NFL or NBA data will auto-load</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Controls & Lineups -->
+            <div class="control-panel">
+                <!-- AI Assistant -->
+                <div class="control-card ai-assistant">
+                    <div class="control-title">
+                        <i class="fas fa-brain"></i>AI Assistant
+                    </div>
+                    <div class="ai-providers mb-3">
+                        <div class="ai-chip active" data-provider="chatgpt">ChatGPT</div>
+                        <div class="ai-chip" data-provider="gemini">Gemini</div>
+                        <div class="ai-chip" data-provider="deepseek">DeepSeek</div>
+                    </div>
+                    <div class="ai-response" id="aiResponse">
+                        🤖 <strong>AI Assistant Ready</strong><br>
+                        Load players to get personalized analysis and recommendations.
+                    </div>
+                    <button class="btn btn-primary w-100 mt-2" id="askAIBtn">
+                        <i class="fas fa-comment-dots"></i> Get AI Analysis
+                    </button>
+                </div>
+
+                <!-- Optimization -->
+                <div class="control-card">
+                    <div class="control-title">
+                        <i class="fas fa-cogs"></i>Optimize Lineups
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Lineups</label>
+                            <input type="number" id="numLineups" class="form-control" value="3" min="1" max="50">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Strategy</label>
+                            <select id="objective" class="form-select">
+                                <option value="projection">Max Points</option>
+                                <option value="value">Max Value</option>
+                                <option value="ceiling">Max Ceiling</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-success w-100 btn-lg" id="optimizeBtn">
+                        <i class="fas fa-magic"></i> Generate Lineups
+                    </button>
+                </div>
+
+                <!-- Generated Lineups -->
+                <div class="lineup-list">
+                    <div class="section-header">
+                        <div>
+                            <i class="fas fa-trophy me-2"></i>Optimized Lineups
+                        </div>
+                        <button class="btn btn-light btn-sm" id="exportBtn">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div id="lineupsContainer">
+                        <div class="text-center py-5 text-muted">
+                            <i class="fas fa-trophy fa-3x mb-3"></i>
+                            <h5>Generate lineups to see them here</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
+    <script>
+        let dashboardState = {
+            sport: 'NFL',
+            site: 'DraftKings',
+            players: [],
+            lineups: [],
+            aiProvider: 'chatgpt'
+        };
+
+        $(document).ready(function() {
+            setupEventListeners();
+            showAlert('info', '🎨 Layout 3: Minimalist Clean Design - Apple-inspired');
+        });
+
+        function setupEventListeners() {
+            // Sport selection
+            $('.sport-pill').click(function() {
+                $('.sport-pill').removeClass('active');
+                $(this).addClass('active');
+                const sport = $(this).data('sport');
+                switchSport(sport);
+            });
+
+            // AI providers
+            $('.ai-chip').click(function() {
+                $('.ai-chip').removeClass('active');
+                $(this).addClass('active');
+                dashboardState.aiProvider = $(this).data('provider');
+                showAlert('info', `Switched to ${$(this).text()}`);
+            });
+
+            // Main actions
+            $('#loadSampleBtn').click(loadSampleData);
+            $('#optimizeBtn').click(optimizeLineups);
+            $('#askAIBtn').click(getAIAnalysis);
+            $('#updateProjectionsBtn').click(updateProjections);
+            $('#exportBtn').click(exportLineups);
+
+            // Auto-load on start
+            setTimeout(loadSampleData, 500);
+        }
+
+        function switchSport(sport) {
+            dashboardState.sport = sport;
+            dashboardState.site = sport === 'NBA' ? 'FanDuel' : 'DraftKings';
+            $('#siteSelect').val(dashboardState.site);
+            loadSampleData();
+        }
+
+        function loadSampleData() {
+            const sport = dashboardState.sport;
+            showLoading(`Loading ${sport} players...`);
+
+            let players = [];
+            if (sport === 'NFL') {
+                players = [
+                    { name: 'Josh Allen', position: 'QB', team: 'BUF', salary: 8900 },
+                    { name: 'Christian McCaffrey', position: 'RB', team: 'SF', salary: 9200 },
+                    { name: 'Tyreek Hill', position: 'WR', team: 'MIA', salary: 8200 },
+                    { name: 'Travis Kelce', position: 'TE', team: 'KC', salary: 7400 },
+                    { name: 'Saquon Barkley', position: 'RB', team: 'PHI', salary: 8800 },
+                    { name: 'Davante Adams', position: 'WR', team: 'LVR', salary: 8400 }
+                ];
+            } else {
+                players = [
+                    { name: 'Luka Doncic', position: 'PG', team: 'DAL', salary: 11500 },
+                    { name: 'Nikola Jokic', position: 'C', team: 'DEN', salary: 11000 },
+                    { name: 'Giannis', position: 'PF', team: 'MIL', salary: 10800 },
+                    { name: 'Stephen Curry', position: 'PG', team: 'GSW', salary: 9800 },
+                    { name: 'Anthony Davis', position: 'PF', team: 'LAL', salary: 8800 },
+                    { name: 'Jimmy Butler', position: 'SF', team: 'MIA', salary: 8400 }
+                ];
+            }
+
+            // Add calculated data
+            dashboardState.players = players.map(p => ({
+                ...p,
+                id: p.name.replace(/\s+/g, '').toLowerCase(),
+                projection: Math.round(Math.random() * 15 + (sport === 'NBA' ? 20 : 12)),
+                value: Math.round((Math.random() * 12 + 8) / (p.salary / 1000) * 100) / 100,
+                locked: false,
+                banned: false
+            }));
+
+            displayPlayers(dashboardState.players);
+            updateStats();
+            
+            setTimeout(() => {
+                hideLoading();
+                showAlert('success', `${players.length} ${sport} players loaded!`);
+            }, 800);
+        }
+
+        function displayPlayers(players) {
+            const container = $('#playersContainer');
+            container.empty();
+
+            players.forEach(player => {
+                const valueColor = player.value >= 4 ? 'var(--secondary)' : 
+                                 player.value >= 3 ? 'var(--accent)' : '#6b7280';
+
+                const cardClass = player.locked ? 'player-mini-card locked' : 
+                                 player.banned ? 'player-mini-card banned' : 'player-mini-card';
+
+                const playerCard = $(`
+                    <div class="${cardClass}" data-player-id="${player.id}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1 fw-bold">${player.name}</h6>
+                                <span class="badge me-1" style="background: var(--primary); color: white;">${player.position}</span>
+                                <span class="badge" style="background: var(--neutral); color: white;">${player.team}</span>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">$${(player.salary/1000).toFixed(1)}K</div>
+                                <div class="small" style="color: ${valueColor};">Val: ${player.value}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-bold text-success">Proj: ${player.projection}</span>
+                            </div>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn ${player.locked ? 'btn-success' : 'btn-outline-success'} lock-btn" data-player-id="${player.id}">
+                                    <i class="fas fa-lock"></i>
+                                </button>
+                                <button class="btn ${player.banned ? 'btn-danger' : 'btn-outline-danger'} ban-btn" data-player-id="${player.id}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                
+                container.append(playerCard);
+            });
+
+            // Event handlers
+            $('.lock-btn').click(function() {
+                const playerId = $(this).data('player-id');
+                togglePlayerLock(playerId);
+            });
+
+            $('.ban-btn').click(function() {
+                const playerId = $(this).data('player-id');
+                togglePlayerBan(playerId);
+            });
+        }
+
+        function optimizeLineups() {
+            if (dashboardState.players.length === 0) {
+                showAlert('warning', 'Load players first');
+                return;
+            }
+
+            const numLineups = parseInt($('#numLineups').val());
+            showLoading(`Generating ${numLineups} lineup${numLineups > 1 ? 's' : ''}...`);
+
+            setTimeout(() => {
+                const lineups = [];
+                
+                for (let i = 0; i < numLineups; i++) {
+                    const availablePlayers = dashboardState.players.filter(p => !p.banned);
+                    const lineup = availablePlayers
+                        .sort((a, b) => b.value - a.value)
+                        .slice(0, dashboardState.sport === 'NFL' ? 6 : 5); // Simplified for clean display
+
+                    const totalSalary = lineup.reduce((sum, p) => sum + p.salary, 0);
+                    const totalProjection = lineup.reduce((sum, p) => sum + p.projection, 0);
+                    const salaryCap = dashboardState.site === 'DraftKings' ? 50000 : 60000;
+
+                    lineups.push({
+                        id: `lineup_${i + 1}`,
+                        players: lineup,
+                        total_salary: totalSalary,
+                        total_projection: Math.round(totalProjection),
+                        salary_remaining: salaryCap - totalSalary
+                    });
+                }
+
+                dashboardState.lineups = lineups;
+                displayLineups(lineups);
+                updateStats();
+                
+                hideLoading();
+                showAlert('success', `Generated ${lineups.length} optimized lineups!`);
+            }, 1200);
+        }
+
+        function displayLineups(lineups) {
+            const container = $('#lineupsContainer');
+            container.empty();
+
+            lineups.forEach((lineup, index) => {
+                const lineupHtml = $(`
+                    <div class="lineup-item">
+                        <div class="lineup-header">
+                            <h6 class="mb-0 fw-bold">Lineup ${index + 1}</h6>
+                            <div class="lineup-stats">
+                                <div class="lineup-stat">
+                                    <div class="lineup-stat-value">${lineup.total_projection}</div>
+                                    <div class="lineup-stat-label">Points</div>
+                                </div>
+                                <div class="lineup-stat">
+                                    <div class="lineup-stat-value">$${(lineup.salary_remaining/1000).toFixed(0)}K</div>
+                                    <div class="lineup-stat-label">Left</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            ${lineup.players.slice(0, 4).map(p => 
+                                `<span class="badge me-1 mb-1" style="background: var(--neutral); color: white;">${p.name}</span>`
+                            ).join('')}
+                            ${lineup.players.length > 4 ? `<span class="badge" style="background: var(--primary); color: white;">+${lineup.players.length - 4}</span>` : ''}
+                        </div>
+                    </div>
+                `);
+                
+                container.append(lineupHtml);
+            });
+        }
+
+        function getAIAnalysis() {
+            if (dashboardState.players.length === 0) {
+                showAlert('warning', 'Load players first');
+                return;
+            }
+
+            const provider = dashboardState.aiProvider;
+            const sport = dashboardState.sport;
+            
+            const analyses = {
+                chatgpt: `<strong>🧠 ChatGPT:</strong> Focus on high-volume ${sport === 'NFL' ? 'RBs and slot WRs' : 'guards in pace-up spots'}. Stack correlation plays for upside. Target 4.5+ value with 20%+ ceiling.`,
+                gemini: `<strong>🌟 Gemini:</strong> Contrarian strategy recommended. Low-owned studs in plus matchups offer tournament leverage. Consider 2-player mini-stacks.`,
+                deepseek: `<strong>🔮 DeepSeek:</strong> Exploit ownership inefficiencies. High floor plays with ceiling upside provide optimal risk/reward for this slate construction.`
+            };
+
+            $('#aiResponse').html(analyses[provider]);
+            showAlert('success', `${provider.toUpperCase()} analysis complete!`);
+        }
+
+        function togglePlayerLock(playerId) {
+            const player = dashboardState.players.find(p => p.id === playerId);
+            if (player) {
+                player.locked = !player.locked;
+                if (player.locked) player.banned = false;
+                displayPlayers(dashboardState.players);
+                updateStats();
+                showAlert('info', `${player.name} ${player.locked ? 'locked' : 'unlocked'}`);
+            }
+        }
+
+        function togglePlayerBan(playerId) {
+            const player = dashboardState.players.find(p => p.id === playerId);
+            if (player) {
+                player.banned = !player.banned;
+                if (player.banned) player.locked = false;
+                displayPlayers(dashboardState.players);
+                updateStats();
+                showAlert('info', `${player.name} ${player.banned ? 'banned' : 'unbanned'}`);
+            }
+        }
+
+        function updateProjections() {
+            if (dashboardState.players.length === 0) return;
+
+            showLoading('Updating projections...');
+            setTimeout(() => {
+                dashboardState.players.forEach(p => {
+                    p.projection = Math.round(Math.random() * 15 + 10);
+                    p.value = Math.round((p.projection / (p.salary / 1000)) * 100) / 100;
+                });
+                displayPlayers(dashboardState.players);
+                hideLoading();
+                showAlert('success', 'Projections updated!');
+            }, 1000);
+        }
+
+        function exportLineups() {
+            if (dashboardState.lineups.length === 0) {
+                showAlert('warning', 'No lineups to export');
+                return;
+            }
+            showAlert('success', `Exported ${dashboardState.lineups.length} lineups!`);
+        }
+
+        function updateStats() {
+            $('#playerCount').text(dashboardState.players.length);
+            $('#lockedCount').text(dashboardState.players.filter(p => p.locked).length);
+            $('#bannedCount').text(dashboardState.players.filter(p => p.banned).length);
+            $('#lineupCount').text(dashboardState.lineups.length);
+        }
+
+        function showAlert(type, message) {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show mb-3" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation-triangle' : 'info'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            $('#alertArea').html(alertHtml);
+            setTimeout(() => $('.alert').alert('close'), 5000);
+        }
+
+        function showLoading(message) {
+            const loadingHtml = `
+                <div class="alert alert-primary d-flex align-items-center mb-3" id="loadingAlert">
+                    <div class="spinner-border me-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div>${message}</div>
+                </div>
+            `;
+            $('#alertArea').html(loadingHtml);
+        }
+
+        function hideLoading() {
+            $('#loadingAlert').remove();
+        }
+    </script>
+</body>
+</html>

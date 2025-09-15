@@ -1,0 +1,41 @@
+{
+  "timestamp": "2025-09-12T23:43:37.377695",
+  "test_results": {
+    "dependencies": {
+      "nfl_data_py": "\u2705 NFL Data Py library - OK",
+      "pandas": "\u2705 Pandas for data manipulation - OK",
+      "requests": "\u2705 HTTP requests library - OK",
+      "beautifulsoup4": "\u274c Web scraping library - MISSING",
+      "python-dotenv": "\u274c Environment variable management - MISSING"
+    },
+    "api_keys": {
+      "THE_ODDS_API_KEY": "\u2705 The Odds API key - Configured",
+      "OPENAI_API_KEY": "\u2705 OpenAI API key - Configured",
+      "GEMINI_API_KEY": "\u2705 Google Gemini API key - Configured"
+    },
+    "ingestors": {
+      "NFLDataPyIngestor": "\u2705 NFLDataPyIngestor - OK",
+      "FantasyNerdsIngestor": "\u2705 FantasyNerdsIngestor - OK",
+      "ScrapingIngestor": "\u2705 ScrapingIngestor - OK",
+      "BaseIngestor": "\u2705 BaseIngestor - OK"
+    },
+    "config_files": {
+      "src/config/sources.json": "\u2705 src/config/sources.json - Valid JSON",
+      ".env": "\u2705 .env - Exists and readable",
+      "mcp_config.json": "\u2705 mcp_config.json - Valid JSON"
+    },
+    "data_sources": {
+      "The Odds API": "\u26a0\ufe0f The Odds API - HTTP 401",
+      "Fantasy Nerds API": "\u2705 Fantasy Nerds API - Reachable",
+      "Reddit API": "\u26a0\ufe0f Reddit API - HTTP 429",
+      "NFL.com": "\u2705 NFL.com - Reachable",
+      "ESPN.com": "\u26a0\ufe0f ESPN.com - HTTP 403"
+    }
+  },
+  "summary": {
+    "total_tests": 20,
+    "passed_tests": 15,
+    "success_rate": 75.0,
+    "status": "PARTIAL"
+  }
+}

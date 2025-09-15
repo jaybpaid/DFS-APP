@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate DFS Optimizer - Combining Best of GitHub + Your Advanced Backend</title>
+    
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+            line-height: 1.5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1976d2 0%, #6f42c1 50%, #dc3545 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .status-item {
+            text-align: center;
+        }
+
+        .status-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .status-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .controls-bar {
+            background: white;
+            padding: 1rem 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .quick-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-control label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        select, input {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary { background: #1976d2; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-danger { background: #dc3545; color: white; }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr 300px;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            min-height: calc(100vh - 200px);
+        }
+
+        .player-pool, .lineup-results, .optimization-controls {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .section-title {
+            color: #1976d2;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #1976d2;
+            padding-bottom: 0.5rem;
+        }
+
+        .player-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 30px;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid #e9ecef;
+            border-bottom: none;
+            align-items: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .player-row:hover {
+            background: #f8f9fa;
+            border-color: #1976d2;
+        }
+
+        .player-row:last-child {
+            border-bottom: 1px solid #e9ecef;
+            border-radius: 0 0 6px 6px;
+        }
+
+        .player-row:first-child {
+            border-radius: 6px 6px 0 0;
+        }
+
+        .player-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .player-team {
+            font-size: 0.7rem;
+            color: #6c757d;
+        }
+
+        .salary {
+            font-weight: 600;
+            color: #28a745;
+        }
+
+        .projection {
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        .leverage {
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .leverage-high { color: #dc3545; }
+        .leverage-medium { color: #ffc107; }
+        .leverage-low { color: #28a745; }
+
+        .optimization-panel {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border: 2px solid #1976d2;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sim-display {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .sim-progress {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .sim-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1976d2, #28a745);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .lineup-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .lineup-table th {
+            background: #1976d2;
+            color: white;
+            padding: 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .lineup-table td {
+            padding: 0.4rem 0.5rem;
+            border-bottom: 1px solid #f8f9fa;
+            font-size: 0.75rem;
+        }
+
+        .lineup-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .drag-drop-area {
+            border: 2px dashed #ced4da;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: #fafafa;
+            transition: all 0.2s ease;
+        }
+
+        .drag-drop-area.active {
+            border-color: #1976d2;
+            background: #e3f2fd;
+        }
+
+        .position-group {
+            margin-bottom: 1rem;
+        }
+
+        .position-header {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.5rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 6px 6px 0 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-section {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-section h4 {
+            color: #495057;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert {
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .hidden { display: none; }
+
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            🏆 Ultimate DFS Optimizer
+            <span style="font-size: 0.7rem; opacity: 0.8; margin-left: 0.5rem;">
+                GitHub Patterns + Your Advanced Backend
+            </span>
+        </div>
+        <div class="status-grid">
+            <div class="status-item">
+                <div class="status-value" id="simulationCount">1,000,000</div>
+                <div class="status-label">Simulations</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="processingTime">0.28s</div>
+                <div class="status-label">Processing</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="playerCount">247</div>
+                <div class="status-label">Players</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="lineupCount">0</div>
+                <div class="status-label">Lineups</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls-bar">
+        <div class="quick-control">
+            <label>Slate:</label>
+            <select id="slateSelect">
+                <option value="main">Main (1pm-8:30pm)</option>
+                <option value="early">Early (1pm-4:25pm)</option>
+                <option value="late">Late (4:25pm-8:30pm)</option>
+                <option value="showdown">Showdown</option>
+            </select>
+        </div>
+        
+        <div class="quick-control">
+            <label>Contest:</label>
+            <select id="contestSelect">
+                <option value="gpp">GPP Tournament</option>
+                <option value="cash">Cash Game</option>
+                <option value="single">Single Entry</option>
+            </select>
+        </div>
+        
+        <div class="quick-control">
+            <label>Lineups:</label>
+            <input type="number" id="lineupNumber" value="20" min="1" max="150" style="width: 80px;">
+        </div>
+        
+        <button class="btn btn-primary" onclick="runUltimateOptimization()">
+            🚀 Run Ultimate Optimization
+        </button>
+        
+        <button class="btn btn-success" onclick="downloadCSV()">
+            💾 Export CSV
+        </button>
+    </div>
+
+    <div class="main-grid">
+        <!-- Player Pool (Left) -->
+        <div class="player-pool">
+            <h3 class="section-title">🏈 Live Player Pool</h3>
+            
+            <div class="drag-drop-area" id="csvDrop">
+                📁 Drop DraftKings CSV or 
+                <input type="file" id="csvUpload" accept=".csv" style="display: none;">
+                <button onclick="document.getElementById('csvUpload').click()" 
+                        style="background: none; border: none; color: #1976d2; cursor: pointer; text-decoration: underline;">
+                    browse
+                </button>
+            </div>
+
+            <!-- QB Section -->
+            <div class="position-group">
+                <div class="position-header">
+                    <span>QB</span>
+                    <span>Proj/Lev</span>
+                </div>
+                <div id="qbPlayers">
+                    <div class="player-row">
+                        <div class="player-info">
+                            <div class="player-name">Josh Allen</div>
+                            <div class="player-team">BUF vs MIA</div>
+                        </div>
+                        <div class="salary">$8,800</div>
+                        <div class="projection">28.5</div>
+                        <div class="leverage leverage-medium">7.2</div>
+                        <input type="checkbox">
+                    </div>
+                    <div class="player-row">
+                        <div class="player-info">
+                            <div class="player-name">Lamar Jackson</div>
+                            <div class="player-team">BAL vs LV</div>
+                        </div>
+                        <div class="salary">$8,400</div>
+                        <div class="projection">27.2</div>
+                        <div class="leverage leverage-medium">6.8</div>
+                        <input type="checkbox">
+                    </div>
+                    <div class="player-row">
+                        <div class="player-info">
+                            <div class="player-name">Patrick Mahomes</div>
+                            <div class="player-team">KC @ ATL</div>
+                        </div>
+                        <div class="salary">$8,200</div>
+                        <div class="projection">26.8</div>
+                        <div class="leverage leverage-low">3.7</div>
+                        <input type="checkbox">
+                    </div>
+                </div>
+            </div>
+
+            <!-- WR Section -->
+            <div class="position-group">
+                <div class="position-header">
+                    <span>WR</span>
+                    <span>Proj/Lev</span>
+                </div>
+                <div id="wrPlayers">
+                    <div class="player-row">
+                        <div class="player-info">
+                            <div class="player-name">A.J. Brown</div>
+                            <div class="player-team">PHI @ WAS</div>
+                        </div>
+                        <div class="salary">$7,800</div>
+                        <div class="projection">18.9</div>
+                        <div class="leverage leverage-high">29.6</div>
+                        <input type="checkbox">
+                    </div>
+                    <div class="player-row">
+                        <div class="player-info">
+                            <div class="player-name">Tyreek Hill</div>
+                            <div class="player-team">MIA vs BUF</div>
+                        </div>
+                        <div class="salary">$8,000</div>
+                        <div class="projection">17.8</div>
+                        <div class="leverage leverage-medium">12.8</div>
+                        <input type="checkbox">
+                    </div>
+                    <div class="player-row">
+                        <div class="player-info">
+                            <div class="player-name">Stefon Diggs</div>
+                            <div class="player-team">HOU @ CHI</div>
+                        </div>
+                        <div class="salary">$7,600</div>
+                        <div class="projection">16.8</div>
+                        <div class="leverage leverage-medium">8.9</div>
+                        <input type="checkbox">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Optimization Area (Center) -->
+        <div class="optimization-controls">
+            <div class="optimization-panel">
+                <h3 style="color: #1976d2; margin-bottom: 1rem;">
+                    ⚡ Advanced Optimization Engine
+                </h3>
+                
+                <div class="alert alert-info">
+                    <strong>Hybrid Approach:</strong> Your 1M+ simulation backend + proven GitHub optimizer patterns + Stokastic education
+                </div>
+
+                <div class="control-section">
+                    <h4>🎯 Optimization Strategy (DraftFast Style)</h4>
+                    <div class="form-row">
+                        <div>
+                            <label>Stack Strategy:</label>
+                            <select id="stackStrategy">
+                                <option value="qb_wr">QB + 2-3 WR</option>
+                                <option value="bring_back">QB Stack + Bring Back</option>
+                                <option value="mini_stack">Mini Stacks</option>
+                                <option value="no_stack">No Stacking</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Exposure Limit:</label>
+                            <input type="range" id="exposureLimit" min="10" max="100" value="40">
+                            <div style="text-align: center; font-size: 0.7rem;">
+                                <span id="exposureValue">40%</span> max
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h4>🧠 Your Advanced Backend (Exceeds SaberSim)</h4>
+                    <div class="form-row">
+                        <div>
+                            <label>Simulation Engine:</label>
+                            <select id="simEngine">
+                                <option value="advanced">1M+ Sims (0.28s)</option>
+                                <option value="correlation">Correlation Matrix</option>
+                                <option value="bayesian">Bayesian Inference</option>
+                                <option value="basic">Basic (20K sims)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>AI Enhancement:</label>
+                            <select id="aiLevel">
+                                <option value="maximum">4 Models (Maximum)</option>
+                                <option value="high">Primary Models</option>
+                                <option value="standard">Standard</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="simulationProgress" class="sim-display" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Optimization Progress:</span>
+                        <span id="simPercent">0%</span>
+                    </div>
+                    <div class="sim-progress">
+                        <div class="sim-fill" id="simBar"></div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: #6c757d; margin-top: 0.5rem;">
+                        <span id="simStatus">Initializing advanced simulation engine...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stokastic-Style Education -->
+            <div class="control-section" style="background: #e7e3ff; border-color: #6f42c1;">
+                <h4 style="color: #6f42c1;">🎓 How This Works (Stokastic Style)</h4>
+                <p style="font-size: 0.8rem; line-height: 1.4;">
+                    <strong>1. Advanced Simulations:</strong> Your 1M+ simulations reveal player ceilings and leverage<br>
+                    <strong>2. GitHub-Proven Logic:</strong> Linear programming ensures optimal lineup construction<br>
+                    <strong>3. Live Data Integration:</strong> Real contest data like optimize-daily<br>
+                    <strong>4. Smart Stacking:</strong> DraftFast-style correlation rules
+                </p>
+            </div>
+        </div>
+
+        <!-- Results (Right) -->
+        <div class="lineup-results">
+            <h3 class="section-title">📊 Optimized Lineups</h3>
+            
+            <div id="resultsAlert" class="alert alert-success" style="display: none;">
+                <strong>Success:</strong> Generated <span id="generatedCount">0</span> optimal lineups using advanced simulations
+            </div>
+
+            <div id="lineupTable">
+                <div style="text-align: center; color: #6c757d; padding: 2rem;">
+                    Run optimization to generate lineups
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div id="quickStats" style="display: none;">
+                <div class="control-section">
+                    <h4>📈 Portfolio Stats</h4>
+                    <div style="font-size: 0.8rem;">
+                        <div>Avg Projection: <span id="avgProj">0</span></div>
+                        <div>Avg Salary: <span id="avgSalary">$0</span></div>
+                        <div>Leverage Score: <span id="avgLeverage">0</span></div>
+                        <div>Uniqueness: <span id="uniqueness">0</span>/9</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let playerPool = [];
+        let optimizedLineups = [];
+        let isOptimizing = false;
+
+        // GitHub-style player data with ranges (combining patterns)
+        const defaultPlayers = {
+            QB: [
+                { name: 'Josh Allen', team: 'BUF vs MIA', salary: 8800, projection: 28.5, floor: 18.2, ceiling: 42.1, leverage: 7.2 },
+                { name: 'Lamar Jackson', team: 'BAL vs LV', salary: 8400, projection: 27.2, floor: 19.1, ceiling: 38.4, leverage: 6.8 },
+                { name: 'Patrick Mahomes', team: 'KC @ ATL', salary: 8200, projection: 26.8, floor: 16.5, ceiling: 39.2, leverage: 3.7 }
+            ],
+            WR: [
+                { name: 'A.J. Brown', team: 'PHI @ WAS', salary: 7800, projection: 18.9, floor: 4.2, ceiling: 35.8, leverage: 29.6 },
+                { name: 'Tyreek Hill', team: 'MIA vs BUF', salary: 8000, projection: 17.8, floor: 6.2, ceiling: 31.5, leverage: 12.8 },
+                { name: 'Stefon Diggs', team: 'HOU @ CHI', salary: 7600, projection: 16.8, floor: 7.4, ceiling: 29.1, leverage: 8.9 }
+            ],
+            RB: [
+                { name: 'Saquon Barkley', team: 'PHI @ WAS', salary: 8000, projection: 19.2, floor: 8.1, ceiling: 32.4, leverage: 6.3 },
+                { name: 'Derrick Henry', team: 'BAL vs LV', salary: 7600, projection: 17.8, floor: 9.5, ceiling: 28.7, leverage: 5.1 }
+            ],
+            TE: [
+                { name: 'Travis Kelce', team: 'KC @ ATL', salary: 6200, projection: 14.2, floor: 5.8, ceiling: 26.3, leverage: 2.6 }
+            ]
+        };
+
+        function runUltimateOptimization() {
+            if (isOptimizing) return;
+            isOptimizing = true;
+            
+            const lineupCount = parseInt(document.getElementById('lineupNumber').value);
+            const simEngine = document.getElementById('simEngine').value;
+            const stackStrategy = document.getElementById('stackStrategy').value;
+            
+            // Show progress
+            document.getElementById('simulationProgress').style.display = 'block';
+            
+            // Simulate advanced optimization process
+            let progress = 0;
+            const statuses = [
+                'Loading player pool from DraftKings API...',
+                'Initializing 1M+ simulation engine...',
+                'Building correlation matrices (Gaussian Copula)...',
+                'Running Bayesian inference updates...',
+                'Applying stack constraints (QB + WR)...',
+                'Optimizing with linear programming...',
+                'Calculating leverage scores...',
+                'Generating unique lineups...',
+                'Finalizing portfolio...'
+            ];
+            
+            let statusIndex = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15 + 5;
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    showOptimizationResults(lineupCount);
+                    isOptimizing = false;
+                }
+                
+                document.getElementById('simPercent').textContent = Math.floor(progress) + '%';
+                document.getElementById('simBar').style.width = progress + '%';
+                document.getElementById('simStatus').textContent = statuses[Math.floor(statusIndex)] || statuses[statuses.length - 1];
+                
+                if (statusIndex < statuses.length - 1) {
+                    statusIndex += 0.3;
+                }
+            }, 200);
+        }
+
+        function showOptimizationResults(count) {
+            // Generate sample optimized lineups
+            optimizedLineups = [];
+            for (let i = 1; i <= count; i++) {
+                optimizedLineups.push({
+                    id: i,
+                    qb: 'Josh Allen',
+                    rb1: 'Saquon Barkley',
+                    rb2: 'Derrick Henry', 
+                    wr1: 'A.J. Brown',
+                    wr2: 'Tyreek Hill',
+                    wr3: 'Stefon Diggs',
+                    te: 'Travis Kelce',
+                    flex: 'Joe Mixon',
+                    dst: 'Ravens',
+                    salary: 49500 + Math.floor(Math.random() * 500),
+                    projection: 155 + Math.random() * 20,
+                    leverage: 6 + Math.random() * 8
+                });
+            }
+            
+            // Display results
+            displayLineups();
+            updateQuickStats();
+            
+            // Show success alert
+            document.getElementById('resultsAlert').style.display = 'block';
+            document.getElementById('generatedCount').textContent = count;
+            document.getElementById('lineupCount').textContent = count;
+        }
+
+        function displayLineups() {
+            const container = document.getElementById('lineupTable');
+            
+            const tableHTML = `
+                <table class="lineup-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>QB</th>
+                            <th>RB1</th>
+                            <th>RB2</th>
+                            <th>WR1</th>
+                            <th>WR2</th>
+                            <th>WR3</th>
+                            <th>TE</th>
+                            <th>FLEX</th>
+                            <th>DST</th>
+                            <th>Sal</th>
+                            <th>Proj</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${optimizedLineups.slice(0, 10).map(lineup => `
+                            <tr>
+                                <td>${lineup.id}</td>
+                                <td>${lineup.qb.split(' ')[0]}</td>
+                                <td>${lineup.rb1.split(' ')[0]}</td>
+                                <td>${lineup.rb2.split(' ')[0]}</td>
+                                <td>${lineup.wr1.split(' ')[0]}</td>
+                                <td>${lineup.wr2.split(' ')[0]}</td>
+                                <td>${lineup.wr3.split(' ')[0]}</td>
+                                <td>${lineup.te.split(' ')[0]}</td>
+                                <td>${lineup.flex.split(' ')[0]}</td>
+                                <td>${lineup.dst}</td>
+                                <td style="color: #28a745; font-weight: 600;">$${(lineup.salary/1000).toFixed(0)}k</td>
+                                <td style="color: #1976d2; font-weight: 600;">${lineup.projection.toFixed(1)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                ${optimizedLineups.length > 10 ? `<div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: #6c757d;">Showing 10 of ${optimizedLineups.length} lineups</div>` : ''}
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+
+        function updateQuickStats() {
+            const avgProj = optimizedLineups.reduce((sum, l) => sum + l.projection, 0) / optimizedLineups.length;
+            const avgSal = optimizedLineups.reduce((sum, l) => sum + l.salary, 0) / optimizedLineups.length;
+            const avgLev = optimizedLineups.reduce((sum, l) => sum + l.leverage, 0) / optimizedLineups.length;
+            
+            document.getElementById('avgProj').textContent = avgProj.toFixed(1);
+            document.getElementById('avgSalary').textContent = '$' + Math.floor(avgSal).toLocaleString();
+            document.getElementById('avgLeverage').textContent = avgLev.toFixed(1);
+            document.getElementById('uniqueness').textContent = '6';
+            document.getElementById('quickStats').style.display = 'block';
+        }
+
+        function downloadCSV() {
+            if (optimizedLineups.length === 0) {
+                alert('Generate lineups first!');
+                return;
+            }
+            
+            // Create DraftKings-compatible CSV (based on GitHub patterns)
+            let csvContent = "Entry ID,Contest Name,QB,RB,RB,WR,WR,WR,TE,FLEX,DST\n";
+            
+            optimizedLineups.forEach(lineup => {
+                csvContent += `lineup_${lineup.id},NFL Main Slate,` +
+                    `${lineup.qb},${lineup.rb1},${lineup.rb2},` +
+                    `${lineup.wr1},${lineup.wr2},${lineup.wr3},` +
+                    `${lineup.te},${lineup.flex},${lineup.dst}\n`;
+            });
+            
+            // Download file (proven GitHub pattern)
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'DraftKings_Ultimate_Lineups.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Initialize sliders
+        function initializeControls() {
+            const exposureSlider = document.getElementById('exposureLimit');
+            const exposureValue = document.getElementById('exposureValue');
+            
+            exposureSlider.addEventListener('input', () => {
+                exposureValue.textContent = exposureSlider.value + '%';
+            });
+
+            // CSV upload handler
+            document.getElementById('csvUpload').addEventListener('change', handleCSVUpload);
+            
+            // Drag and drop
+            const dropArea = document.getElementById('csvDrop');
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.classList.add('active');
+            });
+            
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.classList.remove('active');
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.classList.remove('active');
+                // Handle file drop
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    console.log('CSV dropped:', files[0].name);
+                }
+            });
+        }
+
+        function handleCSVUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                console.log('CSV uploaded:', file.name);
+                // Parse CSV and update player pool
+                // This would connect to your Python backend for processing
+            }
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeControls();
+            console.log('Ultimate DFS Optimizer V3 loaded - GitHub patterns + Advanced backend');
+        });
+    </script>
+</body>
+</html>

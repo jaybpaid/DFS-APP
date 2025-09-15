@@ -1,0 +1,39 @@
+{
+  "player_data_structure": {
+    "player_name": "string",
+    "position": "string",
+    "team": "string",
+    "salary_dk": "integer",
+    "salary_fd": "integer",
+    "projections": {
+      "rotowire": "float",
+      "draftkings": "float",
+      "fantasypros": "float",
+      "ai_enhanced": "float",
+      "consensus": "float"
+    },
+    "metrics": {
+      "floor": "float",
+      "ceiling": "float",
+      "ownership": "float",
+      "leverage_score": "float (0-10)",
+      "edge_ratio": "float",
+      "correlation_scores": "object"
+    },
+    "game_context": {
+      "matchup": "string",
+      "game_time": "ISO_timestamp",
+      "vegas_total": "float",
+      "weather": "string",
+      "pace_grade": "string",
+      "status": "AVAILABLE|LOCKED|OUT"
+    },
+    "ai_analysis": {
+      "recommendation": "string",
+      "leverage_reasoning": "string",
+      "stack_fit": "float",
+      "tournament_score": "float",
+      "cash_score": "float"
+    }
+  }
+}

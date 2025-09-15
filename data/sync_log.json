@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-09-15T12:57:04.105662",
+  "synced_sources": [
+    "draftkings_contests",
+    "player_pool",
+    "projections",
+    "ownership",
+    "injury_news"
+  ],
+  "failed_sources": [],
+  "total_players": 363,
+  "total_contests": 0
+}

@@ -1,0 +1,99 @@
+{
+  "filesystem": {
+    "status": "failed",
+    "enabled": true,
+    "error": "Error accessing directory /Users/peso/Documents/Cline/DFS APP/--help: Error: ENOENT: no such file or directory, stat '/Users/peso/Documents/Cline/DFS APP/--help'\n    at async Object.stat (node:internal/fs/promises:1037:18)\n    at async file:///usr/local/lib/node_modules/@modelcontextprotocol/server-filesystem/dist/index.js:43:23\n    at async Promise.all (index 0)\n    at async file:///usr/local/lib/node_modules/@modelcontextprotocol/server-filesystem/dist/index.js:41:1 {\n  errno: -2,\n  code: 'ENOENT',\n  syscall: 'stat',\n  path: '/Users/peso/Documents/Cline/DFS APP/--help'\n}\n",
+    "returncode": 1
+  },
+  "brave-search": {
+    "status": "success",
+    "enabled": true,
+    "details": "Command executed successfully"
+  },
+  "browser-use": {
+    "status": "success",
+    "enabled": true,
+    "details": "Command executed successfully"
+  },
+  "github": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "calculator": {
+    "status": "failed",
+    "enabled": true,
+    "error": "Command timed out",
+    "returncode": -1
+  },
+  "read-website-fast": {
+    "status": "success",
+    "enabled": true,
+    "details": "Command executed successfully"
+  },
+  "screenshot-website-fast": {
+    "status": "success",
+    "enabled": true,
+    "details": "Command executed successfully"
+  },
+  "firecrawl": {
+    "status": "failed",
+    "enabled": true,
+    "error": "Command timed out",
+    "returncode": -1
+  },
+  "google-maps": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "memory": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "time": {
+    "status": "failed",
+    "enabled": true,
+    "error": "Command timed out",
+    "returncode": -1
+  },
+  "shell": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "git": {
+    "status": "failed",
+    "enabled": true,
+    "error": "Command timed out",
+    "returncode": -1
+  },
+  "puppeteer": {
+    "status": "failed",
+    "enabled": true,
+    "error": "Command timed out",
+    "returncode": -1
+  },
+  "fetch": {
+    "status": "failed",
+    "enabled": true,
+    "error": "Command timed out",
+    "returncode": -1
+  },
+  "sentry": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "gitlab": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "apify": {
+    "status": "success",
+    "enabled": true,
+    "details": "Command executed successfully"
+  },
+  "graphlit": {
+    "status": "failed",
+    "enabled": true,
+    "error": "Command timed out",
+    "returncode": -1
+  }
+}

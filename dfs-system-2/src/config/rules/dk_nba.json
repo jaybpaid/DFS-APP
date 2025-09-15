@@ -1,0 +1,63 @@
+{
+  "site": "DraftKings",
+  "sport": "NBA",
+  "salary_cap": 50000,
+  "roster_size": 8,
+  "positions": {
+    "PG": {
+      "min": 1,
+      "max": 3,
+      "eligible_positions": ["PG"]
+    },
+    "SG": {
+      "min": 1,
+      "max": 3,
+      "eligible_positions": ["SG"]
+    },
+    "SF": {
+      "min": 1,
+      "max": 3,
+      "eligible_positions": ["SF"]
+    },
+    "PF": {
+      "min": 1,
+      "max": 3,
+      "eligible_positions": ["PF"]
+    },
+    "C": {
+      "min": 1,
+      "max": 2,
+      "eligible_positions": ["C"]
+    },
+    "G": {
+      "min": 1,
+      "max": 1,
+      "eligible_positions": ["PG", "SG"]
+    },
+    "F": {
+      "min": 1,
+      "max": 1,
+      "eligible_positions": ["SF", "PF"]
+    },
+    "UTIL": {
+      "min": 1,
+      "max": 1,
+      "eligible_positions": ["PG", "SG", "SF", "PF", "C"]
+    }
+  },
+  "constraints": {
+    "max_players_per_team": 8,
+    "max_players_per_game": 6,
+    "min_salary_used": 49000,
+    "captain_mode": false
+  },
+  "stacking_rules": {
+    "max_team_stack": 4,
+    "preferred_team_stack": 3,
+    "game_stack_positions": ["PG", "SG", "SF", "PF", "C"]
+  },
+  "late_swap": {
+    "enabled": true,
+    "lock_time_minutes_before_tipoff": 5
+  }
+}

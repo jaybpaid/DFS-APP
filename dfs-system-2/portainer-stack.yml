@@ -1,0 +1,139 @@
+# DFS Ultimate Optimizer - Portainer Stack
+# Deploy this stack through Portainer UI for easy management
+
+version: '3.8'
+
+services:
+  dfs-optimizer:
+    image: dfs-ultimate-optimizer:latest
+    build: .
+    container_name: dfs-ultimate-optimizer
+    restart: unless-stopped
+    ports:
+      - "8000:8000"  # Live Optimizer API
+      - "8765:8765"  # DraftKings API Server
+    environment:
+      - PYTHONPATH=/app
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+      - DFS_LOG_LEVEL=INFO
+      - DFS_DATA_REFRESH_INTERVAL=900
+    volumes:
+      - dfs_data:/app/public/data
+      - dfs_logs:/app/logs
+      - dfs_cache:/app/cache
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health", "&&", "curl", "-f", "http://localhost:8765/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - dfs-network
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 6G
+        reservations:
+          cpus: '2.0'
+          memory: 3G
+
+  # Optional: Redis for caching and session management
+  redis:
+    image: redis:7-alpine
+    container_name: dfs-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - dfs-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  # Optional: Nginx reverse proxy with SSL
+  nginx:
+    image: nginx:alpine
+    container_name: dfs-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - nginx_config:/etc/nginx/conf.d
+      - nginx_ssl:/etc/nginx/ssl
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - dfs-optimizer
+    networks:
+      - dfs-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+
+  # Optional: Monitoring with Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: dfs-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - dfs-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+volumes:
+  dfs_data:
+    driver: local
+  dfs_logs:
+    driver: local
+  dfs_cache:
+    driver: local
+  redis_data:
+    driver: local
+  nginx_config:
+    driver: local
+  nginx_ssl:
+    driver: local
+  nginx_logs:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  dfs-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

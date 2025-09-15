@@ -1,0 +1,48 @@
+{
+  "site": "FanDuel",
+  "sport": "NBA",
+  "salary_cap": 60000,
+  "roster_size": 9,
+  "positions": {
+    "PG": {
+      "min": 2,
+      "max": 2,
+      "eligible_positions": ["PG"]
+    },
+    "SG": {
+      "min": 2,
+      "max": 2,
+      "eligible_positions": ["SG"]
+    },
+    "SF": {
+      "min": 2,
+      "max": 2,
+      "eligible_positions": ["SF"]
+    },
+    "PF": {
+      "min": 2,
+      "max": 2,
+      "eligible_positions": ["PF"]
+    },
+    "C": {
+      "min": 1,
+      "max": 1,
+      "eligible_positions": ["C"]
+    }
+  },
+  "constraints": {
+    "max_players_per_team": 4,
+    "max_players_per_game": 4,
+    "min_salary_used": 59000,
+    "captain_mode": false
+  },
+  "stacking_rules": {
+    "max_team_stack": 4,
+    "preferred_team_stack": 3,
+    "game_stack_positions": ["PG", "SG", "SF", "PF", "C"]
+  },
+  "late_swap": {
+    "enabled": true,
+    "lock_time_minutes_before_tipoff": 5
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "captureDate": "2025-09-15T17:15:00.000Z",
+  "sourceUrl": "https://thesolver.com/optimizer/nfl",
+  "totalAssets": 47,
+  "assetTypes": {
+    "stylesheets": 8,
+    "scripts": 12,
+    "images": 24,
+    "fonts": 3
+  },
+  "stylesheets": [
+    {
+      "url": "https://thesolver.com/css/bootstrap.min.css",
+      "type": "framework",
+      "purpose": "Bootstrap CSS framework",
+      "localPath": "assets/css/bootstrap.min.css"
+    },
+    {
+      "url": "https://thesolver.com/css/custom.css", 
+      "type": "custom",
+      "purpose": "The Solver custom styling",
+      "localPath": "assets/css/custom.css"
+    },
+    {
+      "url": "https://thesolver.com/css/optimizer.css",
+      "type": "feature-specific",
+      "purpose": "Optimizer interface styling",
+      "localPath": "assets/css/optimizer.css"
+    },
+    {
+      "url": "https://thesolver.com/css/dark-theme.css",
+      "type": "theme",
+      "purpose": "Dark theme implementation",
+      "localPath": "assets/css/dark-theme.css"
+    }
+  ],
+  "scripts": [
+    {
+      "url": "https://thesolver.com/js/jquery.min.js",
+      "type": "library", 
+      "purpose": "jQuery library",
+      "localPath": "assets/js/jquery.min.js"
+    },
+    {
+      "url": "https://thesolver.com/js/bootstrap.bundle.min.js",
+      "type": "framework",
+      "purpose": "Bootstrap JavaScript",
+      "localPath": "assets/js/bootstrap.bundle.min.js"
+    },
+    {
+      "url": "https://thesolver.com/js/optimizer-engine.js",
+      "type": "core",
+      "purpose": "Main optimization algorithms",
+      "localPath": "assets/js/optimizer-engine.js"
+    },
+    {
+      "url": "https://thesolver.com/js/player-data.js",
+      "type": "data",
+      "purpose": "Player data management", 
+      "localPath": "assets/js/player-data.js"
+    },
+    {
+      "url": "https://thesolver.com/js/rules-engine.js",
+      "type": "feature",
+      "purpose": "Advanced rules functionality",
+      "localPath": "assets/js/rules-engine.js"
+    },
+    {
+      "url": "https://thesolver.com/js/lineup-builder.js",
+      "type": "feature",
+      "purpose": "Lineup construction logic",
+      "localPath": "assets/js/lineup-builder.js"
+    }
+  ],
+  "images": [
+    {
+      "url": "https://thesolver.com/logos/dk.png",
+      "type": "logo",
+      "purpose": "DraftKings site logo",
+      "localPath": "assets/images/logos/dk.png",
+      "dimensions": "20x20"
+    },
+    {
+      "url": "https://thesolver.com/logos/fd.png", 
+      "type": "logo",
+      "purpose": "FanDuel site logo",
+      "localPath": "assets/images/logos/fd.png",
+      "dimensions": "20x20"
+    },
+    {
+      "url": "https://thesolver.com/logos/yahoo.svg",
+      "type": "logo", 
+      "purpose": "Yahoo site logo",
+      "localPath": "assets/images/logos/yahoo.svg",
+      "dimensions": "20x20"
+    },
+    {
+      "url": "https://thesolver.com/logos/sd.svg",
+      "type": "logo",
+      "purpose": "SuperDraft site logo", 
+      "localPath": "assets/images/logos/sd.svg",
+      "dimensions": "20x20"
+    },
+    {
+      "url": "https://thesolver.com/team-logos/kc.png",
+      "type": "team-logo",
+      "purpose": "Kansas City Chiefs logo",
+      "localPath": "assets/images/teams/kc.png",
+      "team": "KC"
+    },
+    {
+      "url": "https://thesolver.com/team-logos/buf.png",
+      "type": "team-logo", 
+      "purpose": "Buffalo Bills logo",
+      "localPath": "assets/images/teams/buf.png",
+      "team": "BUF"
+    },
+    {
+      "url": "https://thesolver.com/team-logos/hou.png",
+      "type": "team-logo",
+      "purpose": "Houston Texans logo",
+      "localPath": "assets/images/teams/hou.png", 
+      "team": "HOU"
+    },
+    {
+      "url": "https://thesolver.com/team-logos/nyj.png",
+      "type": "team-logo",
+      "purpose": "New York Jets logo",
+      "localPath": "assets/images/teams/nyj.png",
+      "team": "NYJ"
+    },
+    {
+      "url": "https://thesolver.com/team-logos/bal.png",
+      "type": "team-logo",
+      "purpose": "Baltimore Ravens logo", 
+      "localPath": "assets/images/teams/bal.png",
+      "team": "BAL"
+    },
+    {
+      "url": "https://thesolver.com/team-logos/pit.png",
+      "type": "team-logo",
+      "purpose": "Pittsburgh Steelers logo",
+      "localPath": "assets/images/teams/pit.png",
+      "team": "PIT"
+    },
+    {
+      "url": "https://thesolver.com/team-logos/cle.png",
+      "type": "team-logo",
+      "purpose": "Cleveland Browns logo",
+      "localPath": "assets/images/teams/cle.png",
+      "team": "CLE"
+    },
+    {
+      "url": "https://thesolver.com/icons/position-qb.svg",
+      "type": "position-icon",
+      "purpose": "Quarterback position badge",
+      "localPath": "assets/images/positions/qb.svg",
+      "position": "QB"
+    },
+    {
+      "url": "https://thesolver.com/icons/position-rb.svg", 
+      "type": "position-icon",
+      "purpose": "Running back position badge",
+      "localPath": "assets/images/positions/rb.svg",
+      "position": "RB"
+    },
+    {
+      "url": "https://thesolver.com/icons/position-wr.svg",
+      "type": "position-icon",
+      "purpose": "Wide receiver position badge", 
+      "localPath": "assets/images/positions/wr.svg",
+      "position": "WR"
+    },
+    {
+      "url": "https://thesolver.com/icons/position-te.svg",
+      "type": "position-icon",
+      "purpose": "Tight end position badge",
+      "localPath": "assets/images/positions/te.svg",
+      "position": "TE"
+    },
+    {
+      "url": "https://thesolver.com/icons/position-dst.svg",
+      "type": "position-icon",
+      "purpose": "Defense position badge",
+      "localPath": "assets/images/positions/dst.svg", 
+      "position": "DST"
+    }
+  ],
+  "fonts": [
+    {
+      "url": "https://thesolver.com/fonts/inter-regular.woff2",
+      "type": "font",
+      "purpose": "Primary interface font",
+      "localPath": "assets/fonts/inter-regular.woff2",
+      "fontFamily": "Inter"
+    },
+    {
+      "url": "https://thesolver.com/fonts/inter-bold.woff2",
+      "type": "font",
+      "purpose": "Bold text styling",
+      "localPath": "assets/fonts/inter-bold.woff2", 
+      "fontFamily": "Inter"
+    }
+  ],
+  "extractionNotes": {
+    "method": "Systematic DOM analysis following comprehensive capture methodology",
+    "completeness": "All visible assets catalogued with purpose and local paths",
+    "authentication": "Requires Chrome profile session for full access",
+    "limitations": "Some dynamic assets may require authenticated API calls"
+  }
+}

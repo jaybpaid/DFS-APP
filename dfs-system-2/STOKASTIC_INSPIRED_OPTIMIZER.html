@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stokastic-Inspired DFS Optimizer - Simulation-First Approach</title>
+    
+    <!-- Chart.js for simulation visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+            line-height: 1.5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .workflow-indicator {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .step {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.2);
+            font-weight: 500;
+        }
+
+        .step.active {
+            background: rgba(255,255,255,0.4);
+        }
+
+        .tabs {
+            background: white;
+            border-bottom: 1px solid #e9ecef;
+            padding: 0 2rem;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 0;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover { color: #6f42c1; background: #f8f9fa; }
+        .tab.active { color: #6f42c1; border-bottom-color: #6f42c1; }
+
+        .container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem 2rem;
+            min-height: calc(100vh - 140px);
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section h3 {
+            color: #6f42c1;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #6f42c1;
+            padding-bottom: 0.5rem;
+        }
+
+        .educational-note {
+            background: #e7e3ff;
+            border: 2px solid #6f42c1;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .educational-note h4 {
+            color: #6f42c1;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .player-range-display {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 1px solid #e9ecef;
+            border-bottom: none;
+            align-items: center;
+            font-size: 0.85rem;
+            background: white;
+        }
+
+        .player-range-display:hover {
+            background: #f8f9fa;
+        }
+
+        .player-range-display:last-child {
+            border-bottom: 1px solid #e9ecef;
+            border-radius: 0 0 6px 6px;
+        }
+
+        .player-name {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .player-team {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        .range-bar {
+            position: relative;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .range-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #dc3545, #ffc107, #28a745);
+            border-radius: 10px;
+        }
+
+        .ownership-indicator {
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .ownership-low { background: #d4edda; color: #155724; }
+        .ownership-medium { background: #fff3cd; color: #856404; }
+        .ownership-high { background: #f8d7da; color: #721c24; }
+
+        .leverage-score {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .leverage-high { color: #dc3545; }
+        .leverage-medium { color: #fd7e14; }
+        .leverage-low { color: #28a745; }
+
+        .workflow-guide {
+            background: linear-gradient(135deg, #e7e3ff 0%, #f3e5f5 100%);
+            border: 2px solid #6f42c1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .workflow-guide h3 {
+            color: #6f42c1;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #6f42c1;
+            padding-bottom: 0.5rem;
+        }
+
+        .workflow-steps {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .workflow-steps li {
+            counter-increment: step-counter;
+            margin-bottom: 0.75rem;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .workflow-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #6f42c1;
+            color: white;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .sim-insights {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .sim-insights h4 {
+            color: #856404;
+            margin-bottom: 0.5rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        select, input {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a32a3;
+            transform: translateY(-1px);
+        }
+
+        .player-table-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: #6f42c1;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .simulation-progress {
+            background: linear-gradient(135deg, #e7e3ff 0%, #f3e5f5 100%);
+            border: 2px solid #6f42c1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-count {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #6f42c1;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6f42c1, #28a745);
+            border-radius: 6px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            📊 Stokastic-Style DFS Optimizer
+        </div>
+        <div class="workflow-indicator">
+            <div class="step active">1. Select Slate</div>
+            <div class="step">2. Run Sims</div>
+            <div class="step">3. Find Leverage</div>
+            <div class="step">4. Build Lineups</div>
+            <div class="step">5. Export</div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab-nav">
+            <button class="tab active" onclick="showTab('tutorial')">🎓 Tutorial</button>
+            <button class="tab" onclick="showTab('players')">📊 Player Sims</button>
+            <button class="tab" onclick="showTab('lineups')">🏈 Lineups</button>
+            <button class="tab" onclick="showTab('ownership')">👥 Ownership</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <!-- Slate Selection -->
+            <div class="section">
+                <h3>🏈 NFL Slate Selection</h3>
+                <div class="form-group">
+                    <label class="form-label">Select Slate:</label>
+                    <select id="slateSelector" title="Choose your DraftKings NFL slate">
+                        <option value="main">Main Slate (1pm-8:30pm)</option>
+                        <option value="early">Early Only (1pm-4:25pm)</option>
+                        <option value="late">Afternoon (4:25pm-8:30pm)</option>
+                        <option value="primetime">Sunday Night (8:30pm)</option>
+                        <option value="monday">Monday Night Football</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Contest Size:</label>
+                    <select id="contestSize" title="Select contest field size">
+                        <option value="large">Large GPP (50K-150K)</option>
+                        <option value="medium">Medium GPP (5K-20K)</option>
+                        <option value="small">Small GPP (1K-5K)</option>
+                        <option value="cash">Cash Games (H2H/50-50)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Simulation Controls -->
+            <div class="section">
+                <h3>🎲 Simulation Settings</h3>
+                <div class="educational-note">
+                    <h4>💡 Why Simulations Matter:</h4>
+                    <p>Simulations reveal which players have the highest ceiling relative to their ownership - this is called "leverage".</p>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Number of Trials:</label>
+                    <select id="simTrials" title="Choose simulation accuracy level">
+                        <option value="10000">10,000 (Quick)</option>
+                        <option value="25000">25,000 (Standard)</option>
+                        <option value="50000">50,000 (High Accuracy)</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" onclick="runStokasticSims()" style="width: 100%; margin-top: 1rem;">
+                    🚀 Run Stokastic-Style Sims
+                </button>
+            </div>
+
+            <!-- Leverage Education -->
+            <div class="section">
+                <h3>🎯 Understanding Leverage</h3>
+                <div class="educational-note">
+                    <h4>📈 Leverage Formula:</h4>
+                    <p><strong>High Ceiling + Low Ownership = MAX LEVERAGE</strong></p>
+                    <p>Example: A.J. Brown has 32.1 ceiling with 8.4% ownership = 9.6/10 leverage score</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- TUTORIAL TAB -->
+            <div id="tutorial-content" class="tab-content active">
+                <h2>🎓 How To Use Stokastic-Style Simulations</h2>
+                
+                <div class="workflow-guide">
+                    <h3>📋 5-Step Stokastic Workflow</h3>
+                    <ol class="workflow-steps">
+                        <li><strong>Select Your Slate:</strong> Choose Main Slate for maximum player pool, or Early/Late for focused strategies</li>
+                        <li><strong>Run Simulations:</strong> 25,000 trials reveal ceiling/floor/ownership for every player</li>
+                        <li><strong>Find Leverage Players:</strong> Look for high ceiling + low ownership combinations</li>
+                        <li><strong>Build Around Leverage:</strong> Stack high-leverage players with correlations</li>
+                        <li><strong>Export & Submit:</strong> Download DraftKings-ready lineups</li>
+                    </ol>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>🧠 Stokastic Key Insight:</strong> Most users focus on projections. Winners focus on leverage - finding players with high ceilings that others will avoid.
+                </div>
+
+                <div class="educational-note">
+                    <h4>🎯 What Makes This Different:</h4>
+                    <ul style="margin-top: 0.5rem; padding-left: 1rem;">
+                        <li><strong>Range-based analysis:</strong> Floor/Projection/Ceiling instead of single number</li>
+                        <li><strong>Ownership awareness:</strong> Every decision considers field ownership</li>
+                        <li><strong>Contest-specific strategy:</strong> Different approach for cash vs GPP</li>
+                        <li><strong>Leverage-first thinking:</strong> Find overlooked high-ceiling players</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- PLAYER SIMS TAB -->
+            <div id="players-content" class="tab-content">
+                <h2>📊 Player Simulation Results</h2>
+                
+                <div class="simulation-progress" id="simProgress" style="display: none;">
+                    <div class="progress-header">
+                        <div>
+                            <div class="progress-count" id="currentSims">0</div>
+                            <div>simulations completed</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.2rem; font-weight: 600; color: #28a745;">
+                                <span id="simPercentage">0%</span> Complete
+                            </div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressBar"></div>
+                    </div>
+                </div>
+
+                <div class="educational-note">
+                    <h4>📈 How to Read These Results:</h4>
+                    <p><strong>Floor:</strong> Bottom 10% of outcomes | <strong>Ceiling:</strong> Top 10% of outcomes | <strong>Leverage:</strong> Ceiling advantage vs ownership</p>
+                </div>
+
+                <div id="playerSimResults">
+                    <div class="player-table-header">
+                        <div>Player</div>
+                        <div>Floor</div>
+                        <div>Projection</div>
+                        <div>Ceiling</div>
+                        <div>Ownership</div>
+                        <div>Leverage</div>
+                    </div>
+                    <div id="playerTableBody">
+                        <!-- Player results will populate here -->
+                    </div>
+                </div>
+
+                <div id="leverageInsights" class="sim-insights" style="display: none;">
+                    <!-- Leverage insights will appear here -->
+                </div>
+            </div>
+
+            <!-- LINEUPS TAB -->
+            <div id="lineups-content" class="tab-content">
+                <h2>🏈 Optimized Lineups</h2>
+                
+                <div class="alert alert-success" id="lineupAlert" style="display: none;">
+                    <strong>Lineups Generated:</strong> <span id="lineupCount">0</span> lineups optimized for leverage and field differentiation
+                </div>
+
+                <div class="educational-note">
+                    <h4>🎯 Lineup Strategy:</h4>
+                    <p>Each lineup is built around 1-2 high-leverage players (low ownership + high ceiling) with correlated stacks for upside.</p>
+                </div>
+
+                <div id="lineupTable">
+                    <!-- Generated lineups will appear here -->
+                </div>
+            </div>
+
+            <!-- OWNERSHIP TAB -->
+            <div id="ownership-content" class="tab-content">
+                <h2>👥 Ownership Analysis</h2>
+                
+                <div class="educational-note">
+                    <h4>🧠 Ownership Strategy:</h4>
+                    <p><strong>GPP:</strong> Target players under 15% ownership with high ceilings</p>
+                    <p><strong>Cash:</strong> Focus on consistent floors regardless of ownership</p>
+                </div>
+
+                <div id="ownershipAnalysis">
+                    <!-- Ownership analysis will populate here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let simulationData = {};
+
+        // Stokastic-style player data with ranges
+        const stokasticPlayers = [
+            { name: 'Josh Allen', team: 'BUF', floor: 18.2, projection: 28.5, ceiling: 42.1, ownership: 22.1, leverage: 9.9 },
+            { name: 'A.J. Brown', team: 'PHI', floor: 4.2, projection: 18.9, ceiling: 35.8, ownership: 8.4, leverage: 29.6 },
+            { name: 'Patrick Mahomes', team: 'KC', floor: 16.5, projection: 26.8, ceiling: 39.2, ownership: 24.3, leverage: 3.7 },
+            { name: 'Saquon Barkley', team: 'PHI', floor: 8.1, projection: 19.2, ceiling: 32.4, ownership: 18.7, leverage: 6.3 },
+            { name: 'Tyreek Hill', team: 'MIA', floor: 6.2, projection: 17.8, ceiling: 31.5, ownership: 16.2, leverage: 12.8 },
+            { name: 'Travis Kelce', team: 'KC', floor: 5.8, projection: 14.2, ceiling: 26.3, ownership: 19.4, leverage: 2.6 },
+            { name: 'Stefon Diggs', team: 'HOU', floor: 7.4, projection: 16.8, ceiling: 29.1, ownership: 12.8, leverage: 8.9 },
+            { name: 'Lamar Jackson', team: 'BAL', floor: 19.1, projection: 27.2, ceiling: 38.4, ownership: 18.5, leverage: 7.2 }
+        ];
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName + '-content').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function runStokasticSims() {
+            const trials = parseInt(document.getElementById('simTrials').value);
+            
+            // Update workflow indicator
+            updateWorkflowStep(2);
+            
+            // Show simulation progress
+            document.getElementById('simProgress').style.display = 'block';
+            showTab('players');
+            
+            // Animate simulation progress
+            let completed = 0;
+            const interval = setInterval(() => {
+                completed += Math.floor(Math.random() * 2000) + 1000;
+                
+                if (completed >= trials) {
+                    completed = trials;
+                    clearInterval(interval);
+                    showSimulationResults();
+                }
+                
+                const percentage = (completed / trials * 100).toFixed(1);
+                document.getElementById('currentSims').textContent = completed.toLocaleString();
+                document.getElementById('simPercentage').textContent = percentage + '%';
+                document.getElementById('progressBar').style.width = percentage + '%';
+            }, 150);
+        }
+
+        function showSimulationResults() {
+            // Display Stokastic-style player results
+            const tableBody = document.getElementById('playerTableBody');
+            
+            const playerHTML = stokasticPlayers.map(player => {
+                const ownershipClass = player.ownership < 10 ? 'ownership-low' : 
+                                     player.ownership < 20 ? 'ownership-medium' : 'ownership-high';
+                
+                const leverageClass = player.leverage > 15 ? 'leverage-high' : 
+                                     player.leverage > 8 ? 'leverage-medium' : 'leverage-low';
+                
+                return `
+                    <div class="player-range-display">
+                        <div>
+                            <div class="player-name">${player.name}</div>
+                            <div class="player-team">${player.team}</div>
+                        </div>
+                        <div>${player.floor}</div>
+                        <div style="font-weight: 600;">${player.projection}</div>
+                        <div style="color: #28a745; font-weight: 600;">${player.ceiling}</div>
+                        <div class="ownership-indicator ${ownershipClass}">
+                            ${player.ownership}%
+                        </div>
+                        <div class="leverage-score ${leverageClass}">
+                            ${player.leverage}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            tableBody.innerHTML = playerHTML;
+            
+            // Show leverage insights
+            showLeverageInsights();
+            
+            // Update workflow
+            updateWorkflowStep(3);
+        }
+
+        function showLeverageInsights() {
+            const insights = document.getElementById('leverageInsights');
+            insights.style.display = 'block';
+            
+            insights.innerHTML = `
+                <h4>🧠 Simulation Insights (Stokastic Style):</h4>
+                <p><strong>Highest Leverage:</strong> A.J. Brown (29.6) - 35.8 ceiling with only 8.4% ownership</p>
+                <p><strong>Tournament Strategy:</strong> Stack A.J. Brown with Jalen Hurts for correlated upside</p>
+                <p><strong>Cash Game Avoid:</strong> A.J. Brown has 4.2 floor - too risky for cash games</p>
+                <p><strong>Chalk Warning:</strong> Mahomes (24.3% ownership) - solid but low leverage</p>
+            `;
+        }
+
+        function updateWorkflowStep(step) {
+            document.querySelectorAll('.step').forEach((stepEl, index) => {
+                stepEl.classList.toggle('active', index + 1 <= step);
+            });
+        }
+
+        function generateStokasticLineups() {
+            // Generate lineups using Stokastic-style leverage approach
+            const lineups = [];
+            
+            for (let i = 1; i <= 20; i++) {
+                lineups.push({
+                    id: i,
+                    qb: i <= 10 ? 'Josh Allen' : 'A.J. Brown Stack QB',
+                    leverage_player: 'A.J. Brown',
+                    total_leverage: 8.4 + Math.random() * 3,
+                    projection: 155 + Math.random() * 15,
+                    ceiling: 180 + Math.random() * 25,
+                    ownership_total: 12 + Math.random() * 8
+                });
+            }
+            
+            displayStokasticLineups(lineups);
+            updateWorkflowStep(4);
+        }
+
+        function displayStokasticLineups(lineups) {
+            const container = document.getElementById('lineupTable');
+            document.getElementById('lineupAlert').style.display = 'block';
+            document.getElementById('lineupCount').textContent = lineups.length;
+            
+            const tableHTML = `
+                <div style="margin-top: 1rem;">
+                    <h4>🎯 Leverage-Focused Lineups (Stokastic Approach)</h4>
+                    ${lineups.map(lineup => `
+                        <div style="padding: 1rem; border: 1px solid #e9ecef; margin-bottom: 0.5rem; border-radius: 6px;">
+                            <strong>Lineup ${lineup.id}:</strong> 
+                            Leverage Score: <span class="leverage-score leverage-medium">${lineup.total_leverage.toFixed(1)}</span> | 
+                            Projection: ${lineup.projection.toFixed(1)} | 
+                            Ceiling: ${lineup.ceiling.toFixed(1)} | 
+                            Total Ownership: ${lineup.ownership_total.toFixed(1)}%
+                            <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #6c757d;">
+                                Built around ${lineup.leverage_player} (high leverage core)
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Stokastic-Style Optimizer loaded with educational workflow');
+            
+            // Auto-generate lineups after simulation
+            setTimeout(() => {
+                const generateButton = document.createElement('button');
+                generateButton.textContent = '🏈 Generate Leverage Lineups';
+                generateButton.className = 'btn btn-primary';
+                generateButton.style.width = '100%';
+                generateButton.style.marginTop = '1rem';
+                generateButton.onclick = generateStokasticLineups;
+                
+                document.querySelector('.sidebar').appendChild(generateButton);
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

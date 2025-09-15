@@ -1,0 +1,79 @@
+{
+  "validation_date": "2025-09-15T00:09:25.714895",
+  "total_players_checked": 200,
+  "stale_data_found": [
+    {
+      "player": "Deebo Samuel",
+      "current_team_in_data": "SF",
+      "correct_team": "WAS",
+      "move_date": "August 2025",
+      "severity": "CRITICAL"
+    },
+    {
+      "player": "Stefon Diggs",
+      "current_team_in_data": "BUF",
+      "correct_team": "HOU",
+      "move_date": "March 2025",
+      "severity": "CRITICAL"
+    },
+    {
+      "player": "Saquon Barkley",
+      "current_team_in_data": "NYG",
+      "correct_team": "PHI",
+      "move_date": "Free Agency 2024",
+      "severity": "CRITICAL"
+    }
+  ],
+  "team_changes_needed": [
+    {
+      "player": "Deebo Samuel",
+      "position": "WR",
+      "current_team": "SF",
+      "correct_team": "WAS",
+      "severity": "HIGH"
+    },
+    {
+      "player": "Isaiah Likely",
+      "position": "TE",
+      "current_team": "ARI",
+      "correct_team": "BAL",
+      "severity": "HIGH"
+    },
+    {
+      "player": "Kenneth Gainwell",
+      "position": "RB",
+      "current_team": "KC",
+      "correct_team": "PHI",
+      "severity": "HIGH"
+    },
+    {
+      "player": "Stefon Diggs",
+      "position": "WR",
+      "current_team": "BUF",
+      "correct_team": "HOU",
+      "severity": "HIGH"
+    }
+  ],
+  "salary_issues": [],
+  "projection_issues": [],
+  "missing_players": [
+    "Jordan Mason (RB) not found",
+    "Brandon Aiyuk (WR) not found",
+    "Jauan Jennings (WR) not found",
+    "Austin Ekeler (RB) not found",
+    "Justice Hill (RB) not found",
+    "Nelson Agholor (WR) not found",
+    "DeVonta Smith (WR) not found",
+    "Dameon Pierce (RB) not found",
+    "Khalil Shakir (WR) not found",
+    "Curtis Samuel (WR) not found"
+  ],
+  "recommendations": [
+    "\u274c CRITICAL: Current player database contains stale 2024 data",
+    "\ud83d\udd04 REQUIRED: Complete roster refresh with September 2025 data",
+    "\ud83d\udcca UPDATE: Get current DraftKings salaries from live contests",
+    "\ud83c\udfaf VERIFY: All projections need current week data",
+    "\u26a0\ufe0f PRIORITY: Fix known player trades (Deebo, Diggs, etc.)",
+    "\u2705 SOLUTION: Implement live data pipeline or manual weekly updates"
+  ]
+}

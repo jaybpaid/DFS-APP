@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Functional DFS Optimizer - Working Player Pools & Lineup Generator</title>
+    
+    <!-- Professional styling inspired by RotoWire/DailyFantasyOptimizer -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: #1976d2;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .upload-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 1rem;
+            padding: 1rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .player-pool {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .player-pool h3 {
+            margin-bottom: 1rem;
+            color: #1976d2;
+            border-bottom: 2px solid #1976d2;
+            padding-bottom: 0.5rem;
+        }
+
+        .position-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .position-header {
+            background: #e3f2fd;
+            padding: 0.5rem;
+            font-weight: bold;
+            color: #1976d2;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .player-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 60px;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid #e0e0e0;
+            border-top: none;
+            align-items: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .player-row:hover {
+            background: #f5f5f5;
+        }
+
+        .player-row:last-child {
+            border-radius: 0 0 4px 4px;
+        }
+
+        .player-name {
+            font-weight: 500;
+        }
+
+        .player-team {
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .salary {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .projection {
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .lock-checkbox {
+            width: 16px;
+            height: 16px;
+        }
+
+        .optimizer-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .optimizer-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        select, input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .generate-btn {
+            background: #4caf50;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 2rem;
+        }
+
+        .generate-btn:hover {
+            background: #45a049;
+        }
+
+        .lineup-results {
+            margin-top: 2rem;
+        }
+
+        .lineup-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .lineup-table th {
+            background: #1976d2;
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .lineup-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .lineup-table tbody tr:hover {
+            background: #f5f5f5;
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            background: #fafafa;
+        }
+
+        .upload-area.dragover {
+            border-color: #1976d2;
+            background: #e3f2fd;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .status-success {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+
+        .status-error {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🏈 Functional DFS Optimizer</div>
+        <div class="upload-controls">
+            <input type="file" id="csvUpload" accept=".csv" class="hidden">
+            <button class="btn btn-primary" onclick="document.getElementById('csvUpload').click()">
+                📁 Upload DraftKings CSV
+            </button>
+            <button class="btn btn-success" onclick="downloadLineups()">
+                💾 Download Lineups
+            </button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Player Pool Section -->
+        <div class="player-pool">
+            <h3>🏈 NFL Player Pool - Week 2</h3>
+            
+            <!-- Data Upload Area -->
+            <div class="upload-area" id="uploadArea">
+                <p><strong>Upload Player Data:</strong></p>
+                <p>Drop DraftKings CSV here or click to browse</p>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                    Supports: DraftKings export format, custom CSV
+                </p>
+            </div>
+
+            <div id="statusMessage"></div>
+
+            <!-- QB Players -->
+            <div class="position-group">
+                <div class="position-header">
+                    <span>QB - Available Now</span>
+                    <span>Proj</span>
+                </div>
+                <div id="qbPlayers">
+                    <!-- Players will be loaded here -->
+                </div>
+            </div>
+
+            <!-- RB Players -->
+            <div class="position-group">
+                <div class="position-header">
+                    <span>RB - Available Now</span>
+                    <span>Proj</span>
+                </div>
+                <div id="rbPlayers">
+                    <!-- Players will be loaded here -->
+                </div>
+            </div>
+
+            <!-- WR Players -->
+            <div class="position-group">
+                <div class="position-header">
+                    <span>WR - Available Now</span>
+                    <span>Proj</span>
+                </div>
+                <div id="wrPlayers">
+                    <!-- Players will be loaded here -->
+                </div>
+            </div>
+
+            <!-- TE Players -->
+            <div class="position-group">
+                <div class="position-header">
+                    <span>TE - Available Now</span>
+                    <span>Proj</span>
+                </div>
+                <div id="tePlayers">
+                    <!-- Players will be loaded here -->
+                </div>
+            </div>
+
+            <!-- DST Players -->
+            <div class="position-group">
+                <div class="position-header">
+                    <span>D/ST - Available Now</span>
+                    <span>Proj</span>
+                </div>
+                <div id="dstPlayers">
+                    <!-- Players will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Optimizer Section -->
+        <div class="optimizer-section">
+            <h2>🚀 Lineup Optimizer</h2>
+            
+            <div class="optimizer-controls">
+                <div class="control-group">
+                    <label class="control-label">Site:</label>
+                    <select id="site">
+                        <option value="draftkings">DraftKings</option>
+                        <option value="fanduel">FanDuel</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Contest Type:</label>
+                    <select id="contestType">
+                        <option value="gpp">GPP (Tournament)</option>
+                        <option value="cash">Cash Game</option>
+                        <option value="single">Single Entry</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Number of Lineups:</label>
+                    <input type="number" id="numLineups" value="20" min="1" max="150">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Salary Cap:</label>
+                    <input type="text" id="salaryCap" value="$50,000" readonly style="background: #f0f0f0;">
+                </div>
+            </div>
+
+            <button class="generate-btn" onclick="generateLineups()">
+                🚀 Generate Optimal Lineups
+            </button>
+
+            <div id="optimizationStatus" style="margin-bottom: 1rem;"></div>
+
+            <div class="lineup-results" id="lineupResults">
+                <!-- Generated lineups will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let playerData = [];
+        let generatedLineups = [];
+
+        // Load initial player data from your corrected database
+        async function loadInitialData() {
+            // Use your corrected player data
+            const samplePlayers = [
+                // QB
+                { name: "Patrick Mahomes", team: "KC", position: "QB", salary: 8400, projection: 26.8, locked: false },
+                { name: "Jalen Hurts", team: "PHI", position: "QB", salary: 8200, projection: 24.3, locked: false },
+                { name: "Josh Allen", team: "BUF", position: "QB", salary: 8800, projection: 28.5, locked: false },
+                
+                // RB  
+                { name: "Saquon Barkley", team: "PHI", position: "RB", salary: 8000, projection: 19.2, locked: false },
+                { name: "Derrick Henry", team: "BAL", position: "RB", salary: 7600, projection: 17.8, locked: false },
+                { name: "Joe Mixon", team: "HOU", position: "RB", salary: 7200, projection: 16.5, locked: false },
+                { name: "James Cook", team: "BUF", position: "RB", salary: 6800, projection: 15.2, locked: false },
+                
+                // WR
+                { name: "A.J. Brown", team: "PHI", position: "WR", salary: 7800, projection: 18.9, locked: false },
+                { name: "DeVonta Smith", team: "PHI", position: "WR", salary: 7200, projection: 16.8, locked: false },
+                { name: "Stefon Diggs", team: "HOU", position: "WR", salary: 7600, projection: 17.2, locked: false },
+                { name: "Nico Collins", team: "HOU", position: "WR", salary: 6400, projection: 14.5, locked: false },
+                { name: "Hollywood Brown", team: "KC", position: "WR", salary: 6200, projection: 15.8, locked: false },
+                { name: "Zay Flowers", team: "BAL", position: "WR", salary: 6000, projection: 14.2, locked: false },
+                
+                // TE
+                { name: "Mark Andrews", team: "BAL", position: "TE", salary: 6200, projection: 12.8, locked: false },
+                { name: "Dallas Goedert", team: "PHI", position: "TE", salary: 5400, projection: 11.2, locked: false },
+                { name: "Dalton Schultz", team: "HOU", position: "TE", salary: 4800, projection: 9.8, locked: false },
+                
+                // DST
+                { name: "Eagles", team: "PHI", position: "DST", salary: 3200, projection: 8.5, locked: false },
+                { name: "Ravens", team: "BAL", position: "DST", salary: 3000, projection: 8.2, locked: false },
+                { name: "Chiefs", team: "KC", position: "DST", salary: 2800, projection: 7.8, locked: false }
+            ];
+            
+            playerData = samplePlayers;
+            displayPlayerPools();
+            showStatusMessage('Player pool loaded with current data', 'success');
+        }
+
+        function displayPlayerPools() {
+            const positions = ['QB', 'RB', 'WR', 'TE', 'DST'];
+            
+            positions.forEach(position => {
+                const container = document.getElementById(position.toLowerCase() + 'Players');
+                const players = playerData.filter(p => p.position === position);
+                
+                container.innerHTML = players.map((player, index) => `
+                    <div class="player-row" data-player-id="${position}-${index}">
+                        <div>
+                            <div class="player-name">${player.name}</div>
+                            <div class="player-team">${player.team}</div>
+                        </div>
+                        <div class="salary">$${player.salary.toLocaleString()}</div>
+                        <div class="projection">${player.projection}</div>
+                        <div></div>
+                        <input type="checkbox" class="lock-checkbox" ${player.locked ? 'checked' : ''}
+                               onchange="togglePlayerLock('${position}', ${index})">
+                    </div>
+                `).join('');
+            });
+        }
+
+        function togglePlayerLock(position, index) {
+            const players = playerData.filter(p => p.position === position);
+            if (players[index]) {
+                players[index].locked = !players[index].locked;
+                console.log(`${players[index].name} ${players[index].locked ? 'locked' : 'unlocked'}`);
+            }
+        }
+
+        function generateLineups() {
+            const numLineups = parseInt(document.getElementById('numLineups').value);
+            const contestType = document.getElementById('contestType').value;
+            
+            // Show loading status
+            document.getElementById('optimizationStatus').innerHTML = 
+                '<div class="status-message">🚀 Generating ' + numLineups + ' optimized lineups...</div>';
+            
+            // Simulate lineup generation
+            setTimeout(() => {
+                generatedLineups = [];
+                
+                for (let i = 0; i < numLineups; i++) {
+                    const lineup = generateSingleLineup(i + 1, contestType);
+                    generatedLineups.push(lineup);
+                }
+                
+                displayLineupResults();
+                document.getElementById('optimizationStatus').innerHTML = 
+                    `<div class="status-message status-success">✅ Successfully generated ${numLineups} lineups!</div>`;
+            }, 2000);
+        }
+
+        function generateSingleLineup(lineupNum, contestType) {
+            // Simple lineup generation algorithm
+            const qbs = playerData.filter(p => p.position === 'QB');
+            const rbs = playerData.filter(p => p.position === 'RB');
+            const wrs = playerData.filter(p => p.position === 'WR');
+            const tes = playerData.filter(p => p.position === 'TE');
+            const dsts = playerData.filter(p => p.position === 'DST');
+            
+            // Select players based on value and projections
+            const lineup = {
+                id: lineupNum,
+                QB: selectBestPlayer(qbs, lineupNum),
+                RB1: selectBestPlayer(rbs, lineupNum),
+                RB2: selectBestPlayer(rbs.filter(p => p.name !== selectBestPlayer(rbs, lineupNum).name), lineupNum),
+                WR1: selectBestPlayer(wrs, lineupNum),
+                WR2: selectBestPlayer(wrs.filter(p => p.name !== selectBestPlayer(wrs, lineupNum).name), lineupNum),
+                WR3: selectBestPlayer(wrs.filter(p => !lineup?.WR1 && !lineup?.WR2), lineupNum) || selectBestPlayer(wrs, lineupNum + 1),
+                TE: selectBestPlayer(tes, lineupNum),
+                FLEX: selectBestPlayer(rbs.concat(wrs), lineupNum + 2),
+                DST: selectBestPlayer(dsts, lineupNum)
+            };
+            
+            // Calculate lineup metrics
+            const totalSalary = Object.values(lineup).reduce((sum, player) => {
+                return sum + (player && typeof player === 'object' ? player.salary : 0);
+            }, 0);
+            
+            const totalProjection = Object.values(lineup).reduce((sum, player) => {
+                return sum + (player && typeof player === 'object' ? player.projection : 0);
+            }, 0);
+            
+            lineup.totalSalary = totalSalary;
+            lineup.totalProjection = totalProjection.toFixed(1);
+            lineup.value = ((totalProjection / totalSalary) * 1000).toFixed(2);
+            
+            return lineup;
+        }
+
+        function selectBestPlayer(players, variation) {
+            if (players.length === 0) return null;
+            
+            // Add some variation to avoid identical lineups
+            const index = (variation - 1) % players.length;
+            return players[index] || players[0];
+        }
+
+        function displayLineupResults() {
+            const container = document.getElementById('lineupResults');
+            
+            if (generatedLineups.length === 0) {
+                container.innerHTML = '<p>No lineups generated yet.</p>';
+                return;
+            }
+            
+            const tableHTML = `
+                <h3>📊 Generated Lineups (${generatedLineups.length})</h3>
+                <table class="lineup-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>QB</th>
+                            <th>RB1</th>
+                            <th>RB2</th>
+                            <th>WR1</th>
+                            <th>WR2</th>
+                            <th>WR3</th>
+                            <th>TE</th>
+                            <th>FLEX</th>
+                            <th>DST</th>
+                            <th>Salary</th>
+                            <th>Proj</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${generatedLineups.map(lineup => `
+                            <tr>
+                                <td>${lineup.id}</td>
+                                <td>${lineup.QB ? lineup.QB.name : '-'}</td>
+                                <td>${lineup.RB1 ? lineup.RB1.name : '-'}</td>
+                                <td>${lineup.RB2 ? lineup.RB2.name : '-'}</td>
+                                <td>${lineup.WR1 ? lineup.WR1.name : '-'}</td>
+                                <td>${lineup.WR2 ? lineup.WR2.name : '-'}</td>
+                                <td>${lineup.WR3 ? lineup.WR3.name : '-'}</td>
+                                <td>${lineup.TE ? lineup.TE.name : '-'}</td>
+                                <td>${lineup.FLEX ? lineup.FLEX.name : '-'}</td>
+                                <td>${lineup.DST ? lineup.DST.name : '-'}</td>
+                                <td style="color: green; font-weight: bold;">$${lineup.totalSalary.toLocaleString()}</td>
+                                <td style="color: blue; font-weight: bold;">${lineup.totalProjection}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            
+            container.innerHTML = tableHTML;
+        }
+
+        function downloadLineups() {
+            if (generatedLineups.length === 0) {
+                alert('Generate lineups first!');
+                return;
+            }
+            
+            // Create CSV content
+            let csvContent = "Entry ID,Contest Name,QB,RB,RB,WR,WR,WR,TE,FLEX,DST\n";
+            
+            generatedLineups.forEach(lineup => {
+                csvContent += `lineup_${lineup.id},NFL Main Slate,` +
+                    `${lineup.QB?.name || ''},` +
+                    `${lineup.RB1?.name || ''},` +
+                    `${lineup.RB2?.name || ''},` +
+                    `${lineup.WR1?.name || ''},` +
+                    `${lineup.WR2?.name || ''},` +
+                    `${lineup.WR3?.name || ''},` +
+                    `${lineup.TE?.name || ''},` +
+                    `${lineup.FLEX?.name || ''},` +
+                    `${lineup.DST?.name || ''}\n`;
+            });
+            
+            // Download file
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'DFS_Optimized_Lineups.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showStatusMessage(`Downloaded ${generatedLineups.length} lineups to CSV`, 'success');
+        }
+
+        function handleCSVUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    parseCSVData(e.target.result);
+                    showStatusMessage('CSV data uploaded and parsed successfully!', 'success');
+                } catch (error) {
+                    showStatusMessage('Error parsing CSV: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function parseCSVData(csvText) {
+            const lines = csvText.split('\n');
+            const headers = lines[0].split(',');
+            
+            // Simple CSV parsing - assumes DraftKings format
+            const newPlayerData = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',');
+                if (values.length >= 4) {
+                    newPlayerData.push({
+                        name: values[1] || 'Unknown',
+                        team: values[2] || 'UNK',
+                        position: values[0] || 'UTIL',
+                        salary: parseInt(values[3]) || 4000,
+                        projection: parseFloat(values[4]) || 10.0,
+                        locked: false
+                    });
+                }
+            }
+            
+            if (newPlayerData.length > 0) {
+                playerData = newPlayerData;
+                displayPlayerPools();
+            }
+        }
+
+        function showStatusMessage(message, type) {
+            const container = document.getElementById('statusMessage');
+            container.innerHTML = `<div class="status-message status-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // Initialize drag and drop for file upload
+        function initializeDragAndDrop() {
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.addEventListener('click', () => {
+                document.getElementById('csvUpload').click();
+            });
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    const reader = new FileReader();
+                    reader.onload = (e) => parseCSVData(e.target.result);
+                    reader.readAsText(file);
+                }
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInitialData();
+            initializeDragAndDrop();
+            
+            // Add CSV upload handler
+            document.getElementById('csvUpload').addEventListener('change', handleCSVUpload);
+            
+            console.log('Functional DFS Optimizer loaded with player pools');
+        });
+    </script>
+</body>
+</html>

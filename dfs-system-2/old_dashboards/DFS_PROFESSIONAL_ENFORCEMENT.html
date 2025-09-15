@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Optimizer Pro - Full Pool Enforcement</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Professional DFS Theme */
+        :root {
+            --primary: #4f46e5;
+            --secondary: #059669;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --dark: #1e293b;
+            --surface: #334155;
+            --surface-light: #475569;
+            --border: #64748b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #8b5cf6;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark) 0%, #0f172a 100%);
+            color: var(--text);
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        /* Top Navigation */
+        .main-nav {
+            background: var(--surface);
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--text-muted);
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--surface-light);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            border: none;
+            border-radius: 12px 12px 0 0;
+            font-weight: 700;
+        }
+
+        /* Error States */
+        .fatal-error {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            border: 2px solid var(--danger);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .validation-report {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Player Table - Force Full Rendering */
+        .player-table-container {
+            height: 600px; /* Fixed height to enable virtualization */
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .player-table {
+            width: 100%;
+            font-size: 0.85rem;
+        }
+
+        .player-row {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .player-row:hover {
+            background: var(--surface-light);
+        }
+
+        /* Mode Indicator */
+        .mode-indicator {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1001;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .mode-online {
+            background: var(--success);
+            color: white;
+        }
+
+        .mode-offline {
+            background: var(--warning);
+            color: black;
+        }
+
+        /* Control Panels */
+        .control-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--text);
+            padding: 0.75rem 1rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-body {
+            padding: 1rem;
+        }
+
+        /* Form Controls */
+        .form-control, .form-select {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: var(--surface-light);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+            color: var(--text);
+        }
+
+        .form-control::placeholder { color: var(--text-muted); }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #22c55e);
+            border: none;
+            font-weight: 600;
+        }
+
+        /* Alert Styles */
+        .alert {
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success { background: var(--success); color: white; }
+        .alert-info { background: var(--info); color: white; }
+        .alert-warning { background: var(--warning); color: white; }
+        .alert-danger { background: var(--danger); color: white; }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mode Indicator -->
+    <div id="modeIndicator" class="mode-indicator mode-online">
+        ONLINE MODE
+    </div>
+
+    <!-- Top Navigation -->
+    <nav class="main-nav">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#main-optimizer">
+                    <i class="fas fa-cogs me-2"></i>Professional Optimizer
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#validation-report">
+                    <i class="fas fa-clipboard-check me-2"></i>Validation Report
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Tab Content -->
+    <div class="tab-content p-3">
+        <!-- MAIN OPTIMIZER -->
+        <div class="tab-pane fade show active" id="main-optimizer">
+            <div class="container-fluid">
+                <!-- Alert Area -->
+                <div id="alertArea"></div>
+
+                <!-- Fatal Error Display -->
+                <div id="fatalError" class="fatal-error" style="display: none;">
+                    <h2><i class="fas fa-exclamation-triangle"></i> VALIDATION FAILED</h2>
+                    <div id="fatalErrorMessage"></div>
+                    <div class="mt-3">
+                        <strong>Remediation Steps:</strong>
+                        <ul class="text-start mt-2">
+                            <li>Ensure proxy server is running: <code>node proxy-server.js</code></li>
+                            <li>Check network connectivity to DraftKings API</li>
+                            <li>Verify correct slate selection (main/classic slates only)</li>
+                            <li>Switch to OFFLINE mode for manual CSV import</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="mb-0"><i class="fas fa-shield-alt me-2"></i>DFS Optimizer Pro - Full Pool Enforcement</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h4 class="mb-1"><span id="currentSport">NFL</span> - <span id="currentSite">DraftKings</span></h4>
+                                        <small class="text-muted">Strict validation - no truncated pools allowed</small>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button class="btn btn-success active sport-btn" data-sport="NFL">🏈 NFL</button>
+                                        <button class="btn btn-outline-success sport-btn" data-sport="NBA">🏀 NBA</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Data Mode & Controls</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Data Mode</label>
+                                    <select class="form-select" id="dataMode">
+                                        <option value="online">ONLINE (API Required)</option>
+                                        <option value="offline">OFFLINE (CSV Import)</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary w-100" id="loadFullPool">
+                                    <i class="fas fa-download me-1"></i>Load Full Pool
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player Pool Display -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0"><i class="fas fa-users me-2"></i>Complete Player Pool</h4>
+                                <div>
+                                    <span class="badge bg-info me-2" id="playerCount">0 players</span>
+                                    <span class="badge bg-warning" id="validationStatus">Not Validated</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="player-table-container">
+                                    <div id="playerTableContent">
+                                        <div class="text-center py-5">
+                                            <i class="fas fa-users fa-3x mb-3 text-muted"></i>
+                                            <h5>Load Full Player Pool to Begin</h5>
+                                            <p class="text-muted">Strict validation enforced - minimum 250 NFL / 150 NBA players required</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VALIDATION REPORT TAB -->
+        <div class="tab-pane fade" id="validation-report">
+            <div class="container-fluid mt-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-clipboard-check me-2"></i>Player Pool Validation Report</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="validationReportContent" class="validation-report">
+                            No validation data available. Load a player pool first.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ENFORCED DFS PLATFORM -->
+    <script>
+        // Configuration
+        const CONFIG = {
+            DATA_MODE: 'online', // online|offline
+            MIN_POOL_SIZES: {
+                NFL: { DK: 250, FD: 250 },
+                NBA: { DK: 150, FD: 150 }
+            },
+            API_ENDPOINTS: {
+                // Use proxy in dev, direct in production with prefetched data
+                DEV_PROXY: '/dk',
+                PRODUCTION_DATA: '/data',
+                DRAFTKINGS: {
+                    contests: 'https://www.draftkings.com/lobby/getcontests',
+                    draftables: 'https://api.draftkings.com/draftgroups/v1/draftgroups'
+                }
+            }
+        };
+
+        // Global State
+        const appState = {
+            players: [],
+            sport: 'NFL',
+            site: 'DraftKings',
+            dataMode: CONFIG.DATA_MODE,
+            validationResults: null,
+            fatalError: null
+        };
+
+        /**
+         * Enhanced Player Pool Provider with Strict Validation
+         */
+        class EnforcedPlayerPoolProvider {
+            constructor() {
+                this.isDevelopment = window.location.protocol === 'file:' || 
+                                   window.location.hostname === 'localhost' ||
+                                   window.location.hostname === '127.0.0.1';
+            }
+
+            /**
+             * Load full player pool with strict enforcement
+             */
+            async loadPlayerPool(sport, site, mode) {
+                try {
+                    showAlert('info', `🔄 Loading FULL ${sport} pool from ${site} (${mode.toUpperCase()} mode)...`);
+
+                    let players;
+                    
+                    if (mode === 'online') {
+                        players = await this.loadOnlinePool(sport, site);
+                    } else {
+                        players = await this.loadOfflinePool(sport, site);
+                    }
+
+                    // STRICT VALIDATION - NO PASSES
+                    const validationResult = this.validatePoolStrict(players, sport, site);
+                    
+                    if (!validationResult.passed) {
+                        throw new ValidationError(validationResult.errors, validationResult);
+                    }
+
+                    appState.validationResults = validationResult;
+                    updateValidationReport(validationResult);
+                    
+                    showAlert('success', `✅ VALIDATION PASSED: ${players.length} ${sport} players loaded`);
+                    return players;
+
+                } catch (error) {
+                    this.handleLoadError(error, sport, site, mode);
+                    throw error;
+                }
+            }
+
+            /**
+             * Load from online APIs with proxy support
+             */
+            async loadOnlinePool(sport, site) {
+                if (site !== 'DraftKings') {
+                    throw new Error(`${site} online provider not implemented`);
+                }
+
+                // Try proxy first (dev), then direct (prod), then prefetched (prod fallback)
+                let apiBase;
+                
+                if (this.isDevelopment) {
+                    apiBase = CONFIG.API_ENDPOINTS.DEV_PROXY;
+                } else {
+                    // Production: try prefetched data first
+                    const prefetchedData = await this.tryLoadPrefetched(sport);
+                    if (prefetchedData) {
+                        return this.normalizeDraftKingsPlayers(prefetchedData.players, sport, prefetchedData.slate.id);
+                    }
+                    apiBase = CONFIG.API_ENDPOINTS.DRAFTKINGS.contests.replace('https://www.draftkings.com', '');
+                }
+
+                // Get contests
+                const contestsUrl = `${apiBase}/lobby/getcontests?sport=${sport.toLowerCase()}`;
+                const contestsData = await this.fetchWithErrorHandling(contestsUrl);
+                
+                // Find main slate
+                const mainSlate = this.findMainSlate(contestsData.contests || [], sport);
+                if (!mainSlate) {
+                    throw new Error(`No suitable ${sport} main slate found. Available contests: ${contestsData.contests?.length || 0}`);
+                }
+
+                // Get draftables
+                const draftablesUrl = `${apiBase}/draftgroups/v1/draftgroups/${mainSlate.draftGroupId}/draftables`;
+                const draftablesData = await this.fetchWithErrorHandling(draftablesUrl);
+
+                const players = this.normalizeDraftKingsPlayers(
+                    draftablesData.draftables || [], 
+                    sport, 
+                    mainSlate.draftGroupId
+                );
+
+                // Log slate selection details
+                console.log(`🎯 SLATE SELECTED:`, {
+                    sport: sport,
+                    slateId: mainSlate.draftGroupId,
+                    slateName: mainSlate.name,
+                    gameCount: mainSlate.gameCount || 'Unknown',
+                    playerCount: players.length,
+                    startTime: mainSlate.startTime
+                });
+
+                return players;
+            }
+
+            /**
+             * Try to load prefetched production data
+             */
+            async tryLoadPrefetched(sport) {
+                try {
+                    const response = await fetch(`/data/dk_${sport.toLowerCase()}_latest.json`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log(`✅ Loaded prefetched ${sport} data:`, data.validation);
+                        return data;
+                    }
+                } catch (error) {
+                    console.log(`No prefetched ${sport} data available`);
+                }
+                return null;
+            }
+
+            /**
+             * Load from offline CSV import
+             */
+            async loadOfflinePool(sport, site) {
+                // For offline mode, show CSV upload interface
+                const csvData = await this.promptForCSVUpload(sport, site);
+                return this.parseCSVToPlayers(csvData, sport, site);
+            }
+
+            /**
+             * Prompt user for CSV upload
+             */
+            async promptForCSVUpload(sport, site) {
+                return new Promise((resolve, reject) => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.csv';
+                    
+                    input.onchange = (e) => {
+                        const file = e.target.files[0];
+                        if (!file) {
+                            reject(new Error('No file selected'));
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            resolve(event.target.result);
+                        };
+                        reader.onerror = () => reject(new Error('Failed to read CSV file'));
+                        reader.readAsText(file);
+                    };
+                    
+                    input.click();
+                });
+            }
+
+            /**
+             * Parse CSV data to players format
+             */
+            parseCSVToPlayers(csvData, sport, site) {
+                const lines = csvData.trim().split('\n');
+                const headers = lines[0].split(',').map(h => h.trim());
+                
+                const players = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',').map(v => v.trim());
+                    
+                    if (values.length < headers.length) continue;
+                    
+                    const player = {};
+                    headers.forEach((header, idx) => {
+                        player[header.toLowerCase()] = values[idx];
+                    });
+                    
+                    // Normalize to our format
+                    const normalizedPlayer = {
+                        playerId: player.id || player.playerid || `csv_${i}`,
+                        name: player.name || player.playername || 'Unknown',
+                        pos: player.position || player.pos || 'UTIL',
+                        team: player.team || player.teamabbreviation || 'UNK',
+                        salary: parseInt(player.salary) || 5000,
+                        projection: parseFloat(player.projection || player.fppg || '10'),
+                        ownership: parseFloat(player.ownership || '15'),
+                        boom_pct: parseInt(player.boom_pct || '50'),
+                        site: site,
+                        sport: sport,
+                        minExp: 0,
+                        maxExp: 100,
+                        selected: false
+                    };
+                    
+                    players.push(normalizedPlayer);
+                }
+                
+                return players;
+            }
+
+            /**
+             * Fetch with comprehensive error handling
+             */
+            async fetchWithErrorHandling(url) {
+                try {
+                    const response = await fetch(url, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'User-Agent': 'Mozilla/5.0 DFS-Platform/1.0'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    return data;
+                    
+                } catch (error) {
+                    if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                        throw new Error('Network error: Cannot reach API. Ensure proxy is running or check network connectivity.');
+                    }
+                    throw error;
+                }
+            }
+
+            /**
+             * Find main slate with enhanced logic
+             */
+            findMainSlate(contests, sport) {
+                if (!contests || contests.length === 0) return null;
+                
+                const now = new Date();
+                
+                // Filter for valid main slates
+                let validContests = contests.filter(contest => {
+                    const startTime = new Date(contest.startTimeType || contest.startTime);
+                    const isToday = startTime.toDateString() === now.toDateString() || 
+                                   startTime > now; // Include future slates
+                    
+                    const isMainType = contest.gameType === 'Classic' || 
+                                      contest.name?.toLowerCase().includes('main') || 
+                                      contest.name?.toLowerCase().includes('millionaire') ||
+                                      contest.name?.toLowerCase().includes('gpp');
+                                      
+                    return isToday && isMainType && contest.draftGroupId;
+                });
+
+                // If no main slates today, get any slate with decent entry count
+                if (validContests.length === 0) {
+                    validContests = contests.filter(c => 
+                        c.draftGroupId && 
+                        (c.totalEntries || 0) > 100
+                    );
+                }
+                
+                // Sort by entry count (popularity)
+                validContests.sort((a, b) => (b.totalEntries || 0) - (a.totalEntries || 0));
+                
+                return validContests[0] || null;
+            }
+
+            /**
+             * Normalize DraftKings API data to our format
+             */
+            normalizeDraftKingsPlayers(draftables, sport, slateId) {
+                const players = [];
+                const seenIds = new Set();
+                
+                draftables.forEach((draftable, index) => {
+                    try {
+                        const playerId = draftable.draftableId || draftable.playerId || draftable.id || `dk_${index}`;
+                        const name = draftable.displayName || draftable.name || `Player_${index}`;
+                        const salary = parseInt(draftable.salary) || 3000;
+                        const team = this.extractTeam(draftable);
+                        const position = this.extractPosition(draftable, sport);
+                        
+                        // Skip duplicates
+                        if (seenIds.has(playerId)) return;
+                        seenIds.add(playerId);
+                        
+                        // Skip invalid entries  
+                        if (salary <= 0) return;
+                        
+                        const projection = this.estimateProjection(position, salary, sport);
+                        const ownership = this.estimateOwnership(salary, position, sport);
+                        const boom_pct = this.estimateBoomPercentage(projection, position, sport);
+                        
+                        const player = {
+                            site: 'DK',
+                            sport: sport,
+                            slateId: slateId,
+                            playerId: String(playerId),
+                            name: name,
+                            pos: position,
+                            team: team,
+                            salary: salary,
+                            projection: projection,
+                            ownership: ownership,
+                            boom_pct: boom_pct,
+                            leverage: Math.round(((projection / salary * 1000) / (ownership / 100)) * 100) / 100,
+                            floor: Math.round(projection * 0.7 * 10) / 10,
+                            ceiling: Math.round(projection * 1.4 * 10) / 10,
+                            minExp: 0,
+                            maxExp: 100,
+                            selected: false
+                        };
+                        
+                        players.push(player);
+                        
+                    } catch (err) {
+                        console.warn('Error processing draftable:', err);
+                    }
+                });
+                
+                return players;
+            }
+
+            extractTeam(draftable) {
+                return (draftable.teamAbbreviation || 
+                       draftable.team || 
+                       'UNK').toUpperCase();
+            }
+
+            extractPosition(draftable, sport) {
+                const pos = (draftable.rosterSlotId || 
+                            draftable.position || 
+                            'UTIL').toUpperCase();
+                            
+                if (sport === 'NFL') {
+                    const nflMap = {
+                        'QB': 'QB', 'RB': 'RB', 'WR': 'WR', 'TE': 'TE',
+                        'DST': 'DST', 'K': 'K', 'FLEX': 'FLEX'
+                    };
+                    return nflMap[pos] || 'FLEX';
+                } else {
+                    const nbaMap = {
+                        'PG': 'PG', 'SG': 'SG', 'SF': 'SF', 'PF': 'PF', 'C': 'C'
+                    };
+                    return nbaMap[pos] || 'UTIL';
+                }
+            }
+
+            estimateProjection(position, salary, sport) {
+                const multipliers = sport === 'NFL' ? {
+                    'QB': 0.0026, 'RB': 0.0023, 'WR': 0.0021, 'TE': 0.0019, 'DST': 0.003, 'K': 0.0025
+                } : {
+                    'PG': 0.0048, 'SG': 0.0045, 'SF': 0.0043, 'PF': 0.0041, 'C': 0.0039
+                };
+                
+                const mult = multipliers[position] || (sport === 'NFL' ? 0.002 : 0.004);
+                const base = sport === 'NFL' ? 3 : 15;
+                return Math.round((salary * mult + base) * 10) / 10;
+            }
+
+            estimateOwnership(salary, position, sport) {
+                const maxSalary = sport === 'NFL' ? 10000 : 12000;
+                let baseOwnership = Math.min(45, (salary / maxSalary) * 30 + 5);
+                
+                if (sport === 'NFL') {
+                    if (['QB', 'RB'].includes(position)) baseOwnership += 5;
+                    else if (['DST', 'K'].includes(position)) baseOwnership -= 8;
+                }
+                
+                return Math.max(1, Math.round(baseOwnership * 10) / 10);
+            }
+
+            estimateBoomPercentage(projection, position, sport) {
+                let baseBoom = Math.min(95, projection * 3.5 + 20);
+                
+                if (sport === 'NFL' && ['WR', 'RB'].includes(position)) baseBoom += 5;
+                else if (sport === 'NBA' && ['PG', 'SG'].includes(position)) baseBoom += 3;
+                
+                return Math.max(5, Math.round(baseBoom));
+            }
+
+            /**
+             * STRICT VALIDATION - HARD FAIL ON ANY ISSUE
+             */
+            validatePoolStrict(players, sport, site) {
+                const errors = [];
+                const warnings = [];
+                
+                const minSize = CONFIG.MIN_POOL_SIZES[sport][site === 'DraftKings' ? 'DK' : 'FD'];
+                
+                // Size check
+                if (players.length < minSize) {
+                    errors.push(`FATAL: Player pool too small: ${players.length} < ${minSize} required for ${sport}/${site}`);
+                }
+                
+                // Position coverage
+                const positions = new Set(players.map(p => p.pos));
+                const expectedPositions = sport === 'NFL' ? 
+                    ['QB', 'RB', 'WR', 'TE', 'DST'] : 
+                    ['PG', 'SG', 'SF', 'PF', 'C'];
+                
+                const missingPositions = expectedPositions.filter(pos => !positions.has(pos));
+                if (missingPositions.length > 0) {
+                    errors.push(`FATAL: Missing required positions: ${missingPositions.join(', ')}`);
+                }
+                
+                // Team coverage (should have multiple teams)
+                const teams = new Set(players.map(p => p.team));
+                if (teams.size < 4) {
+                    errors.push(`FATAL: Insufficient team coverage: ${teams.size} teams (need 4+)`);
+                }
+                
+                // Duplicate check
+                const playerIds = players.map(p => p.playerId);
+                const uniqueIds = new Set(playerIds);
+                if (uniqueIds.size !== playerIds.length) {
+                    errors.push(`FATAL: Duplicate player IDs found: ${playerIds.length - uniqueIds.size} duplicates`);
+                }
+                
+                // Salary validation
+                const invalidSalaries = players.filter(p => !p.salary || p.salary <= 0 || isNaN(p.salary));
+                if (invalidSalaries.length > 0) {
+                    errors.push(`FATAL: Invalid salaries found: ${invalidSalaries.length} players`);
+                }
+                
+                // Position distribution
+                expectedPositions.forEach(pos => {
+                    const count = players.filter(p => p.pos === pos).length;
+                    if (count < 2) {
+                        warnings.push(`Low ${pos} count: ${count} players`);
+                    }
+                });
+                
+                const result = {
+                    passed: errors.length === 0,
+                    errors: errors,
+                    warnings: warnings,
+                    stats: {
+                        totalPlayers: players.length,
+                        requiredMinimum: minSize,
+                        positionCounts: {},
+                        teamCount: teams.size,
+                        uniquePlayerIds: uniqueIds.size,
+                        duplicates: playerIds.length - uniqueIds.size,
+                        invalidSalaries: invalidSalaries.length
+                    }
+                };
+                
+                // Calculate position stats
+                expectedPositions.forEach(pos => {
+                    result.stats.positionCounts[pos] = players.filter(p => p.pos === pos).length;
+                });
+                
+                return result;
+            }
+
+            /**
+             * Handle load errors
+             */
+            handleLoadError(error, sport, site, mode) {
+                console.error('Pool load error:', error);
+                
+                if (mode === 'online') {
+                    // In ONLINE mode, show fatal error - NO FALLBACKS
+                    showFatalError(error.message || error.toString());
+                } else {
+                    // In OFFLINE mode, show regular error
+                    showAlert('danger', `❌ Failed to load ${sport} pool: ${error.message}`);
+                }
+                
+                appState.fatalError = {
+                    mode: mode,
+                    sport: sport,
+                    site: site,
+                    error: error.message || error.toString(),
+                    timestamp: new Date().toISOString()
+                };
+            }
+        }
+
+        /**
+         * Custom validation error class
+         */
+        class ValidationError extends Error {
+            constructor(errors, validationResult) {
+                super(`Validation failed: ${errors.join('; ')}`);
+                this.name = 'ValidationError';
+                this.errors = errors;
+                this.validationResult = validationResult;
+            }
+        }
+
+        // Global provider instance
+        const poolProvider = new EnforcedPlayerPoolProvider();
+
+        /**
+         * Load full player pool with enforcement
+         */
+        async function loadFullPlayerPool() {
+            try {
+                hideFatalError();
+                clearValidationStatus();
+                
+                const sport = appState.sport;
+                const site = appState.site;
+                const mode = appState.dataMode;
+                
+                const players = await poolProvider.loadPlayerPool(sport, site, mode);
+                
+                // Store players (NO LIMITS)
+                appState.players = players;
+                
+                // Update UI
+                updatePlayerCount(players.length);
+                updateValidationStatus('PASSED', 'success');
+                renderPlayerTable(players);
+                
+                showAlert('success', `✅ FULL POOL LOADED: ${players.length} ${sport} players validated`);
+                
+            } catch (error) {
+                console.error('Failed to load player pool:', error);
+                updateValidationStatus('FAILED', 'danger');
+                
+                if (appState.dataMode === 'online') {
+                    showFatalError(error.message);
+                } else {
+                    showAlert('danger', `❌ Load failed: ${error.message}`);
+                }
+            }
+        }
+
+        /**
+         * Render complete player table - NO TRUNCATION
+         */
+        function renderPlayerTable(players) {
+            const container = document.getElementById('playerTableContent');
+            
+            if (!players || players.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-3 text-warning"></i>
+                        <h5>No players loaded</h5>
+                        <p class="text-muted">Load a player pool to continue</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Create table with ALL players - no pagination, no limits
+            let html = `
+                <table class="table table-dark table-sm player-table">
+                    <thead class="sticky-top">
+                        <tr>
+                            <th>Player</th>
+                            <th>Pos</th>
+                            <th>Team</th>
+                            <th>Salary</th>
+                            <th>Proj</th>
+                            <th>Own%</th>
+                            <th>Boom%</th>
+                            <th>Leverage</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // Render EVERY player - enforce full pool display
+            players.forEach((player, index) => {
+                const leverageColor = player.leverage > 2 ? 'text-success' : 
+                                    player.leverage > 0 ? 'text-info' : 'text-warning';
+                
+                html += `
+                    <tr class="player-row">
+                        <td>
+                            <strong>${player.name}</strong>
+                            <small class="d-block text-muted">${player.playerId}</small>
+                        </td>
+                        <td><span class="badge bg-primary">${player.pos}</span></td>
+                        <td>${player.team}</td>
+                        <td>$${player.salary.toLocaleString()}</td>
+                        <td>${player.projection.toFixed(1)}</td>
+                        <td>${player.ownership.toFixed(1)}%</td>
+                        <td>${player.boom_pct}%</td>
+                        <td class="${leverageColor}">${player.leverage.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                    </tbody>
+                </table>
+                <div class="mt-2 text-center text-muted">
+                    <small>Showing all ${players.length} players - no pagination limits</small>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+            
+            // Force scroll to show table is fully rendered
+            setTimeout(() => {
+                const tableContainer = container.closest('.player-table-container');
+                if (tableContainer) {
+                    tableContainer.scrollTop = 0;
+                }
+            }, 100);
+        }
+
+        /**
+         * Show fatal error state
+         */
+        function showFatalError(message) {
+            const errorDiv = document.getElementById('fatalError');
+            const messageDiv = document.getElementById('fatalErrorMessage');
+            
+            messageDiv.innerHTML = `
+                <div class="alert alert-danger mb-3">
+                    <strong>FATAL ERROR:</strong> ${message}
+                </div>
+                <p>The system cannot proceed without a valid full player pool.</p>
+                <p>In ONLINE mode, no demo data or truncated pools are allowed.</p>
+            `;
+            
+            errorDiv.style.display = 'block';
+        }
+
+        /**
+         * Hide fatal error state
+         */
+        function hideFatalError() {
+            const errorDiv = document.getElementById('fatalError');
+            errorDiv.style.display = 'none';
+        }
+
+        /**
+         * Update player count display
+         */
+        function updatePlayerCount(count) {
+            const badge = document.getElementById('playerCount');
+            badge.textContent = `${count} players`;
+        }
+
+        /**
+         * Update validation status
+         */
+        function updateValidationStatus(status, type) {
+            const badge = document.getElementById('validationStatus');
+            badge.textContent = status;
+            badge.className = `badge bg-${type}`;
+        }
+
+        /**
+         * Clear validation status
+         */
+        function clearValidationStatus() {
+            updateValidationStatus('Validating...', 'warning');
+        }
+
+        /**
+         * Update validation report
+         */
+        function updateValidationReport(validationResult) {
+            const container = document.getElementById('validationReportContent');
+            
+            const report = {
+                timestamp: new Date().toISOString(),
+                mode: appState.dataMode,
+                sport: appState.sport,
+                site: appState.site,
+                validation: validationResult
+            };
+            
+            container.innerHTML = `
+                <pre>${JSON.stringify(report, null, 2)}</pre>
+            `;
+        }
+
+        /**
+         * Show alert message
+         */
+        function showAlert(type, message) {
+            const alertArea = document.getElementById('alertArea');
+            alertArea.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+        }
+
+        /**
+         * Update mode indicator
+         */
+        function updateModeIndicator(mode) {
+            const indicator = document.getElementById('modeIndicator');
+            indicator.textContent = `${mode.toUpperCase()} MODE`;
+            indicator.className = `mode-indicator mode-${mode}`;
+        }
+
+        /**
+         * Auto-load player pool on page load
+         */
+        async function autoLoadPlayerPool() {
+            try {
+                showAlert('info', `🚀 AUTO-LOADING: ${appState.sport} pool in ${appState.dataMode.toUpperCase()} mode...`);
+                await loadFullPlayerPool();
+            } catch (error) {
+                console.error('Auto-load failed:', error);
+                showAlert('warning', '⚠️ Auto-load failed - click "Load Full Pool" to try manually');
+            }
+        }
+
+        /**
+         * Auto-refresh data periodically (every 5 minutes)
+         */
+        function startAutoRefresh() {
+            setInterval(async () => {
+                if (appState.dataMode === 'online' && !appState.fatalError) {
+                    console.log('🔄 Auto-refreshing player pool...');
+                    try {
+                        await loadFullPlayerPool();
+                        showAlert('success', '✅ Data auto-refreshed successfully');
+                    } catch (error) {
+                        console.log('Auto-refresh failed, will retry later');
+                    }
+                }
+            }, 5 * 60 * 1000); // 5 minutes
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load full pool button
+            document.getElementById('loadFullPool').addEventListener('click', loadFullPlayerPool);
+
+            // Data mode selector
+            document.getElementById('dataMode').addEventListener('change', function() {
+                appState.dataMode = this.value;
+                updateModeIndicator(this.value);
+
+                if (this.value === 'online') {
+                    showAlert('info', '🔄 ONLINE mode: Full API validation enforced');
+                    // Auto-load when switching to online mode
+                    setTimeout(autoLoadPlayerPool, 1000);
+                } else {
+                    showAlert('info', '📁 OFFLINE mode: CSV import enabled');
+                }
+            });
+
+            // Sport switcher
+            document.querySelectorAll('.sport-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.sport-btn').forEach(b => {
+                        b.classList.remove('btn-success');
+                        b.classList.add('btn-outline-success');
+                    });
+                    this.classList.add('btn-success');
+                    this.classList.remove('btn-outline-success');
+
+                    appState.sport = this.dataset.sport;
+                    document.getElementById('currentSport').textContent = this.dataset.sport;
+
+                    // Auto-load when switching sports
+                    appState.players = [];
+                    updatePlayerCount(0);
+                    updateValidationStatus('Loading...', 'info');
+                    renderPlayerTable([]);
+                    setTimeout(autoLoadPlayerPool, 500);
+                });
+            });
+
+            // Initialize
+            updateModeIndicator(appState.dataMode);
+            showAlert('info', '🎯 Enforcement mode active - auto-loading player pool...');
+
+            // Auto-load on page load
+            setTimeout(autoLoadPlayerPool, 1500);
+
+            // Start auto-refresh for online mode
+            startAutoRefresh();
+        });
+    </script>
+</body>
+</html>

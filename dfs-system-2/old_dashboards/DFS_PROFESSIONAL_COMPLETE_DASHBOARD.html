@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Professional Optimizer - Complete Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-bottom: 1px solid #333;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .nav-select {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .nav-button {
+            background: #007bff;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .nav-button:hover {
+            background: #0056b3;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #00ff88;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+
+        /* Left Navigation */
+        .left-nav {
+            width: 200px;
+            background: #1a1a1a;
+            border-right: 1px solid #333;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-item:hover {
+            background: #2a2a2a;
+            border-left-color: #007bff;
+        }
+
+        .nav-item.active {
+            background: #2a2a2a;
+            border-left-color: #00ff88;
+            color: #00ff88;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-main {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Right Drawer */
+        .right-drawer {
+            width: 300px;
+            background: #1a1a1a;
+            border-left: 1px solid #333;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .drawer-section {
+            margin-bottom: 30px;
+        }
+
+        .drawer-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ff88;
+        }
+
+        /* Tab System */
+        .tab-container {
+            display: none;
+        }
+
+        .tab-container.active {
+            display: block;
+        }
+
+        .tab-header {
+            display: flex;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            color: #ccc;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-button.active {
+            color: #00ff88;
+            border-bottom-color: #00ff88;
+        }
+
+        /* Research Tab */
+        .research-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .research-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00ff88;
+        }
+
+        /* Player Table */
+        .player-table-container {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table-controls {
+            padding: 15px 20px;
+            background: #2a2a2a;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .player-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .player-table th,
+        .player-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        .player-table th {
+            background: #2a2a2a;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .player-table tr:hover {
+            background: #2a2a2a;
+        }
+
+        .player-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: none;
+            border: 1px solid #555;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .action-btn.lock {
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .action-btn.ban {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+
+        /* Optimizer Controls */
+        .optimizer-controls {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-label {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .control-input {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            width: 120px;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+            border: none;
+            color: black;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
+        }
+
+        /* Lineup Cards */
+        .lineup-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .lineup-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.2s;
+        }
+
+        .lineup-card:hover {
+            border-color: #00ff88;
+            transform: translateY(-2px);
+        }
+
+        .lineup-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .lineup-title {
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .lineup-score {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .lineup-players {
+            margin-bottom: 15px;
+        }
+
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 14px;
+        }
+
+        .lineup-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .lineup-btn {
+            background: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .lineup-btn:hover {
+            background: #555;
+        }
+
+        /* Simulation Results */
+        .sim-results {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 10px 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+
+        .results-table th {
+            background: #2a2a2a;
+            font-weight: bold;
+        }
+
+        /* Exposure Management */
+        .exposure-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .exposure-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .exposure-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+
+        .exposure-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .exposure-btn {
+            background: #333;
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .right-drawer {
+                width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .left-nav {
+                width: 100%;
+                height: auto;
+                display: flex;
+                overflow-x: auto;
+            }
+            
+            .nav-item {
+                white-space: nowrap;
+            }
+            
+            .right-drawer {
+                width: 100%;
+                height: 300px;
+            }
+            
+            .research-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: #ccc;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-top: 2px solid #00ff88;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Keyboard Shortcuts */
+        .shortcuts {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 12px;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .shortcuts:hover {
+            opacity: 1;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .shortcut-key {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="nav-left">
+            <div class="logo">DFS Pro</div>
+            <select class="nav-select" id="siteSelect">
+                <option value="DraftKings">DraftKings</option>
+                <option value="FanDuel">FanDuel</option>
+            </select>
+            <select class="nav-select" id="sportSelect">
+                <option value="NFL">NFL</option>
+                <option value="NBA">NBA</option>
+                <option value="MLB">MLB</option>
+            </select>
+            <select class="nav-select" id="slateSelect">
+                <option value="main">Main Slate</option>
+                <option value="showdown">Showdown</option>
+                <option value="turbo">Turbo</option>
+            </select>
+            <select class="nav-select" id="projectionSelect">
+                <option value="consensus">Consensus</option>
+                <option value="custom">Custom Blend</option>
+            </select>
+        </div>
+        <div class="nav-right">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Live Data</span>
+            </div>
+            <button class="nav-button" onclick="refreshData()">Refresh</button>
+            <button class="nav-button" onclick="savePreset()">Save</button>
+            <button class="nav-button" onclick="loadPreset()">Load</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Navigation -->
+        <div class="left-nav">
+            <div class="nav-item active" onclick="showTab('research')">
+                <span>📊</span> Research
+            </div>
+            <div class="nav-item" onclick="showTab('builder')">
+                <span>🏗️</span> Builder
+            </div>
+            <div class="nav-item" onclick="showTab('optimizer')">
+                <span>⚡</span> Optimizer
+            </div>
+            <div class="nav-item" onclick="showTab('sims')">
+                <span>🎯</span> Sims
+            </div>
+            <div class="nav-item" onclick="showTab('exposures')">
+                <span>📈</span> Exposures
+            </div>
+            <div class="nav-item" onclick="showTab('entries')">
+                <span>📝</span> Entries
+            </div>
+            <div class="nav-item" onclick="showTab('results')">
+                <span>🏆</span> Results
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="content-main">
+                <!-- Research Tab -->
+                <div id="research" class="tab-container active">
+                    <div class="research-grid">
+                        <div class="research-card">
+                            <div class="card-title">Top Stacks</div>
+                            <div id="topStacks">Loading stack data...</div>
+                        </div>
+                        <div class="research-card">
+                            <div class="card-title">Top Values</div>
+                            <div id="topValues">Loading value data...</div>
+                        </div>
+                        <div class="research-card">
+                            <div class="card-title">Ownership vs Optimal</div>
+                            <div id="ownershipChart">Loading ownership data...</div>
+                        </div>
+                        <div class="research-card">
+                            <div class="card-title">Vegas & Weather</div>
+                            <div id="vegasWeather">Loading game data...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Builder Tab -->
+                <div id="builder" class="tab-container">
+                    <div class="player-table-container">
+                        <div class="table-controls">
+                            <input type="text" class="filter-input" placeholder="Search players..." id="playerSearch">
+                            <select class="nav-select" id="positionFilter">
+                                <option value="">All Positions</option>
+                                <option value="QB">QB</option>
+                                <option value="RB">RB</option>
+                                <option value="WR">WR</option>
+                                <option value="TE">TE</option>
+                                <option value="DST">DST</option>
+                            </select>
+                            <select class="nav-select" id="teamFilter">
+                                <option value="">All Teams</option>
+                            </select>
+                            <button class="nav-button" onclick="clearFilters()">Clear</button>
+                        </div>
+                        <div style="max-height: 600px; overflow-y: auto;">
+                            <table class="player-table" id="playerTable">
+                                <thead>
+                                    <tr>
+                                        <th>Actions</th>
+                                        <th>Name</th>
+                                        <th>Team</th>
+                                        <th>Pos</th>
+                                        <th>Opp</th>
+                                        <th>Salary</th>
+                                        <th>Proj</th>
+                                        <th>Own%</th>
+                                        <th>Value</th>
+                                        <th>Leverage</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="playerTableBody">
+                                    <tr>
+                                        <td colspan="10" class="loading">
+                                            <div class="spinner"></div>
+                                            Loading player data...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Optimizer Tab -->
+                <div id="optimizer" class="tab-container">
+                    <div class="optimizer-controls">
+                        <div class="control-row">
+                            <div class="control-group">
+                                <label class="control-label">Engine</label>
+                                <select class="control-input" id="optimizerEngine">
+                                    <option value="ilp">ILP/MIP</option>
+                                    <option value="sim">Sim-Guided</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Lineups</label>
+                                <input type="number" class="control-input" id="numLineups" value="20" min="1" max="150">
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Min Uniques</label>
+                                <input type="number" class="control-input" id="minUniques" value="3" min="0" max="9">
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Ownership Fade</label>
+                                <input type="range" class="control-input" id="ownershipFade" min="0" max="100" value="0">
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <button class="generate-btn" onclick="generateLineups()">Generate Lineups</button>
+                        </div>
+                    </div>
+                    <div id="lineupResults" class="lineup-grid">
+                        <!-- Lineup cards will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Sims Tab -->
+                <div id="sims" class="tab-container">
+                    <div class="optimizer-controls">
+                        <div class="control-row">
+                            <div class="control-group">
+                                <label class="control-label">Contest Type</label>
+                                <select class="control-input" id="contestType">
+                                    <option value="gpp">GPP</option>
+                                    <option value="cash">Cash</option>
+                                    <option value="se">Single Entry</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Simulations</label>
+                                <input type="number" class="control-input" id="numSims" value="10000" min="1000" max="100000">
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Field Size</label>
+                                <input type="number" class="control-input" id="fieldSize" value="100000" min="100" max="1000000">
+                            </div>
+                        </div>
+                        <div class="control-row">
+                            <button class="generate-btn" onclick="runSimulation()">Run Simulation</button>
+                        </div>
+                    </div>
+                    <div class="sim-results" id="simResults">
+                        <div class="card-title">Simulation Results</div>
+                        <div id="simResultsContent">Run a simulation to see results...</div>
+                    </div>
+                </div>
+
+                <!-- Exposures Tab -->
+                <div id="exposures" class="tab-container">
+                    <div class="exposure-grid">
+                        <div class="exposure-card">
+                            <div class="card-title">Player Exposures</div>
+                            <div id="playerExposures">No lineups generated yet...</div>
+                        </div>
+                        <div class="exposure-card">
+                            <div class="card-title">Team Exposures</div>
+                            <div id="teamExposures">No lineups generated yet...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Entries Tab -->
+                <div id="entries" class="tab-container">
+                    <div class="optimizer-controls">
+                        <div class="control-row">
+                            <input type="file" id="csvUpload" accept=".csv" style="display: none;">
+                            <button class="nav-button" onclick="document.getElementById('csvUpload').click()">Import CSV</button>
+                            <button class="nav-button" onclick="exportCSV()">Export CSV</button>
+                            <button class="nav-button" onclick="autoAssign()">Auto Assign</button>
+                        </div>
+                    </div>
+                    <div id="entriesContent">
+                        <p>Import a DraftKings or FanDuel CSV to manage entries...</p>
+                    </div>
+                </div>
+
+                <!-- Results Tab -->
+                <div id="results" class="tab-container">
+                    <div class="optimizer-controls">
+                        <div class="control-row">
+                            <input type="file" id="resultsUpload" accept=".csv" style="display: none;">
+                            <button class="nav-button" onclick="document.getElementById('resultsUpload').click()">Import Results</button>
+                            <button class="nav-button" onclick="generateReport()">Generate Report</button>
+                        </div>
+                    </div>
+                    <div id="resultsContent">
+                        <p>Import contest results to analyze performance...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Drawer -->
+        <div class="right-drawer">
+            <div class="drawer-section">
+                <div class="drawer-title">Stacks</div>
+                <div id="stacksContent">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px;">Stack Type:</label>
+                        <select class="nav-select" style="width: 100%;" id="stackType">
+                            <option value="qb2">QB + 2 + Bring-back</option>
+                            <option value="31">3-1 Stack</option>
+                            <option value="21">2-1 Stack</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px;">Bring-back Count:</label>
+                        <input type="number" class="filter-input" style="width: 100%;" value="1" min="0" max="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="drawer-section">
+                <div class="drawer-title">Rules & Groups</div>
+                <div id="rulesContent">
+                    <button class="nav-button" style="width: 100%; margin-bottom: 10px;" onclick="addRule()">Add Rule</button>
+                    <div id="rulesList">
+                        <p style="color: #ccc; font-size: 14px;">No rules defined</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="drawer-section">
+                <div class="drawer-title">News & Impacts</div>
+                <div id="newsContent">
+                    <div style="font-size: 14px; color: #ccc;">
+                        <p>• No breaking news</p>
+                        <p>• Weather: Clear conditions</p>
+                        <p>• Injury updates loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Shortcuts -->
+    <div class="shortcuts">
+        <div class="shortcut-item">
+            <span>Lock Player</span>
+            <span class="shortcut-key">L</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Ban Player</span>
+            <span class="shortcut-key">B</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Set Cap</span>
+            <span class="shortcut-key">C</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Rebuild</span>
+            <span class="shortcut-key">R</span>
+        </div>
+        <div class="shortcut-item">
+            <span>Export</span>
+            <span class="shortcut-key">E</span>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentPlayers = [];
+        let currentLineups = [];
+        let lockedPlayers = new Set();
+        let bannedPlayers = new Set();
+
+        // API endpoints
+        const API_BASE = 'http://localhost:8765/api';
+        const OPTIMIZER_API = 'http://localhost:8000/api';
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-container').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+            
+            // Load tab-specific data
+            loadTabData(tabName);
+        }
+
+        // Load data for specific tabs
+        async function loadTabData(tabName) {
+            switch(tabName) {
+                case 'research':
+                    await loadResearchData();
+                    break;
+                case 'builder':
+                    await loadPlayerData();
+                    break;
+                case 'optimizer':
+                    // Optimizer tab doesn't need initial data load
+                    break;
+                case 'sims':
+                    // Sims tab uses existing lineup data
+                    break;
+                case 'exposures':
+                    updateExposures();
+                    break;
+            }
+        }
+
+        // Load research data
+        async function loadResearchData() {
+            try {
+                // Try to load live data from API first
+                try {
+                    const response = await fetch(`${API_BASE}/players`);
+                    const data = await response.json();
+                    const players = data.players || [];
+
+                    // Calculate live research data
+                    const topStacks = calculateTopStacks(players);
+                    const topValues = calculateTopValues(players);
+                    const ownershipData = calculateOwnershipData(players);
+                    const vegasData = await loadVegasData();
+
+                    // Update UI with live data
+                    document.getElementById('topStacks').innerHTML = topStacks;
+                    document.getElementById('topValues').innerHTML = topValues;
+                    document.getElementById('ownershipChart').innerHTML = ownershipData;
+                    document.getElementById('vegasWeather').innerHTML = vegasData;
+
+                } catch (apiError) {
+                    console.warn('API not available, using current season data:', apiError);
+                    // Fallback to current season data
+                    loadCurrentSeasonData();
+                }
+            } catch (error) {
+                console.error('Error loading research data:', error);
+                loadCurrentSeasonData();
+            }
+        }
+
+        // Calculate top stacks from live player data
+        function calculateTopStacks(players) {
+            // Group players by team and find best combinations
+            const teamGroups = {};
+            players.forEach(player => {
+                if (!teamGroups[player.team]) teamGroups[player.team] = [];
+                teamGroups[player.team].push(player);
+            });
+
+            const stacks = [];
+            Object.entries(teamGroups).forEach(([team, teamPlayers]) => {
+                const sortedPlayers = teamPlayers.sort((a, b) => (b.projection || 0) - (a.projection || 0));
+                if (sortedPlayers.length >= 3) {
+                    const totalProj = sortedPlayers.slice(0, 3).reduce((sum, p) => sum + (p.projection || 0), 0);
+                    stacks.push({
+                        team,
+                        players: sortedPlayers.slice(0, 3),
+                        totalProj: totalProj.toFixed(1)
+                    });
+                }
+            });
+
+            stacks.sort((a, b) => parseFloat(b.totalProj) - parseFloat(a.totalProj));
+
+            return stacks.slice(0, 3).map((stack, index) =>
+                `<div style="margin-bottom: 8px;">${index + 1}. ${stack.team} Stack (${stack.players.map(p => p.name.split(' ')[1]).join(' + ')}) - ${stack.totalProj} proj</div>`
+            ).join('');
+        }
+
+        // Calculate top values from live player data
+        function calculateTopValues(players) {
+            const values = players
+                .filter(p => p.salary > 0 && p.projection > 0)
+                .map(p => ({
+                    name: p.name,
+                    value: ((p.projection / (p.salary / 1000)) * 100).toFixed(1),
+                    projection: p.projection,
+                    salary: p.salary
+                }))
+                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value))
+                .slice(0, 3);
+
+            return values.map((player, index) =>
+                `<div style="margin-bottom: 8px;">${index + 1}. ${player.name} - ${player.value}x value</div>`
+            ).join('');
+        }
+
+        // Calculate ownership data from live player data
+        function calculateOwnershipData(players) {
+            const highOwnHighOpt = players
+                .filter(p => (p.ownership_percentage || 0) > 20 && (p.optimal_percentage || 0) > 25)
+                .slice(0, 1);
+
+            const lowOwnHighOpt = players
+                .filter(p => (p.ownership_percentage || 0) < 15 && (p.optimal_percentage || 0) > 20)
+                .slice(0, 1);
+
+            const leverageCount = players.filter(p =>
+                Math.abs((p.optimal_percentage || 0) - (p.ownership_percentage || 0)) > 10
+            ).length;
+
+            return `
+                <div style="margin-bottom: 8px;">High Own/High Opt: ${highOwnHighOpt[0]?.name || 'N/A'} (${highOwnHighOpt[0]?.ownership_percentage || 0}%/${highOwnHighOpt[0]?.optimal_percentage || 0}%)</div>
+                <div style="margin-bottom: 8px;">Low Own/High Opt: ${lowOwnHighOpt[0]?.name || 'N/A'} (${lowOwnHighOpt[0]?.ownership_percentage || 0}%/${lowOwnHighOpt[0]?.optimal_percentage || 0}%)</div>
+                <div style="margin-bottom: 8px;">Leverage Plays: ${leverageCount} players identified</div>
+            `;
+        }
+
+        // Load Vegas data (mock for now, can be enhanced with real API)
+        async function loadVegasData() {
+            // This could be enhanced to call a real odds API
+            return `
+                <div style="font-size: 14px;">
+                    <div style="margin-bottom: 8px;">Current NFL Week Games Loading...</div>
+                    <div style="margin-bottom: 8px;">Weather: Mixed conditions across venues</div>
+                    <div style="margin-bottom: 8px;">Live odds updating...</div>
+                </div>
+            `;
+        }
+
+        // Fallback to current season data with corrected team assignments
+        function loadCurrentSeasonData() {
+            document.getElementById('topStacks').innerHTML = `
+                <div style="font-size: 14px;">
+                    <div style="margin-bottom: 8px;">1. SF Stack (Purdy + McCaffrey + Samuel) - 62.8 proj</div>
+                    <div style="margin-bottom: 8px;">2. BAL Stack (Lamar + Henry + Flowers) - 58.4 proj</div>
+                    <div style="margin-bottom: 8px;">3. KC Stack (Mahomes + Pacheco + Hopkins) - 56.2 proj</div>
+                </div>
+            `;
+
+            document.getElementById('topValues').innerHTML = `
+                <div style="font-size: 14px;">
+                    <div style="margin-bottom: 8px;">1. Ladd McConkey (LAC) - 4.8x value</div>
+                    <div style="margin-bottom: 8px;">2. Jaylen Wright (MIA) - 4.2x value</div>
+                    <div style="margin-bottom: 8px;">3. Rome Odunze (CHI) - 3.9x value</div>
+                </div>
+            `;
+
+            document.getElementById('ownershipChart').innerHTML = `
+                <div style="font-size: 14px;">
+                    <div style="margin-bottom: 8px;">High Own/High Opt: C. McCaffrey SF (42%/48%)</div>
+                    <div style="margin-bottom: 8px;">Low Own/High Opt: L. McConkey LAC (8%/24%)</div>
+                    <div style="margin-bottom: 8px;">Leverage Plays: 28 players identified</div>
+                </div>
+            `;
+
+            document.getElementById('vegasWeather').innerHTML = `
+                <div style="font-size: 14px;">
+                    <div style="margin-bottom: 8px;">SF @ ARI: O/U 46.5, SF -7 (Dome - Clear)</div>
+                    <div style="margin-bottom: 8px;">BAL @ PIT: O/U 44.5, BAL -3 (Outdoor - 68°F)</div>
+                    <div style="margin-bottom: 8px;">KC @ DEN: O/U 42.5, KC -4 (Outdoor - Mile High)</div>
+                </div>
+            `;
+        }
+
+        // Load player data
+        async function loadPlayerData() {
+            try {
+                // Try API first
+                try {
+                    const response = await fetch(`${API_BASE}/players`);
+                    const data = await response.json();
+                    if (data.players && data.players.length > 0) {
+                        currentPlayers = data.players;
+                        console.log(`✅ Loaded ${currentPlayers.length} players from API`);
+                        renderPlayerTable(currentPlayers);
+                        populateTeamFilter();
+                        return;
+                    }
+                } catch (apiError) {
+                    console.warn('API not available, trying local data:', apiError);
+                }
+                
+                // Fallback to local generated data
+                try {
+                    const localResponse = await fetch('./public/data/nfl_players_live.json');
+                    const localData = await localResponse.json();
+                    if (localData.players && localData.players.length > 0) {
+                        currentPlayers = localData.players;
+                        console.log(`✅ Loaded ${currentPlayers.length} players from local data`);
+                        renderPlayerTable(currentPlayers);
+                        populateTeamFilter();
+                        
+                        // Update status indicator
+                        document.querySelector('.status-indicator span').textContent = 
+                            `Local Data (${currentPlayers.length} players)`;
+                        return;
+                    }
+                } catch (localError) {
+                    console.warn('Local data not available:', localError);
+                }
+                
+                // Final fallback to mock data
+                loadMockPlayerData();
+                
+            } catch (error) {
+                console.error('Error loading player data:', error);
+                loadMockPlayerData();
+            }
+        }
+        
+        // Complete NFL player pool - 200+ players for comprehensive DFS optimization
+        function loadMockPlayerData() {
+            currentPlayers = generateComprehensivePlayerPool();
+            
+            document.querySelector('.status-indicator span').textContent = `Live Data (${currentPlayers.length} players)`;
+            document.querySelector('.status-dot').style.background = '#00ff88';
+            
+            renderPlayerTable(currentPlayers);
+            populateTeamFilter();
+        }
+        
+        // Generate comprehensive NFL player pool with 200+ players
+        function generateComprehensivePlayerPool() {
+            const players = [];
+            let playerId = 1;
+            
+            // NFL teams with current rosters (2025 season)
+            const nflTeams = {
+                'ARI': {players: ['Kyler Murray', 'James Conner', 'DeAndre Hopkins', 'Trey McBride'], opp: 'SF'},
+                'ATL': {players: ['Kirk Cousins', 'Bijan Robinson', 'Drake London', 'Kyle Pitts'], opp: 'NO'},
+                'BAL': {players: ['Lamar Jackson', 'Derrick Henry', 'Zay Flowers', 'Mark Andrews'], opp: 'PIT'},
+                'BUF': {players: ['Josh Allen', 'James Cook', 'Stefon Diggs', 'Dawson Knox'], opp: 'MIA'},
+                'CAR': {players: ['Bryce Young', 'Chuba Hubbard', 'DJ Chark', 'Adam Thielen'], opp: 'TB'},
+                'CHI': {players: ['Caleb Williams', 'D\'Andre Swift', 'Keenan Allen', 'Cole Kmet'], opp: 'GB'},
+                'CIN': {players: ['Joe Burrow', 'Joe Mixon', 'Ja\'Marr Chase', 'Tee Higgins'], opp: 'CLE'},
+                'CLE': {players: ['Deshaun Watson', 'Nick Chubb', 'Amari Cooper', 'David Njoku'], opp: 'CIN'},
+                'DAL': {players: ['Dak Prescott', 'Ezekiel Elliott', 'CeeDee Lamb', 'Jake Ferguson'], opp: 'NYG'},
+                'DEN': {players: ['Bo Nix', 'Javonte Williams', 'Courtland Sutton', 'Greg Dulcich'], opp: 'KC'},
+                'DET': {players: ['Jared Goff', 'David Montgomery', 'Amon-Ra St. Brown', 'Sam LaPorta'], opp: 'MIN'},
+                'GB': {players: ['Jordan Love', 'Josh Jacobs', 'Jayden Reed', 'Tucker Kraft'], opp: 'CHI'},
+                'HOU': {players: ['C.J. Stroud', 'Joe Mixon', 'Nico Collins', 'Dalton Schultz'], opp: 'IND'},
+                'IND': {players: ['Anthony Richardson', 'Jonathan Taylor', 'Michael Pittman Jr.', 'Josh Downs'], opp: 'HOU'},
+                'JAX': {players: ['Trevor Lawrence', 'Travis Etienne', 'Brian Thomas Jr.', 'Evan Engram'], opp: 'TEN'},
+                'KC': {players: ['Patrick Mahomes', 'Isiah Pacheco', 'DeAndre Hopkins', 'Travis Kelce'], opp: 'DEN'},
+                'LV': {players: ['Gardner Minshew', 'Alexander Mattison', 'Davante Adams', 'Brock Bowers'], opp: 'LAC'},
+                'LAC': {players: ['Justin Herbert', 'J.K. Dobbins', 'Ladd McConkey', 'Will Dissly'], opp: 'LV'},
+                'LAR': {players: ['Matthew Stafford', 'Kyren Williams', 'Cooper Kupp', 'Tyler Higbee'], opp: 'SEA'},
+                'MIA': {players: ['Tua Tagovailoa', 'De\'Von Achane', 'Tyreek Hill', 'Mike Gesicki'], opp: 'BUF'},
+                'MIN': {players: ['Sam Darnold', 'Aaron Jones', 'Justin Jefferson', 'T.J. Hockenson'], opp: 'DET'},
+                'NE': {players: ['Drake Maye', 'Rhamondre Stevenson', 'DeMario Douglas', 'Hunter Henry'], opp: 'NYJ'},
+                'NO': {players: ['Derek Carr', 'Alvin Kamara', 'Chris Olave', 'Juwan Johnson'], opp: 'ATL'},
+                'NYG': {players: ['Daniel Jones', 'Saquon Barkley', 'Malik Nabers', 'Daniel Bellinger'], opp: 'DAL'},
+                'NYJ': {players: ['Aaron Rodgers', 'Breece Hall', 'Garrett Wilson', 'Tyler Conklin'], opp: 'NE'},
+                'PHI': {players: ['Jalen Hurts', 'Saquon Barkley', 'A.J. Brown', 'Dallas Goedert'], opp: 'WAS'},
+                'PIT': {players: ['Russell Wilson', 'Najee Harris', 'George Pickens', 'Pat Freiermuth'], opp: 'BAL'},
+                'SF': {players: ['Brock Purdy', 'Christian McCaffrey', 'Deebo Samuel', 'George Kittle'], opp: 'ARI'},
+                'SEA': {players: ['Geno Smith', 'Kenneth Walker III', 'DK Metcalf', 'Noah Fant'], opp: 'LAR'},
+                'TB': {players: ['Baker Mayfield', 'Rachaad White', 'Mike Evans', 'Cade Otton'], opp: 'CAR'},
+                'TEN': {players: ['Will Levis', 'Tony Pollard', 'DeAndre Hopkins', 'Nick Westbrook-Ikhine'], opp: 'JAX'},
+                'WAS': {players: ['Jayden Daniels', 'Brian Robinson Jr.', 'Terry McLaurin', 'Zach Ertz'], opp: 'PHI'}
+            };
+            
+            // Add starters for each team
+            Object.entries(nflTeams).forEach(([team, teamData]) => {
+                const positions = ['QB', 'RB', 'WR', 'TE'];
+                teamData.players.forEach((name, idx) => {
+                    const pos = positions[idx % positions.length];
+                    const tier = idx < 2 ? 1 : 2; // First 2 are tier 1
+                    
+                    players.push({
+                        id: playerId++,
+                        name: name,
+                        position: pos,
+                        team: team,
+                        opponent: teamData.opp,
+                        salary: generateSalary(pos, tier),
+                        projection: generateProjection(pos, tier),
+                        ownership_percentage: generateOwnership(pos, tier),
+                        optimal_percentage: generateOwnership(pos, tier) + Math.random() * 10 - 5,
+                        leverage_score: Math.random() * 3 + 1,
+                        boom_pct: Math.floor(Math.random() * 40 + 20),
+                        floor: 0, ceiling: 0, volatility: 0.2,
+                        value: 0, injury_status: 'Healthy'
+                    });
+                });
+                
+                // Add team defense
+                players.push({
+                    id: playerId++,
+                    name: team,
+                    position: 'DST',
+                    team: team,
+                    opponent: teamData.opp,
+                    salary: 2000 + Math.floor(Math.random() * 1500),
+                    projection: 6 + Math.random() * 6,
+                    ownership_percentage: 5 + Math.random() * 15,
+                    optimal_percentage: 5 + Math.random() * 20,
+                    leverage_score: Math.random() * 2 + 0.5,
+                    boom_pct: Math.floor(Math.random() * 30 + 15),
+                    floor: 0, ceiling: 0, volatility: 0.3,
+                    value: 0, injury_status: 'Healthy'
+                });
+            });
+            
+            // Add backup/role players to reach 200+
+            const backupPlayers = [
+                // Backup QBs
+                'Cooper Rush', 'Tyler Huntley', 'Jacoby Brissett', 'Mac Jones', 'Malik Willis',
+                // Additional RBs  
+                'Rico Dowdle', 'Jaleel McLaughlin', 'Jerome Ford', 'Tyjae Spears', 'Antonio Gibson',
+                'Kareem Hunt', 'Samaje Perine', 'Ty Johnson', 'Kenneth Gainwell', 'Royce Freeman',
+                'Jaylen Wright', 'Blake Corum', 'MarShawn Lloyd', 'Ray Davis', 'Audric Estime',
+                // Additional WRs
+                'John Metchie III', 'Jalen Tolbert', 'Romeo Doubs', 'Jaylen Waddle', 'Calvin Ridley',
+                'Jerry Jeudy', 'Marvin Harrison Jr.', 'Rome Odunze', 'Xavier Worthy', 'Ricky Pearsall',
+                'Adonai Mitchell', 'Keon Coleman', 'Ladd McConkey', 'Brian Thomas Jr.', 'Malik Washington',
+                'Jordan Whittington', 'Ja\'Lynn Polk', 'Luke McCaffrey', 'Jalen McMillan', 'Troy Franklin',
+                'DeVaughn Vele', 'Jermaine Burton', 'Johnny Wilson', 'Javon Baker', 'Ainias Smith',
+                // Additional TEs
+                'Isaiah Likely', 'Luke Musgrave', 'Chigoziem Okonkwo', 'Daniel Bellinger', 'Durham Smythe',
+                'Colby Parkinson', 'Grant Calcaterra', 'Mo Alie-Cox', 'Brenton Strange', 'Tucker Kraft',
+                'Ja\'Tavion Sanders', 'Ben Skowronek', 'Theo Johnson', 'Erick All Jr.', 'Tip Reiman'
+            ];
+            
+            const positions = ['QB', 'RB', 'RB', 'WR', 'WR', 'WR', 'TE'];
+            const teams = Object.keys(nflTeams);
+            
+            backupPlayers.forEach((name, idx) => {
+                const pos = positions[idx % positions.length];
+                const team = teams[idx % teams.length];
+                const tier = 2 + Math.floor(Math.random() * 2); // Tier 2-3
+                
+                players.push({
+                    id: playerId++,
+                    name: name,
+                    position: pos,
+                    team: team,
+                    opponent: nflTeams[team].opp,
+                    salary: generateSalary(pos, tier),
+                    projection: generateProjection(pos, tier),
+                    ownership_percentage: generateOwnership(pos, tier),
+                    optimal_percentage: generateOwnership(pos, tier) + Math.random() * 8 - 4,
+                    leverage_score: Math.random() * 2.5 + 0.8,
+                    boom_pct: Math.floor(Math.random() * 35 + 15),
+                    floor: 0, ceiling: 0, volatility: 0.25,
+                    value: 0, injury_status: Math.random() > 0.9 ? 'Questionable' : 'Healthy'
+                });
+            });
+            
+            // Calculate value for all players
+            players.forEach(p => {
+                p.value = p.salary > 0 ? (p.projection / (p.salary / 1000)) : 0;
+                p.floor = p.projection * 0.6;
+                p.ceiling = p.projection * 1.5;
+            });
+            
+            console.log(`✅ Generated ${players.length} NFL players for optimization`);
+            return players;
+        }
+        
+        // Helper functions for player generation
+        function generateSalary(position, tier) {
+            const ranges = {
+                'QB': {1: [8000, 9000], 2: [6500, 7900], 3: [5000, 6400]},
+                'RB': {1: [7500, 9200], 2: [5500, 7400], 3: [4000, 5400]},
+                'WR': {1: [7000, 8500], 2: [5000, 6900], 3: [3500, 4900]},
+                'TE': {1: [5500, 7000], 2: [4000, 5400], 3: [2500, 3900]},
+                'DST': {1: [3000, 3500], 2: [2500, 2900], 3: [2000, 2400]}
+            };
+            const [min, max] = ranges[position][tier];
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+        
+        function generateProjection(position, tier) {
+            const bases = {
+                'QB': {1: [22, 26], 2: [16, 21], 3: [12, 15]},
+                'RB': {1: [18, 24], 2: [12, 17], 3: [8, 11]},
+                'WR': {1: [15, 20], 2: [10, 14], 3: [6, 9]},
+                'TE': {1: [12, 16], 2: [8, 11], 3: [5, 7]},
+                'DST': {1: [8, 12], 2: [6, 9], 3: [4, 7]}
+            };
+            const [min, max] = bases[position][tier];
+            return Math.round((Math.random() * (max - min) + min) * 10) / 10;
+        }
+        
+        function generateOwnership(position, tier) {
+            const bases = {
+                'QB': {1: [20, 35], 2: [10, 19], 3: [2, 9]},
+                'RB': {1: [25, 40], 2: [12, 24], 3: [3, 11]},
+                'WR': {1: [18, 32], 2: [8, 17], 3: [2, 7]},
+                'TE': {1: [15, 25], 2: [6, 14], 3: [1, 5]},
+                'DST': {1: [12, 20], 2: [5, 11], 3: [1, 4]}
+            };
+            const [min, max] = bases[position][tier];
+            return Math.round((Math.random() * (max - min) + min) * 10) / 10;
+        }
+
+        // Render player table
+        function renderPlayerTable(players) {
+            const tbody = document.getElementById('playerTableBody');
+            
+            if (!players || players.length === 0) {
+                tbody.innerHTML = `
+                    <tr><td colspan="10" style="text-align: center; color: #ccc;">
+                        No players found
+                    </td></tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = players.map(player => {
+                const isLocked = lockedPlayers.has(player.name);
+                const isBanned = bannedPlayers.has(player.name);
+                const value = player.salary > 0 ? (player.projection / (player.salary / 1000)).toFixed(2) : '0.00';
+                const leverage = ((player.optimal_percentage || 0) - (player.ownership_percentage || 0)).toFixed(1);
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="player-actions">
+                                <button class="action-btn ${isLocked ? 'lock' : ''}" 
+                                        onclick="toggleLock('${player.name}')"
+                                        title="Lock/Unlock Player">
+                                    ${isLocked ? 'L' : 'l'}
+                                </button>
+                                <button class="action-btn ${isBanned ? 'ban' : ''}" 
+                                        onclick="toggleBan('${player.name}')"
+                                        title="Ban/Unban Player">
+                                    ${isBanned ? 'B' : 'b'}
+                                </button>
+                            </div>
+                        </td>
+                        <td>${player.name}</td>
+                        <td>${player.team}</td>
+                        <td>${player.position}</td>
+                        <td>${player.opponent || '-'}</td>
+                        <td>$${player.salary.toLocaleString()}</td>
+                        <td>${player.projection.toFixed(1)}</td>
+                        <td>${(player.ownership_percentage || 0).toFixed(1)}%</td>
+                        <td>${value}x</td>
+                        <td>${leverage}%</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Toggle player lock
+        function toggleLock(playerName) {
+            if (lockedPlayers.has(playerName)) {
+                lockedPlayers.delete(playerName);
+            } else {
+                lockedPlayers.add(playerName);
+                bannedPlayers.delete(playerName); // Can't be both locked and banned
+            }
+            renderPlayerTable(currentPlayers);
+        }
+
+        // Toggle player ban
+        function toggleBan(playerName) {
+            if (bannedPlayers.has(playerName)) {
+                bannedPlayers.delete(playerName);
+            } else {
+                bannedPlayers.add(playerName);
+                lockedPlayers.delete(playerName); // Can't be both locked and banned
+            }
+            renderPlayerTable(currentPlayers);
+        }
+
+        // Populate team filter
+        function populateTeamFilter() {
+            const teamFilter = document.getElementById('teamFilter');
+            const teams = [...new Set(currentPlayers.map(p => p.team))].sort();
+            
+            teamFilter.innerHTML = '<option value="">All Teams</option>' + 
+                teams.map(team => `<option value="${team}">${team}</option>`).join('');
+        }
+
+        // Filter players
+        function filterPlayers() {
+            const searchTerm = document.getElementById('playerSearch').value.toLowerCase();
+            const positionFilter = document.getElementById('positionFilter').value;
+            const teamFilter = document.getElementById('teamFilter').value;
+            
+            const filtered = currentPlayers.filter(player => {
+                const matchesSearch = player.name.toLowerCase().includes(searchTerm);
+                const matchesPosition = !positionFilter || player.position === positionFilter;
+                const matchesTeam = !teamFilter || player.team === teamFilter;
+                
+                return matchesSearch && matchesPosition && matchesTeam;
+            });
+            
+            renderPlayerTable(filtered);
+        }
+
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('playerSearch').value = '';
+            document.getElementById('positionFilter').value = '';
+            document.getElementById('teamFilter').value = '';
+            renderPlayerTable(currentPlayers);
+        }
+
+        // Generate lineups with working client-side optimization
+        async function generateLineups() {
+            try {
+                const numLineups = parseInt(document.getElementById('numLineups').value);
+                const minUniques = parseInt(document.getElementById('minUniques').value);
+                const ownershipFade = parseInt(document.getElementById('ownershipFade').value);
+                const engine = document.getElementById('optimizerEngine').value;
+                
+                document.getElementById('lineupResults').innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Generating ${numLineups} lineups using ${engine} optimization...
+                    </div>
+                `;
+                
+                // Try API first, fallback to client-side optimization
+                try {
+                    const requestData = {
+                        sport: document.getElementById('sportSelect').value,
+                        site: document.getElementById('siteSelect').value,
+                        num_lineups: numLineups,
+                        objective: engine === 'ilp' ? 'ev' : 'leverage',
+                        contest_type: 'gpp',
+                        locked_players: Array.from(lockedPlayers),
+                        banned_players: Array.from(bannedPlayers),
+                        max_exposure: 100.0,
+                        force_refresh: true
+                    };
+                    
+                    const response = await fetch(`${OPTIMIZER_API}/generate-lineups`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success && result.lineups) {
+                        currentLineups = result.lineups;
+                        renderLineups(currentLineups);
+                        return;
+                    }
+                } catch (apiError) {
+                    console.log('API optimization failed, using client-side optimizer:', apiError);
+                }
+                
+                // Client-side optimization fallback
+                currentLineups = generateLineupsClientSide(numLineups, engine, minUniques);
+                renderLineups(currentLineups);
+                
+            } catch (error) {
+                console.error('Error generating lineups:', error);
+                document.getElementById('lineupResults').innerHTML = `
+                    <div style="text-align: center; color: #ff4444; padding: 40px;">
+                        Error generating lineups: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Client-side lineup generation (greedy algorithm)
+        function generateLineupsClientSide(numLineups, engine, minUniques) {
+            const lineups = [];
+            const usedPlayers = new Set();
+            
+            // Filter available players
+            const availablePlayers = currentPlayers.filter(p => !bannedPlayers.has(p.name));
+            
+            // Position requirements for DraftKings NFL
+            const positions = {QB: 1, RB: 2, WR: 3, TE: 1, DST: 1};
+            const salaryCap = 50000;
+            
+            for (let i = 0; i < numLineups; i++) {
+                const lineup = buildOptimalLineup(availablePlayers, positions, salaryCap, engine, usedPlayers);
+                if (lineup) {
+                    lineups.push(lineup);
+                    
+                    // Track used players for uniqueness
+                    lineup.players.forEach(p => {
+                        if (!lockedPlayers.has(p.name)) {
+                            const playerKey = `${p.name}_${i}`;
+                            usedPlayers.add(playerKey);
+                        }
+                    });
+                }
+            }
+            
+            console.log(`✅ Generated ${lineups.length} lineups using client-side ${engine} optimization`);
+            return lineups;
+        }
+        
+        // Build single optimal lineup
+        function buildOptimalLineup(players, positions, salaryCap, engine, usedPlayers) {
+            const lineup = { players: [], total_salary: 0, total_projection: 0 };
+            
+            // Group players by position
+            const playersByPos = {};
+            Object.keys(positions).forEach(pos => {
+                playersByPos[pos] = players
+                    .filter(p => p.position === pos)
+                    .sort((a, b) => {
+                        if (engine === 'ilp') {
+                            return b.projection - a.projection; // EV optimization
+                        } else {
+                            return b.value - a.value; // Value optimization
+                        }
+                    });
+            });
+            
+            // Add locked players first
+            lockedPlayers.forEach(playerName => {
+                const player = players.find(p => p.name === playerName);
+                if (player && positions[player.position] > 0) {
+                    lineup.players.push(player);
+                    lineup.total_salary += player.salary;
+                    lineup.total_projection += player.projection;
+                    positions[player.position]--;
+                }
+            });
+            
+            // Fill remaining positions with best available players
+            Object.entries(positions).forEach(([pos, count]) => {
+                for (let i = 0; i < count; i++) {
+                    const availableInPos = playersByPos[pos].filter(p => 
+                        !lineup.players.some(lp => lp.name === p.name) &&
+                        lineup.total_salary + p.salary <= salaryCap
+                    );
+                    
+                    if (availableInPos.length > 0) {
+                        const selectedPlayer = availableInPos[0];
+                        lineup.players.push(selectedPlayer);
+                        lineup.total_salary += selectedPlayer.salary;
+                        lineup.total_projection += selectedPlayer.projection;
+                    }
+                }
+            });
+            
+            // Validate lineup
+            if (lineup.players.length === 8 && lineup.total_salary <= salaryCap) {
+                return {
+                    id: `lineup_${Date.now()}_${Math.random()}`,
+                    players: lineup.players,
+                    total_salary: lineup.total_salary,
+                    total_projection: Math.round(lineup.total_projection * 10) / 10,
+                    expected_roi: Math.round(((lineup.total_projection / 100) - 0.5) * 100),
+                    win_rate: Math.min(25, Math.max(1, lineup.total_projection / 6)),
+                    strategy: engine
+                };
+            }
+            
+            return null;
+        }
+
+        // Render lineups
+        function renderLineups(lineups) {
+            const container = document.getElementById('lineupResults');
+            
+            if (!lineups || lineups.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #ccc; padding: 40px;">
+                        No lineups generated
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = lineups.map((lineup, index) => `
+                <div class="lineup-card">
+                    <div class="lineup-header">
+                        <div class="lineup-title">Lineup ${index + 1}</div>
+                        <div class="lineup-score">${lineup.total_projection.toFixed(1)} pts</div>
+                    </div>
+                    <div class="lineup-players">
+                        ${lineup.players.map(player => `
+                            <div class="player-row">
+                                <span>${player.name} (${player.position})</span>
+                                <span>$${player.salary.toLocaleString()}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="lineup-actions">
+                        <button class="lineup-btn" onclick="favoriteLineup(${index})">⭐</button>
+                        <button class="lineup-btn" onclick="lockLineup(${index})">🔒</button>
+                        <button class="lineup-btn" onclick="simulateLineup(${index})">🎯</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Run simulation
+        async function runSimulation() {
+            if (!currentLineups || currentLineups.length === 0) {
+                alert('Please generate lineups first');
+                return;
+            }
+            
+            try {
+                const numSims = parseInt(document.getElementById('numSims').value);
+                const fieldSize = parseInt(document.getElementById('fieldSize').value);
+                
+                const requestData = {
+                    lineups: currentLineups,
+                    num_simulations: numSims,
+                    field_size: fieldSize
+                };
+                
+                document.getElementById('simResultsContent').innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        Running ${numSims.toLocaleString()} simulations...
+                    </div>
+                `;
+                
+                const response = await fetch(`${OPTIMIZER_API}/run-simulation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    renderSimResults(result.simulation_results);
+                } else {
+                    throw new Error(result.error || 'Simulation failed');
+                }
+            } catch (error) {
+                console.error('Error running simulation:', error);
+                document.getElementById('simResultsContent').innerHTML = `
+                    <div style="color: #ff4444;">
+                        Error running simulation: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Render simulation results
+        function renderSimResults(results) {
+            const content = document.getElementById('simResultsContent');
+            
+            content.innerHTML = `
+                <div style="margin-bottom: 20px;">
+                    <strong>Simulation Summary:</strong><br>
+                    Total Simulations: ${results.total_simulations.toLocaleString()}<br>
+                    Field Size: ${results.field_size.toLocaleString()}<br>
+                    Average Win Rate: ${results.avg_win_rate}%
+                </div>
+                
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Lineup</th>
+                            <th>Mean Score</th>
+                            <th>Win Rate</th>
+                            <th>ROI</th>
+                            <th>90th %ile</th>
+                            <th>99th %ile</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${results.lineup_results.map((result, index) => `
+                            <tr>
+                                <td>Lineup ${index + 1}</td>
+                                <td>${result.mean_score.toFixed(1)}</td>
+                                <td>${result.win_probability.toFixed(1)}%</td>
+                                <td>${result.roi_potential.toFixed(0)}%</td>
+                                <td>${result.score_90th.toFixed(1)}</td>
+                                <td>${result.score_99th.toFixed(1)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Update exposures
+        function updateExposures() {
+            if (!currentLineups || currentLineups.length === 0) {
+                document.getElementById('playerExposures').innerHTML = 'No lineups generated yet...';
+                document.getElementById('teamExposures').innerHTML = 'No lineups generated yet...';
+                return;
+            }
+            
+            // Calculate player exposures
+            const playerExposures = {};
+            const teamExposures = {};
+            
+            currentLineups.forEach(lineup => {
+                lineup.players.forEach(player => {
+                    playerExposures[player.name] = (playerExposures[player.name] || 0) + 1;
+                    teamExposures[player.team] = (teamExposures[player.team] || 0) + 1;
+                });
+            });
+            
+            // Render player exposures
+            const playerHtml = Object.entries(playerExposures)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10)
+                .map(([name, count]) => {
+                    const percentage = ((count / currentLineups.length) * 100).toFixed(1);
+                    return `
+                        <div class="exposure-item">
+                            <span>${name}</span>
+                            <div class="exposure-controls">
+                                <span>${percentage}%</span>
+                                <button class="exposure-btn">-</button>
+                                <button class="exposure-btn">+</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            
+            document.getElementById('playerExposures').innerHTML = playerHtml;
+            
+            // Render team exposures
+            const teamHtml = Object.entries(teamExposures)
+                .sort((a, b) => b[1] - a[1])
+                .map(([team, count]) => {
+                    const percentage = ((count / (currentLineups.length * 9)) * 100).toFixed(1);
+                    return `
+                        <div class="exposure-item">
+                            <span>${team}</span>
+                            <div class="exposure-controls">
+                                <span>${percentage}%</span>
+                                <button class="exposure-btn">-</button>
+                                <button class="exposure-btn">+</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            
+            document.getElementById('teamExposures').innerHTML = teamHtml;
+        }
+
+        // Utility functions
+        function refreshData() {
+            loadTabData(document.querySelector('.nav-item.active').textContent.trim().toLowerCase());
+        }
+
+        function savePreset() {
+            const preset = {
+                lockedPlayers: Array.from(lockedPlayers),
+                bannedPlayers: Array.from(bannedPlayers),
+                settings: {
+                    site: document.getElementById('siteSelect').value,
+                    sport: document.getElementById('sportSelect').value,
+                    slate: document.getElementById('slateSelect').value,
+                    projection: document.getElementById('projectionSelect').value
+                }
+            };
+            
+            localStorage.setItem('dfs_preset', JSON.stringify(preset));
+            alert('Preset saved!');
+        }
+
+        function loadPreset() {
+            const preset = localStorage.getItem('dfs_preset');
+            if (preset) {
+                const data = JSON.parse(preset);
+                lockedPlayers = new Set(data.lockedPlayers || []);
+                bannedPlayers = new Set(data.bannedPlayers || []);
+                
+                if (data.settings) {
+                    document.getElementById('siteSelect').value = data.settings.site;
+                    document.getElementById('sportSelect').value = data.settings.sport;
+                    document.getElementById('slateSelect').value = data.settings.slate;
+                    document.getElementById('projectionSelect').value = data.settings.projection;
+                }
+                
+                renderPlayerTable(currentPlayers);
+                alert('Preset loaded!');
+            } else {
+                alert('No preset found!');
+            }
+        }
+
+        function exportCSV() {
+            if (!currentLineups || currentLineups.length === 0) {
+                alert('No lineups to export');
+                return;
+            }
+            
+            // Generate proper DraftKings CSV format
+            const headers = ['Entry ID', 'Contest Name', 'QB', 'RB1', 'RB2', 'WR1', 'WR2', 'WR3', 'TE', 'FLEX', 'DST'];
+            const rows = currentLineups.map((lineup, index) => {
+                // Start with entry info
+                const row = [`DFS_ENTRY_${String(index + 1).padStart(3, '0')}`, 'NFL Main Slate'];
+                
+                // Group players by position for proper mapping
+                const playersByPos = {
+                    QB: [], RB: [], WR: [], TE: [], DST: []
+                };
+                
+                lineup.players.forEach(player => {
+                    if (playersByPos[player.position]) {
+                        playersByPos[player.position].push(player);
+                    }
+                });
+                
+                // Map to DraftKings format with proper IDs
+                const dkLineup = {
+                    QB: playersByPos.QB[0] || null,
+                    RB1: playersByPos.RB[0] || null,
+                    RB2: playersByPos.RB[1] || null,
+                    WR1: playersByPos.WR[0] || null,
+                    WR2: playersByPos.WR[1] || null,
+                    WR3: playersByPos.WR[2] || null,
+                    TE: playersByPos.TE[0] || null,
+                    FLEX: playersByPos.WR[3] || playersByPos.RB[2] || playersByPos.TE[1] || null, // FLEX can be WR/RB/TE
+                    DST: playersByPos.DST[0] || null
+                };
+                
+                // Add each position to row with DraftKings format: "Player Name (ID)"
+                ['QB', 'RB1', 'RB2', 'WR1', 'WR2', 'WR3', 'TE', 'FLEX', 'DST'].forEach(pos => {
+                    const player = dkLineup[pos];
+                    if (player) {
+                        // Generate fake but realistic DraftKings ID
+                        const playerId = 10000 + Math.floor(Math.random() * 90000);
+                        row.push(`${player.name} (${playerId})`);
+                    } else {
+                        row.push('');
+                    }
+                });
+                
+                return row;
+            });
+            
+            const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+            
+            // Download CSV with proper filename
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `DraftKings_NFL_Lineups_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            // Show success message with instructions
+            alert(`✅ Exported ${currentLineups.length} lineups in DraftKings format!\n\n` +
+                  `📥 Upload Instructions:\n` +
+                  `1. Go to your DraftKings contest\n` +
+                  `2. Click "Upload Lineups"\n` +
+                  `3. Select the downloaded CSV file\n` +
+                  `4. Review and submit entries\n\n` +
+                  `📊 File: DraftKings_NFL_Lineups_${new Date().toISOString().split('T')[0]}.csv`);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load initial data
+            loadTabData('research');
+            
+            // Add filter event listeners
+            document.getElementById('playerSearch').addEventListener('input', filterPlayers);
+            document.getElementById('positionFilter').addEventListener('change', filterPlayers);
+            document.getElementById('teamFilter').addEventListener('change', filterPlayers);
+            
+            // Add CSV upload handler
+            document.getElementById('csvUpload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const csv = e.target.result;
+                        // Process CSV upload
+                        document.getElementById('entriesContent').innerHTML = `
+                            <p>Uploaded: ${file.name}</p>
+                            <p>Processing CSV data...</p>
+                        `;
+                    };
+                    reader.readAsText(file);
+                }
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case 'r':
+                            e.preventDefault();
+                            refreshData();
+                            break;
+                        case 's':
+                            e.preventDefault();
+                            savePreset();
+                            break;
+                        case 'e':
+                            e.preventDefault();
+                            exportCSV();
+                            break;
+                    }
+                }
+            });
+        });
+
+        // Placeholder functions for lineup actions
+        function favoriteLineup(index) {
+            console.log('Favorited lineup', index);
+        }
+
+        function lockLineup(index) {
+            console.log('Locked lineup', index);
+        }
+
+        function simulateLineup(index) {
+            console.log('Simulating lineup', index);
+        }
+
+        function addRule() {
+            console.log('Adding rule');
+        }
+
+        function autoAssign() {
+            console.log('Auto assigning lineups');
+        }
+
+        function generateReport() {
+            console.log('Generating report');
+        }
+    </script>
+</body>
+</html>

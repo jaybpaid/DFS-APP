@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Optimizer Pro - Ultimate Complete Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        /* Obsidian Theme Variables */
+        :root {
+            --obsidian-bg: #0d1117;
+            --obsidian-surface: #161b22; 
+            --obsidian-surface-hover: #21262d;
+            --obsidian-surface-light: #30363d;
+            --obsidian-border: #21262d;
+            --obsidian-border-light: #30363d;
+            --obsidian-accent: #8b5cf6;
+            --obsidian-accent-bright: #a78bfa;
+            --obsidian-blue: #58a6ff;
+            --obsidian-green: #3fb950;
+            --obsidian-orange: #ff9500;
+            --obsidian-red: #f85149;
+            --obsidian-yellow: #e3b341;
+            --obsidian-text: #e6edf3;
+            --obsidian-text-muted: #8b949e;
+            --obsidian-text-bright: #ffffff;
+            --obsidian-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            --obsidian-glow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--obsidian-accent) var(--obsidian-surface);
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--obsidian-surface); }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--obsidian-accent); 
+            border-radius: 4px; 
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--obsidian-accent-bright); }
+
+        body {
+            background: var(--obsidian-bg);
+            color: var(--obsidian-text);
+            font-family: 'JetBrains Mono', 'Inter', monospace;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* Navigation */
+        .main-nav {
+            background: var(--obsidian-surface);
+            border-bottom: 2px solid var(--obsidian-border);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--obsidian-shadow);
+        }
+
+        .nav-tabs {
+            border: none;
+            margin: 0;
+            padding: 0 1rem;
+        }
+
+        .nav-tabs .nav-link {
+            background: transparent;
+            color: var(--obsidian-text-muted);
+            border: none;
+            border-bottom: 3px solid transparent;
+            border-radius: 0;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: var(--obsidian-surface-hover);
+            color: var(--obsidian-text-bright);
+            border-bottom-color: var(--obsidian-accent);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: var(--obsidian-surface-hover);
+            color: var(--obsidian-accent-bright);
+            border-bottom-color: var(--obsidian-accent);
+            box-shadow: inset 0 0 0 1px var(--obsidian-border);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            background: var(--obsidian-bg);
+            min-height: calc(100vh - 65px);
+        }
+
+        .tab-pane {
+            padding: 1.5rem;
+        }
+
+        /* Cards */
+        .obsidian-card {
+            background: var(--obsidian-surface);
+            border: 1px solid var(--obsidian-border);
+            border-radius: 12px;
+            box-shadow: var(--obsidian-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .obsidian-card:hover {
+            border-color: var(--obsidian-accent);
+            box-shadow: var(--obsidian-glow);
+            transform: translateY(-2px);
+        }
+
+        .obsidian-header {
+            background: linear-gradient(135deg, var(--obsidian-accent) 0%, var(--obsidian-blue) 100%);
+            color: var(--obsidian-text-bright);
+            padding: 1rem;
+            border-radius: 12px 12px 0 0;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Forms */
+        .form-control, .form-select {
+            background: var(--obsidian-surface-hover);
+            border: 1px solid var(--obsidian-border-light);
+            color: var(--obsidian-text);
+            border-radius: 6px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: var(--obsidian-surface-hover);
+            border-color: var(--obsidian-accent);
+            box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.25);
+            color: var(--obsidian-text);
+        }
+
+        .form-control::placeholder {
+            color: var(--obsidian-text-muted);
+        }
+
+        /* Buttons */
+        .btn-obsidian-primary {
+            background: linear-gradient(135deg, var(--obsidian-accent), var(--obsidian-blue));
+            border: none;
+            color: var(--obsidian-text-bright);
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-obsidian-primary:hover {
+            background: linear-gradient(135deg, var(--obsidian-blue), var(--obsidian-accent-bright));
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-obsidian-success {
+            background: linear-gradient(135deg, var(--obsidian-green), #22c55e);
+            border: none;
+            color: var(--obsidian-text-bright);
+            font-weight: 600;
+        }
+
+        .btn-obsidian-danger {
+            background: linear-gradient(135deg, var(--obsidian-red), #f87171);
+            border: none;
+            color: var(--obsidian-text-bright);
+            font-weight: 600;
+        }
+
+        /* Advanced Player Cards */
+        .player-card-ultimate {
+            background: var(--obsidian-surface);
+            border: 1px solid var(--obsidian-border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .player-card-ultimate:hover {
+            border-color: var(--obsidian-accent);
+            background: var(--obsidian-surface-hover);
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.2);
+        }
+
+        .player-card-ultimate.locked {
+            border-color: var(--obsidian-green);
+            background: rgba(63, 185, 80, 0.1);
+            box-shadow: 0 0 12px rgba(63, 185, 80, 0.2);
+        }
+
+        .player-card-ultimate.banned {
+            border-color: var(--obsidian-red);
+            background: rgba(248, 81, 73, 0.1);
+            box-shadow: 0 0 12px rgba(248, 81, 73, 0.2);
+        }
+
+        .player-tier-indicator {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .tier-stud { background: var(--obsidian-accent); }
+        .tier-value { background: var(--obsidian-green); }
+        .tier-punt { background: var(--obsidian-orange); }
+
+        /* News Items */
+        .news-ultimate {
+            background: var(--obsidian-surface);
+            border-left: 4px solid var(--obsidian-accent);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        .news-ultimate:hover {
+            background: var(--obsidian-surface-hover);
+            border-left-color: var(--obsidian-accent-bright);
+        }
+
+        .news-ultimate.breaking {
+            border-left-color: var(--obsidian-red);
+            animation: newsFlash 2s infinite;
+        }
+
+        .news-ultimate.positive { border-left-color: var(--obsidian-green); }
+        .news-ultimate.negative { border-left-color: var(--obsidian-orange); }
+
+        @keyframes newsFlash {
+            0%, 100% { border-left-color: var(--obsidian-red); }
+            50% { border-left-color: #ff6b6b; }
+        }
+
+        /* Metrics Grid */
+        .metrics-ultimate {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-ultimate {
+            background: var(--obsidian-surface);
+            border: 1px solid var(--obsidian-border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .metric-ultimate:hover {
+            border-color: var(--obsidian-accent);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+
+        .metric-ultimate .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--obsidian-accent);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .metric-ultimate .label {
+            font-size: 0.75rem;
+            color: var(--obsidian-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.25rem;
+        }
+
+        /* Advanced Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* AI Response Area */
+        .ai-response-ultimate {
+            background: linear-gradient(135deg, var(--obsidian-surface), var(--obsidian-surface-hover));
+            border: 1px solid var(--obsidian-border);
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 150px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Range Sliders */
+        .form-range::-webkit-slider-track {
+            background: var(--obsidian-border-light);
+            border-radius: 3px;
+            height: 6px;
+        }
+
+        .form-range::-webkit-slider-thumb {
+            background: var(--obsidian-accent);
+            border: 2px solid var(--obsidian-surface);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(139, 92, 246, 0.4);
+        }
+
+        .form-range::-webkit-slider-thumb:hover {
+            background: var(--obsidian-accent-bright);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs .nav-link {
+                font-size: 0.8rem;
+                padding: 0.75rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Navigation -->
+    <nav class="main-nav">
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#optimizer-pane">
+                    <i class="fas fa-cogs me-2"></i>Optimizer
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#news-pane">
+                    <i class="fas fa-newspaper me-2"></i>Breaking News
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#analysis-pane">
+                    <i class="fas fa-chart-line me-2"></i>Analysis
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#weather-pane">
+                    <i class="fas fa-cloud-sun me-2"></i>Weather
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#simulation-pane">
+                    <i class="fas fa-dice me-2"></i>Simulation
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#portfolio-pane">
+                    <i class="fas fa-briefcase me-2"></i>Portfolio
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#ai-lab-pane">
+                    <i class="fas fa-robot me-2"></i>AI Lab
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#research-pane">
+                    <i class="fas fa-microscope me-2"></i>Research
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- OPTIMIZER TAB - Clean Main Interface -->
+        <div class="tab-pane fade show active" id="optimizer-pane">
+            <div class="container-fluid">
+                <!-- Alert Area -->
+                <div id="alertArea"></div>
+
+                <!-- Sport Selection & Quick Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="obsidian-card">
+                            <div class="obsidian-header">
+                                <div>
+                                    <h3 class="mb-0">
+                                        <i class="fas fa-brain me-2"></i>DFS Optimizer Pro
+                                        <span class="badge bg-light text-dark ms-2">ULTIMATE</span>
+                                    </h3>
+                                </div>
+                                <div class="btn-group">
+                                    <button class="btn btn-light active" data-sport="NFL">🏈 NFL</button>
+                                    <button class="btn btn-outline-light" data-sport="NBA">🏀 NBA</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="metrics-ultimate">
+                                    <div class="metric-ultimate">
+                                        <div class="value" id="playerCount">0</div>
+                                        <div class="label">Players</div>
+                                    </div>
+                                    <div class="metric-ultimate">
+                                        <div class="value" id="lockedCount">0</div>
+                                        <div class="label">Locked</div>
+                                    </div>
+                                    <div class="metric-ultimate">
+                                        <div class="value" id="bannedCount">0</div>
+                                        <div class="label">Banned</div>
+                                    </div>
+                                    <div class="metric-ultimate">
+                                        <div class="value" id="lineupCount">0</div>
+                                        <div class="label">Lineups</div>
+                                    </div>
+                                    <div class="metric-ultimate">
+                                        <div class="value" id="avgROI">0%</div>
+                                        <div class="label">Avg ROI</div>
+                                    </div>
+                                    <div class="metric-ultimate">
+                                        <div class="value" id="sharpeRatio">0.0</div>
+                                        <div class="label">Sharpe</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="obsidian-card">
+                            <div class="obsidian-header">
+                                <span><i class="fas fa-rocket me-2"></i>Quick Generate</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Lineups</label>
+                                    <input type="number" class="form-control" id="quickLineups" value="10" min="1" max="150">
+                                </div>
+                                <button class="btn btn-obsidian-success w-100 btn-lg" id="quickOptimizeBtn">
+                                    <i class="fas fa-magic me-2"></i>Quick Optimize
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Content Grid -->
+                <div class="row">
+                    <!-- Player Pool -->
+                    <div class="col-lg-8">
+                        <div class="obsidian-card">
+                            <div class="obsidian-header">
+                                <span><i class="fas fa-users me-2"></i>Player Pool</span>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-light" id="loadDataBtn">
+                                        <i class="fas fa-download"></i> Load Data
+                                    </button>
+                                    <button class="btn btn-light" id="refreshProjectionsBtn">
+                                        <i class="fas fa-sync-alt"></i> Refresh
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                                <div id="playerPoolContainer">
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-satellite-dish fa-4x mb-3" style="color: var(--obsidian-accent);"></i>
+                                        <h4>Select Sport to Load Ultimate Player Pool</h4>
+                                        <p class="text-muted">Advanced metrics: projection, ownership, leverage, ceiling, floor</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Controls -->
+                    <div class="col-lg-4">
+                        <!-- Advanced Settings -->
+                        <div class="obsidian-card mb-3">
+                            <div class="obsidian-header">
+                                <span><i class="fas fa-sliders-h me-2"></i>Advanced Controls</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Optimization Strategy</label>
+                                    <select class="form-select" id="strategy">
+                                        <option value="tournament">Tournament (GPP)</option>
+                                        <option value="cash">Cash Game</option>
+                                        <option value="hybrid">Hybrid</option>
+                                        <option value="contrarian">Contrarian</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Lineup Diversity <span class="badge bg-info" id="diversityValue">70%</span></label>
+                                    <input type="range" class="form-range" id="diversity" min="0" max="100" value="70">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Ownership Leverage <span class="badge bg-warning" id="leverageValue">Medium</span></label>
+                                    <input type="range" class="form-range" id="ownershipLeverage" min="0" max="100" value="50">
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="aiAssisted" checked>
+                                    <label class="form-check-label">AI-Assisted Optimization</label>
+                                </div>
+                                
+                                <button class="btn btn-obsidian-primary w-100" id="advancedOptimizeBtn">
+                                    <i class="fas fa-brain me-2"></i>Advanced Optimize
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Generated Lineups -->
+                        <div class="obsidian-card">
+                            <div class="obsidian-header">
+                                <span><i class="fas fa-trophy me-2"></i>Generated Lineups</span>
+                                <button class="btn btn-light btn-sm" id="exportBtn">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                            </div>
+                            <div class="card-body" style="max-height: 500px; overflow-y: auto;">
+                                <div id="lineupsContainer">
+                                    <div class="text-center py-5">
+                                        <i class="fas fa-trophy fa-3x mb-3" style="color: var(--obsidian-accent);"></i>
+                                        <h5>Advanced Lineups</h5>
+                                        <p class="text-muted">With ROI, Sharpe, correlations</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BREAKING NEWS TAB -->
+        <div class="tab-pane fade" id="news-pane">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="obsidian-card">
+                            <div class="obsidian-header">
+                                <span><i class="fas fa-newspaper me-2"></i>Real-Time Player News</span>
+                                <button class="btn btn-light btn-sm" id="refreshNewsBtn">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                            </div>
+                            <div class="card-body" style="max-height: 700px; overflow-y: auto;">
+                                <div id="newsContainer">
+                                    <!-- News items will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <!-- News Filters -->
+                        <div class="obsidian-card mb-3">
+                            <div class="obsidian-header">
+                                <span><i class="fas fa-filter me-2"></i>News Filters</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">News Type</label>
+                                    <select class="form-select" id="newsTypeFilter">
+                                        <option value="all">All News</option>
+                                        <option value="breaking">Breaking News</option>
+                                        <option value="injuries">Injuries</option>
+                                        <option value="lineups">Starting Lineups</option>
+                                        <option value="weather">Weather Updates</option>
+                                        <option value="inactives">Inactives</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Impact Level</label>
+                                    <select class="form-select" id="impactFilter">
+                                        <option value="all">All Impact Levels</option>
+                                        <option value="high">High Impact</option>
+                                        <option value="medium">Medium Impact</option>
+                                        <option value="low">Low Impact</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="autoRefreshNews" checked>
+                                    <label class="form-check-label">Auto-refresh (30 seconds)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AI News Analysis -->
+                        <div class="obsidian-card">
+                            <div class="obsidian-header">
+                                <span><i class="fas fa-brain me-2"></i>AI News Analysis</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="ai-response-ultimate" id="newsAIAnalysis">
+                                    <div class="text-muted">
+                                        <i class="fas fa-robot fa-2x mb-2"></i><br>
+                                        AI news analysis will appear here
+                                    </div>
+                                </div>
+                                <button class="btn btn-obsidian-primary w-100 mt-2" id="analyzeNewsBtn">
+                                    <i class="fas fa-brain"></i> Analyze News Impact
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANALYSIS TAB -->
+        <div class="tab-pane fade" id="analysis-pane">
+            <div class="container-fluid">
+                <div class="features-grid">
+                    <!-- Ownership Analysis -->
+                    <div class="obsidian-card">
+                        <div class="obsidian-header">
+                            <span><i class="fas fa-chart-pie me-2"></i>Ownership Analysis</span>
+                        </div>
+                        <div class="card-body">
+                            <div id="ownershipAnalysis">
+                                <div class="mb-3">
+                                    <h6 class="text-warning">🔥 High Owned (Fade Candidates)</h6>
+                                    <div class="ownership-list" id="highOwnedList">
+                                        <div class="d-flex justify-content-between py-1">
+                                            <span>Christian McCaffrey</span>
+                                            <span class="text-danger">35.2%</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between py-1">
+                                            <span>Josh Allen</span>
+                                            <span class="text-danger">28.7%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <h6 class="text-success">💎 Low Owned (Leverage Plays)</h6>
+                                    <div class="ownership-list" id="lowOwnedList">
+                                        <div class="d-flex justify-content-between py-1">
+                                            <span>Kyren Williams</span>
+                                            <span class="text-success">8.1%</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between py-1">
+                                            <span>Tank Dell</span>
+                                            <span class="text-success">6.4%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Value Analysis -->
+                    <div class="obsidian-card">
+                        <div class="obsidian-header">
+                            <span><i class="fas fa-gem me-2"></i>Value Analysis</span>
+                        </div>
+                        <div class="card-body">
+                            <div id="valueAnalysis">
+                                <div class="mb-3">
+                                    <h6 class="text-success">🎯 Top Value Plays</h6>
+                                    <div id="topValueList">
+                                        <div class="d-flex justify-content-between py-1">
+                                            <span>Saquon Barkley</span>
+                                            <span class="text-success">5.2x</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between py-1">
+                                            <span>A.J. Brown</span>
+                                            <span class="text-success">4.8x</span>
+                                        </div

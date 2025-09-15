@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Professional Optimizer - All Features Visible</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --pro-blue: #1e40af;
+            --pro-green: #059669;
+            --pro-purple: #7c3aed;
+            --pro-orange: #ea580c;
+            --pro-red: #dc2626;
+            --dark-bg: #0f172a;
+            --card-bg: #ffffff;
+            --subtle-bg: #f8fafc;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 14px;
+        }
+
+        /* Professional Header */
+        .pro-header {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1e293b 100%);
+            color: white;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .pro-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pro-logo h2 {
+            margin: 0;
+            background: linear-gradient(135deg, var(--pro-purple), var(--pro-blue));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* Advanced Control Grid */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-panel {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, var(--pro-blue), var(--pro-purple));
+            color: white;
+            padding: 0.8rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .panel-content {
+            padding: 1rem;
+        }
+
+        /* Professional Player Cards */
+        .player-pro-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .player-pro-card:hover {
+            border-color: var(--pro-blue);
+            box-shadow: 0 2px 12px rgba(30, 64, 175, 0.15);
+        }
+
+        .player-pro-card.locked {
+            border-color: var(--pro-green);
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        }
+
+        .player-pro-card.banned {
+            border-color: var(--pro-red);
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        }
+
+        /* Advanced Metrics Display */
+        .advanced-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 0.3rem;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+
+        .metric-value {
+            font-weight: 700;
+            color: var(--pro-blue);
+            font-size: 0.8rem;
+        }
+
+        .metric-label {
+            font-size: 0.6rem;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+
+        /* Lineup Cards */
+        .lineup-pro-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .lineup-pro-card:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .lineup-header {
+            background: linear-gradient(135deg, var(--pro-green), var(--pro-blue));
+            color: white;
+            padding: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lineup-metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            padding: 0.5rem 0.8rem;
+            background: #f8fafc;
+        }
+
+        /* Advanced Lineup Analysis */
+        .analysis-badges {
+            display: flex;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Form Enhancements */
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1.5px solid #d1d5db;
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--pro-blue);
+            box-shadow: 0 0 0 0.2rem rgba(30, 64, 175, 0.1);
+        }
+
+        .btn-pro-primary {
+            background: linear-gradient(135deg, var(--pro-blue), var(--pro-purple));
+            border: none;
+            color: white;
+        }
+
+        .btn-pro-success {
+            background: linear-gradient(135deg, var(--pro-green), #10b981);
+            border: none;
+            color: white;
+        }
+
+        /* Simulation Dashboard */
+        .sim-dashboard {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .sim-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--pro-orange);
+        }
+
+        /* Layout */
+        .split-screen {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            min-height: 80vh;
+        }
+
+        .player-pool-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .lineup-analysis-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Loading States */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .split-screen {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Professional Header -->
+    <div class="pro-header">
+        <div class="pro-nav">
+            <div class="pro-logo">
+                <h2><i class="fas fa-brain me-2"></i>DFS Professional Optimizer</h2>
+                <small class="opacity-75">All Features Visible • Real-Time Analysis</small>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="sport-selector">
+                    <button class="btn btn-outline-light btn-sm active" id="sportNFL">🏈 NFL</button>
+                    <button class="btn btn-outline-light btn-sm" id="sportNBA">🏀 NBA</button>
+                </div>
+                <select class="form-select form-select-sm" id="contestSelect" style="width: 200px;">
+                    <option value="millionaire_maker">Millionaire Maker ($20)</option>
+                    <option value="main_slate">Main Slate ($1)</option>
+                    <option value="sunday_million">Sunday Million ($9)</option>
+                </select>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-success btn-sm" id="getAIStrategy">🤖 AI Strategy</button>
+                    <button class="btn btn-outline-primary btn-sm" id="runSimulationBtn">🎲 Run Simulation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid px-3 py-3">
+        <!-- Upload Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-upload me-2"></i>Upload Salary File
+            </div>
+            <div class="card-body">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                    <h5>Drag & Drop or Click to Upload</h5>
+                    <p class="text-muted">Upload DraftKings or FanDuel salary CSV files</p>
+                    <input type="file" id="salaryFile" accept=".csv" style="display: none;">
+                    <button class="btn btn-primary" onclick="document.getElementById('salaryFile').click()">
+                        Choose File
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Controls -->
+        <div class="controls-grid">
+            <!-- Advanced Settings -->
+            <div class="control-panel">
+                <div class="panel-header">
+                    <i class="fas fa-cogs me-2"></i>Advanced Settings
+                </div>
+                <div class="panel-content">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Lineups to Generate</label>
+                            <input type="number" class="form-control" id="numLineups" value="20" min="1" max="500">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Contest Type</label>
+                            <select class="form-select" id="contestType">
+                                <option value="gpp">Tournament (GPP)</option>
+                                <option value="cash">Cash Game</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Randomness Level</label>
+                            <input type="range" class="form-range" id="randomness" min="0" max="50" value="15">
+                            <span class="range-value" id="randomnessValue">15%</span>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Contrarian Level</label>
+                            <input type="range" class="form-range" id="contrarian" min="0" max="80" value="25">
+                            <span class="range-value" id="contrarianValue">25%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="aiOptimization" checked>
+                        <label class="form-check-label">AI-Driven Player Selection</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="exposureControls" checked>
+                        <label class="form-check-label">Smart Exposure Controls</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulation Results -->
+            <div class="control-panel">
+                <div class="panel-header">
+                    <i class="fas fa-chart-line me-2"></i>Contest Simulation
+                </div>
+                <div class="panel-content">
+                    <div class="sim-dashboard" id="simulationResults" style="display: none;">
+                        <div class="row mb-2">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="sim-value" id="simRuns">50K</div>
+                                    <div class="sim-label">Simulations</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="sim-value" id="avgROI">0%</div>
+                                    <div class="sim-label">Avg ROI</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="sim-value" id="winRate">0%</div>
+                                    <div class="sim-label">Win Rate</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="sim-value" id="sharpeRatio">0.0</div>
+                                    <div class="sim-label">Sharpe</div>
+                                </div>
+                            </div>
+                        </div>
+                        <small class="text-center d-block text-muted">Monte Carlo analysis of expected performance</small>
+                    </div>
+
+                    <div id="simulationMessage" class="text-center">
+                        <button class="btn btn-pro-primary w-100" id="runSimBtn">
+                            <i class="fas fa-play me-2"></i>Run Advanced Simulation
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Strategy Results -->
+            <div class="control-panel">
+                <div class="panel-header">
+                    <i class="fas fa-robot me-2"></i>AI Strategy Analysis
+                </div>
+                <div class="panel-content">
+                    <select class="form-select mb-3" id="aiModelSelect">
+                        <option value="gpt4">GPT-4 (Strategic Narrative)</option>
+                        <option value="claude">Claude (Statistical Analysis)</option>
+                        <option value="deepseek">DeepSeek (Hybrid Approach)</option>
+                    </select>
+                    <div id="aiStrategyResults" class="mb-3">
+                        <div class="text-center text-muted">
+                            <i class="fas fa-brain fa-2x mb-2"></i>
+                            <p>Click Get AI Strategy for professional analysis</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-pro-success w-100" id="getAIStrategyBtn">
+                        Get AI Strategy
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Split-Screen Layout -->
+        <div class="split-screen">
+            <!-- Left: Professional Player Pool -->
+            <div class="player-pool-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4><i class="fas fa-users me-2"></i>Professional Player Pool</h4>
+                    <button class="btn btn-outline-primary btn-sm" id="autoSetExposuresBtn">
+                        <i class="fas fa-magic me-1"></i>Auto-Set Exposures
+                    </button>
+                </div>
+
+                <!-- Player Pool Filters -->
+                <div class="row mb-3">
+                    <div class="col-3">
+                        <select id="positionFilter" class="form-select">
+                            <option value="ALL">All Positions</option>
+                            <option value="QB">QB</option>
+                            <option value="RB">RB</option>
+                            <option value="WR">WR</option>
+                            <option value="TE">TE</option>
+                            <option value="DST">DST</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <input type="text" id="nameFilter" class="form-control" placeholder="Search players...">
+                    </div>
+                    <div class="col-3">
+                        <input type="number" id="minSalaryFilter" class="form-control" placeholder="Min Salary">
+                    </div>
+                    <div class="col-3">
+                        <input type="number" id="maxSalaryFilter" class="form-control" placeholder="Max Salary">
+                    </div>
+                </div>
+
+                <!-- Player Pool Container -->
+                <div id="professionalPlayerContainer">
+                    <div class="loading-spinner">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading players...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Upload salary file to get started</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Lineup Analysis -->
+            <div class="lineup-analysis-section">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4><i class="fas fa-th-list me-2"></i>Advanced Lineup Analysis</h4>
+                    <div>
+                        <button class="btn btn-success btn-sm" id="generateLineupsBtn">
+                            <i class="fas fa-magic me-1"></i>Generate Advanced Lineups
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Generate Lineups Controls -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <label class="form-label">Objective</label>
+                                <select class="form-select" id="objectiveSelect">
+                                    <option value="ev">Expected Value (EV)</option>
+                                    <option value="leverage">Ownership Leverage</option>
+                                    <option value="ceiling">Ceiling Upside</option>
+                                    <option value="sharpe">Sharpe Ratio</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Field Size</label>
+                                <select class="form-select" id="fieldSizeSelect">
+                                    <option value="100000">Large (100K+)</option>
+                                    <option value="50000">Medium (50K)</option>
+                                    <option value="10000">Small (10K)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-pro-primary w-100" id="advancedGenerateBtn" disabled>
+                            <i class="fas fa-brain me-2"></i>Generate Advanced Lineups
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lineup Analysis Container -->
+                <div id="advancedLineupContainer">
+                    <div class="loading-spinner">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Generating lineups...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Generate lineups to see analysis</p>
+                    </div>
+                </div>
+
+                <!-- Portfolio Analysis -->
+                <div class="card mt-3" id="portfolioAnalysis" style="display: none;">
+                    <div class="card-header">
+                        <i class="fas fa-chart-pie me-2"></i>Portfolio Analysis
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="h5 text-success" id="avgROI">0.0%</div>
+                                <small class="text-muted">Avg ROI</small>
+                            </div>
+                            <div class="col-6">
+                                <div class="h5 text-info" id="diversityScore">0.0</div>
+                                <small class="text-muted">Diversity</small>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <button class="btn btn-outline-success btn-sm w-100" id="exportLineupsBtn">
+                                <i class="fas fa-download me-2"></i>Export Lineups to CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <script>
+        let professionalState = {
+            players: [],
+            lineups: [],
+            sport: 'NFL',
+            site: 'DraftKings',
+            filters: { position: 'ALL', name: '', minSalary: '', maxSalary: '' },
+            currentView: 'both' // players + analysis
+        };
+
+        $(document).ready(function() {
+            initializeProfessionalDashboard();
+            setupProfessionalEventListeners();
+        });
+
+        function initializeProfessionalDashboard() {
+            showAlert('success', '🚀 Professional DFS Optimizer - All Advanced Features Active!');
+        }
+
+        function setupProfessionalEventListeners() {
+            // Upload
+            setupFileUpload();
+
+            // Sport selection
+            $('#sportNFL').click(() => switchSport('NFL'));
+            $('#sportNBA').click(() => switchSport('NBA'));
+
+            // Simulation
+            $('#runSimBtn, #runSimulationBtn').click(runContestSimulation);
+            $('#getAIStrategyBtn').click(getAIProfessionalStrategy);
+
+            // Lineup generation
+            $('#generateLineupsBtn, #advancedGenerateBtn').click(generateAdvancedLineups);
+
+            // Filters
+            $('#positionFilter').change(() => updateFilters());
+            $('#nameFilter').on('input', () => updateFilters());
+            $('#minSalaryFilter, #maxSalaryFilter').change(() => updateFilters());
+
+            // Auto-set exposures
+            $('#autoSetExposuresBtn').click(autoSetExposures);
+
+            // Range sliders
+            $('#randomness').on('input', function() {
+                $('#randomnessValue').text($(this).val() + '%');
+            });
+            $('#contrarian').on('input', function() {
+                $('#contrarianValue').text($(this).val() + '%');
+            });
+        }
+
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('salaryFile');
+
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--pro-blue)';
+                uploadArea.style.backgroundColor = '#f0f9ff';
+            });
+
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#d1d5db';
+                uploadArea.style.backgroundColor = '#fafafa';
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#d1d5db';
+                uploadArea.style.backgroundColor = '#fafafa';
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    uploadSalaryFile(files[0]);
+                }
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    uploadSalaryFile(e.target.files[0]);
+                }
+            });
+        }
+
+        async function uploadSalaryFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                showAlert('info', 'Uploading and processing salary file with advanced metrics...');
+
+                const response = await fetch('/api/upload/salary', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('success', result.message + ' - Professional metrics activated!');
+                    professionalState.sport = result.sport;
+                    professionalState.site = result.site;
+                    await loadProfessionalPlayers();
+                    $('#advancedGenerateBtn').prop('disabled', false);
+                } else {
+                    showAlert('danger', 'Upload failed: ' + result.error);
+                }
+            } catch (error) {
+                showAlert('danger', 'Upload error: ' + error.message);
+            }
+        }
+
+        async function loadProfessionalPlayers() {
+            try {
+                showAlert('info', 'Loading professional player pool with 10+ advanced metrics...');
+
+                const response = await fetch('/api/players/advanced-metrics');
+                const players = await response.json();
+
+                if (players.length === 0) {
+                    $('#professionalPlayerContainer').html(`
+                        <div class="text-center py-5">
+                            <i class="fas fa-users fa-4x mb-3 text-muted"></i>
+                            <h4>No Players Loaded</h4>
+                            <p class="text-muted">Upload a salary file to get started</p>
+                        </div>
+                    `);
+                    return;
+                }
+
+                professionalState.players = players;
+                displayProfessionalPlayerPool(players);
+                showAlert('success', `Professional player pool loaded with ${players.length} players and advanced metrics!`);
+
+            } catch (error) {
+                showAlert('danger', 'Error loading players: ' + error.message);
+            }
+        }
+
+        function displayProfessionalPlayerPool(players) {
+            const container = $('#professionalPlayerContainer');
+            const filteredPlayers = applyFilters(players);
+
+            if (filteredPlayers.length === 0) {
+                container.html('<p class="text-center text-muted">No players match current filters</p>');
+                return;
+            }
+
+            let html = '';
+
+            filteredPlayers.forEach(player => {
+                const lockedClass = player.locked === player.id ? 'locked' : (player.banned === player.id ? 'banned' : '');
+                const leverageColor = player.leverage_score > 3 ? 'text-success' : (player.leverage_score > 2 ? 'text-warning' : 'text-danger');
+                const boomPct = player.boom_pct || 0;
+                const leverageScore = player.leverage_score || 0;
+                const aceScore = player.ace_score || 0;
+                const ownership_leverage = player.ownership_leverage || 0;
+
+                html += `
+                    <div class="player-pro-card ${lockedClass}" data-player-id="${player.id}">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1 fw-bold">${player.name}</h6>
+                                <span class="badge me-1" style="background: var(--pro-blue);">${player.position}</span>
+                                <span class="badge" style="background: var(--pro-purple);">${player.team}</span>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">$${player.salary.toLocaleString()}</div>
+                                <small class="badge bg-success">${boomPct}%</small>
+                            </div>
+                        </div>
+
+                        <div class="advanced-metrics">
+                            <div class="metric-item">
+                                <div class="metric-value ${leverageColor}">${leverageScore}</div>
+                                <div class="metric-label">Leverage</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">${ownership_leverage}%</div>
+                                <div class="metric-label">Own%</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value text-primary">${aceScore}</div>
+                                <div class="metric-label">ACE</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value text-info">${player.correlation_score.toFixed(2)}</div>
+                                <div class="metric-label">Corr</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value text-warning">${player.projection.toFixed(1)}</div>
+                                <div class="metric-label">Proj</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">${player.floor.toFixed(1)}</div>
+                                <div class="metric-label">Floor</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value text-danger">${player.ceiling.toFixed(1)}</div>
+                                <div class="metric-label">Ceil</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-value">${player.volatility.toFixed(2)}</div>
+                                <div class="metric-label">Vol</div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-success btn-sm lock-btn" data-player-id="${player.id}"
+                                        title="${player.locked === player.id ? 'Player is locked in' : 'Lock this player'}">
+                                    <i class="fas ${player.locked === player.id ? 'fa-lock' : 'fa-lock'}"></i>
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm ban-btn" data-player-id="${player.id}"
+                                        title="${player.banned === player.id ? 'Player is banned' : 'Ban this player'}">
+                                    <i class="fas ${player.banned === player.id ? 'fa-ban' : 'fa-ban'}"></i>
+                                </button>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-light text-dark">Exp: ${player.exposure}%</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.html(html);
+
+            // Add click handlers
+            $('.lock-btn').click(function() {
+                const playerId = $(this).data('player-id');
+                togglePlayerLock(playerId);
+            });
+
+            $('.ban-btn').click(function() {
+                const playerId = $(this).data('player-id');
+                togglePlayerBan(playerId);
+            });
+        }
+
+        async function runContestSimulation() {
+            if (professionalState.players.length === 0) {
+                showAlert('warning', 'Upload salary file first');
+                return;
+            }
+
+            showAlert('info', 'Running Monte Carlo contest simulation with 50K simulations...');
+
+            try {
+                const response = await fetch('/api/contest/simulation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        field_size: parseInt($('#fieldSizeSelect').val()),
+                        sim_depth: 50000,
+                        contest_entry_fee: 20.0
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success !== false) {
+                    $('#simulationResults').show();
+                    $('#simulationMessage').hide();
+
+                    $('#simRuns').text(result.simulation_runs.toLocaleString());
+                    $('#avgROI').text(result.avg_roi + '%');
+                    $('#winRate').text(result.win_rate + '%');
+                    $('#sharpeRatio').text(result.sharpe_ratio);
+
+                    showAlert('success', `Advanced simulation completed! Avg ROI: ${result.avg_roi}%`);
+                } else {
+                    showAlert('danger', 'Simulation failed: ' + result.error);
+                }
+            } catch (error) {
+                showAlert('danger', 'Simulation error: ' + error.message);
+            }
+        }
+
+        async function getAIProfessionalStrategy() {
+            const aiModel = $('#aiModelSelect').val();
+            showAlert('info', `Getting ${aiModel} AI strategy with advanced analysis...`);
+
+            try {
+                const response = await fetch('/api/ai/strategy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ai_model: aiModel })
+                });
+
+                const result = await response.json();
+
+                $('#aiStrategyResults').html(`
+                    <div class="alert alert-light">
+                        <small style="font-size: 0.85rem;">${result.strategy}</small>
+                    </div>
+                `);
+
+                showAlert('success', 'AI strategy analysis completed with professional insights!');
+
+            } catch (error) {
+                showAlert('danger', 'AI strategy error: ' + error.message);
+            }
+        }
+
+        async function generateAdvancedLineups() {
+            if (professionalState.players.length === 0) {
+                showAlert('warning', 'Upload salary file first');
+                return;
+            }
+
+            const numLineups = parseInt($('#numLineups').val());
+            const objective = $('#objectiveSelect').val();
+            const aiEnabled = $('#aiOptimization').is(':checked');
+
+            showAlert('info', `Generating ${numLineups} advanced lineups with ${aiEnabled ? 'AI optimization' : 'statistical optimization'}...`);
+
+            try {
+                const response = await fetch('/api/lineups/advanced-generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        num_lineups: numLineups,
+                        randomize_pct: parseInt($('#randomness').val()),
+                        max_overlap: 65,
+                        contrarian_pct: parseInt($('#contrarian').val()),
+                        objective: objective,
+                        ai_enabled: aiEnabled
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    professionalState.lineups = result.lineups;
+                    displayAdvancedLineupAnalysis(result.lineups);
+                    $('#portfolioAnalysis').show();
+                    showAlert('success', `Generated ${result.count} advanced lineups with ROI analysis!`);
+                } else {
+                    showAlert('danger', 'Lineup generation failed: ' + result.error);
+                }
+            } catch (error) {
+                showAlert('danger', 'Lineup generation error: ' + error.message);
+            }
+        }
+
+        function displayAdvancedLineupAnalysis(lineups) {
+            const container = $('#advancedLineupContainer');
+            let html = '';
+
+            if (lineups.length === 0) {
+                container.html('<div class="text-center text-muted"><i class="fas fa-th-list fa-2x mb-2"></i><br>Generate lineups to see analysis</div>');
+                return;
+            }
+
+            // Calculate portfolio stats
+            if (lineups[0] && lineups[0].expected_roi !== undefined) {
+                const totalROI = lineups.reduce((sum, l) => sum + (l.expected_roi || 0), 0);
+                const avgROI = totalROI / lineups.length;
+                $('#avgROI').text(avgROI.toFixed(1) + '%');
+            }
+
+            lineups.slice(0, 20).forEach((lineup, index) => {
+                const expectedROI = lineup.expected_roi ? (lineup.expected_roi * 100).toFixed(1) : 'N/A';
+                const roiColor = expectedROI !== 'N/A' && expectedROI >= 0 ? 'text-success' : 'text-danger';
+                const winRate = lineup.win_rates ? (lineup.win_rates.cash * 100).toFixed(1) + '%' : 'N/A';
+                const sharpe = lineup.sharpe_ratio ? lineup.sharpe_ratio.toFixed(2) : 'N/A';
+                const kelly = lineup.kelly_percent ? lineup.kelly_percent.toFixed(1) + '%' : 'N/A';
+
+                html += `
+                    <div class="lineup-pro-card mb-3">
+                        <div class="lineup-header">
+                            <div>
+                                <strong>Lineup ${index + 1}</strong>
+                                <span class="badge badge-sm bg-info ms-2">${lineup.stack_type || 'No Stack'}</span>
+                            </div>
+                            <div class="${roiColor} fw-bold">${expectedROI !== 'N/A' ? expectedROI + '%' : ''}</div>
+                        </div>
+
+                        <div class="lineup-metrics">
+                            <div class="text-center">
+                                <div class="fw-bold text-primary">${winRate}</div>
+                                <small class="text-muted">Win Rate</small>
+                            </div>
+                            <div class="text-center">
+                                <div class="fw-bold text-warning">${sharpe}</div>
+                                <small class="text-muted">Sharpe</small>
+                            </div>
+                            <div class="text-center">
+                                <div class="fw-bold text-info">${kelly}</div>
+                                <small class="text-muted">Kelly Bet</small>
+                            </div>
+                            <div class="text-center">
+                                <div class="fw-bold text-success">${lineup.total_projection.toFixed(1)}</div>
+                                <small class="text-muted">Projection</small>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-2">
+                            <div class="table-responsive">
+                                <table class="table table-sm mb-0">
+                                    <tbody>
+                `;
+
+                // Sort players properly for display
+                const sortedPlayers = lineup.players ? lineup.players.sort((a, b) => {
+                    const order = { 'QB': 1, 'RB': 2, 'WR': 3, 'TE': 4, 'FLEX': 5, 'DST': 6 };
+                    return (order[a.position] || 99) - (order[b.position] || 99);
+                }) : [];
+
+                sortedPlayers.forEach(player => {
+                    const posColor = player.position === 'QB' ? 'bg-danger' : 'bg-info';
+                    html += `
+                        <tr>
+                            <td class="py-1">
+                                <strong>${player.name}</strong><br>
+                                <small class="text-muted">(${player.team}) $${player.salary.toLocaleString()}</small>
+                            </td>
+                            <td class="py-1">
+                                <span class="badge ${posColor}">${player.position}</span>
+                            </td>
+                            <td class="py-1 text-center">${player.projection || 'N/A'}</td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="mt-2 text-end">
+                                <small class="text-muted me-2">$${lineup.total_salary.toLocaleString()}</small>
+                                <span class="badge bg-light text-dark">Uniqueness: ${lineup.uniqueness_score?.toFixed(1) || 'N/A'}%</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.html(html);
+        }
+
+        async function autoSetExposures() {
+            showAlert('info', 'Auto-setting smart player exposures based on value metrics...');
+
+            try {
+                const response = await fetch('/api/exposures/auto-set', {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Refresh player display
+                    await loadProfessionalPlayers();
+                    showAlert('success', 'Smart exposures auto-set! Lower ownership = higher exposure opportunity.');
+                } else {
+                    showAlert('danger', 'Auto-set failed: ' + result.error);
+                }
+            } catch (error) {
+                showAlert('danger', 'Auto-set error: ' + error.message);
+            }
+        }
+
+        function applyFilters(players = professionalState.players) {
+            let filtered = [...players];
+
+            if (professionalState.filters.position !== 'ALL') {
+                filtered = filtered.filter(p => p.position === professionalState.filters.position);
+            }
+
+            if (professionalState.filters.name) {
+                filtered = filtered.filter(p =>
+                    p.name.toLowerCase().includes(professionalState.filters.name.toLowerCase())
+                );
+            }
+
+            if (professionalState.filters.minSalary) {
+                filtered = filtered.filter(p => p.salary >= parseInt(professionalState.filters.minSalary));
+            }
+
+            if (professionalState.filters.maxSalary) {
+                filtered = filtered.filter(p => p.salary <= parseInt(professionalState.filters.maxSalary));
+            }
+
+            return filtered;
+        }
+
+        function updateFilters() {
+            professionalState.filters = {
+                position: $('#positionFilter').val(),
+                name: $('#nameFilter').val().trim(),
+                minSalary: $('#minSalaryFilter').val().trim(),
+                maxSalary: $('#maxSalaryFilter').val().trim()
+            };
+
+            if (professionalState.players.length > 0) {
+                displayProfessionalPlayerPool(professionalState.players);
+            }
+        }
+
+        function switchSport(sport) {
+            $('.sport-selector button').removeClass('active');
+            $(`#sport${sport}`).addClass('active');
+            professionalState.sport = sport;
+
+            showAlert('info', `Switched to ${sport} - Reload salary file for ${sport} analysis`);
+        }
+
+        async function togglePlayerLock(playerId) {
+            try {
+                await fetch('/api/players/lock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ player_ids: [playerId] })
+                });
+
+                // Refresh display
+                await loadProfessionalPlayers();
+                showAlert('info', 'Player lock status updated');
+            } catch (error) {
+                showAlert('danger', 'Lock error: ' + error.message);
+            }
+        }
+
+        async function togglePlayerBan(playerId) {
+            try {
+                await fetch('/api/players/ban', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ player_ids: [playerId] })
+                });
+
+                // Refresh display
+                await loadProfessionalPlayers();
+                showAlert('info', 'Player ban status updated');
+            } catch (error) {
+                showAlert('danger', 'Ban error: ' + error.message);
+            }
+        }
+
+        function showAlert(type, message) {
+            $('#alertArea').html(`
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `);
+
+            setTimeout(() => {
+                $('.alert').alert('close');
+            }, 6000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Optimizer Pro - Complete Professional Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        /* DFS Site-Inspired Theme (DraftKings + FanDuel colors) */
+        :root {
+            --dk-green: #53d337;
+            --dk-dark: #242424;
+            --fd-blue: #1e3a8a;
+            --fd-light-blue: #3b82f6;
+            --primary: #4f46e5;
+            --secondary: #059669;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark-bg: #1a1a1a;
+            --surface: #2a2a2a;
+            --surface-light: #3a3a3a;
+            --border: #404040;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #808080;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #2d2d2d 100%);
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 14px;
+        }
+
+        /* Top Navigation Tabs */
+        .main-nav {
+            background: var(--surface);
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-tabs {
+            border: none;
+            padding: 0 1rem;
+        }
+
+        .nav-tabs .nav-link {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-bottom: 3px solid transparent;
+            border-radius: 0;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: var(--surface-light);
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.2);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--fd-light-blue));
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+        }
+
+        /* Form Elements */
+        .form-control, .form-select {
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 8px;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: var(--surface-light);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.25);
+            color: var(--text-primary);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--fd-light-blue));
+            border: none;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--dk-green), var(--success));
+            border: none;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #f87171);
+            border: none;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* Player Cards */
+        .player-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .player-card:hover {
+            border-color: var(--primary);
+            background: var(--surface-light);
+        }
+
+        .player-card.locked {
+            border-color: var(--dk-green);
+            background: rgba(83, 211, 55, 0.1);
+        }
+
+        .player-card.banned {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Control Panels from Original */
+        .control-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: linear-gradient(135deg, var(--primary), var(--fd-light-blue));
+            color: var(--text-primary);
+            padding: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-content {
+            padding: 1.5rem;
+        }
+
+        /* Range Sliders */
+        .form-range::-webkit-slider-track {
+            background: var(--border);
+            border-radius: 4px;
+            height: 6px;
+        }
+
+        .form-range::-webkit-slider-thumb {
+            background: var(--primary);
+            border: 2px solid var(--surface);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4);
+        }
+
+        .form-range::-webkit-slider-thumb:hover {
+            background: var(--fd-light-blue);
+        }
+
+        /* Advanced Features Grid */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary), var(--fd-light-blue));
+            color: var(--text-primary);
+            border-radius: 12px;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .stats-card h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Lineup Cards */
+        .lineup-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .lineup-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 16px rgba(79, 70, 229, 0.2);
+        }
+
+        .lineup-header {
+            background: linear-gradient(135deg, var(--success), var(--dk-green));
+            color: var(--text-primary);
+            padding: 1rem;
+            font-weight: 700;
+        }
+
+        /* News Items */
+        .news-item {
+            background: var(--surface);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+        }
+
+        .news-item.breaking {
+            border-left-color: var(--danger);
+            animation: news-pulse 2s infinite;
+        }
+
+        .news-item.positive { border-left-color: var(--success); }
+        .news-item.negative { border-left-color: var(--warning); }
+
+        @keyframes news-pulse {
+            0%, 100% { border-left-color: var(--danger); }
+            50% { border-left-color: #ff7f7f; }
+        }
+
+        /* Alerts */
+        .alert {
+            border: none;
+            border-radius: 8px;
+        }
+
+        /* Tables */
+        .table-dark {
+            --bs-table-bg: var(--surface);
+            --bs-table-border-color: var(--border);
+            color: var(--text-primary);
+        }
+
+        .table-dark th {
+            background: var(--primary);
+            border-color: var(--border);
+        }
+
+        /* Weather Widgets */
+        .weather-widget {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .weather-good { border-left: 4px solid var(--success); }
+        .weather-concern { border-left: 4px solid var(--warning); }
+        .weather-bad { border-left: 4px solid var(--danger); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs .nav-link {
+                font-size: 0.8rem;
+                padding: 0.75rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation with Additional Tabs -->
+    <nav class="main-nav">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#optimizer-main">
+                    <i class="fas fa-cogs me-2"></i>Optimizer
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#player-news">
+                    <i class="fas fa-newspaper me-2"></i>Player News
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#weather-analysis">
+                    <i class="fas fa-cloud-sun me-2"></i>Weather
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#ownership-intel">
+                    <i class="fas fa-chart-pie me-2"></i>Ownership
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#ai-analysis">
+                    <i class="fas fa-brain me-2"></i>AI Analysis
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#research-tools">
+                    <i class="fas fa-microscope me-2"></i>Research
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- MAIN OPTIMIZER TAB - Keep ALL Original Functionality -->
+        <div class="tab-pane fade show active" id="optimizer-main">
+            <div class="container-fluid mt-4">
+                <!-- Alert Area -->
+                <div id="alertArea"></div>
+
+                <!-- Header with Sport/Site Selection (Restored from original) -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="mb-0">
+                                    <i class="fas fa-brain me-2"></i>DFS Optimizer Pro
+                                    <span class="badge bg-light text-dark ms-2">Advanced Professional Platform</span>
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h4 class="mb-1">
+                                            <span id="currentSport">NFL</span> - <span id="currentSite">DraftKings</span>
+                                        </h4>
+                                        <small class="text-muted">Click sport to auto-load players</small>
+                                    </div>
+                                    <div class="btn-group">
+                                        <button class="btn btn-primary active sport-selector" data-sport="NFL">🏈 NFL</button>
+                                        <button class="btn btn-outline-primary sport-selector" data-sport="NBA">🏀 NBA</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Contest Selection</h5>
+                            </div>
+                            <div class="card-body">
+                                <select class="form-select" id="contestSelect">
+                                    <option value="millionaire_maker">Millionaire Maker ($20)</option>
+                                    <option value="main_slate">Main Slate ($1)</option>
+                                    <option value="sunday_million">Sunday Million ($9)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Stats (Restored from original) -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-users fa-2x mb-2"></i>
+                            <h3 id="playerCount">0</h3>
+                            <p class="mb-0">Players Loaded</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-lock fa-2x mb-2"></i>
+                            <h3 id="lockedCount">0</h3>
+                            <p class="mb-0">Locked Players</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-ban fa-2x mb-2"></i>
+                            <h3 id="bannedCount">0</h3>
+                            <p class="mb-0">Banned Players</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-list-ol fa-2x mb-2"></i>
+                            <h3 id="lineupCount">0</h3>
+                            <p class="mb-0">Generated Lineups</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sub-Navigation for Optimizer Controls (Restored) -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <ul class="nav nav-pills justify-content-center">
+                            <li class="nav-item">
+                                <button class="nav-link active optimizer-tab" data-target="lineup-builder">Lineup Builder</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link optimizer-tab" data-target="exposure-control">Exposure Control</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link optimizer-tab" data-target="stacking">Stacking</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link optimizer-tab" data-target="simulation">Simulation</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link optimizer-tab" data-target="portfolio">Portfolio</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link optimizer-tab" data-target="late-swap">Late Swap</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Optimizer Sub-Tab Content -->
+                <div class="optimizer-content">
+                    <!-- LINEUP BUILDER (Restored from original) -->
+                    <div class="optimizer-section active" id="lineup-builder">
+                        <div class="controls-grid">
+                            <!-- Basic Settings -->
+                            <div class="control-panel">
+                                <div class="panel-header">
+                                    <i class="fas fa-cogs"></i>Basic Settings
+                                </div>
+                                <div class="panel-content">
+                                    <div class="row mb-3">
+                                        <div class="col-6">
+                                            <label class="form-label">Lineups to Generate</label>
+                                            <input type="number" class="form-control" id="numLineups" value="20" min="1" max="500">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label">Contest Type</label>
+                                            <select class="form-select" id="contestType">
+                                                <option value="gpp">Tournament (GPP)</option>
+                                                <option value="cash">Cash Game</option>
+                                                <option value="satellite">Satellite</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Optimization Objective</label>
+                                        <select class="form-select" id="objective">
+                                            <option value="ev">Expected Value (EV)</option>
+                                            <option value="roi">Return on Investment</option>
+                                            <option value="sharpe">Sharpe Ratio</option>
+                                            <option value="ceiling">Ceiling Upside</option>
+                                            <option value="leverage">Ownership Leverage</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Randomness Level <span class="badge bg-primary" id="randomnessValue">15%</span></label>
+                                        <input type="range" class="form-range" id="randomness" min="0" max="50" value="15">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Risk Management (Restored) -->
+                            <div class="control-panel">
+                                <div class="panel-header">
+                                    <i class="fas fa-shield-alt"></i>Risk Management
+                                </div>
+                                <div class="panel-content">
+                                    <div class="mb-3">
+                                        <label class="form-label">Max Lineup Overlap <span class="badge bg-primary" id="overlapValue">65%</span></label>
+                                        <input type="range" class="form-range" id="maxOverlap" min="0" max="100" value="65">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Min Unique Players</label>
+                                        <input type="number" class="form-control" id="minUniquePlayerse" value="4" min="1" max="9">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Contrarian Percentage <span class="badge bg-primary" id="contrarianValue">25%</span></label>
+                                        <input type="range" class="form-range" id="contrarian" min="0" max="80" value="25">
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="forceUnique" checked>
+                                        <label class="form-check-label">Force Unique Lineups</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Salary Management (Restored) -->
+                            <div class="control-panel">
+                                <div class="panel-header">
+                                    <i class="fas fa-dollar-sign"></i>Salary Management
+                                </div>
+                                <div class="panel-content">
+                                    <div class="mb-3">
+                                        <label class="form-label">Min Salary Usage <span class="badge bg-primary" id="minSalaryValue">98%</span></label>
+                                        <input type="range" class="form-range" id="minSalary" min="85" max="100" value="98">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Max Salary Variance</label>
+                                        <select class="form-select" id="salaryVariance">
+                                            <option value="tight">Tight ($0-200)</option>
+                                            <option value="normal" selected>Normal ($0-500)</option>
+                                            <option value="wide">Wide ($0-1000)</option>
+                                        </select>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <label class="form-label">Studs %</label>
+                                            <input type="number" class="form-control" id="studsPercent" value="40" min="0" max="100">
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label">Value %</label>
+                                            <input type="number" class="form-control" id="valuePercent" value="35" min="0" max="100">
+                                        </div>
+                                        <div class="col-4">
+                                            <label class="form-label">Punts %</label>
+                                            <input type="number" class="form-control" id="puntsPercent" value="25" min="0" max="100">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI Strategy Engine (Restored) -->
+                            <div class="control-panel">
+                                <div class="panel-header">
+                                    <i class="fas fa-brain"></i>AI Strategy Engine
+                                </div>
+                                <div class="panel-content">
+                                    <div class="ai-provider-selector mb-3">
+                                        <div class="btn-group w-100" role="group">
+                                            <input type="radio" class="btn-check" name="aiEngine" id="gpt4" value="gpt4" checked>
+                                            <label class="btn btn-outline-primary" for="gpt4">GPT-4</label>
+                                            
+                                            <input type="radio" class="btn-check" name="aiEngine" id="claude" value="claude">
+                                            <label class="btn btn-outline-primary" for="claude">Claude</label>
+                                            
+                                            <input type="radio" class="btn-check" name="aiEngine" id="gemini" value="gemini">
+                                            <label class="btn btn-outline-primary" for="gemini">Gemini</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="aiOptimization" checked>
+                                        <label class="form-check-label">AI-Driven Player Selection</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="aiStacking" checked>
+                                        <label class="form-check-label">AI Stack Recommendations</label>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="aiOwnership" checked>
+                                        <label class="form-check-label">AI Ownership Modeling</label>
+                                    </div>
+                                    <button class="btn btn-primary w-100" id="getAIStrategyBtn">
+                                        <i class="fas fa-robot me-2"></i>Get AI Strategy
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Generate Button (Restored) -->
+                        <div class="text-center mb-4">
+                            <button class="btn btn-success btn-lg px-5" id="generateAdvancedBtn">
+                                <i class="fas fa-rocket me-2"></i>Generate Advanced Lineups
+                            </button>
+                            <button class="btn btn-outline-primary btn-lg ms-3" id="loadSampleDataBtn">
+                                <i class="fas fa-download me-2"></i>Load Sample Data
+                            </button>
+                        </div>
+
+                        <!-- Main Results Grid (Restored) -->
+                        <div class="row">
+                            <!-- Player Pool (Restored with DataTable) -->
+                            <div class="col-lg-8">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0"><i class="fas fa-users me-2"></i>Player Pool</h5>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-light" id="updateProjectionsBtn">
+                                                <i class="fas fa-sync-alt"></i> Update Projections
+                                            </button>
+                                            <button class="btn btn-outline-light" id="lockSelectedBtn">
+                                                <i class="fas fa-lock"></i> Lock Selected
+                                            </button>
+                                            <button class="btn btn-outline-light" id="banSelectedBtn">
+                                                <i class="fas fa-ban"></i> Ban Selected
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table id="playersTable" class="table table-dark table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th><input type="checkbox" id="selectAllPlayers"></th>
+                                                        <th>Name</th>
+                                                        <th>Pos</th>
+                                                        <th>Team</th>
+                                                        <th>Salary</th>
+                                                        <th>Proj</th>
+                                                        <th>Own%</th>
+                                                        <th>Value</th>
+                                                        <th>Exp%</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="playersTableBody">
+                                                    <tr>
+                                                        <td colspan="10" class="text-center py-5">
+                                                            <i class="fas fa-upload fa-3x mb-3"></i><br>
+                                                            <h5>Load sample data or select sport to begin</h5>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Generated Lineups (Restored) -->
+                            <div class="col-lg-4">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Generated Lineups</h5>
+                                        <button class="btn btn-outline-light btn-sm" id="exportLineupsBtn">
+                                            <i class="fas fa-download"></i> Export
+                                        </button>
+                                    </div>
+                                    <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                                        <div id="lineupsContainer">
+                                            <div class="text-center py-5">
+                                                <i class="fas fa-magic fa-3x mb-3"></i><br>
+                                                <h5>Generate lineups to see them here</h5>
+                                            </div>
+                                        </div

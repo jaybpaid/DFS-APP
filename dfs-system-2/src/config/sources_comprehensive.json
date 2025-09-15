@@ -1,0 +1,434 @@
+{
+  "NBA": {
+    "core_stats": {
+      "nba_api": {
+        "enabled": true,
+        "url": "https://github.com/swar/nba_api",
+        "free": true,
+        "ttl_hours": 24,
+        "description": "Official NBA stats endpoints",
+        "tos_compliant": true,
+        "requires_python_client": true
+      },
+      "nba_schedule_json": {
+        "enabled": true,
+        "url": "https://cdn.nba.com/static/json",
+        "free": true,
+        "ttl_hours": 6,
+        "description": "Unofficial JSON schedule feed",
+        "tos_compliant": true
+      },
+      "balldontlie": {
+        "enabled": true,
+        "url": "https://www.balldontlie.io/api/v1/",
+        "free": true,
+        "ttl_hours": 24,
+        "description": "Free NBA stats, games, players API",
+        "tos_compliant": true,
+        "rate_limit": "60/minute"
+      },
+      "api_sports_nba": {
+        "enabled": true,
+        "url": "https://api-sports.io",
+        "free": true,
+        "ttl_hours": 12,
+        "description": "Free tier NBA data",
+        "tos_compliant": true,
+        "requires_api_key": true,
+        "daily_limit": true
+      },
+      "teamrankings_nba": {
+        "enabled": false,
+        "url": "https://www.teamrankings.com/nba",
+        "free": true,
+        "ttl_hours": 24,
+        "description": "Efficiency, trends, stats",
+        "tos_compliant": false,
+        "note": "Requires scraping - check ToS"
+      },
+      "dunksandthrees": {
+        "enabled": false,
+        "url": "https://dunksandthrees.com",
+        "free": true,
+        "ttl_hours": 24,
+        "description": "Advanced ratings like EPM",
+        "tos_compliant": false,
+        "note": "Some pages free - check ToS"
+      }
+    },
+    "injuries": {
+      "nba_official": {
+        "enabled": true,
+        "url": "https://official.nba.com/nba-injury-report",
+        "free": true,
+        "ttl_minutes": 30,
+        "description": "Official NBA injury reports",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "espn_nba": {
+        "enabled": true,
+        "url": "https://www.espn.com/nba/injuries",
+        "free": true,
+        "ttl_minutes": 30,
+        "description": "ESPN NBA injuries",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "nbc_sports_edge": {
+        "enabled": true,
+        "url": "https://www.nbcsports.com/fantasy/basketball/player-news",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "NBC Sports Edge NBA news",
+        "tos_compliant": true,
+        "requires_parsing": true
+      }
+    },
+    "lineups": {
+      "rotowire_nba": {
+        "enabled": true,
+        "url": "https://www.rotowire.com/basketball/nba-lineups.php",
+        "free": true,
+        "ttl_minutes": 60,
+        "description": "RotoWire NBA lineups",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "nba_official_lineups": {
+        "enabled": true,
+        "url": "https://www.nba.com/lineups",
+        "free": true,
+        "ttl_minutes": 60,
+        "description": "NBA.com starting lineups",
+        "tos_compliant": true,
+        "requires_parsing": true
+      }
+    },
+    "odds_props": {
+      "action_network_nba": {
+        "enabled": false,
+        "url": "https://www.actionnetwork.com/nba/props",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "Action Network NBA props",
+        "tos_compliant": false,
+        "note": "Check ToS for scraping"
+      },
+      "scores_and_odds_nba": {
+        "enabled": false,
+        "url": "https://www.scoresandodds.com/nba/props",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "ScoresAndOdds NBA props",
+        "tos_compliant": false,
+        "note": "Check ToS for scraping"
+      },
+      "rotowire_nba_odds": {
+        "enabled": false,
+        "url": "https://www.rotowire.com/basketball/nba-odds.php",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "RotoWire NBA odds",
+        "tos_compliant": false,
+        "note": "Check ToS for scraping"
+      },
+      "daily_fantasy_fuel": {
+        "enabled": false,
+        "url": "https://dailyfantasyfuel.com/nba/projections",
+        "free": true,
+        "ttl_hours": 2,
+        "description": "DailyFantasyFuel NBA projections",
+        "tos_compliant": false,
+        "note": "Check ToS for scraping"
+      },
+      "fanduel_research": {
+        "enabled": true,
+        "url": "https://www.fanduel.com/research/nba",
+        "free": true,
+        "ttl_hours": 1,
+        "description": "FanDuel Research NBA",
+        "tos_compliant": true,
+        "requires_parsing": true
+      }
+    },
+    "salaries": {
+      "draftkings_api": {
+        "enabled": true,
+        "url": "https://api.draftkings.com/draftgroups/v1/draftgroups/{draftGroupId}/draftables",
+        "free": true,
+        "ttl_minutes": 30,
+        "description": "DraftKings Draftables API",
+        "tos_compliant": true,
+        "note": "Reverse-engineered but widely used"
+      },
+      "draftkings_contests": {
+        "enabled": true,
+        "url": "https://www.draftkings.com/lobby/getcontests?sport=NBA",
+        "free": true,
+        "ttl_minutes": 60,
+        "description": "DraftKings contest listing",
+        "tos_compliant": true
+      }
+    }
+  },
+  "NFL": {
+    "core_stats": {
+      "nflfastr": {
+        "enabled": true,
+        "url": "https://github.com/nflverse/nflfastR",
+        "free": true,
+        "ttl_hours": 24,
+        "description": "nflfastR play-by-play, schedules, advanced metrics",
+        "tos_compliant": true
+      }
+    },
+    "injuries_inactives": {
+      "nfl_official": {
+        "enabled": true,
+        "url": "https://www.nfl.com/injuries",
+        "free": true,
+        "ttl_minutes": 30,
+        "description": "Official NFL injury reports",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "nfl_inactives": {
+        "enabled": true,
+        "url": "https://www.nfl.com/inactives",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "NFL game-day inactives",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "espn_nfl": {
+        "enabled": true,
+        "url": "https://www.espn.com/nfl/injuries",
+        "free": true,
+        "ttl_minutes": 30,
+        "description": "ESPN NFL injuries",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "rotowire_inactives": {
+        "enabled": true,
+        "url": "https://www.rotowire.com/football/nfl-inactives.php",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "RotoWire NFL inactives",
+        "tos_compliant": true,
+        "requires_parsing": true
+      }
+    },
+    "lineups_depth": {
+      "ourlads": {
+        "enabled": true,
+        "url": "https://www.ourlads.com/nfldepthcharts",
+        "free": true,
+        "ttl_hours": 12,
+        "description": "Ourlads NFL depth charts",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "rotowire_lineups": {
+        "enabled": true,
+        "url": "https://www.rotowire.com/football/nfl-lineups.php",
+        "free": true,
+        "ttl_minutes": 60,
+        "description": "RotoWire NFL lineups",
+        "tos_compliant": true,
+        "requires_parsing": true
+      }
+    },
+    "weather": {
+      "nfl_weather": {
+        "enabled": true,
+        "url": "https://nflweather.com",
+        "free": true,
+        "ttl_minutes": 30,
+        "description": "NFLWeather.com data",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "roto_grinders_weather": {
+        "enabled": true,
+        "url": "https://rotogrinders.com/weather/nfl",
+        "free": true,
+        "ttl_minutes": 30,
+        "description": "RotoGrinders weather (Kevin Roth)",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "openweather": {
+        "enabled": true,
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "free": true,
+        "ttl_minutes": 20,
+        "description": "OpenWeatherMap API",
+        "tos_compliant": true,
+        "requires_api_key": true
+      }
+    },
+    "odds_props": {
+      "covers": {
+        "enabled": false,
+        "url": "https://www.covers.com/sport/football/nfl/odds",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "Covers NFL odds",
+        "tos_compliant": false,
+        "note": "Check ToS for scraping"
+      },
+      "vegas_insider": {
+        "enabled": false,
+        "url": "https://www.vegasinsider.com/nfl/odds",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "VegasInsider NFL odds",
+        "tos_compliant": false,
+        "note": "Check ToS for scraping"
+      },
+      "action_network": {
+        "enabled": false,
+        "url": "https://www.actionnetwork.com/nfl/odds",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "Action Network NFL odds",
+        "tos_compliant": false,
+        "note": "Check ToS for scraping"
+      },
+      "rotowire_odds": {
+        "enabled": false,
+        "url": "https://www.rotowire.com/football/nfl-odds.php",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "RotoWire NFL odds",
+        "tos_compliant": false,
+        "note": "Check ToS for scraping"
+      },
+      "draftkings_sportsbook": {
+        "enabled": true,
+        "url": "https://sportsbook.draftkings.com/leagues/football/nfl",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "DraftKings sportsbook odds",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "fanduel_sportsbook": {
+        "enabled": true,
+        "url": "https://sportsbook.fanduel.com/football/nfl",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "FanDuel sportsbook odds",
+        "tos_compliant": true,
+        "requires_parsing": true
+      }
+    },
+    "salaries": {
+      "draftkings_api": {
+        "enabled": true,
+        "url": "https://api.draftkings.com/draftgroups/v1/draftgroups/{draftGroupId}/draftables",
+        "free": true,
+        "ttl_minutes": 30,
+        "description": "DraftKings Draftables API",
+        "tos_compliant": true,
+        "note": "Reverse-engineered but widely used"
+      },
+      "draftkings_contests": {
+        "enabled": true,
+        "url": "https://www.draftkings.com/lobby/getcontests?sport=NFL",
+        "free": true,
+        "ttl_minutes": 60,
+        "description": "DraftKings contest listing",
+        "tos_compliant": true
+      }
+    }
+  },
+  "CrossSport": {
+    "odds_apis": {
+      "the_odds_api": {
+        "enabled": true,
+        "url": "https://the-odds-api.com",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "The Odds API with free tier",
+        "tos_compliant": true,
+        "requires_api_key": true,
+        "daily_limit": true
+      },
+      "api_sports_odds": {
+        "enabled": true,
+        "url": "https://api-sports.io",
+        "free": true,
+        "ttl_minutes": 15,
+        "description": "API-Sports odds endpoints",
+        "tos_compliant": true,
+        "requires_api_key": true
+      }
+    },
+    "news": {
+      "nbc_sports_edge": {
+        "enabled": true,
+        "url": "https://www.nbcsports.com/fantasy",
+        "free": true,
+        "ttl_minutes": 30,
+        "description": "NBC Sports Edge (Rotoworld)",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "fantasypros_news": {
+        "enabled": true,
+        "url": "https://www.fantasypros.com/nba/news.php",
+        "free": true,
+        "ttl_minutes": 30,
+        "description": "FantasyPros NBA news",
+        "tos_compliant": true,
+        "requires_parsing": true
+      }
+    }
+  },
+  "AI_Backend": {
+    "projection_engines": {
+      "ensemble_ml": {
+        "enabled": true,
+        "models": ["xgboost", "lightgbm", "linear_regression", "random_forest"],
+        "features": ["usage_rate", "pace", "matchup_rating", "rest_days", "injury_risk"],
+        "update_frequency": "daily"
+      },
+      "deep_learning": {
+        "enabled": false,
+        "models": ["lstm", "transformer", "attention"],
+        "features": ["time_series", "player_embeddings", "game_context"],
+        "update_frequency": "weekly",
+        "note": "Advanced neural networks for pattern recognition"
+      }
+    },
+    "optimization_ai": {
+      "reinforcement_learning": {
+        "enabled": false,
+        "description": "RL agent for lineup construction strategy",
+        "update_frequency": "continuous"
+      },
+      "genetic_algorithm": {
+        "enabled": true,
+        "description": "Evolutionary approach for lineup diversity",
+        "population_size": 1000,
+        "generations": 100
+      }
+    },
+    "real_time_processing": {
+      "news_sentiment": {
+        "enabled": true,
+        "description": "NLP analysis of player news and social media",
+        "update_frequency": "real-time"
+      },
+      "injury_prediction": {
+        "enabled": true,
+        "description": "ML models to predict injury risk",
+        "features": ["usage_trends", "fatigue_indicators", "historical_patterns"]
+      }
+    }
+  }
+}

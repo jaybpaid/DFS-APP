@@ -1,0 +1,5 @@
+sso_start_url = https://d-92674a2e91.awsapps.com/start
+sso_role_name = BedrockDeveloperAccess
+region = us-west-2
+output = json
+

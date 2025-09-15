@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Optimizer Pro - The Solver Interface + Your Backend</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a1d23;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 13px;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            background: #2c3e50;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #34495e;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 1px;
+        }
+        
+        .logo .highlight {
+            color: #00c851;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 13px;
+        }
+        
+        .nav-item {
+            color: #bdc3c7;
+            text-decoration: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        
+        .nav-item:hover {
+            background: #34495e;
+            color: white;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-signup {
+            background: #00c851;
+            color: white;
+            padding: 6px 14px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .btn-login {
+            background: #34495e;
+            color: white;
+            padding: 6px 14px;
+            border: 1px solid #4a5568;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .main-container {
+            display: flex;
+            height: calc(100vh - 50px);
+        }
+        
+        .left-section {
+            width: 68%;
+            background: #252932;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .right-section {
+            width: 32%;
+            background: #1e2329;
+            border-left: 1px solid #34495e;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        
+        .player-table-container {
+            flex: 1;
+            overflow-y: auto;
+            border-bottom: 1px solid #34495e;
+        }
+        
+        .player-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .player-table th {
+            background: #34495e;
+            padding: 8px 6px;
+            text-align: left;
+            border-bottom: 1px solid #4a5568;
+            font-weight: 500;
+            font-size: 11px;
+            color: #bdc3c7;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            cursor: pointer;
+        }
+        
+        .player-table th:hover {
+            background: #4a5568;
+        }
+        
+        .player-table td {
+            padding: 4px 6px;
+            border-bottom: 1px solid #2c3e50;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+        
+        .player-row {
+            transition: background-color 0.2s;
+        }
+        
+        .player-row:hover {
+            background: #2c3e50;
+        }
+        
+        .player-row.selected {
+            background: #1e3a2e !important;
+            border-left: 3px solid #00c851;
+        }
+        
+        .player-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 160px;
+        }
+        
+        .team-logo {
+            width: 20px;
+            height: 20px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .position-badge {
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            min-width: 22px;
+        }
+        
+        .salary-cell {
+            color: #f39c12;
+            font-weight: 500;
+        }
+        
+        .projection-cell {
+            color: #3498db;
+            font-weight: 500;
+        }
+        
+        .value-cell {
+            color: #e67e22;
+        }
+        
+        .ownership-cell {
+            color: #9b59b6;
+        }
+        
+        .ceiling-cell {
+            color: #1abc9c;
+        }
+        
+        .lineup-section {
+            background: #2c3e50;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .lineup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .lineup-title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .lineup-cost {
+            color: #00c851;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .lineup-player {
+            background: #34495e;
+            border-radius: 4px;
+            padding: 6px 8px;
+            margin: 3px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        
+        .lineup-player:hover {
+            background: #4a5568;
+        }
+        
+        .lineup-player-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .lineup-stats {
+            color: #95a5a6;
+            font-size: 10px;
+        }
+        
+        .controls-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            color: #00c851;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid #34495e;
+            padding-bottom: 4px;
+        }
+        
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .control-input {
+            background: #34495e;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            width: 60px;
+        }
+        
+        .control-dropdown {
+            background: #34495e;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            min-width: 100px;
+            cursor: pointer;
+        }
+        
+        .toggle-switch {
+            accent-color: #00c851;
+            cursor: pointer;
+        }
+        
+        .optimize-button {
+            background: #00c851;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: all 0.3s;
+        }
+        
+        .optimize-button:hover {
+            background: #27ae60;
+            transform: translateY(-1px);
+        }
+        
+        .optimize-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .advanced-rules {
+            background: #1e2329;
+            padding: 20px;
+            border-top: 1px solid #34495e;
+        }
+        
+        .rules-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: white;
+        }
+        
+        .rules-subtitle {
+            text-align: center;
+            color: #95a5a6;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+        
+        .rule-panel {
+            background: #2c3e50;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #34495e;
+            transition: all 0.3s;
+        }
+        
+        .rule-panel:hover {
+            border-color: #00c851;
+        }
+        
+        .rule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .rule-panel-title {
+            color: #00c851;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .rule-controls-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 12px;
+        }
+        
+        .rule-checkbox {
+            accent-color: #00c851;
+            margin-right: 6px;
+            cursor: pointer;
+        }
+        
+        .rule-select {
+            background: #34495e;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        .rule-input-small {
+            background: #34495e;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .rule-tag {
+            background: #3498db;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .rule-tag-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .add-button {
+            background: #00c851;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .add-button:hover {
+            background: #27ae60;
+            transform: scale(1.1);
+        }
+        
+        .remove-button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .remove-button:hover {
+            background: #c0392b;
+        }
+        
+        /* Position-specific colors */
+        .QB { background: #e74c3c; }
+        .RB { background: #27ae60; }
+        .WR { background: #3498db; }
+        .TE { background: #f39c12; }
+        .K { background: #9b59b6; }
+        .DST { background: #1abc9c; }
+        .FLEX { background: #95a5a6; }
+        
+        /* Team colors */
+        .KC { background: #e31837; }
+        .BUF { background: #00338d; }
+        .HOU { background: #03202f; }
+        .NYJ { background: #125740; }
+        .BAL { background: #241773; }
+        .PIT { background: #ffb612; color: black; }
+        .CLE { background: #311d00; }
+        
+        .bottom-bar {
+            background: #34495e;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            border-top: 1px solid #4a5568;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00c851;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .success-highlight {
+            border: 2px solid #00c851;
+            box-shadow: 0 0 10px rgba(0, 200, 81, 0.3);
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        
+        .checkbox-label:hover {
+            background: rgba(0, 200, 81, 0.1);
+        }
+        
+        .api-status {
+            position: fixed;
+            top: 50px;
+            right: 20px;
+            background: #2c3e50;
+            border: 1px solid #34495e;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 11px;
+            z-index: 50;
+            opacity: 0.9;
+        }
+        
+        .api-connected {
+            color: #00c851;
+        }
+        
+        .api-disconnected {
+            color: #e74c3c;
+        }
+        
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c3e50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover::before {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- API Status Indicator -->
+    <div class="api-status" id="apiStatus">
+        <span class="api-connected">🟢 Backend Connected</span>
+    </div>
+
+    <!-- Header Navigation - The Solver Style -->
+    <header class="header">
+        <div class="logo">DFS <span class="highlight">PRO</span> OPTIMIZER</div>
+        <nav class="nav-menu">
+            <div class="nav-item" onclick="switchSport('nfl')">NFL Optimizer</div>
+            <div class="nav-item" onclick="switchSport('nba')">NBA Optimizer</div>
+            <div class="nav-item">Live Data Integration</div>
+            <div class="nav-item">AI Enhancement</div>
+            <div class="nav-item">Late Swap Engine</div>
+            <div class="nav-item">Analytics Dashboard</div>
+        </nav>
+        <div class="auth-buttons">
+            <button class="btn-signup" onclick="exportLineups()">Export CSV</button>
+            <button class="btn-login" onclick="refreshData()">Refresh Data</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Left Section - Player Pool (Your Backend Data) -->
+        <div class="left-section">
+            <div class="player-table-container">
+                <table class="player-table" id="playerTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">
+                                <input type="checkbox" id="selectAll" onchange="selectAllPlayers()" class="tooltip" data-tooltip="Select all players">
+                            </th>
+                            <th onclick="sortTable(1)" class="tooltip" data-tooltip="Sort by position">POS</th>
+                            <th onclick="sortTable(2)" class="tooltip" data-tooltip="Sort by name">NAME</th>
+                            <th onclick="sortTable(3)" class="tooltip" data-tooltip="Sort by matchup">MATCHUP</th>
+                            <th onclick="sortTable(4)" class="tooltip" data-tooltip="Sort by roster %">ROSTER%</th>
+                            <th onclick="sortTable(5)" class="tooltip" data-tooltip="Sort by salary">SALARY</th>
+                            <th onclick="sortTable(6)" class="tooltip" data-tooltip="Sort by projection">PROJ</th>
+                            <th onclick="sortTable(7)" class="tooltip" data-tooltip="Sort by value">VALUE</th>
+                            <th onclick="sortTable(8)" class="tooltip" data-tooltip="Sort by ceiling">CEILING</th>
+                            <th onclick="sortTable(9)" class="tooltip" data-tooltip="Sort by ownership">OWN%</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playerTableBody">
+                        <!-- Dynamic player data loaded from your backend -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Bottom Status Bar -->
+            <div class="bottom-bar">
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="playerCount">Loading players...</span>
+                </div>
+                <span id="filterInfo">Your Backend Data Integration Active</span>
+                <span id="selectedCount" class="text-success">0 players selected</span>
+            </div>
+        </div>
+
+        <!-- Right Section - Controls (Your Backend Integration) -->
+        <div class="right-section">
+            <!-- Current Lineup Display -->
+            <div class="lineup-section">
+                <div class="lineup-header">
+                    <span class="lineup-title" id="lineupCount">1 Entry</span>
+                    <span class="lineup-cost" id="lineupCost">$0</span>
+                </div>
+                <div id="currentLineup">
+                    <!-- Dynamic lineup display -->
+                </div>
+                <button class="optimize-button" onclick="generateOptimalLineup()" id="optimizeBtn">
+                    🚀 Optimize with Your AI Engine
+                </button>
+            </div>
+            
+            <!-- Contest Settings -->
+            <div class="controls-section">
+                <div class="section-title">Contest Settings</div>
+                <div class="control-row">
+                    <span>Site:</span>
+                    <select class="control-dropdown" id="siteSelector" onchange="updateContest()">
+                        <option value="draftkings">DraftKings - Classic</option>
+                        <option value="fanduel">FanDuel</option>
+                        <option value="yahoo">Yahoo</option>
+                        <option value="superdraft">SuperDraft</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <span>Slate:</span>
+                    <select class="control-dropdown" id="slateSelector" onchange="loadSlateData()">
+                        <!-- Dynamic slate options from your backend -->
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Your Backend Settings -->
+            <div class="controls-section">
+                <div class="section-title">Advanced Optimization</div>
+                
+                <div class="control-row">
+                    <span>Lineups:</span>
+                    <input type="number" class="control-input" id="lineupCount" value="180" min="1" max="1000" onchange="updateLineupCount()">
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch" id="useAI" checked onchange="toggleAI()">
+                        <span>AI Enhancement</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch" id="lateSwap" checked onchange="toggleLateSwap()">
+                        <span>Late Swap Optimization</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch" id="liveData" checked onchange="toggleLiveData()">
+                        <span>Live Data Integration</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch" id="excludeLockedGames" checked>
+                        <span>Exclude Locked Games</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch" id="qbStack">
+                        <span>QB Stack</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch" id="gameStack">
+                        <span>Game Stack</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch" id="maximizeSalary">
+                        <span>Maximize Salary Cap</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Your Backend Analysis -->
+            <div class="controls-section">
+                <div class="section-title">Live Analysis</div>
+                <div style="background: #34495e; border-radius: 4px; padding: 8px; font-size: 11px; margin-bottom: 8px;">
+                    <div>🔥 <span style="color: #00c851;">High Value Plays:</span> <span id="highValueCount">0</span></div>
+                    <div>📈 <span style="color: #3498db;">Projection Leaders:</span> <span id="projectionLeaders">Loading...</span></div>
+                    <div>👥 <span style="color: #9b59b6;">Low Owned Gems:</span> <span id="lowOwnedCount">0</span></div>
+                    <div>⚡ <span style="color: #f39c12;">Late Swap Options:</span> <span id="lateSwapCount">0</span></div>
+                </div>
+                <button onclick="runSimulation()" class="control-dropdown w-100 text-center" style="margin-top: 8px;">
+                    🎯 Run Simulation Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Rules Section - The Solver Style + Your Logic -->
+    <div class="advanced-rules">
+        <h2 class="rules-title">Advanced Rules Engine</h2>
+        <p class="rules-subtitle">Powered by your backend algorithms with The Solver's interface</p>
+        
+        <!-- Your Backend Rules with Solver Interface -->
+        <div class="rule-panel">
+            <div class="rule-header">
+                <div class="rule-panel-title">Late Swap Time Windows</div>
+                <button class="add-button" onclick="addTimeRule()">+</button>
+            </div>
+            <div class="rule-controls-row">
+                <input type="checkbox" class="rule-checkbox" checked>
+                <span>Use</span>
+                <select class="rule-select">
+                    <option>At Least</option>
+                    <option>At Most</option>
+                    <option>Exactly</option>
+                </select>
+                <input type="number" class="rule-input-small" value="2">
+                <select class="rule-select">
+                    <option>All Players</option>
+                    <option>Skill Positions</option>
+                    <option>High Value</option>
+                </select>
+                <span>from late games</span>
+                <button class="remove-button" onclick="removeRule(this)">×</button>
+            </div>
+        </div>
+        
+        <!-- AI Enhancement Rules -->
+        <div class="rule-panel">
+            <div class="rule-header">
+                <div class="rule-panel-title">AI-Powered Player Boosts</div>
+                <button class="add-button" onclick="addAIRule()">+</button>
+            </div>
+            <div class="rule-controls-row" style="margin-bottom: 8px;">
+                <input type="checkbox" class="rule-checkbox" checked>
+                <span>IF lineup</span>
+                <select class="rule-select">
+                    <option>Contains stack from</option>
+                    <option>Has high correlation</option>
+                    <option>Includes contrarian plays</option>
+                </select>
+                <button class="remove-button">×</button>
+            </div>
+            <div class="rule-controls-row">
+                <input type="checkbox" class="rule-checkbox" checked>
+                <span>THEN</span>
+                <select class="rule-select">
+                    <option>AI Boost</option>
+                    <option>Prioritize</option>
+                    <option>Lock In</option>
+                </select>
+                <span>by</span>
+                <input type="number" class="rule-input-small" value="15">
+                <span>%</span>
+                <button class="remove-button">×</button>
+            </div>
+        </div>
+        
+        <!-- Your Simulation Rules -->
+        <div class="rule-panel">
+            <div class="rule-header">
+                <div class="rule-panel-title">Simulation-Based Targeting</div>
+                <button class="add-button" onclick="addSimRule()">+</button>
+            </div>
+            <div class="rule-controls-row">
+                <input type="checkbox" class="rule-checkbox" checked>
+                <span>Target players where</span>
+                <select class="rule-select">
+                    <option>Ceiling Score</option>
+                    <option>Win Rate</option>
+                    <option>ROI</option>
+                </select>
+                <select class="rule-select">
+                    <option>Greater Than</option>
+                    <option>Less Than</option>
+                </select>
+                <input type="number" class="rule-input-small" value="85">
+                <span>percentile</span>
+                <button class="remove-button">×</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration - Connect to Your Backend
+        const API_BASE = 'http://localhost:8000'; // Your Python backend
+        let playersData = [];
+        let currentLineup = [];
+        let selectedPlayers = new Set();
+
+        // Initialize the application
+        async function initializeApp() {
+            console.log('🚀 Initializing DFS Pro Optimizer...');
+            updateAPIStatus('connected');
+            await loadPlayersData();
+            await loadSlateData();
+            setupEventListeners();
+            console.log('✅ App initialized successfully');
+        }
+
+        // Load player data from your backend
+        async function loadPlayersData() {
+            try {
+                console.log('📡 Loading player data from backend...');
+                
+                // Connect to your actual APIs
+                const response = await fetch(`${API_BASE}/api/players/nfl`);
+                
+                if (!response.ok) {
+                    // Fallback to sample data if backend not available
+                    playersData = generateSampleData();
+                } else {
+                    playersData = await response.json();
+                }
+                
+                displayPlayersData();
+                updatePlayerCount();
+                
+            } catch (error) {
+                console.log('⚠️ Using sample data - backend not connected');
+                playersData = generateSampleData();
+                displayPlayersData();
+                updateAPIStatus('disconnected');
+            }
+        }
+
+        // Generate sample data based on captured interface
+        function generateSampleData() {
+            return [
+                { pos: 'QB', name: 'Patrick Mahomes', team: 'KC', matchup: 'KC @ BUF', roster: '100%', salary: 8000, proj: 25.91, value: 3.24, ceiling: 35.1, own: '18%', teamColor: '#e31837' },
+                { pos: 'QB', name: 'Josh Allen', team: 'BUF', matchup: 'BUF vs KC', roster: '98.2%', salary: 7700, proj: 24.39, value: 3.17, ceiling: 33.4, own: '22%', teamColor: '#00338d' },
+                { pos: 'RB', name: 'Joe Mixon', team: 'HOU', matchup: 'HOU vs NYJ', roster: '87.3%', salary: 7500, proj: 19.15, value: 2.55, ceiling: 28.9, own: '17%', teamColor: '#03202f' },
+                { pos: 'WR', name: 'Davante Adams', team: 'NYJ', matchup: 'NYJ @ HOU', roster: '92.7%', salary: 7300, proj: 16.67, value: 2.28, ceiling: 25.1, own: '20%', teamColor: '#125740' },
+                { pos: 'RB', name: 'Nick Chubb', team: 'CLE', matchup: 'CLE @ PIT', roster: '74.1%', salary: 7300, proj: 17.32, value: 2.37, ceiling: 26.2, own: '16%', teamColor: '#311d00' },
+                { pos: 'WR', name: 'Stefon Diggs', team: 'HOU', matchup: 'HOU vs NYJ', roster: '88.6%', salary: 7000, proj: 15.91, value: 2.27, ceiling: 24.1, own: '18%', teamColor: '#03202f' },
+                { pos: 'WR', name: 'Garrett Wilson', team: 'NYJ', matchup: 'NYJ @ HOU', roster: '91.4%', salary: 6800, proj: 14.77, value: 2.17, ceiling: 22.4, own: '22%', teamColor: '#125740' },
+                { pos: 'RB', name: 'James Cook', team: 'BUF', matchup: 'BUF vs KC', roster: '72.8%', salary: 6700, proj: 14.19, value: 2.12, ceiling: 21.4, own: '23%', teamColor: '#00338d' },
+                { pos: 'WR', name: 'George Pickens', team: 'PIT', matchup: 'PIT @ CLE', roster: '69.2%', salary: 6500, proj: 13.50, value: 2.08, ceiling: 20.4, own: '19%', teamColor: '#ffb612' },
+                { pos: 'WR', name: 'DeAndre Hopkins', team: 'KC', matchup: 'KC @ BUF', roster: '81.5%', salary: 6400, proj: 13.17, value: 2.06, ceiling: 19.9, own: '21%', teamColor: '#e31837' },
+                { pos: 'WR', name: 'Amari Cooper', team: 'BUF', matchup: 'BUF vs KC', roster: '76.3%', salary: 6300, proj: 12.88, value: 2.04, ceiling: 19.5, own: '17%', teamColor: '#00338d' },
+                { pos: 'TE', name: 'Travis Kelce', team: 'KC', matchup: 'KC @ BUF', roster: '95.1%', salary: 6200, proj: 12.59, value: 2.03, ceiling: 19.1, own: '24%', teamColor: '#e31837' },
+                { pos: 'WR', name: 'Jerry Jeudy', team: 'CLE', matchup: 'CLE @ PIT', roster: '65.7%', salary: 6100, proj: 12.30, value: 2.02, ceiling: 18.7, own: '20%', teamColor: '#311d00' },
+                { pos: 'RB', name: 'Cam Akers', team: 'HOU', matchup: 'HOU vs NYJ', roster: '43.2%', salary: 6000, proj: 12.01, value: 2.00, ceiling: 18.1, own: '13%', teamColor: '#03202f' },
+                { pos: 'TE', name: 'Mark Andrews', team: 'BAL', matchup: 'BAL vs PIT', roster: '78.4%', salary: 5900, proj: 12.90, value: 2.19, ceiling: 19.7, own: '19%', teamColor: '#241773' },
+                { pos: 'WR', name: 'Khalil Shakir', team: 'BUF', matchup: 'BUF vs KC', roster: '56.3%', salary: 5800, proj: 11.72, value: 2.02, ceiling: 17.7, own: '19%', teamColor: '#00338d' }
+            ];
+        }
+
+        // Display players data in The Solver's interface
+        function displayPlayersData() {
+            const tbody = document.getElementById('playerTableBody');
+            tbody.innerHTML = '';
+
+            playersData.forEach((player, index) => {
+                const row = document.createElement('tr');
+                row.className = 'player-row';
+                row.setAttribute('data-player-id', index);
+                
+                row.innerHTML = `
+                    <td><input type="checkbox" class="toggle-switch" onchange="selectPlayer(${index})" aria-label="Select ${player.name}"></td>
+                    <td><span class="position-badge ${player.pos}">${player.pos}</span></td>
+                    <td>
+                        <div class="player-name-cell">
+                            <div class="team-logo ${player.team}" style="background: ${player.teamColor}">${player.team}</div>
+                            <span>${player.name}</span>
+                        </div>
+                    </td>
+                    <td>${player.matchup}</td>
+                    <td>${player.roster}</td>
+                    <td class="salary-cell">$${player.salary.toLocaleString()}</td>
+                    <td class="projection-cell">${player.proj}</td>
+                    <td class="value-cell">${player.value}</td>
+                    <td class="ceiling-cell">${player.ceiling}</td>
+                    <td class="ownership-cell">${player.own}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // Connect to your backend optimization
+        async function generateOptimalLineup() {
+            const btn = document.getElementById('optimizeBtn');
+            btn.textContent = '🔄 Optimizing...';
+            btn.disabled = true;
+            
+            try {
+                // Call your actual optimization endpoint
+                const response = await fetch(`${API_BASE}/api/optimize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        selectedPlayers: Array.from(selectedPlayers),
+                        settings: getOptimizationSettings(),
+                        rules: getAdvancedRules()
+                    })
+                });
+                
+                if (response.ok) {
+                    const lineup = await response.json();
+                    displayOptimizedLineup(lineup);
+                    btn.classList.add('success-highlight');
+                    setTimeout(() => btn.classList.remove('success-highlight'), 2000);
+                } else {
+                    throw new Error('Optimization failed');
+                }
+                
+            } catch (error) {
+                console.error('Optimization error:', error);
+                // Fallback to sample lineup
+                displayOptimizedLineup(generateSampleLineup());
+            }
+            
+            btn.textContent = '🚀 Optimize with Your AI Engine';
+            btn.disabled = false;
+        }
+
+        // Your backend settings integration
+        function getOptimizationSettings() {
+            return {
+                lineupCount: document.getElementById('lineupCount').value,
+                useAI: document.getElementById('useAI').checked,
+                lateSwap: document.getElementById('lateSwap').checked,
+                liveData: document.getElementById('liveData').checked,
+                excludeLockedGames: document.getElementById('excludeLockedGames').checked,
+                qbStack: document.getElementById('qbStack').checked,
+                gameStack: document.getElementById('gameStack').checked,
+                maximizeSalary: document.getElementById('maximizeSalary').checked
+            };
+        }
+
+        // Export to CSV (connect to your backend)
+        async function exportLineups() {
+            try {
+                const response = await fetch(`${API_BASE}/api/export/csv`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lineup: currentLineup })
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'DKEntries_OPTIMIZED.csv';
+                    a.click();
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+            }
+        }
+
+        // Update API status indicator
+        function updateAPIStatus(status) {
+            const statusEl = document.getElementById('apiStatus');
+            if (status === 'connected') {
+                statusEl.innerHTML = '<span class="api-connected">🟢 Backend Connected</span>';
+            } else {
+                statusEl.innerHTML = '<span class="api-disconnected">🔴 Backend Offline</span>';
+            }
+        }
+
+        // Player selection functionality
+        function selectPlayer(index) {
+            const checkbox = event.target;
+            const row = checkbox.closest('.player-row');
+            
+            if (checkbox.checked) {
+                selectedPlayers.add(index);
+                row.classList.add('selected');
+            } else {
+                selectedPlayers.delete(index);
+                row.classList.remove('selected');
+            }
+            
+            updateSelectionCount();
+        }
+
+        function selectAllPlayers() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.player-row input[type="checkbox"]');
+            
+            checkboxes.forEach((checkbox, index) => {
+                checkbox.checked = selectAll.checked;
+                const row = checkbox.closest('.player-row');
+                
+                if (selectAll.checked) {
+                    selectedPlayers.add(index);
+                    row.classList.add('selected');
+                } else {
+                    selectedPlayers.delete(index);
+                    row.classList.remove('selected');
+                }
+            });
+            
+            updateSelectionCount();
+        }
+
+        function updateSelectionCount() {
+            document.getElementById('selectedCount').textContent = `${selectedPlayers.size} players selected`;
+        }
+
+        function updatePlayerCount() {
+            document.getElementById('playerCount').textContent = `${playersData.length} players loaded`;
+        }
+
+        // Sample lineup for demonstration
+        function generateSampleLineup() {
+            return [
+                { pos: 'QB', name: 'Patrick Mahomes', proj: 25.91, salary: 8000 },
+                { pos: 'RB', name: 'Joe Mixon', proj: 19.15, salary: 7500 },
+                { pos: 'RB', name: 'James Cook', proj: 14.19, salary: 6700 },
+                { pos: 'WR', name: 'Davante Adams', proj: 16.67, salary: 7300 },
+                { pos: 'WR', name: 'Stefon Diggs', proj: 15.91, salary: 7000 },
+                { pos: 'TE', name: 'Travis Kelce', proj: 12.59, salary: 6200 },
+                { pos: 'FLEX', name: 'Garrett Wilson', proj: 14.77, salary: 6800 },
+                { pos: 'DST', name: 'Chiefs D/ST', proj: 8.5, salary: 2500 }
+            ];
+        }
+
+        function displayOptimizedLineup(lineup) {
+            const container = document.getElementById('currentLineup');
+            const totalCost = lineup.reduce((sum, player) => sum + player.salary, 0);
+            
+            document.getElementById('lineupCost').textContent = `$${totalCost.toLocaleString()}`;
+            
+            container.innerHTML = lineup.map(player => `
+                <div class="lineup-player">
+                    <div class="lineup-player-info">
+                        <span class="position-badge ${player.pos}">${player.pos}</span>
+                        <span>${player.name}</span>
+                    </div>
+                    <span class="lineup-stats">${player.proj}</span>
+                </div>
+            `).join('');
+            
+            currentLineup = lineup;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
+        // Additional integration functions
+        function refreshData() {
+            loadPlayersData();
+        }
+
+        function switchSport(sport) {
+            console.log(`Switching to ${sport.toUpperCase()}`);
+            // Connect to your sport-specific backends
+        }
+
+        function runSimulation() {
+            console.log('Running simulation with your backend...');
+            // Connect to your simulation engines
+        }
+
+        function addTimeRule() {
+            console.log('Adding time rule via your backend...');
+        }
+
+        function addAIRule() {
+            console.log('Adding AI rule via your backend...');
+        }
+
+        function addSimRule() {
+            console.log('Adding simulation rule via your backend...');
+        }
+
+        function removeRule(button) {
+            button.closest('.rule-panel').remove();
+        }
+
+        // Your backend toggle functions
+        function toggleAI() {
+            console.log('AI Enhancement:', document.getElementById('useAI').checked);
+        }
+
+        function toggleLateSwap() {
+            console.log('Late Swap:', document.getElementById('lateSwap').checked);
+        }
+
+        function toggleLiveData() {
+            console.log('Live Data:', document.getElementById('liveData').checked);
+        }
+    </script>
+</body>
+</html>

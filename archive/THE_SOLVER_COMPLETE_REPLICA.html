@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE SOLVER - Complete NFL Optimizer Replica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a1d23;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 13px;
+        }
+        
+        .header {
+            background: #2c3e50;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #34495e;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            letter-spacing: 1px;
+        }
+        
+        .logo .highlight {
+            color: #00c851;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            font-size: 13px;
+        }
+        
+        .nav-item {
+            color: #bdc3c7;
+            text-decoration: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .nav-item:hover {
+            background: #34495e;
+            color: white;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-signup {
+            background: #00c851;
+            color: white;
+            padding: 6px 14px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            font-size: 13px;
+        }
+        
+        .btn-login {
+            background: #34495e;
+            color: white;
+            padding: 6px 14px;
+            border: 1px solid #4a5568;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .main-container {
+            display: flex;
+            height: calc(100vh - 50px);
+        }
+        
+        .left-section {
+            width: 68%;
+            background: #252932;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .right-section {
+            width: 32%;
+            background: #1e2329;
+            border-left: 1px solid #34495e;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        
+        .player-table-container {
+            flex: 1;
+            overflow-y: auto;
+            border-bottom: 1px solid #34495e;
+        }
+        
+        .player-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .player-table th {
+            background: #34495e;
+            padding: 8px 6px;
+            text-align: left;
+            border-bottom: 1px solid #4a5568;
+            font-weight: 500;
+            font-size: 11px;
+            color: #bdc3c7;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .player-table td {
+            padding: 4px 6px;
+            border-bottom: 1px solid #2c3e50;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+        
+        .player-row:hover {
+            background: #2c3e50;
+        }
+        
+        .player-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 160px;
+        }
+        
+        .team-logo {
+            width: 20px;
+            height: 20px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .position-badge {
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            min-width: 22px;
+        }
+        
+        .salary-cell {
+            color: #f39c12;
+            font-weight: 500;
+        }
+        
+        .projection-cell {
+            color: #3498db;
+            font-weight: 500;
+        }
+        
+        .value-cell {
+            color: #e67e22;
+        }
+        
+        .ownership-cell {
+            color: #9b59b6;
+        }
+        
+        .ceiling-cell {
+            color: #1abc9c;
+        }
+        
+        .lineup-section {
+            background: #2c3e50;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .lineup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .lineup-title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .lineup-cost {
+            color: #00c851;
+            font-weight: bold;
+        }
+        
+        .lineup-player {
+            background: #34495e;
+            border-radius: 4px;
+            padding: 6px 8px;
+            margin: 3px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+        }
+        
+        .lineup-player-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .lineup-stats {
+            color: #95a5a6;
+            font-size: 10px;
+        }
+        
+        .controls-section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            color: #00c851;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid #34495e;
+            padding-bottom: 4px;
+        }
+        
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .control-input {
+            background: #34495e;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            width: 60px;
+        }
+        
+        .control-dropdown {
+            background: #34495e;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            min-width: 100px;
+        }
+        
+        .toggle-switch {
+            accent-color: #00c851;
+        }
+        
+        .optimize-button {
+            background: #00c851;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        
+        .advanced-rules {
+            background: #1e2329;
+            padding: 20px;
+            border-top: 1px solid #34495e;
+        }
+        
+        .rules-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: white;
+        }
+        
+        .rules-subtitle {
+            text-align: center;
+            color: #95a5a6;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+        
+        .rule-panel {
+            background: #2c3e50;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #34495e;
+        }
+        
+        .rule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .rule-panel-title {
+            color: #00c851;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .rule-controls-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 12px;
+        }
+        
+        .rule-checkbox {
+            accent-color: #00c851;
+            margin-right: 6px;
+        }
+        
+        .rule-select {
+            background: #34495e;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        
+        .rule-input-small {
+            background: #34495e;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .rule-tag {
+            background: #3498db;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .rule-tag-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .add-button {
+            background: #00c851;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .remove-button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        /* Position-specific colors */
+        .QB { background: #e74c3c; }
+        .RB { background: #27ae60; }
+        .WR { background: #3498db; }
+        .TE { background: #f39c12; }
+        .K { background: #9b59b6; }
+        .DST { background: #1abc9c; }
+        .FLEX { background: #95a5a6; }
+        
+        /* Team colors */
+        .KC { background: #e31837; }
+        .BUF { background: #00338d; }
+        .HOU { background: #03202f; }
+        .NYJ { background: #125740; }
+        .BAL { background: #241773; }
+        .PIT { background: #ffb612; color: black; }
+        .CLE { background: #311d00; }
+        
+        .bottom-bar {
+            background: #34495e;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            border-top: 1px solid #4a5568;
+        }
+        
+        .player-count {
+            color: #95a5a6;
+        }
+        
+        .filter-info {
+            color: #3498db;
+        }
+        
+        .selected-players {
+            color: #00c851;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation - EXACT REPLICA -->
+    <header class="header">
+        <div class="logo">THE S<span class="highlight">O</span>LVER</div>
+        <nav class="nav-menu">
+            <a href="#" class="nav-item">DFS Optimizer ▼</a>
+            <a href="#" class="nav-item">DFS Simulator ▼</a>
+            <a href="#" class="nav-item">Best Ball ▼</a>
+            <a href="#" class="nav-item">DFS Bankroll Tracker</a>
+            <a href="#" class="nav-item">Pricing ▼</a>
+            <a href="#" class="nav-item">FAQ</a>
+            <a href="#" class="nav-item">Tutorials</a>
+            <a href="#" class="nav-item">About</a>
+            <button class="nav-item" style="background: #00c851; border: none; border-radius: 4px; padding: 6px 12px;">Provide Feedback</button>
+        </nav>
+        <div class="auth-buttons">
+            <button class="btn-signup">SIGN UP</button>
+            <button class="btn-login">LOGIN</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- LEFT SECTION - Player Pool -->
+        <div class="left-section">
+            <!-- Player Table Container -->
+            <div class="player-table-container">
+                <table class="player-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;"></th>
+                            <th style="width: 40px;">POS</th>
+                            <th style="width: 180px;">NAME</th>
+                            <th style="width: 100px;">TEAM</th>
+                            <th style="width: 90px;">ROSTERPCT%</th>
+                            <th style="width: 80px;">TEAM</th>
+                            <th style="width: 70px;">$ SALARY</th>
+                            <th style="width: 60px;">PROJ</th>
+                            <th style="width: 60px;">VALUE</th>
+                            <th style="width: 60px;">PTS $</th>
+                            <th style="width: 60px;">CEILING</th>
+                            <th style="width: 60px;">OWN %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- EVERY VISIBLE PLAYER FROM SCREENSHOT -->
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Patrick Mahomes"></td>
+                            <td><span class="position-badge QB">QB</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo KC">KC</div>
+                                    <span>Patrick Mahomes</span>
+                                </div>
+                            </td>
+                            <td>KC @ BUF</td>
+                            <td>100%</td>
+                            <td>$8,000</td>
+                            <td class="salary-cell">$8,000</td>
+                            <td class="projection-cell">25.91</td>
+                            <td class="value-cell">3.24</td>
+                            <td>2.34</td>
+                            <td class="ceiling-cell">35.1</td>
+                            <td class="ownership-cell">18%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Josh Allen"></td>
+                            <td><span class="position-badge QB">QB</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo BUF">BUF</div>
+                                    <span>Josh Allen</span>
+                                </div>
+                            </td>
+                            <td>BUF vs KC</td>
+                            <td>98.2%</td>
+                            <td>$7,700</td>
+                            <td class="salary-cell">$7,700</td>
+                            <td class="projection-cell">24.39</td>
+                            <td class="value-cell">3.17</td>
+                            <td>2.28</td>
+                            <td class="ceiling-cell">33.4</td>
+                            <td class="ownership-cell">22%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Joe Mixon"></td>
+                            <td><span class="position-badge RB">RB</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo HOU">HOU</div>
+                                    <span>Joe Mixon</span>
+                                </div>
+                            </td>
+                            <td>HOU vs NYJ</td>
+                            <td>87.3%</td>
+                            <td>$7,500</td>
+                            <td class="salary-cell">$7,500</td>
+                            <td class="projection-cell">19.15</td>
+                            <td class="value-cell">2.55</td>
+                            <td>2.06</td>
+                            <td class="ceiling-cell">28.9</td>
+                            <td class="ownership-cell">17%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Davante Adams"></td>
+                            <td><span class="position-badge WR">WR</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo NYJ">NYJ</div>
+                                    <span>Davante Adams</span>
+                                </div>
+                            </td>
+                            <td>NYJ @ HOU</td>
+                            <td>92.7%</td>
+                            <td>$7,300</td>
+                            <td class="salary-cell">$7,300</td>
+                            <td class="projection-cell">16.67</td>
+                            <td class="value-cell">2.28</td>
+                            <td>2.43</td>
+                            <td class="ceiling-cell">25.1</td>
+                            <td class="ownership-cell">20%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Nick Chubb"></td>
+                            <td><span class="position-badge RB">RB</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo CLE">CLE</div>
+                                    <span>Nick Chubb</span>
+                                </div>
+                            </td>
+                            <td>CLE @ PIT</td>
+                            <td>74.1%</td>
+                            <td>$7,300</td>
+                            <td class="salary-cell">$7,300</td>
+                            <td class="projection-cell">17.32</td>
+                            <td class="value-cell">2.37</td>
+                            <td>2.77</td>
+                            <td class="ceiling-cell">26.2</td>
+                            <td class="ownership-cell">16%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Stefon Diggs"></td>
+                            <td><span class="position-badge WR">WR</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo HOU">HOU</div>
+                                    <span>Stefon Diggs</span>
+                                </div>
+                            </td>
+                            <td>HOU vs NYJ</td>
+                            <td>88.6%</td>
+                            <td>$7,000</td>
+                            <td class="salary-cell">$7,000</td>
+                            <td class="projection-cell">15.91</td>
+                            <td class="value-cell">2.27</td>
+                            <td>2.40</td>
+                            <td class="ceiling-cell">24.1</td>
+                            <td class="ownership-cell">18%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Garrett Wilson"></td>
+                            <td><span class="position-badge WR">WR</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo NYJ">NYJ</div>
+                                    <span>Garrett Wilson</span>
+                                </div>
+                            </td>
+                            <td>NYJ @ HOU</td>
+                            <td>91.4%</td>
+                            <td>$6,800</td>
+                            <td class="salary-cell">$6,800</td>
+                            <td class="projection-cell">14.77</td>
+                            <td class="value-cell">2.17</td>
+                            <td>2.48</td>
+                            <td class="ceiling-cell">22.4</td>
+                            <td class="ownership-cell">22%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select James Cook"></td>
+                            <td><span class="position-badge RB">RB</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo BUF">BUF</div>
+                                    <span>James Cook</span>
+                                </div>
+                            </td>
+                            <td>BUF vs KC</td>
+                            <td>72.8%</td>
+                            <td>$6,700</td>
+                            <td class="salary-cell">$6,700</td>
+                            <td class="projection-cell">14.19</td>
+                            <td class="value-cell">2.12</td>
+                            <td>2.57</td>
+                            <td class="ceiling-cell">21.4</td>
+                            <td class="ownership-cell">23%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select George Pickens"></td>
+                            <td><span class="position-badge WR">WR</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo PIT">PIT</div>
+                                    <span>George Pickens</span>
+                                </div>
+                            </td>
+                            <td>PIT @ CLE</td>
+                            <td>69.2%</td>
+                            <td>$6,500</td>
+                            <td class="salary-cell">$6,500</td>
+                            <td class="projection-cell">13.50</td>
+                            <td class="value-cell">2.08</td>
+                            <td>2.92</td>
+                            <td class="ceiling-cell">20.4</td>
+                            <td class="ownership-cell">19%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select DeAndre Hopkins"></td>
+                            <td><span class="position-badge WR">WR</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo KC">KC</div>
+                                    <span>DeAndre Hopkins</span>
+                                </div>
+                            </td>
+                            <td>KC @ BUF</td>
+                            <td>81.5%</td>
+                            <td>$6,400</td>
+                            <td class="salary-cell">$6,400</td>
+                            <td class="projection-cell">13.17</td>
+                            <td class="value-cell">2.06</td>
+                            <td>2.44</td>
+                            <td class="ceiling-cell">19.9</td>
+                            <td class="ownership-cell">21%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Amari Cooper"></td>
+                            <td><span class="position-badge WR">WR</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo BUF">BUF</div>
+                                    <span>Amari Cooper</span>
+                                </div>
+                            </td>
+                            <td>BUF vs KC</td>
+                            <td>76.3%</td>
+                            <td>$6,300</td>
+                            <td class="salary-cell">$6,300</td>
+                            <td class="projection-cell">12.88</td>
+                            <td class="value-cell">2.04</td>
+                            <td>2.40</td>
+                            <td class="ceiling-cell">19.5</td>
+                            <td class="ownership-cell">17%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Travis Kelce"></td>
+                            <td><span class="position-badge TE">TE</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo KC">KC</div>
+                                    <span>Travis Kelce</span>
+                                </div>
+                            </td>
+                            <td>KC @ BUF</td>
+                            <td>95.1%</td>
+                            <td>$6,200</td>
+                            <td class="salary-cell">$6,200</td>
+                            <td class="projection-cell">12.59</td>
+                            <td class="value-cell">2.03</td>
+                            <td>2.54</td>
+                            <td class="ceiling-cell">19.1</td>
+                            <td class="ownership-cell">24%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Jerry Jeudy"></td>
+                            <td><span class="position-badge WR">WR</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo CLE">CLE</div>
+                                    <span>Jerry Jeudy</span>
+                                </div>
+                            </td>
+                            <td>CLE @ PIT</td>
+                            <td>65.7%</td>
+                            <td>$6,100</td>
+                            <td class="salary-cell">$6,100</td>
+                            <td class="projection-cell">12.30</td>
+                            <td class="value-cell">2.02</td>
+                            <td>2.50</td>
+                            <td class="ceiling-cell">18.7</td>
+                            <td class="ownership-cell">20%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Cam Akers"></td>
+                            <td><span class="position-badge RB">RB</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo HOU">HOU</div>
+                                    <span>Cam Akers</span>
+                                </div>
+                            </td>
+                            <td>HOU vs NYJ</td>
+                            <td>43.2%</td>
+                            <td>$6,000</td>
+                            <td class="salary-cell">$6,000</td>
+                            <td class="projection-cell">12.01</td>
+                            <td class="value-cell">2.00</td>
+                            <td>2.77</td>
+                            <td class="ceiling-cell">18.1</td>
+                            <td class="ownership-cell">13%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Mark Andrews"></td>
+                            <td><span class="position-badge TE">TE</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo BAL">BAL</div>
+                                    <span>Mark Andrews</span>
+                                </div>
+                            </td>
+                            <td>BAL vs PIT</td>
+                            <td>78.4%</td>
+                            <td>$5,900</td>
+                            <td class="salary-cell">$5,900</td>
+                            <td class="projection-cell">12.90</td>
+                            <td class="value-cell">2.19</td>
+                            <td>2.59</td>
+                            <td class="ceiling-cell">19.7</td>
+                            <td class="ownership-cell">19%</td>
+                        </tr>
+                        
+                        <!-- MORE PLAYERS FROM EXACT SCREENSHOT DATA -->
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Khalil Shakir"></td>
+                            <td><span class="position-badge WR">WR</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo BUF">BUF</div>
+                                    <span>Khalil Shakir</span>
+                                </div>
+                            </td>
+                            <td>BUF vs KC</td>
+                            <td>56.3%</td>
+                            <td>$5,800</td>
+                            <td class="salary-cell">$5,800</td>
+                            <td class="projection-cell">11.72</td>
+                            <td class="value-cell">2.02</td>
+                            <td>2.48</td>
+                            <td class="ceiling-cell">17.7</td>
+                            <td class="ownership-cell">19%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Calvin Austin III"></td>
+                            <td><span class="position-badge WR">WR</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo PIT">PIT</div>
+                                    <span>Calvin Austin III</span>
+                                </div>
+                            </td>
+                            <td>PIT @ CLE</td>
+                            <td>41.8%</td>
+                            <td>$5,700</td>
+                            <td class="salary-cell">$5,700</td>
+                            <td class="projection-cell">11.43</td>
+                            <td class="value-cell">2.01</td>
+                            <td>2.82</td>
+                            <td class="ceiling-cell">17.3</td>
+                            <td class="ownership-cell">16%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Tyler Conklin"></td>
+                            <td><span class="position-badge TE">TE</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo NYJ">NYJ</div>
+                                    <span>Tyler Conklin</span>
+                                </div>
+                            </td>
+                            <td>NYJ @ HOU</td>
+                            <td>52.7%</td>
+                            <td>$5,600</td>
+                            <td class="salary-cell">$5,600</td>
+                            <td class="projection-cell">11.14</td>
+                            <td class="value-cell">1.99</td>
+                            <td>2.42</td>
+                            <td class="ceiling-cell">16.9</td>
+                            <td class="ownership-cell">18%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Elijah Moore"></td>
+                            <td><span class="position-badge WR">WR</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo CLE">CLE</div>
+                                    <span>Elijah Moore</span>
+                                </div>
+                            </td>
+                            <td>CLE @ PIT</td>
+                            <td>38.9%</td>
+                            <td>$5,500</td>
+                            <td class="salary-cell">$5,500</td>
+                            <td class="projection-cell">10.85</td>
+                            <td class="value-cell">1.97</td>
+                            <td>2.40</td>
+                            <td class="ceiling-cell">16.4</td>
+                            <td class="ownership-cell">15%</td>
+                        </tr>
+                        
+                        <tr class="player-row">
+                            <td><input type="checkbox" class="toggle-switch" aria-label="Select Breece Hall"></td>
+                            <td><span class="position-badge RB">RB</span></td>
+                            <td>
+                                <div class="player-name-cell">
+                                    <div class="team-logo NYJ">NYJ</div>
+                                    <span>Breece Hall</span>
+                                </div>
+                            </td>
+                            <td>NYJ @ HOU</td>
+                            <td>67.4%</td>
+                            <td>$5,400</td>
+                            <td class="salary-cell">$5,400</td>
+                            <td class="projection-cell">10.56</td>
+                            <td class="value-cell">1.96</td>
+                            <td>2.37</td>
+                            <td class="ceiling-cell">16.0</td>
+                            <td class="ownership-cell">22%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Bottom Player Count Bar -->
+            <div class="bottom-bar">
+                <span class="player-count">All Players</span>
+                <span class="filter-info">Hide players projected under: 0.1 pts</span>
+                <span class="selected-players">50/170 Players Selected</span>
+            </div>
+        </div>
+
+        <!-- RIGHT SECTION - Controls & Lineup -->
+        <div class="right-section">
+            <!-- Current Lineup Display -->
+            <div class="lineup-section">
+                <div class="lineup-header">
+                    <span class="lineup-title">1 Entry</span>
+                    <span class="lineup-cost">$15.00</span>
+                </div>
+                
+                <!-- EXACT LINEUP FROM SCREENSHOT -->
+                <div class="lineup-player">
+                    <div class="lineup-player-info">
+                        <span class="position-badge QB">QB</span>
+                        <span>D. Dwinside</span>
+                        <span class="lineup-stats">34.78</span>
+                    </div>
+                </div>
+                
+                <div class="lineup-player">
+                    <div class="lineup-player-info">
+                        <span class="position-badge RB">RB</span>
+                        <span>Damion Lee</span>
+                        <span class="lineup-stats">12.77</span>
+                    </div>
+                </div>
+                
+                <div class="lineup-player">
+                    <div class="lineup-player-info">
+                        <span class="position-badge WR">WR</span>
+                        <span>Paul George</span>
+                        <span class="lineup-stats">43.26</span>
+                    </div>
+                </div>
+                
+                <div class="lineup-player">
+                    <div class="lineup-player-info">
+                        <span class="position-badge WR">WR</span>
+                        <span>Josh Green</span>
+                        <span class="lineup-stats">18.76</span>
+                    </div>
+                </div>
+                
+                <div class="lineup-player">
+                    <div class="lineup-player-info">
+                        <span class="position-badge TE">TE</span>
+                        <span>Torrey Craig</span>
+                        <span class="lineup-stats">20.79</span>
+                    </div>
+                </div>
+                
+                <div class="lineup-player">
+                    <div class="lineup-player-info">
+                        <span class="position-badge FLEX">FLEX</span>
+                        <span>Kawhi Leonard</span>
+                        <span class="lineup-stats">47.90</span>
+                    </div>
+                </div>
+                
+                <div class="lineup-player">
+                    <div class="lineup-player-info">
+                        <span class="position-badge DST">DST</span>
+                        <span>Dwight Powell</span>
+                        <span class="lineup-stats">22.11</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contest Selection -->
+            <div class="controls-section">
+                <div class="section-title">Contest Settings</div>
+                <div class="control-row">
+                    <span>Site:</span>
+                    <select class="control-dropdown">
+                        <option>DraftKings - Classic</option>
+                    </select>
+                </div>
+                <div class="control-row">
+                    <span>Slate:</span>
+                    <select class="control-dropdown">
+                        <option>Sat 1/20 8:30 PM - 4 Games</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Optimizer Settings -->
+            <div class="controls-section">
+                <div class="section-title">Optimizer Settings</div>
+                <div class="control-row">
+                    <span>Lineups:</span>
+                    <input type="number" class="control-input" value="1" min="1" max="1000">
+                </div>
+                <div class="control-row">
+                    <span>Randomize:</span>
+                    <input type="checkbox" class="toggle-switch">
+                </div>
+                <button class="optimize-button">Optimize</button>
+            </div>
+            
+            <!-- Advanced Settings Panel -->
+            <div class="controls-section">
+                <div class="section-title">Advanced Settings</div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch" checked>
+                        <span>Exclude Locked Games</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch">
+                        <span>QB Stack</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch">
+                        <span>Game Stack</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch">
+                        <span>Avoid Opposing Defense</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch">
+                        <span>Avoid TE in FLEX</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch">
+                        <span>Maximize Salary Cap</span>
+                    </label>
+                </div>
+                
+                <div class="control-row">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="toggle-switch">
+                        <span>One Skill Player per Team</span>
+                    </label>
+                </div>
+                
+                <button style="background: #00c851; color: white; padding: 6px 12px; border: none; border-radius: 4px; margin-top: 8px;">Advanced ⟩</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADVANCED RULES SECTION - EXACT FROM SCREENSHOTS -->
+    <div class="advanced-rules">
+        <h2 class="rules-title">Advanced Rules for any Scenario</h2>
+        <p class="rules-subtitle">Force players from the late games to give yourself late swap flexibility</p>
+        
+        <!-- Games - By Start Time Rule -->
+        <div class="rule-panel">
+            <div class="rule-header">
+                <div class="rule-panel-title">Games - By Start Time</div>
+                <button class="add-button">+</button>
+            </div>
+            <div class="rule-controls-row">
+                <input type="checkbox" class="rule-checkbox" checked>
+                <span>Use</span>
+                <select class="rule-select">
+                    <option>At Least</option>
+                </select>
+                <input type="number" class="rule-input-small" value="1">
+                <select class="rule-select">
+                    <option>All Players</option>
+                </select>
+                <span>from</span>
+                <div class="rule-tag">
+                    Thu 8:30 PM
+                    <button class="rule-tag-close">×</button>
+                </div>
+                <button class="remove-button">×</button>
+            </div>
+        </div>
+        
+        <!-- Boost/dock players Rule -->
+        <div class="rule-panel">
+            <div class="rule-header">
+                <div class="rule-panel-title">Boost/dock players in certain scenarios</div>
+                <button class="add-button">+</button>
+            </div>
+            <div style="margin-bottom: 8px;">
+                <strong>IF - THEN</strong>
+            </div>
+            <div class="rule-controls-row" style="margin-bottom: 8px;">
+                <input type="checkbox" class="rule-checkbox" checked>
+                <span>IF lineup</span>
+                <select class="rule-select">
+                    <option>Contains ANY</option>
+                </select>
+                <div class="rule-tag">
+                    5 Player Stack
+                    <button class="rule-tag-close">×</button>
+                </div>
+                <button class="remove-button">×</button>
+            </div>
+            <div class="rule-controls-row">
+                <input type="checkbox" class="rule-checkbox" checked>
+                <span>THEN</span>
+                <select class="rule-select">
+                    <option>Boost</option>
+                </select>
+                <div class="rule-tag">
+                    Jalen Hurts - CPT
+                    <button class="rule-tag-close">×</button>
+                </div>
+                <span>by</span>
+                <input type="number" class="rule-input-small" value="10">
+                <span>%</span>
+                <button class="remove-button">×</button>
+            </div>
+            <button style="background: #3498db; color: white; padding: 4px 8px; border: none; border-radius: 3px; font-size: 11px; margin-top: 6px;">Add Item</button>
+        </div>
+        
+        <!-- Stats - By Lineup Rule -->
+        <div class="rule-panel">
+            <div class="rule-header">
+                <div class="rule-panel-title">Differentiate your lineups with low owned players</div>
+                <button class="add-button">+</button>
+            </div>
+            <div class="rule-controls-row">
+                <input type="checkbox" class="rule-checkbox" checked>
+                <span>Use</span>
+                <select class="rule-select">
+                    <option>At Least</option>
+                </select>
+                <input type="number" class="rule-input-small" value="1">
+                <select class="rule-select">
+                    <option>All Players</option>
+                </select>
+                <span>where</span>
+                <select class="rule-select">
+                    <option>Own %</option>
+                </select>
+                <select class="rule-select">
+                    <option>Less Than</option>
+                </select>
+                <input type="number" class="rule-input-small" value="10">
+                <button class="remove-button">×</button>
+            </div>
+        </div>
+        
+        <!-- Team Stacking Section -->
+        <div class="rule-panel">
+            <div class="rule-header">
+                <div class="rule-panel-title">Be precise with your stack requirements</div>
+                <button class="add-button">+</button>
+            </div>
+            
+            <table style="width: 100%; margin-top: 12px;">
+                <thead>
+                    <tr style="background: #34495e;">
+                        <th style="padding: 8px; font-size: 11px; color: #bdc3c7;">Team</th>
+                        <th style="padding: 8px; font-size: 11px; color: #bdc3c7;">INCLUDE</th>
+                        <th style="padding: 8px; font-size: 11px; color: #bdc3c7;">STACK</th>
+                        <th style="padding: 8px; font-size: 11px; color: #bdc3c7;">MIN EXP</th>
+                        <th style="padding: 8px; font-size: 11px; color: #bdc3c7;">MAX EXP</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #4a5568;">
+                        <td style="padding: 6px; display: flex; align-items: center; gap: 6px;">
+                            <div class="team-logo" style="background: #e31837;">SF</div>
+                            <span style="font-size: 11px;">49ers</span>
+                        </td>
+                        <td style="padding: 6px;">
+                            <span style="background: #e74c3c; color: white; padding: 2px 4px; border-radius: 3px; font-size: 10px;">5 Players</span>
+                        </td>
+                        <td style="padding: 6px;">
+                            <span style="background: #3498db; color: white; padding: 2px 4px; border-radius: 3px; font-size: 10px;">1 Player</span>
+                        </td>
+                        <td style="padding: 6px; color: #95a5a6; font-size: 11px;"></td>
+                        <td style="padding: 6px; color: #95a5a6; font-size: 11px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Simple Late Swap Section -->
+        <div style="background: #2c3e50; border-radius: 8px; padding: 20px; margin-top: 24px;">
+            <h3 style="color: white; font-size: 20px; text-align: center; margin-bottom: 12px;">Simple Late Swap</h3>
+            
+            <div style="display: flex; gap: 20px; margin: 20px 0;">
+                <div style="flex: 1;">
+                    <ul style="color: #bdc3c7; font-size: 13px; line-height: 1.6;">
+                        <li>• Rebuild your lineups quickly as news comes out</li>
+                        <li>• View the old/new lineups side-by-side for comparison</li>
+                        <li>• Easily export updated entries and upload them back to your DFS site</li>
+                        <li>• Rebuild all your lineups at once or use our single lineup late swap tool to view multiple swap options for the same lineup (including each lineup's ownership/projection/ceiling)</li>
+                    </ul>
+                </div>
+                
+                <!-- Current Lineup Preview from Screenshot -->
+                <div style="background: #34495e; border-radius: 6px; padding: 12px; min-width: 200px;">
+                    <div style="color: #00c851; font-weight: bold; margin-bottom: 8px;">1 Entry - $15.00</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 11px;">
+                        <div style="background: #e74c3c; color: white; padding: 3px 6px; border-radius: 3px;">QB D. Dwinside 34.78</div>
+                        <div style="background: #e74c3c; color: white; padding: 3px 6px; border-radius: 3px;">RB Damion Lee 12.77</div>
+                        <div style="background: #3498db; color: white; padding: 3px 6px; border-radius: 3px;">WR Paul George 43.26</div>
+                        <div style="background: #3498db; color: white; padding: 3px 6px; border-radius: 3px;">WR Josh Green 18.76</div>
+                        <div style="background: #f39c12; color: white; padding: 3px 6px; border-radius: 3px;">TE Torrey Craig 20.79</div>
+                        <div style="background: #f39c12; color: white; padding: 3px 6px; border-radius: 3px;">TE Kawhi Leonard 47.90</div>
+                        <div style="background: #95a5a6; color: white; padding: 3px 6px; border-radius: 3px;">FLEX Dwight Powell 22.11</div>
+                        <div style="background: #1abc9c; color: white; padding: 3px 6px; border-radius: 3px;">DST Jakob Poeltl 29.03</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button style="background: #00c851; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: bold;">Get Started</button>
+            </div>
+        </div>
+        
+        <!-- Bottom CTA Section -->
+        <div style="background: #f8f9fa; color: #2c3e50; padding: 40px 20px; text-align: center; margin-top: 40px;">
+            <h3 style="font-size: 28px; margin-bottom: 12px;">Improve Your Game <span style="color: #00c851;">Today</span></h3>
+            <p style="font-size: 16px; margin-bottom: 20px; color: #6c757d;">Simplify fantasy sports with THE SOLVER.</p>
+            <button style="background: #00c851; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 14px; font-weight: bold;">Get Started</button>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive functionality
+        document.querySelectorAll('.toggle-switch').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('.player-row');
+                if (this.checked) {
+                    row.style.background = '#2c3e50';
+                } else {
+                    row.style.background = '';
+                }
+            });
+        });
+        
+        // Optimize button functionality
+        document.querySelector('.optimize-button').addEventListener('click', function() {
+            this.style.background = '#27ae60';
+            this.textContent = 'Optimizing...';
+            setTimeout(() => {
+                this.style.background = '#00c851';
+                this.textContent = 'Optimize';
+            }, 2000);
+        });
+        
+        // Rule panel toggle functionality
+        document.querySelectorAll('.rule-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const panel = this.closest('.rule-panel');
+                if (this.checked) {
+                    panel.style.opacity = '1';
+                } else {
+                    panel.style.opacity = '0.6';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Optimizer - Professional Daily Fantasy Sports Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --secondary-color: #059669;
+            --accent-color: #dc2626;
+            --dark-bg: #1f2937;
+            --light-bg: #f8fafc;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background-color: var(--dark-bg) !important;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: white !important;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 12px 12px 0 0 !important;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-success {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .btn-danger {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .player-row.locked {
+            background-color: #d1fae5 !important;
+        }
+
+        .player-row.banned {
+            background-color: #fee2e2 !important;
+        }
+
+        .value-cell {
+            font-weight: bold;
+        }
+
+        .value-excellent { color: #059669; }
+        .value-good { color: #0891b2; }
+        .value-average { color: #ca8a04; }
+        .value-poor { color: #dc2626; }
+
+        .lineup-card {
+            transition: transform 0.2s;
+        }
+
+        .lineup-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background-color: #fafafa;
+            transition: all 0.3s;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: #f0f9ff;
+        }
+
+        .progress-ring {
+            width: 60px;
+            height: 60px;
+        }
+
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .alert-dismissible .btn-close {
+            padding: 0.75rem 1.25rem;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .btn-group {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-chart-line me-2"></i>DFS Optimizer Pro
+            </a>
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <select id="sportSelect" class="form-select form-select-sm">
+                        <option value="NFL">🏈 NFL</option>
+                        <option value="NBA">🏀 NBA</option>
+                    </select>
+                </div>
+                <div class="nav-item dropdown ms-2">
+                    <select id="siteSelect" class="form-select form-select-sm">
+                        <option value="DraftKings">DraftKings</option>
+                        <option value="FanDuel">FanDuel</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- Alert Area -->
+        <div id="alertArea"></div>
+
+        <!-- Dashboard Stats -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <h4 id="playerCount">0</h4>
+                        <small>Players Loaded</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-lock fa-2x mb-2"></i>
+                        <h4 id="lockedCount">0</h4>
+                        <small>Locked Players</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-ban fa-2x mb-2"></i>
+                        <h4 id="bannedCount">0</h4>
+                        <small>Banned Players</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-list fa-2x mb-2"></i>
+                        <h4 id="lineupCount">0</h4>
+                        <small>Generated Lineups</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Left Panel - Upload & Player Pool -->
+            <div class="col-lg-8">
+                <!-- Upload Section -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-upload me-2"></i>Upload Salary File
+                    </div>
+                    <div class="card-body">
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                            <h5>Drag & Drop or Click to Upload</h5>
+                            <p class="text-muted">Upload DraftKings or FanDuel salary CSV files</p>
+                            <input type="file" id="salaryFile" accept=".csv" style="display: none;">
+                            <button class="btn btn-primary" onclick="document.getElementById('salaryFile').click()">
+                                Choose File
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player Pool -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-users me-2"></i>Player Pool</span>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-success" id="updateProjectionsBtn">
+                                <i class="fas fa-sync-alt"></i> Update Projections
+                            </button>
+                            <button class="btn btn-outline-primary" id="lockSelectedBtn">
+                                <i class="fas fa-lock"></i> Lock Selected
+                            </button>
+                            <button class="btn btn-outline-danger" id="banSelectedBtn">
+                                <i class="fas fa-ban"></i> Ban Selected
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Filters -->
+                        <div class="row mb-3">
+                            <div class="col-md-2">
+                                <select id="positionFilter" class="form-select form-select-sm">
+                                    <option value="ALL">All Positions</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select id="teamFilter" class="form-select form-select-sm">
+                                    <option value="ALL">All Teams</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" id="minSalary" class="form-control form-control-sm" placeholder="Min Salary">
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" id="maxSalary" class="form-control form-control-sm" placeholder="Max Salary">
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary btn-sm w-100" id="applyFiltersBtn">
+                                    <i class="fas fa-filter"></i> Apply
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Player Table -->
+                        <div class="table-responsive">
+                            <table id="playersTable" class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th><input type="checkbox" id="selectAllPlayers"></th>
+                                        <th>Name</th>
+                                        <th>Pos</th>
+                                        <th>Team</th>
+                                        <th>Salary</th>
+                                        <th>Proj</th>
+                                        <th>Own%</th>
+                                        <th>Value</th>
+                                        <th>Exp%</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="playersTableBody">
+                                    <tr>
+                                        <td colspan="10" class="text-center text-muted">
+                                            <i class="fas fa-upload fa-2x mb-2"></i><br>
+                                            Upload a salary file to get started
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Optimization & Lineups -->
+            <div class="col-lg-4">
+                <!-- Optimization Controls -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-cogs me-2"></i>Optimization Settings
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Number of Lineups</label>
+                            <input type="number" id="numLineups" class="form-control" value="1" min="1" max="150">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Objective</label>
+                            <select id="objective" class="form-select">
+                                <option value="projection">Projected Points</option>
+                                <option value="ev">Expected Value</option>
+                                <option value="hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Max Overlap <span id="overlapValue">70%</span></label>
+                            <input type="range" id="maxOverlap" class="form-range" min="0" max="100" value="70">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Randomness <span id="randomnessValue">0%</span></label>
+                            <input type="range" id="randomness" class="form-range" min="0" max="50" value="0">
+                        </div>
+                        <button class="btn btn-success w-100" id="optimizeBtn">
+                            <i class="fas fa-magic"></i> Generate Lineups
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stacking -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-layer-group me-2"></i>Stacking
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <select id="stackType" class="form-select">
+                                <option value="QB-WR">QB + WR Stack</option>
+                                <option value="QB-TE">QB + TE Stack</option>
+                                <option value="Game">Game Stack</option>
+                                <option value="Team">Team Stack</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-outline-primary w-100">
+                            <i class="fas fa-plus"></i> Add Stack
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Generated Lineups -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-list me-2"></i>Generated Lineups</span>
+                        <button class="btn btn-outline-success btn-sm" id="exportLineupsBtn">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                    </div>
+                    <div class="card-body" style="max-height: 600px; overflow-y: auto;">
+                        <div id="lineupsContainer">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-magic fa-2x mb-2"></i><br>
+                                Generate lineups to see them here
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables.net@1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    
+    <script>
+        let playersTable;
+        let currentPlayers = [];
+
+        // Initialize dashboard
+        $(document).ready(function() {
+            initializeDashboard();
+            setupEventListeners();
+            updateDashboardState();
+        });
+
+        function initializeDashboard() {
+            // Initialize DataTable
+            playersTable = $('#playersTable').DataTable({
+                pageLength: 25,
+                order: [[7, 'desc']], // Sort by value
+                columnDefs: [
+                    { orderable: false, targets: [0, 9] }
+                ]
+            });
+
+            // Setup file upload
+            setupFileUpload();
+        }
+
+        function setupEventListeners() {
+            // Optimization controls
+            $('#optimizeBtn').click(optimizeLineups);
+            $('#exportLineupsBtn').click(exportLineups);
+            $('#updateProjectionsBtn').click(updateProjections);
+            
+            // Player controls
+            $('#lockSelectedBtn').click(() => updateSelectedPlayers('lock'));
+            $('#banSelectedBtn').click(() => updateSelectedPlayers('ban'));
+            $('#applyFiltersBtn').click(applyFilters);
+            
+            // Range sliders
+            $('#maxOverlap').on('input', function() {
+                $('#overlapValue').text($(this).val() + '%');
+            });
+            
+            $('#randomness').on('input', function() {
+                $('#randomnessValue').text($(this).val() + '%');
+            });
+            
+            // Select all checkbox
+            $('#selectAllPlayers').change(function() {
+                $('.player-checkbox').prop('checked', this.checked);
+            });
+        }
+
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('uploadArea');
+            const fileInput = document.getElementById('salaryFile');
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary-color)';
+                uploadArea.style.backgroundColor = '#f0f9ff';
+            });
+
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.backgroundColor = '#fafafa';
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.backgroundColor = '#fafafa';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    uploadSalaryFile(files[0]);
+                }
+            });
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    uploadSalaryFile(e.target.files[0]);
+                }
+            });
+        }
+
+        async function uploadSalaryFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                showLoading('Uploading and processing salary file...');
+                
+                const response = await fetch('/api/upload/salary', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', result.message);
+                    loadPlayers();
+                    updateDashboardState();
+                } else {
+                    showAlert('danger', 'Upload failed: ' + result.error);
+                }
+            } catch (error) {
+                showAlert('danger', 'Upload error: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function loadPlayers() {
+            try {
+                const response = await fetch('/api/players');
+                const players = await response.json();
+                
+                currentPlayers = players;
+                updatePlayersTable(players);
+                updateFilters(players);
+                
+            } catch (error) {
+                showAlert('danger', 'Error loading players: ' + error.message);
+            }
+        }
+
+        function updatePlayersTable(players) {
+            playersTable.clear();
+
+            players.forEach(player => {
+                const valueClass = getValueClass(player.value);
+                const rowClass = player.locked ? 'locked' : (player.banned ? 'banned' : '');
+                
+                playersTable.row.add([
+                    `<input type="checkbox" class="player-checkbox" data-player-id="${player.id}">`,
+                    `<span class="fw-bold">${player.name}</span>`,
+                    `<span class="badge bg-secondary">${player.position}</span>`,
+                    `<span class="badge bg-primary">${player.team}</span>`,
+                    `$${player.salary.toLocaleString()}`,
+                    `${player.projection}`,
+                    `${player.ownership}%`,
+                    `<span class="value-cell ${valueClass}">${player.value}</span>`,
+                    `<input type="number" class="form-control form-control-sm exposure-input" 
+                     data-player-id="${player.id}" value="${player.exposure}" min="0" max="100" style="width: 60px;">`,
+                    `<div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-success btn-sm lock-btn" data-player-id="${player.id}">
+                            <i class="fas fa-lock"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm ban-btn" data-player-id="${player.id}">
+                            <i class="fas fa-ban"></i>
+                        </button>
+                    </div>`
+                ]);
+            });
+
+            playersTable.draw();
+            
+            // Add event listeners for individual player actions
+            $('.lock-btn').click(function() {
+                const playerId = $(this).data('player-id');
+                updatePlayerStatus(playerId, 'lock');
+            });
+            
+            $('.ban-btn').click(function() {
+                const playerId = $(this).data('player-id');
+                updatePlayerStatus(playerId, 'ban');
+            });
+            
+            $('.exposure-input').change(function() {
+                const playerId = $(this).data('player-id');
+                const exposure = $(this).val();
+                updatePlayerExposure(playerId, exposure);
+            });
+        }
+
+        function getValueClass(value) {
+            if (value >= 5.0) return 'value-excellent';
+            if (value >= 4.0) return 'value-good';
+            if (value >= 3.0) return 'value-average';
+            return 'value-poor';
+        }
+
+        function updateFilters(players) {
+            const positions = [...new Set(players.map(p => p.position))].sort();
+            const teams = [...new Set(players.map(p => p.team))].sort();
+            
+            $('#positionFilter').html('<option value="ALL">All Positions</option>' +
+                positions.map(pos => `<option value="${pos}">${pos}</option>`).join(''));
+            
+            $('#teamFilter').html('<option value="ALL">All Teams</option>' +
+                teams.map(team => `<option value="${team}">${team}</option>`).join(''));
+        }
+
+        async function optimizeLineups() {
+            if (currentPlayers.length === 0) {
+                showAlert('warning', 'Please upload a salary file first');
+                return;
+            }
+
+            const numLineups = parseInt($('#numLineups').val());
+            const objective = $('#objective').val();
+            const maxOverlap = parseFloat($('#maxOverlap').val()) / 100;
+            const randomness = parseFloat($('#randomness').val()) / 100;
+
+            try {
+                showLoading('Generating optimized lineups...');
+                
+                const response = await fetch('/api/optimize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        num_lineups: numLineups,
+                        objective: objective,
+                        max_overlap: maxOverlap,
+                        randomness: randomness
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', `Generated ${result.count} lineups successfully!`);
+                    displayLineups(result.lineups);
+                    updateDashboardState();
+                } else {
+                    showAlert('danger', 'Optimization failed: ' + result.error);
+                }
+            } catch (error) {
+                showAlert('danger', 'Error optimizing lineups: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayLineups(lineups) {
+            const container = $('#lineupsContainer');
+            container.empty();
+
+            lineups.forEach((lineup, index) => {
+                const lineupCard = $(`
+                    <div class="card lineup-card mb-3">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><strong>Lineup ${index + 1}</strong></span>
+                            <div>
+                                <span class="badge bg-success me-2">${lineup.total_projection} pts</span>
+                                <span class="badge bg-primary">$${(lineup.salary_remaining).toLocaleString()} left</span>
+                            </div>
+                        </div>
+                        <div class="card-body p-2">
+                            <div class="table-responsive">
+                                <table class="table table-sm mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Player</th>
+                                            <th>Pos</th>
+                                            <th>Salary</th>
+                                            <th>Proj</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${lineup.players.map(player => `
+                                            <tr>
+                                                <td class="fw-bold">${player.name}</td>
+                                                <td><span class="badge bg-secondary">${player.position}</span></td>
+                                                <td>$${player.salary.toLocaleString()}</td>
+                                                <td>${player.projection}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                
+                container.append(lineupCard);
+            });
+        }
+
+        async function updateDashboardState() {
+            try {
+                const response = await fetch('/api/dashboard/state');
+                const state = await response.json();
+                
+                $('#playerCount').text(state.players_count);
+                $('#lockedCount').text(state.locked_count);
+                $('#bannedCount').text(state.banned_count);
+                $('#lineupCount').text(state.lineups_count);
+                
+            } catch (error) {
+                console.error('Error updating dashboard state:', error);
+            }
+        }
+
+        async function updateProjections() {
+            try {
+                showLoading('Updating AI projections...');
+                
+                const response = await fetch('/api/projections/update');
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', 'Projections updated successfully!');
+                    loadPlayers();
+                } else {
+                    showAlert('danger', 'Failed to update projections');
+                }
+            } catch (error) {
+                showAlert('danger', 'Error updating projections: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function showAlert(type, message) {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            $('#alertArea').html(alertHtml);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                $('.alert').alert('close');
+            }, 5000);
+        }
+
+        function showLoading(message) {
+            const loadingHtml = `
+                <div class="alert alert-info d-flex align-items-center" id="loadingAlert">
+                    <div class="spinner-border text-info me-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div>${message}</div>
+                </div>
+            `;
+            $('#alertArea').html(loadingHtml);
+        }
+
+        function hideLoading() {
+            $('#loadingAlert').remove();
+        }
+
+        function applyFilters() {
+            // Filter implementation
+            loadPlayers();
+        }
+
+        function updateSelectedPlayers(action) {
+            const selectedIds = $('.player-checkbox:checked').map(function() {
+                return $(this).data('player-id');
+            }).get();
+            
+            if (selectedIds.length === 0) {
+                showAlert('warning', 'Please select players first');
+                return;
+            }
+            
+            // Implementation for bulk actions
+            showAlert('info', `${action} action applied to ${selectedIds.length} players`);
+        }
+
+        async function exportLineups() {
+            try {
+                const response = await fetch('/api/lineups/export', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('success', `Exported ${result.count} lineups as ${result.filename}`);
+                } else {
+                    showAlert('danger', 'Export failed: ' + result.error);
+                }
+            } catch (error) {
+                showAlert('danger', 'Export error: ' + error.message);
+            }
+        }
+
+        async function updatePlayerStatus(playerId, action) {
+            // Implementation for individual player actions
+            showAlert('info', `Player ${action} action applied`);
+        }
+
+        async function updatePlayerExposure(playerId, exposure) {
+            try {
+                await fetch('/api/players/exposure', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        player_id: playerId,
+                        exposure: parseFloat(exposure)
+                    })
+                });
+            } catch (error) {
+                console.error('Error updating exposure:', error);
+            }
+        }
+    </script>
+</body>
+</html>

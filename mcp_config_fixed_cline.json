@@ -1,0 +1,70 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/614759/Repo/cline/Gaming Arc/gaming-portfolio", "/Users/614759/Documents/Cline/MCP", "/Users/614759/Desktop"],
+      "enabled": true
+    },
+    "fetch": {
+      "command": "node",
+      "args": ["/Users/614759/Documents/Cline/MCP/fetch-mcp/dist/index.js"],
+      "enabled": true
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "enabled": true
+    },
+    "everything": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-everything"],
+      "enabled": true
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@hisma/server-puppeteer"],
+      "enabled": true
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "enabled": true,
+      "env": {
+        "BRAVE_API_KEY": "BSAy-rn_ERP0d7uLpeiDv_tmabkSW-r"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "enabled": true,
+      "env": {
+        "GITHUB_TOKEN": "github_pat_11ABCDEFG"
+      }
+    },
+    "aws-kb-retrieval": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-aws-kb-retrieval"],
+      "enabled": true
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "enabled": true
+    },
+    "git": {
+      "command": "npx",
+      "args": ["-y", "@cyanheads/git-mcp-server"],
+      "enabled": true
+    },
+    "time": {
+      "command": "npx",
+      "args": ["-y", "time-mcp"],
+      "enabled": true
+    },
+    "calculator": {
+      "command": "npx",
+      "args": ["-y", "calculator-mcp"],
+      "enabled": true
+    }
+  }
+}

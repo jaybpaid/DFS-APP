@@ -1,0 +1,105 @@
+{
+  "slate_info": {
+    "date": "2025-09-14",
+    "type": "NFL Week 2",
+    "available_games": [
+      "KC@PHI"
+    ],
+    "locked_games": [
+      "DEN@IND",
+      "CAR@ARI"
+    ],
+    "total_players": 50,
+    "salary_cap": 50000
+  },
+  "players": {
+    "A.J. Brown": {
+      "position": "WR",
+      "team": "PHI",
+      "salary_dk": 6600,
+      "projections": {
+        "rotowire": 18.9,
+        "draftkings": 1.8,
+        "fantasypros": 14.2,
+        "ai_enhanced": 22.4,
+        "consensus": 14.3
+      },
+      "metrics": {
+        "floor": 8.2,
+        "ceiling": 32.1,
+        "ownership": 8.4,
+        "leverage_score": 9.6,
+        "edge_ratio": 10.5
+      },
+      "game_context": {
+        "matchup": "KC@PHI",
+        "game_time": "2025-09-16T20:30:00",
+        "vegas_total": 54.5,
+        "weather": "Dome",
+        "pace_grade": "ELITE",
+        "status": "AVAILABLE"
+      },
+      "ai_analysis": {
+        "recommendation": "MAX LEVERAGE - Elite WR1 in shootout with massive projection edge",
+        "leverage_reasoning": "DK 1.8 vs RW 18.9 creates 10.5x edge with low 8.4% ownership",
+        "stack_fit": 8.9,
+        "tournament_score": 9.6,
+        "cash_score": 6.2
+      }
+    },
+    "Patrick Mahomes": {
+      "position": "QB",
+      "team": "KC",
+      "salary_dk": 6200,
+      "projections": {
+        "rotowire": 26.8,
+        "draftkings": 26.02,
+        "fantasypros": 26.4,
+        "ai_enhanced": 27.6,
+        "consensus": 26.7
+      },
+      "metrics": {
+        "floor": 19.8,
+        "ceiling": 36.5,
+        "ownership": 22.1,
+        "leverage_score": 5.8,
+        "edge_ratio": 1.03
+      },
+      "game_context": {
+        "matchup": "KC@PHI",
+        "game_time": "2025-09-16T20:30:00",
+        "vegas_total": 54.5,
+        "weather": "Dome",
+        "pace_grade": "ELITE",
+        "status": "AVAILABLE"
+      },
+      "ai_analysis": {
+        "recommendation": "ELITE QB - Kelce out increases passing volume",
+        "leverage_reasoning": "Consensus projections with Kelce-out target boost",
+        "stack_fit": 8.7,
+        "tournament_score": 7.8,
+        "cash_score": 8.5
+      }
+    }
+  },
+  "optimization_results": {
+    "top_lineup": {
+      "players": [
+        "Jalen Hurts",
+        "Saquon Barkley",
+        "Trey Benson",
+        "A.J. Brown",
+        "Jahan Dotson",
+        "Marvin Harrison Jr.",
+        "Dallas Goedert",
+        "Jonathan Taylor",
+        "Panthers"
+      ],
+      "salary": 49800,
+      "projection": 156.3,
+      "win_probability": 10.2,
+      "leverage_score": 9.8,
+      "stack_correlation": 9.1
+    }
+  }
+}

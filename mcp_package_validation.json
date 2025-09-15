@@ -1,0 +1,90 @@
+{
+  "filesystem": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package @modelcontextprotocol/server-filesystem exists and can be installed"
+  },
+  "brave-search": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "browser-use": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package @agent-infra/mcp-server-browser exists and can be installed"
+  },
+  "github": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "calculator": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package calculator-mcp exists and can be installed"
+  },
+  "read-website-fast": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package @just-every/mcp-read-website-fast exists and can be installed"
+  },
+  "screenshot-website-fast": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package @just-every/mcp-read-website-fast exists and can be installed"
+  },
+  "firecrawl": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package firecrawl-mcp exists and can be installed"
+  },
+  "google-maps": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "memory": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "time": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package time-mcp exists and can be installed"
+  },
+  "shell": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "git": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package @cyanheads/git-mcp-server exists and can be installed"
+  },
+  "puppeteer": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package @kirkdeam/puppeteer-mcp-server exists and can be installed"
+  },
+  "fetch": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package mcp-fetch exists and can be installed"
+  },
+  "sentry": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "gitlab": {
+    "status": "disabled",
+    "enabled": false
+  },
+  "apify": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package @apify/actors-mcp-server exists and can be installed"
+  },
+  "graphlit": {
+    "status": "success",
+    "enabled": true,
+    "details": "Package graphlit-mcp-server exists and can be installed"
+  }
+}

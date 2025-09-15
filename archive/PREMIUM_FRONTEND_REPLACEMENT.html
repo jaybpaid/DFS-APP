@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS PRO Optimizer - Production Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: #1e3a8a;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .sport-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-left: 2rem;
+        }
+
+        .sport-tab {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .sport-tab:hover,
+        .sport-tab.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-right: 2rem;
+        }
+
+        .date-input {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .slate-selector {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            min-width: 200px;
+            font-size: 0.9rem;
+        }
+
+        .main-tabs {
+            background: white;
+            border-bottom: 2px solid #e5e7eb;
+            padding: 0 2rem;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 0;
+        }
+
+        .main-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .main-tab:hover {
+            color: #1e3a8a;
+            background: #f9fafb;
+        }
+
+        .main-tab.active {
+            color: #1e3a8a;
+            border-bottom-color: #1e3a8a;
+            background: #f9fafb;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            min-height: calc(100vh - 140px);
+        }
+
+        .sidebar {
+            background: white;
+            border-right: 1px solid #ddd;
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+        }
+
+        .sidebar h3 {
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #1e3a8a;
+            padding-bottom: 0.5rem;
+        }
+
+        .content-area {
+            background: white;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Player Pool Styling - FULL ROSTER */
+        .position-group {
+            margin-bottom: 1rem;
+        }
+
+        .position-header {
+            background: #e5e7eb;
+            padding: 0.5rem;
+            font-weight: bold;
+            color: #374151;
+            border-radius: 4px 4px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .game-time {
+            font-size: 0.8rem;
+            color: #059669;
+            font-weight: normal;
+        }
+
+        .game-locked {
+            color: #dc2626;
+        }
+
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-top: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .player-row:hover {
+            background: #f3f4f6;
+        }
+
+        .player-row:last-child {
+            border-radius: 0 0 4px 4px;
+        }
+
+        .player-selected {
+            background: #dbeafe !important;
+            border-left: 4px solid #1e3a8a;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-name {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .player-stats {
+            font-size: 0.75rem;
+            color: #6b7280;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .player-salary {
+            color: #059669;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .leverage-indicator {
+            background: #fbbf24;
+            color: #92400e;
+            padding: 0.2rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+        }
+
+        .high-leverage {
+            background: #dc2626;
+            color: white;
+        }
+
+        .max-leverage {
+            background: #059669;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Control Groups */
+        .control-section {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .control-section h4 {
+            color: #1e3a8a;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .control-group input,
+        .control-group select {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: #1e3a8a;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #1e40af;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #059669;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+            transform: translateY(-1px);
+        }
+
+        /* Lineup Table */
+        .lineup-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .lineup-table th {
+            background: #1e3a8a;
+            color: white;
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .lineup-table td {
+            padding: 0.5rem;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 0.8rem;
+        }
+
+        .lineup-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        /* News and alerts */
+        .news-ticker {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            color: #991b1b;
+        }
+
+        .success-alert {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 4px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            color: #065f46;
+        }
+
+        /* Status indicators */
+        .status-locked {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .status-available {
+            background: #ecfdf5;
+            color: #065f46;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .loading-indicator {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1e3a8a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center;">
+            <div class="logo">DFS PRO Optimizer</div>
+            <div class="sport-tabs">
+                <button class="sport-tab active" onclick="switchSport('nfl')">NFL</button>
+                <button class="sport-tab" onclick="switchSport('nba')">NBA</button>
+                <button class="sport-tab" onclick="switchSport('mlb')">MLB</button>
+                <button class="sport-tab" onclick="switchSport('nhl')">NHL</button>
+            </div>
+        </div>
+        
+        <!-- DATE AND SLATE SELECTION LIKE ROTOWIRE -->
+        <div class="date-selector">
+            <label style="color: white;">Date:</label>
+            <input type="date" class="date-input" id="slateDate" onchange="loadSlatesForDate()" value="2025-09-15">
+            
+            <label style="color: white;">Slate:</label>
+            <select class="slate-selector" id="slateSelector" onchange="loadPlayerPool()">
+                <option value="">Loading slates...</option>
+            </select>
+        </div>
+        
+        <div style="display: flex; gap: 1rem;">
+            <button class="btn-success" onclick="exportCSV()">Export CSV</button>
+            <button class="btn-primary" onclick="refreshData()">Refresh Data</button>
+        </div>
+    </div>
+
+    <div class="main-tabs">
+        <div class="tab-nav">
+            <button class="main-tab active" onclick="showTab('optimizer')">Optimizer</button>
+            <button class="main-tab" onclick="showTab('customization')">Advanced Settings</button>
+            <button class="main-tab" onclick="showTab('research')">Research & News</button>
+            <button class="main-tab" onclick="showTab('projections')">Multi-Source Projections</button>
+            <button class="main-tab" onclick="showTab('lateswap')">Late Swap Engine</button>
+            <button class="main-tab" onclick="showTab('simulations')">Simulations</button>
+            <button class="main-tab" onclick="showTab('results')">Results & Analytics</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h3 id="playerPoolHeader">Loading Player Pool...</h3>
+            
+            <!-- DYNAMIC PLAYER POOL - LOADED FROM DATA -->
+            <div id="playerPool">
+                <div class="loading-indicator">
+                    <div class="spinner"></div>
+                    <div>Loading players from live data sources...</div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 2rem;">Quick Filters</h3>
+            <div style="margin-bottom: 0.5rem;">
+                <input type="checkbox" id="availableOnly" checked onchange="filterPlayers()">
+                <label for="availableOnly">Available Games Only</label>
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+                <input type="checkbox" id="excludeInactive" checked onchange="filterPlayers()">
+                <label for="excludeInactive">Exclude Inactive Players</label>
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+                <input type="checkbox" id="showLeverageOnly" onchange="filterPlayers()">
+                <label for="showLeverageOnly">Leverage Plays Only</label>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <!-- OPTIMIZER TAB -->
+            <div id="optimizer-content" class="tab-content active">
+                <div class="news-ticker" id="newsAlert">
+                    <div class="spinner"></div> Loading latest news and alerts...
+                </div>
+
+                <div class="control-section">
+                    <h4>📊 Contest Configuration</h4>
+                    <div class="control-grid">
+                        <div class="control-group">
+                            <label>Site:</label>
+                            <select id="siteSelector" onchange="updateContestOptions()">
+                                <option value="draftkings">DraftKings</option>
+                                <option value="fanduel">FanDuel</option>
+                                <option value="yahoo">Yahoo</option>
+                                <option value="superdraft">SuperDraft</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Contest Type:</label>
+                            <select id="contestType">
+                                <option value="gpp">GPP (Tournament)</option>
+                                <option value="cash">Cash (50/50)</option>
+                                <option value="doubleup">Double Up</option>
+                                <option value="satellite">Satellite</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Number of Lineups:</label>
+                            <input type="number" id="lineupCount" value="150" min="1" max="150" onchange="updateLineupCount()">
+                            <small style="color: #6b7280;">Max: 150 lineups</small>
+                        </div>
+                        <div class="control-group">
+                            <label>Salary Cap:</label>
+                            <input type="text" id="salaryCap" value="$50,000" readonly style="background: #f3f4f6;">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button class="btn-success" onclick="generateOptimalLineups()" id="optimizeBtn">
+                            🚀 Generate Optimal Lineups
+                        </button>
+                        <button class="btn-primary" onclick="validateLineups()">
+                            ✅ Validate All Lineups
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC LINEUP TABLE -->
+                <div id="lineupsContainer">
+                    <div class="loading-indicator">
+                        <div class="spinner"></div>
+                        <div>Ready to generate lineups...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADVANCED SETTINGS TAB -->
+            <div id="customization-content" class="tab-content">
+                <h2 style="color: #1e3a8a; margin-bottom: 1.5rem;">🎛️ Advanced Optimizer Configuration</h2>
+                
+                <div class="control-section">
+                    <h4>🎯 Stacking & Correlation Rules</h4>
+                    <div class="control-grid">
+                        <div class="control-group">
+                            <input type="checkbox" id="qbStack" checked>
+                            <label for="qbStack">Force QB + 2-3 WR/TE stacks</label>
+                        </div>
+                        <div class="control-group">
+                            <input type="checkbox" id="gameStack">
+                            <label for="gameStack">Prioritize game stacks</label>
+                        </div>
+                        <div class="control-group">
+                            <input type="checkbox" id="bringBack">
+                            <label for="bringBack">Include opposing team bring-back</label>
+                        </div>
+                        <div class="control-group">
+                            <label>Stack Percentage:</label>
+                            <input type="range" min="0" max="100" value="70" id="stackPercent" onchange="updateSliderValue(this, '%')">
+                            <span id="stackPercentValue">70%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h4>📊 Exposure & Uniqueness Management</h4>
+                    <div class="control-grid">
+                        <div class="control-group">
+                            <label>Max Player Exposure:</label>
+                            <input type="range" min="0" max="100" value="40" id="playerExposure" onchange="updateSliderValue(this, '%')">
+                            <span id="playerExposureValue">40%</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Min Unique Players:</label>
+                            <input type="range" min="1" max="9" value="6" id="uniquePlayers" onchange="updateSliderValue(this, '')">
+                            <span id="uniquePlayersValue">6</span>
+                        </div>
+                        <div class="control-group">
+                            <label>Team Diversity:</label>
+                            <input type="range" min="1" max="6" value="4" id="teamLimit" onchange="updateSliderValue(this, ' teams max')">
+                            <span id="teamLimitValue">4 teams max</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h4>🤖 AI Enhancement Configuration</h4>
+                    <div class="control-grid">
+                        <div class="control-group">
+                            <label>AI Optimization Mode:</label>
+                            <select id="aiMode">
+                                <option value="aggressive">Aggressive (Max Leverage)</option>
+                                <option value="balanced">Balanced (Mixed Strategy)</option>
+                                <option value="conservative">Conservative (Cash Focus)</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Projection Blend:</label>
+                            <select id="projectionBlend">
+                                <option value="multi">Multi-Source (RotoWire + DK + Your DB)</option>
+                                <option value="rotowire">RotoWire Primary</option>
+                                <option value="your_data">Your Database Primary</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Boom/Bust Focus:</label>
+                            <input type="range" min="0" max="100" value="75" id="boomFocus" onchange="updateSliderValue(this, '% boom')">
+                            <span id="boomFocusValue">75% boom</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="applyAdvancedSettings()">Apply All Advanced Settings</button>
+            </div>
+
+            <!-- PROJECTIONS COMPARISON TAB -->
+            <div id="projections-content" class="tab-content">
+                <h2 style="color: #1e3a8a; margin-bottom: 1.5rem;">📈 Multi-Source Projections Analysis</h2>
+                
+                <div id="projectionsTable">
+                    <div class="loading-indicator">
+                        <div class="spinner"></div>
+                        <div>Loading projection comparisons...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESEARCH TAB -->
+            <div id="research-content" class="tab-content">
+                <h2 style="color: #1e3a8a; margin-bottom: 1.5rem;">📰 Live Research Center</h2>
+                
+                <div id="researchContent">
+                    <div class="loading-indicator">
+                        <div class="spinner"></div>
+                        <div>Loading latest news, weather, and vegas data...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LATE SWAP TAB -->
+            <div id="lateswap-content" class="tab-content">
+                <h2 style="color: #1e3a8a; margin-bottom: 1.5rem;">🕘 Live Late Swap Engine</h2>
+                
+                <div id="lateSwapContent">
+                    <div class="loading-indicator">
+                        <div class="spinner"></div>
+                        <div>Loading game status and late swap opportunities...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIMULATIONS TAB -->
+            <div id="simulations-content" class="tab-content">
+                <h2 style="color: #1e3a8a; margin-bottom: 1.5rem;">🎲 Monte Carlo Simulation Engine</h2>
+                
+                <div class="control-section">
+                    <h4>Simulation Configuration</h4>
+                    <div class="control-grid">
+                        <div class="control-group">
+                            <label>Simulation Count:</label>
+                            <input type="number" id="simCount" value="50000" min="1000" max="100000">
+                        </div>
+                        <div class="control-group">
+                            <label>Field Size:</label>
+                            <input type="number" id="fieldSize" value="100000" min="1000" max="500000">
+                        </div>
+                        <div class="control-group">
+                            <label>Tournament Type:</label>
+                            <select id="tournamentType">
+                                <option value="gpp">Large GPP</option>
+                                <option value="satellite">Satellite</option>
+                                <option value="cash">Cash Game</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="runAdvancedSimulation()">🎲 Run Advanced Simulation</button>
+                </div>
+                
+                <div id="simulationResults">
+                    <div class="loading-indicator">
+                        Ready to run simulations...
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULTS TAB -->
+            <div id="results-content" class="tab-content">
+                <h2 style="color: #1e3a8a; margin-bottom: 1.5rem;">🏆 Optimization Results & Analytics</h2>
+                
+                <div id="resultsContent">
+                    <div class="loading-indicator">
+                        Run optimization to see results and analytics...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentSport = 'nfl';
+        let currentDate = '2025-09-15';
+        let availableSlates = [];
+        let playerPool = [];
+        let selectedPlayers = new Set();
+        let optimizedLineups = [];
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        async function initializeApp() {
+            console.log('🚀 Initializing DFS Pro Optimizer...');
+            
+            // Set current date
+            document.getElementById('slateDate').value = getCurrentDate();
+            
+            // Load initial data
+            await loadSlatesForDate();
+            await loadPlayerPool();
+            await loadResearchData();
+            
+            console.log('✅ App initialized');
+        }
+
+        function getCurrentDate() {
+            const today = new Date();
+            return today.toISOString().split('T')[0];
+        }
+
+        async function loadSlatesForDate() {
+            console.log('📅 Loading slates for selected date...');
+            
+            const dateInput = document.getElementById('slateDate').value;
+            const slateSelector = document.getElementById('slateSelector');
+            
+            slateSelector.innerHTML = '<option value="">Loading slates...</option>';
+            
+            try {
+                // Load from dynamic data file
+                const response = await fetch('/data/available_slates.json');
+                const slatesData = await response.json();
+                
+                slateSelector.innerHTML = '';
+                slatesData.slates.forEach(slate => {
+                    const option = document.createElement('option');
+                    option.value = slate.id;
+                    option.textContent = `${slate.name} - ${slate.entry_fee} (${slate.player_count} players)`;
+                    slateSelector.appendChild(option);
+                });
+                
+                // Select first slate by default
+                if (slatesData.slates.length > 0) {
+                    slateSelector.value = slatesData.slates[0].id;
+                    await loadPlayerPool();
+                }
+                
+                console.log(`✅ Loaded ${slatesData.slates.length} slates`);
+                
+            } catch (error) {
+                console.error('❌ Failed to load slates:', error);
+                slateSelector.innerHTML = '<option value="">No slates available</option>';
+            }
+        }
+
+        async function loadPlayerPool() {
+            console.log('👥 Loading full player pool...');
+            
+            const playerPoolContainer = document.getElementById('playerPool');
+            
+            try {
+                // Load from dynamic player data
+                const response = await fetch('/data/current_player_pool.json');
+                const players = await response.json();
+                
+                if (!players || players.length === 0) {
+                    throw new Error('No player data available');
+                }
+                
+                // Group players by position
+                const positionGroups = {};
+                players.forEach(player => {
+                    const pos = player.position || 'FLEX';
+                    if (!positionGroups[pos]) {
+                        positionGroups[pos] = [];
+                    }
+                    positionGroups[pos].push(player);
+                });
+                
+                // Render player pool
+                let html = '';
+                const positions = ['QB', 'RB', 'WR', 'TE', 'DST'];
+                
+                positions.forEach(pos => {
+                    if (positionGroups[pos]) {
+                        const players = positionGroups[pos];
+                        const gameTime = getGameTimeForPosition(players);
+                        
+                        html += `
+                            <div class="position-group">
+                                <div class="position-header">
+                                    ${pos} (${players.length} available)
+                                    <span class="game-time">${gameTime}</span>
+                                </div>
+                        `;
+                        
+                        players.forEach(player => {
+                            const leverageClass = getLeverageClass(player);
+                            const leverageText = getLeverageText(player);
+                            
+                            html += `
+                                <div class="player-row" onclick="selectPlayer('${player.id}')" data-player-id="${player.id}">
+                                    <div class="player-info">
+                                        <div class="player-name">
+                                            ${player.name} ${player.team}
+                                            ${leverageText ? `<span class="leverage-indicator ${leverageClass}">${leverageText}</span>` : ''}
+                                        </div>
+                                        <div class="player-stats">

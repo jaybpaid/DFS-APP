@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ruleset.schema.json",
+  "type": "object",
+  "required": ["salaryCap","rosterSlots","stack"],
+  "properties": {
+    "salaryCap": {"type": "number"},
+    "rosterSlots": {"type": "array","items": {"type": "string"}},
+    "flexRules": {"type": "object","additionalProperties": {"type":"array","items":{"type":"string"}}},
+    "maxFromTeam": {"type": "integer","minimum": 1},
+    "stack": {"type": "object","additionalProperties": true},
+    "groups": {"type": "array","items": {"type": "object","additionalProperties": true}},
+    "exposureCaps": {"type": "object","additionalProperties": {"type":"number","minimum":0,"maximum":1}},
+    "minUniques": {"type": "integer","minimum": 0},
+    "ownershipFade": {"type": "number","minimum": -1,"maximum": 1},
+    "randomness": {"type": "number","minimum": 0,"maximum": 1}
+  }
+}

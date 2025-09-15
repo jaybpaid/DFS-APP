@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout Option 1: Stokastic-Style DFS Optimizer</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .top-bar {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr 300px;
+            gap: 1rem;
+            padding: 1rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .sidebar {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .center-panel {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .right-panel {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            color: #667eea;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+
+        .player-card {
+            background: linear-gradient(135deg, #f8faff 0%, #e8f4fd 100%);
+            border: 1px solid #e1e8ff;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .player-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .leverage-badge {
+            display: inline-block;
+            background: #ef4444;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .lineup-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .position-slot {
+            background: #f1f5f9;
+            border: 2px dashed #cbd5e1;
+            border-radius: 6px;
+            padding: 1rem;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .ai-insights {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="logo">🔥 DFS AI Optimizer - Stokastic Style</div>
+        <div style="display: flex; gap: 1rem;">
+            <button style="background: #10b981; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px;">Export Lineups</button>
+            <button style="background: #667eea; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px;">Run AI Analysis</button>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <!-- Left Sidebar: Player Pool -->
+        <div class="sidebar">
+            <div class="section-header">🎯 Player Pool</div>
+            
+            <div class="player-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">A.J. Brown PHI</div>
+                        <div style="font-size: 0.8rem; color: #6b7280;">vs KC - Mon 8:30 PM</div>
+                    </div>
+                    <div>
+                        <div style="color: #059669; font-weight: bold;">$6600</div>
+                        <span class="leverage-badge">MAX LEV</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="player-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">P. Mahomes KC</div>
+                        <div style="font-size: 0.8rem; color: #6b7280;">@ PHI - Mon 8:30 PM</div>
+                    </div>
+                    <div>
+                        <div style="color: #059669; font-weight: bold;">$7800</div>
+                        <span class="leverage-badge" style="background: #f59e0b;">HOT</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-insights">
+                <div style="font-weight: bold; margin-bottom: 0.5rem;">🤖 AI Insights</div>
+                <div style="font-size: 0.9rem;">DeepSeek detected 10.5x projection edge on A.J. Brown. Extreme leverage opportunity in 54.5 total game.</div>
+            </div>
+        </div>
+
+        <!-- Center: Main Optimizer -->
+        <div class="center-panel">
+            <div class="section-header">⚡ Lineup Builder</div>
+            
+            <div class="lineup-grid">
+                <div class="position-slot">QB</div>
+                <div class="position-slot">RB</div>
+                <div class="position-slot">RB</div>
+                <div class="position-slot">WR</div>
+                <div class="position-slot">WR</div>
+                <div class="position-slot">WR</div>
+                <div class="position-slot">TE</div>
+                <div class="position-slot">FLEX</div>
+                <div class="position-slot">DST</div>
+            </div>
+
+            <div style="text-align: center; margin: 2rem 0;">
+                <button style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer;">
+                    🧠 Generate AI-Optimized Lineups
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Panel: Advanced Controls -->
+        <div class="right-panel">
+            <div class="section-header">🎛️ AI Controls</div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="font-weight: bold; display: block; margin-bottom: 0.5rem;">AI Model:</label>
+                <select style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #e1e8ff;">
+                    <option>DeepSeek (FREE)</option>
+                    <option>GPT-4o-mini</option>
+                    <option>Gemini Flash</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <label style="font-weight: bold; display: block; margin-bottom: 0.5rem;">Leverage Focus:</label>
+                <input type="range" style="width: 100%;" min="0" max="100" value="85">
+                <div style="text-align: center; font-size: 0.9rem; color: #6b7280;">85% - Tournament Max</div>
+            </div>
+
+            <div class="ai-insights" style="margin-top: 1rem;">
+                <div style="font-weight: bold; margin-bottom: 0.5rem;">🎯 Live Leverage</div>
+                <div style="font-size: 0.85rem;">• A.J. Brown: 9.6/10 leverage<br>• Hollywood Brown: 7.5/10<br>• JuJu Smith: 8.2/10</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

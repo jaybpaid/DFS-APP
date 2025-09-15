@@ -1,0 +1,216 @@
+{
+  "timestamp": "2025-09-15T00:09:25.730345",
+  "version": "2025_current",
+  "players": [
+    {
+      "name": "Brock Purdy",
+      "position": "QB",
+      "team": "SF",
+      "salary": 8649,
+      "projection": 26.2,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Christian McCaffrey",
+      "position": "RB",
+      "team": "SF",
+      "salary": 8166,
+      "projection": 26.1,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Brandon Aiyuk",
+      "position": "WR",
+      "team": "SF",
+      "salary": 7447,
+      "projection": 23.2,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "George Kittle",
+      "position": "TE",
+      "team": "SF",
+      "salary": 6682,
+      "projection": 20.3,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Jayden Daniels",
+      "position": "QB",
+      "team": "WAS",
+      "salary": 9125,
+      "projection": 27.2,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Brian Robinson Jr.",
+      "position": "RB",
+      "team": "WAS",
+      "salary": 6790,
+      "projection": 21.7,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Terry McLaurin",
+      "position": "WR",
+      "team": "WAS",
+      "salary": 7387,
+      "projection": 22.0,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Deebo Samuel",
+      "position": "WR",
+      "team": "WAS",
+      "salary": 7760,
+      "projection": 25.3,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Zach Ertz",
+      "position": "TE",
+      "team": "WAS",
+      "salary": 4105,
+      "projection": 13.0,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Jalen Hurts",
+      "position": "QB",
+      "team": "PHI",
+      "salary": 9009,
+      "projection": 24.5,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Saquon Barkley",
+      "position": "RB",
+      "team": "PHI",
+      "salary": 8736,
+      "projection": 26.0,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "A.J. Brown",
+      "position": "WR",
+      "team": "PHI",
+      "salary": 7994,
+      "projection": 25.7,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "DeVonta Smith",
+      "position": "WR",
+      "team": "PHI",
+      "salary": 7408,
+      "projection": 21.9,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Dallas Goedert",
+      "position": "TE",
+      "team": "PHI",
+      "salary": 6547,
+      "projection": 19.5,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "C.J. Stroud",
+      "position": "QB",
+      "team": "HOU",
+      "salary": 8663,
+      "projection": 25.1,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Joe Mixon",
+      "position": "RB",
+      "team": "HOU",
+      "salary": 8765,
+      "projection": 26.1,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Nico Collins",
+      "position": "WR",
+      "team": "HOU",
+      "salary": 7642,
+      "projection": 22.7,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Stefon Diggs",
+      "position": "WR",
+      "team": "HOU",
+      "salary": 7197,
+      "projection": 20.1,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Dalton Schultz",
+      "position": "TE",
+      "team": "HOU",
+      "salary": 4466,
+      "projection": 16.6,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Lamar Jackson",
+      "position": "QB",
+      "team": "BAL",
+      "salary": 9089,
+      "projection": 25.1,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Derrick Henry",
+      "position": "RB",
+      "team": "BAL",
+      "salary": 7723,
+      "projection": 23.6,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Zay Flowers",
+      "position": "WR",
+      "team": "BAL",
+      "salary": 7508,
+      "projection": 22.0,
+      "status": "CURRENT_2025"
+    },
+    {
+      "name": "Mark Andrews",
+      "position": "TE",
+      "team": "BAL",
+      "salary": 5846,
+      "projection": 20.0,
+      "status": "CURRENT_2025"
+    }
+  ],
+  "changes_from_previous": [
+    "Brock Purdy: Team corrected to SF",
+    "Christian McCaffrey: Team corrected to SF",
+    "Brandon Aiyuk: Team corrected to SF",
+    "George Kittle: Team corrected to SF",
+    "Jayden Daniels: Team corrected to WAS",
+    "Brian Robinson Jr.: Team corrected to WAS",
+    "Terry McLaurin: Team corrected to WAS",
+    "Deebo Samuel: Team corrected to WAS",
+    "Zach Ertz: Team corrected to WAS",
+    "Jalen Hurts: Team corrected to PHI",
+    "Saquon Barkley: Team corrected to PHI",
+    "A.J. Brown: Team corrected to PHI",
+    "DeVonta Smith: Team corrected to PHI",
+    "Dallas Goedert: Team corrected to PHI",
+    "C.J. Stroud: Team corrected to HOU",
+    "Joe Mixon: Team corrected to HOU",
+    "Nico Collins: Team corrected to HOU",
+    "Stefon Diggs: Team corrected to HOU",
+    "Dalton Schultz: Team corrected to HOU",
+    "Lamar Jackson: Team corrected to BAL",
+    "Derrick Henry: Team corrected to BAL",
+    "Zay Flowers: Team corrected to BAL",
+    "Mark Andrews: Team corrected to BAL"
+  ],
+  "data_source": "Manual validation September 14, 2025"
+}

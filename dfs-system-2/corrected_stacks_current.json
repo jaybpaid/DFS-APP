@@ -1,0 +1,555 @@
+{
+  "timestamp": "2025-09-15T00:10:51.441262",
+  "data_status": "CURRENT_SEP_2025",
+  "top_stacks": [
+    {
+      "team": "PHI",
+      "qb": "Jalen Hurts",
+      "qb_projection": 22.6,
+      "pass_catchers": [
+        {
+          "name": "DeVonta Smith",
+          "projection": 22.6
+        },
+        {
+          "name": "A.J. Brown",
+          "projection": 18.2
+        }
+      ],
+      "total_projection": 63.4,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "TB",
+      "qb": "Baker Mayfield",
+      "qb_projection": 24.6,
+      "pass_catchers": [
+        {
+          "name": "Mike Evans",
+          "projection": 20.2
+        },
+        {
+          "name": "Cade Otton",
+          "projection": 13.8
+        }
+      ],
+      "total_projection": 58.6,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "CHI",
+      "qb": "Caleb Williams",
+      "qb_projection": 25.1,
+      "pass_catchers": [
+        {
+          "name": "Keenan Allen",
+          "projection": 17.4
+        },
+        {
+          "name": "Cole Kmet",
+          "projection": 14.2
+        }
+      ],
+      "total_projection": 56.7,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "CAR",
+      "qb": "Bryce Young",
+      "qb_projection": 24.0,
+      "pass_catchers": [
+        {
+          "name": "DJ Chark",
+          "projection": 19.3
+        },
+        {
+          "name": "Adam Thielen",
+          "projection": 13.3
+        }
+      ],
+      "total_projection": 56.6,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "MIN",
+      "qb": "Sam Darnold",
+      "qb_projection": 24.6,
+      "pass_catchers": [
+        {
+          "name": "Justin Jefferson",
+          "projection": 19.2
+        },
+        {
+          "name": "T.J. Hockenson",
+          "projection": 12.0
+        }
+      ],
+      "total_projection": 55.8,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "BUF",
+      "qb": "Josh Allen",
+      "qb_projection": 22.3,
+      "pass_catchers": [
+        {
+          "name": "Khalil Shakir",
+          "projection": 18.1
+        },
+        {
+          "name": "Curtis Samuel",
+          "projection": 14.6
+        }
+      ],
+      "total_projection": 55.0,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "BAL",
+      "qb": "Lamar Jackson",
+      "qb_projection": 25.4,
+      "pass_catchers": [
+        {
+          "name": "Zay Flowers",
+          "projection": 16.0
+        },
+        {
+          "name": "Malik Washington",
+          "projection": 13.2
+        }
+      ],
+      "total_projection": 54.6,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "KC",
+      "qb": "Patrick Mahomes",
+      "qb_projection": 22.7,
+      "pass_catchers": [
+        {
+          "name": "DeAndre Hopkins",
+          "projection": 18.1
+        },
+        {
+          "name": "Travis Kelce",
+          "projection": 13.8
+        }
+      ],
+      "total_projection": 54.6,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "LV",
+      "qb": "Gardner Minshew",
+      "qb_projection": 21.7,
+      "pass_catchers": [
+        {
+          "name": "Davante Adams",
+          "projection": 18.8
+        },
+        {
+          "name": "Jalen Tolbert",
+          "projection": 14.0
+        }
+      ],
+      "total_projection": 54.5,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "DET",
+      "qb": "Jared Goff",
+      "qb_projection": 23.6,
+      "pass_catchers": [
+        {
+          "name": "Amon-Ra St. Brown",
+          "projection": 19.4
+        },
+        {
+          "name": "Sam LaPorta",
+          "projection": 11.2
+        }
+      ],
+      "total_projection": 54.2,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "JAX",
+      "qb": "Trevor Lawrence",
+      "qb_projection": 24.7,
+      "pass_catchers": [
+        {
+          "name": "Brian Thomas Jr.",
+          "projection": 17.4
+        },
+        {
+          "name": "Evan Engram",
+          "projection": 12.0
+        }
+      ],
+      "total_projection": 54.1,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "ATL",
+      "qb": "Kirk Cousins",
+      "qb_projection": 22.3,
+      "pass_catchers": [
+        {
+          "name": "Drake London",
+          "projection": 18.7
+        },
+        {
+          "name": "Kyle Pitts",
+          "projection": 12.9
+        }
+      ],
+      "total_projection": 53.9,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "SEA",
+      "qb": "Geno Smith",
+      "qb_projection": 20.9,
+      "pass_catchers": [
+        {
+          "name": "DK Metcalf",
+          "projection": 17.5
+        },
+        {
+          "name": "Noah Fant",
+          "projection": 15.3
+        }
+      ],
+      "total_projection": 53.7,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "CIN",
+      "qb": "Joe Burrow",
+      "qb_projection": 21.6,
+      "pass_catchers": [
+        {
+          "name": "Ja'Marr Chase",
+          "projection": 17.5
+        },
+        {
+          "name": "Tee Higgins",
+          "projection": 14.2
+        }
+      ],
+      "total_projection": 53.3,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "DAL",
+      "qb": "Dak Prescott",
+      "qb_projection": 24.3,
+      "pass_catchers": [
+        {
+          "name": "CeeDee Lamb",
+          "projection": 19.0
+        },
+        {
+          "name": "Jake Ferguson",
+          "projection": 8.9
+        }
+      ],
+      "total_projection": 52.2,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "ARI",
+      "qb": "Kyler Murray",
+      "qb_projection": 21.3,
+      "pass_catchers": [
+        {
+          "name": "DeAndre Hopkins",
+          "projection": 16.2
+        },
+        {
+          "name": "Trey McBride",
+          "projection": 14.6
+        }
+      ],
+      "total_projection": 52.1,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "MIA",
+      "qb": "Tua Tagovailoa",
+      "qb_projection": 21.7,
+      "pass_catchers": [
+        {
+          "name": "Mike Gesicki",
+          "projection": 15.9
+        },
+        {
+          "name": "Tyreek Hill",
+          "projection": 14.5
+        }
+      ],
+      "total_projection": 52.1,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "PIT",
+      "qb": "Russell Wilson",
+      "qb_projection": 23.4,
+      "pass_catchers": [
+        {
+          "name": "George Pickens",
+          "projection": 17.4
+        },
+        {
+          "name": "Xavier Worthy",
+          "projection": 11.2
+        }
+      ],
+      "total_projection": 52.0,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "SF",
+      "qb": "Brock Purdy",
+      "qb_projection": 18.5,
+      "pass_catchers": [
+        {
+          "name": "Brandon Aiyuk",
+          "projection": 21.4
+        },
+        {
+          "name": "Jauan Jennings",
+          "projection": 12.0
+        }
+      ],
+      "total_projection": 51.9,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "LAC",
+      "qb": "Justin Herbert",
+      "qb_projection": 22.8,
+      "pass_catchers": [
+        {
+          "name": "Ladd McConkey",
+          "projection": 14.5
+        },
+        {
+          "name": "Romeo Doubs",
+          "projection": 13.9
+        }
+      ],
+      "total_projection": 51.2,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "NO",
+      "qb": "Derek Carr",
+      "qb_projection": 24.0,
+      "pass_catchers": [
+        {
+          "name": "Chris Olave",
+          "projection": 16.6
+        },
+        {
+          "name": "Juwan Johnson",
+          "projection": 10.3
+        }
+      ],
+      "total_projection": 50.9,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "NYG",
+      "qb": "Daniel Jones",
+      "qb_projection": 20.3,
+      "pass_catchers": [
+        {
+          "name": "Malik Nabers",
+          "projection": 16.4
+        },
+        {
+          "name": "Ricky Pearsall",
+          "projection": 14.2
+        }
+      ],
+      "total_projection": 50.9,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "DEN",
+      "qb": "Bo Nix",
+      "qb_projection": 23.1,
+      "pass_catchers": [
+        {
+          "name": "Courtland Sutton",
+          "projection": 16.3
+        },
+        {
+          "name": "Greg Dulcich",
+          "projection": 11.1
+        }
+      ],
+      "total_projection": 50.5,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "HOU",
+      "qb": "C.J. Stroud",
+      "qb_projection": 21.3,
+      "pass_catchers": [
+        {
+          "name": "Dalton Schultz",
+          "projection": 15.1
+        },
+        {
+          "name": "Stefon Diggs",
+          "projection": 14.0
+        }
+      ],
+      "total_projection": 50.4,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "TEN",
+      "qb": "Will Levis",
+      "qb_projection": 19.3,
+      "pass_catchers": [
+        {
+          "name": "DeAndre Hopkins",
+          "projection": 19.3
+        },
+        {
+          "name": "Nick Westbrook-Ikhine",
+          "projection": 11.4
+        }
+      ],
+      "total_projection": 50.0,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "LAR",
+      "qb": "Matthew Stafford",
+      "qb_projection": 20.5,
+      "pass_catchers": [
+        {
+          "name": "Cooper Kupp",
+          "projection": 16.3
+        },
+        {
+          "name": "Tyler Higbee",
+          "projection": 12.8
+        }
+      ],
+      "total_projection": 49.6,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "IND",
+      "qb": "Anthony Richardson",
+      "qb_projection": 19.8,
+      "pass_catchers": [
+        {
+          "name": "Michael Pittman Jr.",
+          "projection": 18.1
+        },
+        {
+          "name": "Josh Downs",
+          "projection": 11.6
+        }
+      ],
+      "total_projection": 49.5,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "CLE",
+      "qb": "Deshaun Watson",
+      "qb_projection": 21.3,
+      "pass_catchers": [
+        {
+          "name": "Amari Cooper",
+          "projection": 15.8
+        },
+        {
+          "name": "David Njoku",
+          "projection": 12.3
+        }
+      ],
+      "total_projection": 49.4,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "WAS",
+      "qb": "Jayden Daniels",
+      "qb_projection": 19.1,
+      "pass_catchers": [
+        {
+          "name": "Terry McLaurin",
+          "projection": 15.1
+        },
+        {
+          "name": "Deebo Samuel",
+          "projection": 14.7
+        }
+      ],
+      "total_projection": 48.9,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "GB",
+      "qb": "Jordan Love",
+      "qb_projection": 25.4,
+      "pass_catchers": [
+        {
+          "name": "Jayden Reed",
+          "projection": 13.4
+        },
+        {
+          "name": "Tucker Kraft",
+          "projection": 9.3
+        }
+      ],
+      "total_projection": 48.1,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "NE",
+      "qb": "Drake Maye",
+      "qb_projection": 19.9,
+      "pass_catchers": [
+        {
+          "name": "DeMario Douglas",
+          "projection": 15.2
+        },
+        {
+          "name": "Hunter Henry",
+          "projection": 12.8
+        }
+      ],
+      "total_projection": 47.9,
+      "data_status": "CURRENT_SEP_2025"
+    },
+    {
+      "team": "NYJ",
+      "qb": "Aaron Rodgers",
+      "qb_projection": 19.4,
+      "pass_catchers": [
+        {
+          "name": "Garrett Wilson",
+          "projection": 16.9
+        },
+        {
+          "name": "Tyler Conklin",
+          "projection": 9.5
+        }
+      ],
+      "total_projection": 45.8,
+      "data_status": "CURRENT_SEP_2025"
+    }
+  ],
+  "key_corrections": [
+    "Deebo Samuel \u2192 WAS (was SF)",
+    "Stefon Diggs \u2192 HOU (was BUF)",
+    "Saquon Barkley \u2192 PHI (was NYG)"
+  ]
+}

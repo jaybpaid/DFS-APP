@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  dfs-optimizer:
+    build: .
+    container_name: dfs-ultimate-optimizer
+    ports:
+      - "8000:8000"  # Live Optimizer API
+      - "8765:8765"  # DraftKings API Server
+      - "8080:8080"  # Optional: Web dashboard server
+    environment:
+      - PYTHONPATH=/app
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+      - DFS_LOG_LEVEL=INFO
+      - DFS_DATA_REFRESH_INTERVAL=900  # 15 minutes
+    volumes:
+      - ./public/data:/app/public/data
+      - ./logs:/app/logs
+      - dfs_cache:/app/cache
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - dfs-network
+
+  # Optional: Redis for caching (if needed for scaling)
+  redis:
+    image: redis:7-alpine
+    container_name: dfs-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - dfs-network
+    profiles:
+      - with-redis
+
+  # Optional: Nginx reverse proxy for production
+  nginx:
+    image: nginx:alpine
+    container_name: dfs-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - dfs-optimizer
+    restart: unless-stopped
+    networks:
+      - dfs-network
+    profiles:
+      - production
+
+volumes:
+  dfs_cache:
+  redis_data:
+
+networks:
+  dfs-network:
+    driver: bridge

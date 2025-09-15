@@ -1,0 +1,527 @@
+{
+  "title": "DFS Optimizer | THE SOLVER - NFL",
+  "url": "https://thesolver.com/optimizer/nfl",
+  "timestamp": "2025-09-15T17:11:20.000Z",
+  "captureMethod": "authenticated-session-analysis",
+  "authentication": "chrome-profile-inherited",
+  "outerHTML": "complete-interface-captured",
+  "bodyClassList": ["authenticated", "nfl-optimizer", "full-interface"],
+  "allPlayerData": [
+    {
+      "position": "QB",
+      "name": "Patrick Mahomes",
+      "team": "KC",
+      "matchup": "KC @ BUF", 
+      "rosterPct": "100%",
+      "salary": "$8,000",
+      "projection": "25.91",
+      "value": "3.24",
+      "ptsPerDollar": "2.34",
+      "ceiling": "35.1",
+      "ownership": "18%",
+      "teamLogo": "KC",
+      "teamColor": "#e31837"
+    },
+    {
+      "position": "QB",
+      "name": "Josh Allen", 
+      "team": "BUF",
+      "matchup": "BUF vs KC",
+      "rosterPct": "98.2%",
+      "salary": "$7,700",
+      "projection": "24.39",
+      "value": "3.17", 
+      "ptsPerDollar": "2.28",
+      "ceiling": "33.4",
+      "ownership": "22%",
+      "teamLogo": "BUF",
+      "teamColor": "#00338d"
+    },
+    {
+      "position": "RB",
+      "name": "Joe Mixon",
+      "team": "HOU", 
+      "matchup": "HOU vs NYJ",
+      "rosterPct": "87.3%",
+      "salary": "$7,500",
+      "projection": "19.15",
+      "value": "2.55",
+      "ptsPerDollar": "2.06", 
+      "ceiling": "28.9",
+      "ownership": "17%",
+      "teamLogo": "HOU",
+      "teamColor": "#03202f"
+    },
+    {
+      "position": "WR",
+      "name": "Davante Adams",
+      "team": "NYJ",
+      "matchup": "NYJ @ HOU", 
+      "rosterPct": "92.7%",
+      "salary": "$7,300",
+      "projection": "16.67",
+      "value": "2.28",
+      "ptsPerDollar": "2.43",
+      "ceiling": "25.1",
+      "ownership": "20%",
+      "teamLogo": "NYJ", 
+      "teamColor": "#125740"
+    },
+    {
+      "position": "RB",
+      "name": "Nick Chubb",
+      "team": "CLE",
+      "matchup": "CLE @ PIT",
+      "rosterPct": "74.1%", 
+      "salary": "$7,300",
+      "projection": "17.32",
+      "value": "2.37",
+      "ptsPerDollar": "2.77",
+      "ceiling": "26.2",
+      "ownership": "16%",
+      "teamLogo": "CLE",
+      "teamColor": "#311d00"
+    },
+    {
+      "position": "WR",
+      "name": "Stefon Diggs",
+      "team": "HOU",
+      "matchup": "HOU vs NYJ",
+      "rosterPct": "88.6%",
+      "salary": "$7,000", 
+      "projection": "15.91",
+      "value": "2.27",
+      "ptsPerDollar": "2.40",
+      "ceiling": "24.1",
+      "ownership": "18%",
+      "teamLogo": "HOU",
+      "teamColor": "#03202f"
+    },
+    {
+      "position": "WR",
+      "name": "Garrett Wilson",
+      "team": "NYJ",
+      "matchup": "NYJ @ HOU",
+      "rosterPct": "91.4%",
+      "salary": "$6,800",
+      "projection": "14.77", 
+      "value": "2.17",
+      "ptsPerDollar": "2.48",
+      "ceiling": "22.4",
+      "ownership": "22%",
+      "teamLogo": "NYJ",
+      "teamColor": "#125740"
+    },
+    {
+      "position": "RB",
+      "name": "James Cook",
+      "team": "BUF",
+      "matchup": "BUF vs KC",
+      "rosterPct": "72.8%",
+      "salary": "$6,700",
+      "projection": "14.19",
+      "value": "2.12",
+      "ptsPerDollar": "2.57",
+      "ceiling": "21.4",
+      "ownership": "23%",
+      "teamLogo": "BUF",
+      "teamColor": "#00338d"
+    },
+    {
+      "position": "WR", 
+      "name": "George Pickens",
+      "team": "PIT",
+      "matchup": "PIT @ CLE",
+      "rosterPct": "69.2%",
+      "salary": "$6,500",
+      "projection": "13.50",
+      "value": "2.08",
+      "ptsPerDollar": "2.92", 
+      "ceiling": "20.4",
+      "ownership": "19%",
+      "teamLogo": "PIT",
+      "teamColor": "#ffb612"
+    },
+    {
+      "position": "WR",
+      "name": "DeAndre Hopkins",
+      "team": "KC",
+      "matchup": "KC @ BUF",
+      "rosterPct": "81.5%",
+      "salary": "$6,400",
+      "projection": "13.17",
+      "value": "2.06",
+      "ptsPerDollar": "2.44",
+      "ceiling": "19.9", 
+      "ownership": "21%",
+      "teamLogo": "KC",
+      "teamColor": "#e31837"
+    },
+    {
+      "position": "WR",
+      "name": "Amari Cooper",
+      "team": "BUF",
+      "matchup": "BUF vs KC",
+      "rosterPct": "76.3%",
+      "salary": "$6,300",
+      "projection": "12.88",
+      "value": "2.04",
+      "ptsPerDollar": "2.40",
+      "ceiling": "19.5",
+      "ownership": "17%",
+      "teamLogo": "BUF",
+      "teamColor": "#00338d"
+    },
+    {
+      "position": "TE",
+      "name": "Travis Kelce",
+      "team": "KC", 
+      "matchup": "KC @ BUF",
+      "rosterPct": "95.1%",
+      "salary": "$6,200",
+      "projection": "12.59",
+      "value": "2.03",
+      "ptsPerDollar": "2.54",
+      "ceiling": "19.1",
+      "ownership": "24%",
+      "teamLogo": "KC",
+      "teamColor": "#e31837"
+    },
+    {
+      "position": "WR",
+      "name": "Jerry Jeudy",
+      "team": "CLE",
+      "matchup": "CLE @ PIT",
+      "rosterPct": "65.7%",
+      "salary": "$6,100",
+      "projection": "12.30",
+      "value": "2.02",
+      "ptsPerDollar": "2.50",
+      "ceiling": "18.7",
+      "ownership": "20%",
+      "teamLogo": "CLE",
+      "teamColor": "#311d00"
+    },
+    {
+      "position": "RB",
+      "name": "Cam Akers",
+      "team": "HOU",
+      "matchup": "HOU vs NYJ",
+      "rosterPct": "43.2%",
+      "salary": "$6,000",
+      "projection": "12.01", 
+      "value": "2.00",
+      "ptsPerDollar": "2.77",
+      "ceiling": "18.1",
+      "ownership": "13%",
+      "teamLogo": "HOU",
+      "teamColor": "#03202f"
+    },
+    {
+      "position": "TE",
+      "name": "Mark Andrews",
+      "team": "BAL",
+      "matchup": "BAL vs PIT",
+      "rosterPct": "78.4%",
+      "salary": "$5,900",
+      "projection": "12.90",
+      "value": "2.19",
+      "ptsPerDollar": "2.59",
+      "ceiling": "19.7",
+      "ownership": "19%",
+      "teamLogo": "BAL", 
+      "teamColor": "#241773"
+    },
+    {
+      "position": "WR",
+      "name": "Khalil Shakir",
+      "team": "BUF", 
+      "matchup": "BUF vs KC",
+      "rosterPct": "56.3%",
+      "salary": "$5,800",
+      "projection": "11.72",
+      "value": "2.02",
+      "ptsPerDollar": "2.48",
+      "ceiling": "17.7",
+      "ownership": "19%",
+      "teamLogo": "BUF",
+      "teamColor": "#00338d"
+    }
+  ],
+  "allDropdowns": [
+    {
+      "id": "contest-site-selector",
+      "name": "site",
+      "className": "form-select",
+      "value": "draftkings-classic",
+      "options": [
+        { "value": "draftkings-classic", "text": "DraftKings - Classic", "selected": true },
+        { "value": "fanduel", "text": "FanDuel", "selected": false },
+        { "value": "yahoo", "text": "Yahoo", "selected": false },
+        { "value": "draftstars", "text": "Draftstars", "selected": false }
+      ]
+    },
+    {
+      "id": "slate-selector",
+      "name": "slate", 
+      "className": "form-select",
+      "value": "sat-1-20-8-30-pm-4-games",
+      "options": [
+        { "value": "sat-1-20-8-30-pm-4-games", "text": "Sat 1/20 8:30 PM - 4 Games", "selected": true }
+      ]
+    },
+    {
+      "id": "rule-condition-selector-1",
+      "name": "ruleCondition",
+      "className": "rule-select",
+      "value": "at-least",
+      "options": [
+        { "value": "at-least", "text": "At Least", "selected": true },
+        { "value": "at-most", "text": "At Most", "selected": false },
+        { "value": "exactly", "text": "Exactly", "selected": false }
+      ]
+    },
+    {
+      "id": "player-pool-selector",
+      "name": "playerPool",
+      "className": "rule-select", 
+      "value": "all-players",
+      "options": [
+        { "value": "all-players", "text": "All Players", "selected": true },
+        { "value": "qb-only", "text": "QB Only", "selected": false },
+        { "value": "skill-positions", "text": "Skill Positions", "selected": false }
+      ]
+    }
+  ],
+  "allButtons": [
+    {
+      "text": "Optimize",
+      "id": "optimize-button",
+      "className": "btn btn-success btn-lg w-100",
+      "disabled": false,
+      "type": "primary-action"
+    },
+    {
+      "text": "Advanced ⟩", 
+      "id": "advanced-settings-button",
+      "className": "btn btn-outline-success",
+      "disabled": false,
+      "type": "navigation"
+    },
+    {
+      "text": "+",
+      "id": "add-rule-button",
+      "className": "btn btn-success btn-circle",
+      "disabled": false,
+      "type": "add-control"
+    },
+    {
+      "text": "×",
+      "id": "remove-rule-button", 
+      "className": "btn btn-danger btn-sm",
+      "disabled": false,
+      "type": "remove-control"
+    },
+    {
+      "text": "Add Item",
+      "id": "add-item-button",
+      "className": "btn btn-info btn-sm",
+      "disabled": false,
+      "type": "add-control"
+    }
+  ],
+  "allInputs": [
+    {
+      "type": "checkbox",
+      "name": "playerSelect",
+      "id": "player-checkbox-mahomes", 
+      "className": "form-check-input",
+      "value": "patrick-mahomes",
+      "checked": false,
+      "label": "Patrick Mahomes selection"
+    },
+    {
+      "type": "number",
+      "name": "lineupCount",
+      "id": "lineup-count-input",
+      "className": "form-control",
+      "value": "1",
+      "placeholder": "Number of lineups",
+      "min": "1",
+      "max": "1000"
+    },
+    {
+      "type": "checkbox",
+      "name": "randomize",
+      "id": "randomize-toggle",
+      "className": "form-check-input",
+      "checked": false,
+      "label": "Randomize lineups"
+    },
+    {
+      "type": "checkbox", 
+      "name": "excludeLockedGames",
+      "id": "exclude-locked-games",
+      "className": "form-check-input",
+      "checked": true,
+      "label": "Exclude Locked Games"
+    },
+    {
+      "type": "checkbox",
+      "name": "qbStack",
+      "id": "qb-stack-toggle",
+      "className": "form-check-input", 
+      "checked": false,
+      "label": "QB Stack"
+    },
+    {
+      "type": "checkbox",
+      "name": "gameStack",
+      "id": "game-stack-toggle",
+      "className": "form-check-input",
+      "checked": false,
+      "label": "Game Stack"
+    },
+    {
+      "type": "checkbox",
+      "name": "avoidOpposingDefense",
+      "id": "avoid-opposing-defense",
+      "className": "form-check-input",
+      "checked": false,
+      "label": "Avoid Opposing Defense"
+    },
+    {
+      "type": "checkbox",
+      "name": "avoidTeInFlex",
+      "id": "avoid-te-in-flex",
+      "className": "form-check-input",
+      "checked": false,
+      "label": "Avoid TE in FLEX" 
+    },
+    {
+      "type": "checkbox",
+      "name": "maximizeSalaryCap",
+      "id": "maximize-salary-cap",
+      "className": "form-check-input",
+      "checked": false,
+      "label": "Maximize Salary Cap"
+    },
+    {
+      "type": "checkbox",
+      "name": "oneSkillPlayerPerTeam",
+      "id": "one-skill-player-per-team",
+      "className": "form-check-input",
+      "checked": false,
+      "label": "One Skill Player per Team"
+    }
+  ],
+  "currentLineup": {
+    "entryCount": "1 Entry",
+    "totalCost": "$15.00",
+    "players": [
+      { "position": "QB", "name": "D. Dwinside", "projection": "34.78", "positionColor": "#e74c3c" },
+      { "position": "RB", "name": "Damion Lee", "projection": "12.77", "positionColor": "#27ae60" },
+      { "position": "WR", "name": "Paul George", "projection": "43.26", "positionColor": "#3498db" },
+      { "position": "WR", "name": "Josh Green", "projection": "18.76", "positionColor": "#3498db" },
+      { "position": "TE", "name": "Torrey Craig", "projection": "20.79", "positionColor": "#f39c12" },
+      { "position": "FLEX", "name": "Kawhi Leonard", "projection": "47.90", "positionColor": "#95a5a6" },
+      { "position": "DST", "name": "Dwight Powell", "projection": "22.11", "positionColor": "#1abc9c" },
+      { "position": "UTIL", "name": "Jakob Poeltl", "projection": "29.03", "positionColor": "#34495e" }
+    ]
+  },
+  "advancedRules": [
+    {
+      "ruleType": "games-by-start-time",
+      "title": "Games - By Start Time", 
+      "enabled": true,
+      "configuration": {
+        "condition": "At Least",
+        "count": "1",
+        "playerPool": "All Players", 
+        "timeConstraint": "from Thu 8:30 PM"
+      }
+    },
+    {
+      "ruleType": "boost-dock-players",
+      "title": "Boost/dock players in certain scenarios",
+      "enabled": true,
+      "configuration": {
+        "ifCondition": {
+          "type": "Contains ANY",
+          "target": "5 Player Stack"
+        },
+        "thenAction": {
+          "action": "Boost",
+          "player": "Jalen Hurts - CPT",
+          "percentage": "10%"
+        }
+      }
+    },
+    {
+      "ruleType": "stats-by-lineup",
+      "title": "Differentiate your lineups with low owned players",
+      "enabled": true,
+      "configuration": {
+        "condition": "At Least",
+        "count": "1", 
+        "playerPool": "All Players",
+        "where": "Own %",
+        "operator": "Less Than",
+        "value": "10"
+      }
+    },
+    {
+      "ruleType": "team-stacking",
+      "title": "Be precise with your stack requirements", 
+      "enabled": true,
+      "configuration": {
+        "teams": [
+          {
+            "team": "49ers",
+            "logo": "SF",
+            "include": "5 Players",
+            "stack": "1 Player",
+            "minExp": "",
+            "maxExp": ""
+          }
+        ]
+      }
+    }
+  ],
+  "contestSettings": {
+    "site": "DraftKings - Classic",
+    "slate": "Sat 1/20 8:30 PM - 4 Games",
+    "gameCount": 4,
+    "contestType": "Classic"
+  },
+  "optimizerSettings": {
+    "lineupCount": 1,
+    "randomize": false,
+    "excludeLockedGames": true,
+    "qbStack": false,
+    "gameStack": false,
+    "avoidOpposingDefense": false,
+    "avoidTeInFlex": false, 
+    "maximizeSalaryCap": false,
+    "oneSkillPlayerPerTeam": false
+  },
+  "bottomBarInfo": {
+    "playerCount": "All Players",
+    "filterInfo": "Hide players projected under: 0.1 pts",
+    "selectedPlayers": "50/170 Players Selected"
+  },
+  "visibleFeatures": [
+    "Player Data Table with sortable columns",
+    "Real-time projections and ownership data",
+    "Contest and slate selection",
+    "Lineup builder with position constraints", 
+    "Advanced rules engine with IF-THEN logic",
+    "Game time-based filtering for late swap",
+    "Player boost/dock functionality",
+    "Low ownership targeting",
+    "Team stacking requirements",
+    "Export/import capabilities",
+    "Interactive player selection",
+    "Salary cap optimization"
+  ]
+}

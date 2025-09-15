@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE SOLVER - NFL Optimizer (Exact Replica)</title>
+    
+    <!-- Bootstrap 5 for The Solver's exact styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <style>
+        body {
+            background: #1a2332;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+        }
+
+        /* Header - Exact Match */
+        .solver-header {
+            background: #1a2332;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 0.75rem 1rem;
+        }
+
+        .solver-logo {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.25rem;
+            text-decoration: none;
+        }
+
+        .nav-tabs .nav-link {
+            color: #8e9aaf;
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #28a745;
+            background: none;
+            border-bottom: 2px solid #28a745;
+        }
+
+        /* Main Content Area */
+        .optimizer-main {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 1rem;
+            padding: 1rem;
+            height: calc(100vh - 140px);
+        }
+
+        /* Left Panel - Player Table */
+        .player-panel {
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow: hidden;
+        }
+
+        .control-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+        }
+
+        .week-selector, .site-selector, .slate-selector {
+            background: #2a3441;
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            padding: 0.375rem 0.75rem;
+            margin-right: 0.5rem;
+        }
+
+        .position-filters {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .position-filter {
+            background: #2a3441;
+            color: #8e9aaf;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            padding: 0.375rem 0.75rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .position-filter.active {
+            background: #007bff;
+            color: #ffffff;
+        }
+
+        /* Player Table - Exact Match */
+        .player-table {
+            width: 100%;
+            margin: 0;
+        }
+
+        .player-table thead th {
+            background: #28a745;
+            color: #ffffff;
+            font-weight: 600;
+            padding: 0.75rem 0.5rem;
+            font-size: 0.875rem;
+            border: none;
+            position: sticky;
+            top: 0;
+        }
+
+        .player-table tbody {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .player-table tbody tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .player-table tbody td {
+            padding: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.875rem;
+        }
+
+        .player-checkbox {
+            margin: 0;
+        }
+
+        .boost-dock-controls {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .boost-btn, .dock-btn {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #8e9aaf;
+            border-radius: 3px;
+            padding: 0.125rem 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .value-positive { color: #28a745; }
+        .value-negative { color: #dc3545; }
+
+        /* Right Panel - Optimizer */
+        .optimizer-panel {
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .optimizer-header {
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .lineup-slots {
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .lineup-slot {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.875rem;
+        }
+
+        .lineup-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #8e9aaf;
+        }
+
+        .stat-value {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .optimizer-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-solver {
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-solver:hover {
+            background: #1e7e34;
+        }
+
+        .btn-secondary-solver {
+            background: #6c757d;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        /* Optimizer Settings */
+        .optimizer-settings {
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .settings-title {
+            color: #28a745;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .rule-checkbox {
+            margin-right: 0.5rem;
+            margin-top: 0.125rem;
+        }
+
+        .rule-description {
+            color: #8e9aaf;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Live Data Indicator */
+        .live-indicator {
+            background: #28a745;
+            color: #ffffff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header - Exact Match -->
+    <nav class="solver-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                <a href="/" class="solver-logo me-3">THE SOLVER</a>
+                <div class="d-flex align-items-center">
+                    <label class="text-muted me-2">Week:</label>
+                    <select id="weekSelector" class="week-selector">
+                        <option value="week2-2025">Week 2 - 2025</option>
+                    </select>
+                    <label class="text-muted mx-2">Site - Game Type:</label>
+                    <select id="siteSelector" class="site-selector">
+                        <option value="dk-classic">🏈 DraftKings - Classic</option>
+                    </select>
+                    <label class="text-muted mx-2">Slate:</label>
+                    <select id="slateSelector" class="slate-selector">
+                        <!-- Populated by live data -->
+                    </select>
+                    <label class="text-muted mx-2">Settings:</label>
+                    <select id="settingsSelector" class="week-selector">
+                        <option value="default">Default</option>
+                    </select>
+                </div>
+            </div>
+            <div class="nav-tabs">
+                <a class="nav-link active" href="#optimizer">Optimizer</a>
+                <a class="nav-link" href="#my-lineups">My Lineups</a>
+                <a class="nav-link" href="#late-swap">Late Swap/Entry Mgr</a>
+                <a class="nav-link" href="#projections">My Projections</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Live Data Indicator -->
+    <div class="container-fluid">
+        <div class="live-indicator">
+            🔴 LIVE DATA - Connected to your advanced backend systems
+        </div>
+    </div>
+
+    <!-- Main Optimizer Interface -->
+    <div class="optimizer-main">
+        <!-- Left Panel - Player Pool -->
+        <div class="player-panel">
+            <div class="control-bar">
+                <div class="d-flex align-items-center">
+                    <span class="text-muted me-3">Games:</span>
+                    <div id="gameInfo" class="text-info">
+                        <!-- Live game data populated here -->
+                    </div>
+                </div>
+                <div class="position-filters">
+                    <button class="position-filter active" data-position="ALL">ALL</button>
+                    <button class="position-filter" data-position="QB">QB</button>
+                    <button class="position-filter" data-position="RB">RB</button>
+                    <button class="position-filter" data-position="WR">WR</button>
+                    <button class="position-filter" data-position="TE">TE</button>
+                    <button class="position-filter" data-position="FLEX">FLEX</button>
+                    <button class="position-filter" data-position="DST">DST</button>
+                </div>
+            </div>
+
+            <div style="height: 600px; overflow-y: auto;">
+                <table class="player-table table table-sm">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;"></th>
+                            <th style="width: 40px;"></th>
+                            <th style="width: 150px;">NAME</th>
+                            <th style="width: 80px;">BOOST/DOCK</th>
+                            <th style="width: 80px;">TEAM</th>
+                            <th style="width: 70px;">SALARY</th>
+                            <th style="width: 60px;">PROJ</th>
+                            <th style="width: 60px;">ACTUAL</th>
+                            <th style="width: 60px;">VALUE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playerTableBody">
+                        <!-- Live player data populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="text-muted">
+                    <span id="playerCount">0</span>/101 Players Selected
+                </div>
+                <div class="d-flex align-items-center">
+                    <label class="me-2">Hide players projected under:</label>
+                    <input type="number" class="form-control" style="width: 70px; background: #2a3441; color: #fff; border-color: rgba(255,255,255,0.2);" value="0.1" step="0.1">
+                    <span class="ms-2">pts</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Optimizer -->
+        <div class="optimizer-panel">
+            <div class="optimizer-header">Optimizer</div>
+
+            <!-- Lineup Display -->
+            <div class="lineup-slots">
+                <div class="lineup-slot">
+                    <span class="fw-bold">QB</span>
+                    <span id="qb-slot" class="text-muted">-</span>
+                </div>
+                <div class="lineup-slot">
+                    <span class="fw-bold">RB</span>
+                    <span id="rb1-slot" class="text-muted">-</span>
+                </div>
+                <div class="lineup-slot">
+                    <span class="fw-bold">RB</span>
+                    <span id="rb2-slot" class="text-muted">-</span>
+                </div>
+                <div class="lineup-slot">
+                    <span class="fw-bold">WR</span>
+                    <span id="wr1-slot" class="text-muted">-</span>
+                </div>
+                <div class="lineup-slot">
+                    <span class="fw-bold">WR</span>
+                    <span id="wr2-slot" class="text-muted">-</span>
+                </div>
+                <div class="lineup-slot">
+                    <span class="fw-bold">WR</span>
+                    <span id="wr3-slot" class="text-muted">-</span>
+                </div>
+                <div class="lineup-slot">
+                    <span class="fw-bold">TE</span>
+                    <span id="te-slot" class="text-muted">-</span>
+                </div>
+                <div class="lineup-slot">
+                    <span class="fw-bold">FLEX</span>
+                    <span id="flex-slot" class="text-muted">-</span>
+                </div>
+                <div class="lineup-slot">
+                    <span class="fw-bold">DST</span>
+                    <span id="dst-slot" class="text-muted">-</span>
+                </div>
+            </div>
+
+            <!-- Live Stats - Exact Match -->
+            <div class="lineup-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Rem/Player:</div>
+                    <div class="stat-value" id="remPerPlayer">$5.6K</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Rem:</div>
+                    <div class="stat-value" id="remSalary">$50,000</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Proj:</div>
+                    <div class="stat-value" id="totalProj">0.00</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Act:</div>
+                    <div class="stat-value" id="totalAct">0.00</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Ceil:</div>
+                    <div class="stat-value" id="totalCeil">0.00</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Own:</div>
+                    <div class="stat-value" id="totalOwn">0% (0.0%)</div>
+                </div>
+            </div>
+
+            <!-- Optimizer Controls -->
+            <div class="optimizer-controls">
+                <button class="btn-secondary-solver">Save</button>
+                <button class="btn-secondary-solver">Clear</button>
+                <button class="btn-secondary-solver">Tag</button>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center">
+                    <label class="me-2">Optimize By:</label>
+                    <select id="optimizeBy" class="week-selector">
+                        <option value="projection">Projection</option>
+                        <option value="value">Value</option>
+                        <option value="ceiling">Ceiling</option>
+                    </select>
+                </div>
+                <div class="d-flex align-items-center">
+                    <label class="me-2">Lineups:</label>
+                    <input type="number" id="lineupCount" value="1" min="1" max="1000" 
+                           class="form-control" style="width: 70px; background: #2a3441; color: #fff; border-color: rgba(255,255,255,0.2);">
+                </div>
+            </div>
+
+            <button class="btn-solver w-100 mb-3" onclick="runSolverOptimization()">
+                Optimize
+            </button>
+
+            <!-- Optimizer Settings - Exact Match -->
+            <div class="optimizer-settings">
+                <div class="settings-title">Optimizer Settings</div>
+                
+                <div class="rule-item">
+                    <input type="checkbox" class="rule-checkbox" id="excludeLocked" checked>
+                    <div>
+                        <label for="excludeLocked">Exclude Locked Games</label>
+                    </div>
+                </div>
+
+                <div class="rule-item">
+                    <input type="checkbox" class="rule-checkbox" id="qbStack">
+                    <div>
+                        <label for="qbStack">QB Stack</label>
+                        <div class="rule-description">Stack one QB with a pass catcher from the same team</div>
+                    </div>
+                </div>
+
+                <div class="rule-item">
+                    <input type="checkbox" class="rule-checkbox" id="gameStack">
+                    <div>
+                        <label for="gameStack">Game Stack</label>
+                        <div class="rule-description">Stack one QB with a skill player from the opponent</div>
+                    </div>
+                </div>
+
+                <div class="rule-item">
+                    <input type="checkbox" class="rule-checkbox" id="avoidOpposingDefense">
+                    <div>
+                        <label for="avoidOpposingDefense">Avoid Opposing Defense</label>
+                        <div class="rule-description">Avoid using the opposing Defense against your players</div>
+                    </div>
+                </div>
+
+                <div class="rule-item">
+                    <input type="checkbox" class="rule-checkbox" id="maximizeSalary">
+                    <div>
+                        <label for="maximizeSalary">Maximize Salary Cap</label>
+                        <div class="rule-description">Use at least 99% of the available salary cap</div>
+                    </div>
+                </div>
+
+                <div class="rule-item">
+                    <input type="checkbox" class="rule-checkbox" id="avoidTEFlex">
+                    <div>
+                        <label for="avoidTEFlex">Avoid TE in FLEX</label>
+                        <div class="rule-description">Only use RB/WR in the FLEX position</div>
+                    </div>
+                </div>
+
+                <div class="rule-item">
+                    <input type="checkbox" class="rule-checkbox" id="oneSkillPerTeam">
+                    <div>
+                        <label for="oneSkillPerTeam">One Skill Player per Team</label>
+                        <div class="rule-description">Only use 1 skill player per team (except QB stacks)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let playerPool = [];
+        let currentLineup = {};
+        let currentFilter = 'ALL';
+        
+        // Connect to your live backend - NO HARDCODED DATA
+        const API_BASE = 'http://localhost:5000';
+
+        async function initializeSolverOptimizer() {
+            console.log('🚀 THE SOLVER - Initializing with LIVE data only');
+            
+            try {
+                // Load live slate data
+                await loadLiveSlateData();
+                
+                // Load live player pool
+                await loadLivePlayerPool();
+                
+                console.log('✅ THE SOLVER replica loaded with live data');
+                
+            } catch (error) {
+                console.error('❌ Error initializing:', error);
+            }
+        }
+
+        async function loadLiveSlateData() {
+            // Connect to your live data systems
+            try {
+                const response = await fetch(`${API_BASE}/api/live-data`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update slate selector with live data
+                    const slateSelector = document.getElementById('slateSelector');
+                    slateSelector.innerHTML = '<option value="current">Loading live slates...</option>';
+                    
+                    // Update game info
+                    const gameInfo = document.getElementById('gameInfo');
+                    gameInfo.textContent = 'Loading live games...';
+                }
+            } catch (error) {
+                console.error('❌ Error loading slate data:', error);
+            }
+        }
+
+        async function loadLivePlayerPool() {
+            console.log('📊 Loading LIVE player data - NO hardcoded data');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/player-data`);
+                const data = await response.json();
+                
+                if (data.success && data.players) {
+                    processLivePlayerData(data.players);
+                    displayPlayerPool();
+                    console.log(`✅ Loaded live players from: ${data.source}`);
+                }
+            } catch (error) {
+                console.error('❌ Error loading player data:', error);
+                // Show loading message
+                document.getElementById('playerTableBody').innerHTML = 
+                    '<tr><td colspan="9" class="text-center">Connecting to live data feeds...</td></tr>';
+            }
+        }
+
+        function processLivePlayerData(players) {
+            playerPool = [];
+            
+            // Handle your corrected player data format
+            if (typeof players === 'object' && !Array.isArray(players)) {
+                Object.keys(players).forEach(position => {
+                    if (Array.isArray(players[position])) {
+                        players[position].forEach(player => {
+                            playerPool.push({
+                                ...player,
+                                position: position,
+                                value: calculateValue(player),
+                                boost: 0,
+                                dock: 0,
+                                selected: false
+                            });
+                        });
+                    }
+                });
+            }
+            
+            console.log(`📊 Processed ${playerPool.length} live players`);
+        }
+
+        function calculateValue(player) {
+            // Value calculation (your backend provides better calculations)
+            const projPerDollar = (player.projection || 0) / (player.salary || 5000) * 1000;
+            return projPerDollar - 3.0; // Baseline value
+        }
+
+        function displayPlayerPool() {
+            const tbody = document.getElementById('playerTableBody');
+            
+            const filteredPlayers = currentFilter === 'ALL' 
+                ? playerPool 
+                : playerPool.filter(p => p.position === currentFilter);
+            
+            const playerHTML = filteredPlayers.map(player => {
+                const valueClass = player.value > 0 ? 'value-positive' : 'value-negative';
+                
+                return `
+                    <tr>
+                        <td><input type="checkbox" class="player-checkbox" ${player.selected ? 'checked' : ''}></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-info me-1">${player.position}</span>
+                            </div>
+                        </td>
+                        <td class="fw-bold">${player.name || 'Live Player'}</td>
+                        <td>
+                            <div class="boost-dock-controls">
+                                <button class="boost-btn">+</button>
+                                <button class="dock-btn">-</button>
+                            </div>
+                        </td>
+                        <td>${player.team || 'UNK'}</td>
+                        <td>$${(player.salary || 0).toLocaleString()}</td>
+                        <td>${(player.projection || 0).toFixed(2)}</td>
+                        <td>0.00</td>
+                        <td class="${valueClass}">${player.value.toFixed(2)}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = playerHTML;
+        }
+
+        function filterPlayers(position) {
+            currentFilter = position;
+            
+            // Update active filter button
+            document.querySelectorAll('.position-filter').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-position="${position}"]`).classList.add('active');
+            
+            displayPlayerPool();
+        }
+
+        async function runSolverOptimization() {
+            console.log('🚀 Running THE SOLVER optimization with your advanced backend');
+            
+            const lineupCount = document.getElementById('lineupCount').value;
+            const optimizeBy = document.getElementById('optimizeBy').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/optimize-lineups`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lineups: parseInt(lineupCount),
+                        optimize_by: optimizeBy,
+                        qb_stack: document.getElementById('qbStack').checked,
+                        game_stack: document.getElementById('gameStack').checked,
+                        maximize_salary: document.getElementById('maximizeSalary').checked,
+                        avoid_opposing_defense: document.getElementById('avoidOpposingDefense').checked
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('✅ Optimization completed with your advanced backend');
+                    displayOptimizationResults(data);
+                } else {
+                    console.error('❌ Optimization failed:', data.error);
+                }
+            } catch (error) {
+                console.error('❌ Error connecting to backend:', error);
+            }
+        }
+
+        function displayOptimizationResults(data) {
+            // Update lineup display with results
+            console.log('📊 Displaying optimization results');
+            
+            // Update stats
+            if (data.lineups && data.lineups.length > 0) {
+                const lineup = data.lineups[0];
+                document.getElementById('totalProj').textContent = (lineup.projection || 0).toFixed(2);
+                // Update other stats...
+            }
+        }
+
+        // Position filter event listeners
+        document.querySelectorAll('.position-filter').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                filterPlayers(e.target.getAttribute('data-position'));
+            });
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🏆 THE SOLVER Exact Replica - Loading with LIVE data only');
+            initializeSolverOptimizer();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "source": "weather.gov_api_via_mcp",
+  "last_updated": "2025-09-15T17:58:40.000Z",
+  "location": "Kansas City (Arrowhead Stadium)",
+  "coordinates": [-94.4839, 39.0489],
+  "api_response": {
+    "cwa": "EAX",
+    "forecastOffice": "https://api.weather.gov/offices/EAX",
+    "gridId": "EAX",
+    "gridX": 47,
+    "gridY": 48,
+    "forecast": "https://api.weather.gov/gridpoints/EAX/47,48/forecast",
+    "forecastHourly": "https://api.weather.gov/gridpoints/EAX/47,48/forecast/hourly",
+    "timeZone": "America/Chicago",
+    "radarStation": "KEAX"
+  },
+  "stadium_weather": {
+    "arrowhead_stadium": {
+      "city": "Kansas City",
+      "state": "MO", 
+      "coordinates": [-94.4839, 39.0489],
+      "forecast_endpoint": "https://api.weather.gov/gridpoints/EAX/47,48/forecast",
+      "status": "WORKING_VIA_MCP",
+      "last_verified": "2025-09-15T17:58:40.000Z"
+    }
+  },
+  "mcp_integration": {
+    "fetch_successful": true,
+    "ssl_bypass_not_needed": true,
+    "government_api_reliable": true
+  }
+}

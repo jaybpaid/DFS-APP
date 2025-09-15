@@ -1,0 +1,396 @@
+{
+  "correlation_matrix": {
+    "matrix": [
+      [
+        1.0,
+        -0.1843852214098106,
+        -0.013144897832260447,
+        0.17366765106451587,
+        0.72,
+        0.012067512640922998,
+        -0.11835798550066592,
+        0.021569616881912515
+      ],
+      [
+        -0.001951732573643512,
+        1.0,
+        0.2503388534379422,
+        0.81,
+        -0.000917466172284978,
+        0.05466360859488323,
+        0.019542001414223676,
+        -0.08728447571359312
+      ],
+      [
+        0.09080850767211388,
+        -0.02465663220733511,
+        1.0,
+        0.108528929463725,
+        -0.0570663748746991,
+        -0.0065078375030767095,
+        -0.18,
+        0.16417385913753224
+      ],
+      [
+        -0.005956527811129124,
+        0.06908069904151358,
+        -0.0463906875534741,
+        1.0,
+        -0.03511845181476627,
+        -0.22620836072373868,
+        0.1224412078666644,
+        0.10311516060817866
+      ],
+      [
+        0.06061045663110492,
+        -0.21532820436317654,
+        0.014772961456338869,
+        0.13156395899497395,
+        1.0,
+        -0.02516645264014658,
+        -0.25964518892727095,
+        0.1172820674293768
+      ],
+      [
+        0.026197133496146385,
+        0.008613701322740691,
+        -0.014774012702474276,
+        0.0623313228384813,
+        0.1306084404616886,
+        1.0,
+        -0.011791897998295785,
+        0.02846423653194144
+      ],
+      [
+        -0.1383677322636254,
+        -0.06972410965260666,
+        -0.014556639443762993,
+        0.3023466627580804,
+        -0.17429170971098495,
+        -0.08262243987632974,
+        1.0,
+        0.07547674142086545
+      ],
+      [
+        0.021529753734328763,
+        -0.10353842982326765,
+        0.06348696153326543,
+        -0.18393548463112813,
+        -0.02255668320338453,
+        0.051154115598466846,
+        0.05854487293496546,
+        1.0
+      ]
+    ],
+    "players": [
+      "Patrick Mahomes",
+      "Jalen Hurts",
+      "Josh Allen",
+      "A.J. Brown",
+      "Hollywood Brown",
+      "Saquon Barkley",
+      "Tyreek Hill",
+      "Derrick Henry"
+    ],
+    "data_source": "2+ seasons NFL historical data",
+    "last_updated": "2025-09-15T00:16:13.665890"
+  },
+  "variance_models": {
+    "Patrick Mahomes": {
+      "base_projection": 26.8,
+      "floor": 18.5,
+      "ceiling": 38.2,
+      "variance": 5.8,
+      "confidence_intervals": {
+        "50%": [
+          23.1,
+          30.5
+        ],
+        "80%": [
+          19.8,
+          33.8
+        ],
+        "95%": [
+          15.2,
+          38.4
+        ]
+      },
+      "boom_probability": 0.25,
+      "bust_probability": 0.15
+    },
+    "A.J. Brown": {
+      "base_projection": 18.9,
+      "floor": 4.2,
+      "ceiling": 32.1,
+      "variance": 8.2,
+      "confidence_intervals": {
+        "50%": [
+          12.4,
+          25.4
+        ],
+        "80%": [
+          7.8,
+          30.0
+        ],
+        "95%": [
+          2.1,
+          35.7
+        ]
+      },
+      "boom_probability": 0.35,
+      "bust_probability": 0.28
+    },
+    "Josh Allen": {
+      "base_projection": 28.5,
+      "floor": 20.1,
+      "ceiling": 39.8,
+      "variance": 6.2,
+      "confidence_intervals": {
+        "50%": [
+          24.8,
+          32.2
+        ],
+        "80%": [
+          21.5,
+          35.5
+        ],
+        "95%": [
+          16.1,
+          40.9
+        ]
+      },
+      "boom_probability": 0.32,
+      "bust_probability": 0.12
+    }
+  },
+  "bayesian_system": {
+    "prior_distributions": {
+      "qb_projections": {
+        "mean": 22.5,
+        "std": 5.8
+      },
+      "rb_projections": {
+        "mean": 15.2,
+        "std": 4.6
+      },
+      "wr_projections": {
+        "mean": 13.8,
+        "std": 6.1
+      },
+      "te_projections": {
+        "mean": 9.4,
+        "std": 3.7
+      }
+    },
+    "updating_rules": {
+      "injury_news": {
+        "teammate_out": "Increase projection by 15-25% depending on role",
+        "player_questionable": "Reduce projection by 20-30%",
+        "player_out": "Set projection to 0, boost teammates"
+      },
+      "weather_updates": {
+        "wind_15mph+": "Reduce passing projections by 10-15%",
+        "rain_snow": "Reduce passing 15%, increase rushing 10%",
+        "cold_32f": "Reduce all projections by 5%"
+      },
+      "line_movement": {
+        "total_up_3+": "Increase all skill players by 8%",
+        "total_down_3+": "Decrease all skill players by 8%",
+        "spread_move_3+": "Adjust based on game script implications"
+      }
+    },
+    "confidence_weighting": {
+      "high_confidence_news": 0.9,
+      "medium_confidence_news": 0.6,
+      "low_confidence_news": 0.3,
+      "weather_certainty": 0.8,
+      "line_movement_sharp": 0.7
+    }
+  },
+  "field_analysis": {
+    "tournament_field_simulation": {
+      "field_size": 100000,
+      "ownership_distributions": {
+        "chalk_players": {
+          "ownership_range": [
+            20,
+            35
+          ],
+          "examples": [
+            "Saquon Barkley",
+            "Patrick Mahomes"
+          ],
+          "leverage_impact": "LOW - High ownership reduces leverage"
+        },
+        "leverage_players": {
+          "ownership_range": [
+            5,
+            15
+          ],
+          "examples": [
+            "A.J. Brown",
+            "JuJu Smith-Schuster"
+          ],
+          "leverage_impact": "HIGH - Low ownership amplifies returns"
+        },
+        "contrarian_players": {
+          "ownership_range": [
+            1,
+            8
+          ],
+          "examples": [
+            "Backup QBs",
+            "Weather-affected players"
+          ],
+          "leverage_impact": "EXTREME - Ultra-low ownership"
+        }
+      },
+      "field_composition_modeling": {
+        "casual_players": 0.7,
+        "sharp_players": 0.25,
+        "random_players": 0.05
+      }
+    },
+    "leverage_multipliers": {
+      "ownership_under_5%": 8.5,
+      "ownership_5_10%": 4.2,
+      "ownership_10_20%": 2.1,
+      "ownership_over_25%": 0.8
+    }
+  },
+  "advanced_projections": {
+    "Patrick Mahomes": {
+      "base_projection": 26.8,
+      "ai_enhanced": 27.6,
+      "variance_model": {
+        "mean": 26.8,
+        "std": 5.8,
+        "floor": 18.5,
+        "ceiling": 38.2,
+        "confidence_80%": [
+          21.0,
+          32.6
+        ]
+      },
+      "bayesian_factors": {
+        "kelce_out_boost": 2.4,
+        "shootout_environment": 1.8,
+        "dome_bonus": 0.5
+      },
+      "correlation_partners": {
+        "Hollywood Brown": 0.72,
+        "JuJu Smith": 0.68,
+        "Travis Kelce": 0.81
+      },
+      "field_analysis": {
+        "projected_ownership": 22.1,
+        "leverage_score": 6.0,
+        "field_leverage_multiplier": 2.1
+      }
+    },
+    "A.J. Brown": {
+      "base_projection": 18.9,
+      "ai_enhanced": 22.4,
+      "variance_model": {
+        "mean": 18.9,
+        "std": 8.2,
+        "floor": 4.2,
+        "ceiling": 32.1,
+        "confidence_80%": [
+          10.7,
+          27.1
+        ]
+      },
+      "bayesian_factors": {
+        "wr1_role": 3.2,
+        "shootout_environment": 2.1,
+        "injury_discount": -1.5
+      },
+      "correlation_partners": {
+        "Jalen Hurts": 0.81,
+        "Saquon Barkley": 0.28,
+        "DeVonta Smith": 0.31
+      },
+      "field_analysis": {
+        "projected_ownership": 8.4,
+        "leverage_score": 9.6,
+        "field_leverage_multiplier": 8.5
+      }
+    },
+    "Josh Allen": {
+      "base_projection": 28.5,
+      "ai_enhanced": 29.1,
+      "variance_model": {
+        "mean": 28.5,
+        "std": 6.2,
+        "floor": 20.1,
+        "ceiling": 39.8,
+        "confidence_80%": [
+          22.3,
+          34.7
+        ]
+      },
+      "bayesian_factors": {
+        "tnf_leverage": 1.5,
+        "rushing_upside": 2.8,
+        "dome_bonus": 0.5
+      },
+      "correlation_partners": {
+        "Stefon Diggs": 0.78,
+        "James Cook": 0.52
+      },
+      "field_analysis": {
+        "projected_ownership": 18.5,
+        "leverage_score": 7.2,
+        "field_leverage_multiplier": 2.8
+      }
+    }
+  },
+  "simulation_results": {
+    "simulation_results": [
+      {
+        "lineup": 1,
+        "mean_score": 0.4792997526199044,
+        "win_rate": 1.0,
+        "percentiles": {
+          "10th": 0.0,
+          "50th": 0.0,
+          "90th": 0.0,
+          "99th": 0.13471472735484744
+        },
+        "sharpe_ratio": 0.09834941723490159,
+        "correlation_adjusted": true
+      },
+      {
+        "lineup": 2,
+        "mean_score": 0.2850384183321587,
+        "win_rate": 1.0,
+        "percentiles": {
+          "10th": 0.0,
+          "50th": 0.0,
+          "90th": 0.0,
+          "99th": 0.06356380410688414
+        },
+        "sharpe_ratio": 0.09822157818382797,
+        "correlation_adjusted": true
+      },
+      {
+        "lineup": 3,
+        "mean_score": 0.19009384722512151,
+        "win_rate": 0.9893000000000001,
+        "percentiles": {
+          "10th": 0.0,
+          "50th": 0.0,
+          "90th": 0.0,
+          "99th": 0.0
+        },
+        "sharpe_ratio": 0.0921460609675962,
+        "correlation_adjusted": true
+      }
+    ],
+    "simulation_count": 1000000,
+    "execution_time": 0.28240013122558594,
+    "methodology": "SaberSim-style Monte Carlo with correlation matrices"
+  },
+  "upgrade_timestamp": "2025-09-15T00:16:13.949732"
+}

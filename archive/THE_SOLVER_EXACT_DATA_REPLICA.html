@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE SOLVER - NFL Optimizer - Exact Replica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1e2329;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+        }
+        
+        .header {
+            background: #2c3e50;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #34495e;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .logo .highlight {
+            color: #00c851;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+        
+        .nav-item {
+            color: #bdc3c7;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-item:hover {
+            background: #34495e;
+            color: white;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn-signup {
+            background: #00c851;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        
+        .btn-login {
+            background: #34495e;
+            color: white;
+            padding: 8px 16px;
+            border: 1px solid #4a5568;
+            border-radius: 4px;
+        }
+        
+        .main-container {
+            display: flex;
+            height: calc(100vh - 80px);
+        }
+        
+        .player-panel {
+            width: 65%;
+            background: #252932;
+            border-right: 1px solid #34495e;
+            overflow-y: auto;
+        }
+        
+        .optimizer-panel {
+            width: 35%;
+            background: #2c3e50;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .player-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .player-table th {
+            background: #34495e;
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 2px solid #4a5568;
+            font-weight: 500;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        .player-table td {
+            padding: 8px;
+            border-bottom: 1px solid #34495e;
+            font-size: 13px;
+        }
+        
+        .player-row:hover {
+            background: #2c3e50;
+        }
+        
+        .player-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .team-logo {
+            width: 24px;
+            height: 24px;
+            background: #666;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .position-badge {
+            background: #00c851;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .salary {
+            color: #f1c40f;
+            font-weight: 500;
+        }
+        
+        .projection {
+            color: #3498db;
+            font-weight: 500;
+        }
+        
+        .value {
+            color: #e74c3c;
+        }
+        
+        .ownership {
+            color: #9b59b6;
+        }
+        
+        .lineup-display {
+            background: #34495e;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .lineup-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .lineup-cost {
+            color: #00c851;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .player-card {
+            background: #2c3e50;
+            border-radius: 6px;
+            padding: 8px;
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .player-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+        }
+        
+        .settings-section {
+            margin-bottom: 24px;
+        }
+        
+        .settings-title {
+            color: #00c851;
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .setting-control {
+            background: #34495e;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+        
+        .checkbox {
+            accent-color: #00c851;
+        }
+        
+        .optimize-btn {
+            background: #00c851;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 16px;
+            cursor: pointer;
+        }
+        
+        .rules-section {
+            background: #2c3e50;
+            margin: 24px;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .rule-panel {
+            background: #34495e;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .rule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .rule-title {
+            color: #00c851;
+            font-weight: bold;
+        }
+        
+        .rule-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .rule-input {
+            background: #2c3e50;
+            border: 1px solid #4a5568;
+            color: white;
+            padding: 6px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .btn-add {
+            background: #00c851;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .btn-remove {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .QB { background: #e74c3c; }
+        .RB { background: #00c851; }
+        .WR { background: #3498db; }
+        .TE { background: #f39c12; }
+        .K { background: #9b59b6; }
+        .DST { background: #1abc9c; }
+        .FLEX { background: #95a5a6; }
+        .UTIL { background: #34495e; }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .selected-highlight {
+            background: #00c851 !important;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <div class="header">
+        <div class="logo">THE S<span class="highlight">O</span>LVER</div>
+        <div class="nav-menu">
+            <a href="#" class="nav-item">DFS Optimizer ▼</a>
+            <a href="#" class="nav-item">DFS Simulator ▼</a>
+            <a href="#" class="nav-item">Best Ball ▼</a>
+            <a href="#" class="nav-item">DFS Bankroll Tracker</a>
+            <a href="#" class="nav-item">Pricing ▼</a>
+            <a href="#" class="nav-item">FAQ</a>
+            <a href="#" class="nav-item">Tutorials</a>
+            <a href="#" class="nav-item">About</a>
+            <button class="nav-item" style="background: #00c851; border: none; border-radius: 4px;">Provide Feedback</button>
+        </div>
+        <div class="auth-buttons">
+            <button class="btn-signup">SIGN UP</button>
+            <button class="btn-login">LOGIN</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Left Player Panel -->
+        <div class="player-panel">
+            <table class="player-table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>POS</th>
+                        <th>NAME</th>
+                        <th>TEAM</th>
+                        <th>ROSTERPCT%</th>
+                        <th>TEAM</th>
+                        <th>$ SALARY</th>
+                        <th>PROJ</th>
+                        <th>VALUE</th>
+                        <th>PTS $</th>
+                        <th>CEILING</th>
+                        <th>OWN %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- EXACT VISIBLE PLAYER DATA FROM SCREENSHOT -->
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge QB">QB</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #e31837;">KC</div>
+                                Patrick Mahomes
+                            </div>
+                        </td>
+                        <td>KC @ BUF</td>
+                        <td>$8,000</td>
+                        <td class="projection">25.91</td>
+                        <td class="value">3.24</td>
+                        <td>2.34</td>
+                        <td>-11.18</td>
+                        <td>35.1</td>
+                        <td class="ownership">18%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge RB">RB</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #002244;">HOU</div>
+                                Joe Mixon
+                            </div>
+                        </td>
+                        <td>HOU vs NYJ</td>
+                        <td>$7,500</td>
+                        <td class="projection">19.15</td>
+                        <td class="value">2.55</td>
+                        <td>2.06</td>
+                        <td>-6.86</td>
+                        <td>28.9</td>
+                        <td class="ownership">17%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #002244;">NYJ</div>
+                                Davante Adams
+                            </div>
+                        </td>
+                        <td>NYJ @ HOU</td>
+                        <td>$7,300</td>
+                        <td class="projection">16.67</td>
+                        <td class="value">2.28</td>
+                        <td>2.43</td>
+                        <td>-24.53</td>
+                        <td>25.1</td>
+                        <td class="ownership">20%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge TE">TE</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #002244;">BAL</div>
+                                Mark Andrews
+                            </div>
+                        </td>
+                        <td>BAL vs PIT</td>
+                        <td>$5,900</td>
+                        <td class="projection">12.90</td>
+                        <td class="value">2.19</td>
+                        <td>2.59</td>
+                        <td>-6.85</td>
+                        <td>19.7</td>
+                        <td class="ownership">19%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge RB">RB</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #fb4f14;">CLE</div>
+                                Nick Chubb
+                            </div>
+                        </td>
+                        <td>CLE @ PIT</td>
+                        <td>$7,300</td>
+                        <td class="projection">17.32</td>
+                        <td class="value">2.37</td>
+                        <td>2.77</td>
+                        <td>-31.21</td>
+                        <td>26.2</td>
+                        <td class="ownership">16%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #002244;">HOU</div>
+                                Stefon Diggs
+                            </div>
+                        </td>
+                        <td>HOU vs NYJ</td>
+                        <td>$7,000</td>
+                        <td class="projection">15.91</td>
+                        <td class="value">2.27</td>
+                        <td>2.40</td>
+                        <td>-17.01</td>
+                        <td>24.1</td>
+                        <td class="ownership">18%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #002244;">NYJ</div>
+                                Garrett Wilson
+                            </div>
+                        </td>
+                        <td>NYJ @ HOU</td>
+                        <td>$6,800</td>
+                        <td class="projection">14.77</td>
+                        <td class="value">2.17</td>
+                        <td>2.48</td>
+                        <td>-13.72</td>
+                        <td>22.4</td>
+                        <td class="ownership">22%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge RB">RB</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #00338d;">BUF</div>
+                                James Cook
+                            </div>
+                        </td>
+                        <td>BUF vs KC</td>
+                        <td>$6,700</td>
+                        <td class="projection">14.19</td>
+                        <td class="value">2.12</td>
+                        <td>2.57</td>
+                        <td>-31.39</td>
+                        <td>21.4</td>
+                        <td class="ownership">23%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #000000;">PIT</div>
+                                George Pickens
+                            </div>
+                        </td>
+                        <td>PIT @ CLE</td>
+                        <td>$6,500</td>
+                        <td class="projection">13.50</td>
+                        <td class="value">2.08</td>
+                        <td>2.92</td>
+                        <td>-16.75</td>
+                        <td>20.4</td>
+                        <td class="ownership">19%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #e31837;">KC</div>
+                                DeAndre Hopkins
+                            </div>
+                        </td>
+                        <td>KC @ BUF</td>
+                        <td>$6,400</td>
+                        <td class="projection">13.17</td>
+                        <td class="value">2.06</td>
+                        <td>2.44</td>
+                        <td>-12.54</td>
+                        <td>19.9</td>
+                        <td class="ownership">21%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #00338d;">BUF</div>
+                                Amari Cooper
+                            </div>
+                        </td>
+                        <td>BUF vs KC</td>
+                        <td>$6,300</td>
+                        <td class="projection">12.88</td>
+                        <td class="value">2.04</td>
+                        <td>2.40</td>
+                        <td>-10.56</td>
+                        <td>19.5</td>
+                        <td class="ownership">17%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge TE">TE</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #e31837;">KC</div>
+                                Travis Kelce
+                            </div>
+                        </td>
+                        <td>KC @ BUF</td>
+                        <td>$6,200</td>
+                        <td class="projection">12.59</td>
+                        <td class="value">2.03</td>
+                        <td>2.54</td>
+                        <td>-6.78</td>
+                        <td>19.1</td>
+                        <td class="ownership">24%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #fb4f14;">CLE</div>
+                                Jerry Jeudy
+                            </div>
+                        </td>
+                        <td>CLE @ PIT</td>
+                        <td>$6,100</td>
+                        <td class="projection">12.30</td>
+                        <td class="value">2.02</td>
+                        <td>2.50</td>
+                        <td>-8.79</td>
+                        <td>18.7</td>
+                        <td class="ownership">20%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge RB">RB</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #002244;">HOU</div>
+                                Cam Akers
+                            </div>
+                        </td>
+                        <td>HOU vs NYJ</td>
+                        <td>$6,000</td>
+                        <td class="projection">12.01</td>
+                        <td class="value">2.00</td>
+                        <td>2.77</td>
+                        <td>-31.91</td>
+                        <td>18.1</td>
+                        <td class="ownership">13%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #00338d;">BUF</div>
+                                Khalil Shakir
+                            </div>
+                        </td>
+                        <td>BUF vs KC</td>
+                        <td>$5,900</td>
+                        <td class="projection">11.72</td>
+                        <td class="value">1.99</td>
+                        <td>2.48</td>
+                        <td>-6.75</td>
+                        <td>17.7</td>
+                        <td class="ownership">19%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #000000;">PIT</div>
+                                Calvin Austin III
+                            </div>
+                        </td>
+                        <td>PIT @ CLE</td>
+                        <td>$5,800</td>
+                        <td class="projection">11.43</td>
+                        <td class="value">1.97</td>
+                        <td>2.82</td>
+                        <td>-26.78</td>
+                        <td>17.3</td>
+                        <td class="ownership">16%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge TE">TE</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #002244;">NYJ</div>
+                                Tyler Conklin
+                            </div>
+                        </td>
+                        <td>NYJ @ HOU</td>
+                        <td>$5,700</td>
+                        <td class="projection">11.14</td>
+                        <td class="value">1.95</td>
+                        <td>2.42</td>
+                        <td>-25.87</td>
+                        <td>16.9</td>
+                        <td class="ownership">18%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #fb4f14;">CLE</div>
+                                Elijah Moore
+                            </div>
+                        </td>
+                        <td>CLE @ PIT</td>
+                        <td>$5,600</td>
+                        <td class="projection">10.85</td>
+                        <td class="value">1.94</td>
+                        <td>2.40</td>
+                        <td>-20.48</td>
+                        <td>16.4</td>
+                        <td class="ownership">15%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge RB">RB</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #002244;">NYJ</div>
+                                Breece Hall
+                            </div>
+                        </td>
+                        <td>NYJ @ HOU</td>
+                        <td>$5,500</td>
+                        <td class="projection">10.56</td>
+                        <td class="value">1.92</td>
+                        <td>2.37</td>
+                        <td>-17.11</td>
+                        <td>16.0</td>
+                        <td class="ownership">22%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge WR">WR</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #e31837;">KC</div>
+                                Xavier Worthy
+                            </div>
+                        </td>
+                        <td>KC @ BUF</td>
+                        <td>$5,400</td>
+                        <td class="projection">10.27</td>
+                        <td class="value">1.90</td>
+                        <td>2.44</td>
+                        <td>-23.34</td>
+                        <td>15.6</td>
+                        <td class="ownership">17%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge RB">RB</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #000000;">PIT</div>
+                                Najee Harris
+                            </div>
+                        </td>
+                        <td>PIT vs BAL</td>
+                        <td>$5,300</td>
+                        <td class="projection">9.98</td>
+                        <td class="value">1.88</td>
+                        <td>2.40</td>
+                        <td>-19.54</td>
+                        <td>15.1</td>
+                        <td class="ownership">19%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span class="position-badge TE">TE</span></td>
+                        <td>
+                            <div class="player-name">
+                                <div class="team-logo" style="background: #002244;">HOU</div>
+                                Dalton Schultz
+                            </div>
+                        </td>
+                        <td>HOU vs NYJ</td>
+                        <td>$5,200</td>
+                        <td class="projection">9.69</td>
+                        <td class="value">1.86</td>
+                        <td>2.33</td>
+                        <td>-16.78</td>
+                        <td>14.7</td>
+                        <td class="ownership">16%</td>
+                    </tr>
+                    <tr class="player-row">
+                        <td><input type="checkbox" class="checkbox"></td>
+                        <td><span

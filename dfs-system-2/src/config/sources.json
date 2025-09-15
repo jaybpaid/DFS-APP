@@ -1,0 +1,362 @@
+{
+  "NFL": {
+    "core": {
+      "nflfastr": {
+        "enabled": true,
+        "url": "https://github.com/nflverse/nfldata/releases/latest/download/play_by_play_{year}.parquet",
+        "ttl_hours": 24,
+        "description": "nflverse play-by-play data",
+        "tos_compliant": true
+      }
+    },
+    "injury": {
+      "nfl_official": {
+        "enabled": true,
+        "url": "https://www.nfl.com/injuries/",
+        "ttl_minutes": 30,
+        "description": "Official NFL injury reports",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "fantasypros": {
+        "enabled": false,
+        "url": "https://www.fantasypros.com/nfl/injuries/",
+        "ttl_minutes": 30,
+        "description": "FantasyPros injury reports",
+        "tos_compliant": false,
+        "note": "Requires ToS review"
+      }
+    },
+    "vegas": {
+      "theoddsapi": {
+        "enabled": true,
+        "url": "https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds",
+        "ttl_minutes": 15,
+        "description": "The Odds API for NFL betting lines",
+        "tos_compliant": true,
+        "requires_api_key": true
+      }
+    },
+    "weather": {
+      "openweather": {
+        "enabled": true,
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "ttl_minutes": 20,
+        "description": "OpenWeatherMap API",
+        "tos_compliant": true,
+        "requires_api_key": true
+      },
+      "noaa": {
+        "enabled": true,
+        "url": "https://api.weather.gov/points/{lat},{lon}",
+        "ttl_minutes": 30,
+        "description": "NOAA Weather Service API",
+        "tos_compliant": true,
+        "requires_api_key": false
+      }
+    },
+    "context": {
+      "teamrankings": {
+        "enabled": false,
+        "url": "https://www.teamrankings.com/nfl/",
+        "ttl_hours": 24,
+        "description": "Team Rankings statistics",
+        "tos_compliant": false,
+        "note": "Requires ToS review"
+      },
+      "nflverse_strength": {
+        "enabled": true,
+        "url": "https://github.com/nflverse/nfldata/releases/latest/download/team_stats_{year}.parquet",
+        "ttl_hours": 24,
+        "description": "nflverse team statistics",
+        "tos_compliant": true
+      }
+    },
+    "schedule": {
+      "nflverse_schedule": {
+        "enabled": true,
+        "url": "https://github.com/nflverse/nfldata/releases/latest/download/schedules.parquet",
+        "ttl_hours": 24,
+        "description": "nflverse game schedules",
+        "tos_compliant": true
+      }
+    },
+    "salaries": {
+      "draftkings": {
+        "enabled": true,
+        "url": "https://api.draftkings.com",
+        "ttl_minutes": 30,
+        "description": "DraftKings salary and contest data",
+        "tos_compliant": false,
+        "rate_limit": "60/minute",
+        "note": "Unofficial API - use with caution"
+      },
+      "fantasy_nerds": {
+        "enabled": true,
+        "url": "https://api.fantasynerds.com/v1/csv",
+        "ttl_minutes": 30,
+        "description": "Fantasy Nerds DFS salaries and projections",
+        "tos_compliant": true,
+        "rate_limit": "100/day",
+        "note": "Free tier available"
+      }
+    },
+    "free_apis": {
+      "nfl_data_py": {
+        "enabled": true,
+        "url": "https://pypi.org/project/nfl-data-py/",
+        "ttl_hours": 24,
+        "description": "nfl-data-py Python library for comprehensive NFL data",
+        "tos_compliant": true,
+        "note": "Install via pip: pip install nfl-data-py"
+      },
+      "yahoo_fantasy": {
+        "enabled": true,
+        "url": "https://developer.yahoo.com/fantasysports/guide/",
+        "ttl_hours": 24,
+        "description": "Yahoo Fantasy Sports API",
+        "tos_compliant": true,
+        "requires_oauth": true,
+        "note": "Free to use with OAuth"
+      },
+      "espn_unofficial": {
+        "enabled": false,
+        "url": "https://site.api.espn.com/apis/site/v2/sports/football/nfl",
+        "ttl_minutes": 30,
+        "description": "ESPN unofficial API endpoints",
+        "tos_compliant": false,
+        "note": "Requires reverse engineering - use with caution"
+      }
+    },
+    "projection_sources": {
+      "rotowire": {
+        "enabled": true,
+        "url": "https://www.rotowire.com/daily/nfl/optimizer.php",
+        "ttl_minutes": 15,
+        "description": "RotoWire expert projections and rankings",
+        "tos_compliant": false,
+        "requires_parsing": true,
+        "note": "Primary projection source - expert consensus rankings",
+        "projection_type": "expert_consensus"
+      },
+      "pro_football_focus": {
+        "enabled": true,
+        "url": "https://www.pff.com/nfl/players",
+        "ttl_minutes": 30,
+        "description": "Pro Football Focus advanced analytics and grades",
+        "tos_compliant": false,
+        "requires_parsing": true,
+        "note": "Advanced metrics and player grades",
+        "projection_type": "advanced_analytics"
+      },
+      "sports_info_solutions": {
+        "enabled": true,
+        "url": "https://www.sportsinfosolutions.com/",
+        "ttl_minutes": 30,
+        "description": "Sports Info Solutions comprehensive player analysis",
+        "tos_compliant": false,
+        "requires_parsing": true,
+        "note": "Detailed player tracking and efficiency metrics",
+        "projection_type": "player_tracking"
+      },
+      "fantasy_footballers": {
+        "enabled": true,
+        "url": "https://www.thefantasyfootballers.com/",
+        "ttl_minutes": 15,
+        "description": "The Fantasy Footballers expert projections",
+        "tos_compliant": false,
+        "requires_parsing": true,
+        "note": "Expert analysis and projection models",
+        "projection_type": "expert_analysis"
+      }
+    },
+    "legacy_sources": {
+      "daily_fantasy_fuel": {
+        "enabled": false,
+        "url": "https://www.dailyfantasyfuel.com/nfl/",
+        "ttl_minutes": 15,
+        "description": "Daily Fantasy Fuel projections and optimizer",
+        "tos_compliant": false,
+        "requires_parsing": true,
+        "note": "Disabled - replaced by primary projection sources"
+      },
+      "stokastic": {
+        "enabled": false,
+        "url": "https://www.stokastic.com/nfl/",
+        "ttl_minutes": 30,
+        "description": "Stokastic boom/bust probability tools",
+        "tos_compliant": false,
+        "requires_parsing": true,
+        "note": "Disabled - ownership data available from primary sources"
+      },
+      "footballguys": {
+        "enabled": false,
+        "url": "https://www.footballguys.com/",
+        "ttl_minutes": 15,
+        "description": "FootballGuys projections and analysis",
+        "tos_compliant": false,
+        "requires_parsing": true,
+        "note": "Disabled - replaced by primary projection sources"
+      }
+    },
+    "github_tools": {
+      "chanzer0_dfs_tools": {
+        "enabled": true,
+        "url": "https://github.com/chanzer0/NFL-DFS-Tools",
+        "ttl_hours": 168,
+        "description": "Complete DFS optimization suite in Python",
+        "tos_compliant": true,
+        "note": "GPP tools, lineup generation, PuLP solver"
+      },
+      "dfs_with_r_coach": {
+        "enabled": true,
+        "url": "https://github.com/dfs-with-r/coach",
+        "ttl_hours": 168,
+        "description": "R-based lineup optimization",
+        "tos_compliant": true,
+        "note": "Supports DraftKings, FanDuel, FantasyDraft"
+      },
+      "yahoo_scraper": {
+        "enabled": true,
+        "url": "https://github.com/andrewrgoss/yahoo-fantasy-fball-scraper",
+        "ttl_hours": 168,
+        "description": "Yahoo Fantasy scraper with Selenium",
+        "tos_compliant": true,
+        "note": "BeautifulSoup and Pandas integration"
+      },
+      "yfpy": {
+        "enabled": true,
+        "url": "https://github.com/uberfastman/yfpy",
+        "ttl_hours": 168,
+        "description": "Python wrapper for Yahoo Fantasy API",
+        "tos_compliant": true,
+        "note": "Supports NFL, NHL, MLB, NBA"
+      }
+    },
+    "community_sources": {
+      "reddit_dfsports": {
+        "enabled": true,
+        "url": "https://www.reddit.com/r/dfsports/",
+        "ttl_minutes": 30,
+        "description": "Reddit DFS strategy and discussion",
+        "tos_compliant": true,
+        "requires_parsing": true,
+        "note": "Real-time discussion and lineup sharing"
+      },
+      "reddit_fantasyfootball": {
+        "enabled": true,
+        "url": "https://www.reddit.com/r/fantasyfootball/",
+        "ttl_minutes": 30,
+        "description": "Reddit fantasy football analysis",
+        "tos_compliant": true,
+        "requires_parsing": true,
+        "note": "Player analysis and waiver advice"
+      },
+      "reddit_nfl": {
+        "enabled": true,
+        "url": "https://www.reddit.com/r/nfl/",
+        "ttl_minutes": 15,
+        "description": "Reddit NFL breaking news",
+        "tos_compliant": true,
+        "requires_parsing": true,
+        "note": "Breaking news and analysis"
+      }
+    },
+    "additional_scraping": {
+      "nfl_injuries": {
+        "enabled": true,
+        "url": "https://www.nfl.com/injuries/",
+        "ttl_minutes": 30,
+        "description": "NFL.com official injury reports",
+        "tos_compliant": true,
+        "requires_parsing": true
+      },
+      "espn_player_news": {
+        "enabled": true,
+        "url": "https://www.espn.com/nfl/",
+        "ttl_minutes": 15,
+        "description": "ESPN player news and updates",
+        "tos_compliant": false,
+        "requires_parsing": true,
+        "note": "Player news and injury updates"
+      },
+      "rotoworld": {
+        "enabled": true,
+        "url": "https://www.rotoworld.com/football/nfl",
+        "ttl_minutes": 15,
+        "description": "RotoWorld player updates",
+        "tos_compliant": false,
+        "requires_parsing": true,
+        "note": "Player news and analysis"
+      },
+      "weather_com": {
+        "enabled": true,
+        "url": "https://weather.com/",
+        "ttl_minutes": 20,
+        "description": "Weather.com for game conditions",
+        "tos_compliant": false,
+        "requires_parsing": true,
+        "note": "Wind speed, precipitation, temperature"
+      }
+    }
+  },
+  "NBA": {
+    "core": {
+      "balldontlie": {
+        "enabled": true,
+        "url": "https://www.balldontlie.io/api/v1/",
+        "ttl_hours": 24,
+        "description": "Ball Don't Lie NBA API",
+        "tos_compliant": true,
+        "rate_limit": "60/minute"
+      },
+      "nba_api": {
+        "enabled": true,
+        "url": "https://stats.nba.com/stats/",
+        "ttl_hours": 24,
+        "description": "Official NBA Stats API",
+        "tos_compliant": true,
+        "rate_limit": "30/minute"
+      }
+    },
+    "injury": {
+      "nba_official": {
+        "enabled": true,
+        "url": "https://www.nba.com/injury-report/",
+        "ttl_minutes": 30,
+        "description": "Official NBA injury reports",
+        "tos_compliant": true,
+        "requires_parsing": true
+      }
+    },
+    "vegas": {
+      "theoddsapi": {
+        "enabled": true,
+        "url": "https://api.the-odds-api.com/v4/sports/basketball_nba/odds",
+        "ttl_minutes": 15,
+        "description": "The Odds API for NBA betting lines",
+        "tos_compliant": true,
+        "requires_api_key": true
+      }
+    },
+    "context": {
+      "pace_eff_public": {
+        "enabled": false,
+        "url": "https://www.teamrankings.com/nba/",
+        "ttl_hours": 24,
+        "description": "Public pace and efficiency data",
+        "tos_compliant": false,
+        "note": "Requires ToS review"
+      }
+    },
+    "schedule": {
+      "balldontlie": {
+        "enabled": true,
+        "url": "https://www.balldontlie.io/api/v1/games",
+        "ttl_hours": 24,
+        "description": "Ball Don't Lie game schedules",
+        "tos_compliant": true
+      }
+    }
+  }
+}

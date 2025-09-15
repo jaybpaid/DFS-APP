@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "contest.schema.json",
+  "type": "object",
+  "required": ["contestId","site","entries","maxEntries","entryFee","payoutCurve"],
+  "properties": {
+    "contestId": {"type": "string"},
+    "site": {"enum": ["DK","FD"]},
+    "name": {"type": "string"},
+    "entries": {"type": "integer","minimum": 2},
+    "maxEntries": {"type": "integer","minimum": 1},
+    "entryFee": {"type": "number","minimum": 0},
+    "payoutCurve": {
+      "type": "array",
+      "items": {"type": "object","required": ["place","pct"],"properties": {"place": {"type": "integer","minimum": 1},"pct": {"type": "number","minimum": 0}}}
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,100 @@
+{
+  "baseUrl": "https://thesolver.com/optimizer/nfl",
+  "captureDate": "2025-09-15T17:13:30.000Z",
+  "captureMethod": "authenticated-session-analysis",
+  "totalRoutes": 4,
+  "authenticationRequired": true,
+  "chromeProfileRequired": true,
+  "routes": [
+    {
+      "route": "https://thesolver.com/optimizer",
+      "title": "DFS Optimizer | THE SOLVER - Landing",
+      "type": "landing",
+      "description": "Main optimizer landing page with sport selection",
+      "timestamp": "2025-09-15T17:08:00.000Z",
+      "requiresAuth": false,
+      "htmlFile": "html_raw/00-landing.html",
+      "domFile": "dom_trees/00-landing.json",
+      "screenshotFile": "screenshots/00-landing.png"
+    },
+    {
+      "route": "https://thesolver.com/optimizer/nfl",
+      "title": "DFS Optimizer | THE SOLVER - NFL",
+      "type": "authenticated-optimizer",
+      "description": "Complete NFL optimizer interface with player data, controls, and advanced rules",
+      "timestamp": "2025-09-15T17:09:00.000Z",
+      "requiresAuth": true,
+      "htmlFile": "html_raw/01-authenticated-nfl-optimizer.html", 
+      "domFile": "dom_trees/01-authenticated-nfl-optimizer.json",
+      "screenshotFile": "screenshots/01-authenticated-nfl-optimizer.png",
+      "features": [
+        "Player data table with 16+ players",
+        "Real-time projections and ownership",
+        "Contest and slate selection",
+        "Advanced rules engine",
+        "Late swap functionality",
+        "Team stacking controls",
+        "Export/import capabilities"
+      ]
+    },
+    {
+      "route": "https://thesolver.com/optimizer/nfl#advanced-rules",
+      "title": "Advanced Rules Panel - NFL Optimizer",
+      "type": "rules-interface",
+      "description": "Advanced rules configuration with IF-THEN logic, time constraints, and stacking",
+      "timestamp": "2025-09-15T17:10:00.000Z",
+      "requiresAuth": true,
+      "htmlFile": "html_raw/02-advanced-rules.html",
+      "domFile": "dom_trees/02-advanced-rules.json",
+      "screenshotFile": "screenshots/02-advanced-rules.png",
+      "ruleTypes": [
+        "Games - By Start Time",
+        "Boost/dock players in scenarios",
+        "Low owned player targeting", 
+        "Team stacking requirements"
+      ]
+    },
+    {
+      "route": "https://thesolver.com/optimizer/nfl#lineup-builder", 
+      "title": "Lineup Builder - NFL Optimizer",
+      "type": "lineup-interface",
+      "description": "Interactive lineup building with position constraints and salary management",
+      "timestamp": "2025-09-15T17:11:00.000Z",
+      "requiresAuth": true,
+      "htmlFile": "html_raw/03-lineup-builder.html",
+      "domFile": "dom_trees/03-lineup-builder.json", 
+      "screenshotFile": "screenshots/03-lineup-builder.png",
+      "positions": ["QB", "RB", "WR", "WR", "TE", "FLEX", "DST", "UTIL"],
+      "salaryCap": "$50,000",
+      "currentLineupCost": "$15,000"
+    }
+  ],
+  "discoveredFeatures": {
+    "playerPool": "170 total players",
+    "visiblePlayers": "16+ with complete statistics",
+    "supportedSites": ["DraftKings", "FanDuel", "Yahoo", "Draftstars", "SuperDraft"],
+    "ruleEngine": "4 advanced rule types with conditional logic",
+    "exportFormats": ["CSV", "JSON", "DFS site formats"],
+    "optimizationOptions": ["Single lineup", "Up to 1000 lineups", "Randomization"],
+    "stackingOptions": ["QB stack", "Game stack", "Team correlations"],
+    "constraints": ["Salary cap", "Position limits", "Ownership targets", "Late swap rules"]
+  },
+  "technicalDetails": {
+    "framework": "Custom React/JavaScript SPA",
+    "styling": "Bootstrap + custom CSS",
+    "colorScheme": "Dark theme with green accents (#00c851)",
+    "responsive": true,
+    "accessibility": "ARIA labels and keyboard navigation",
+    "dataRefreshRate": "Real-time",
+    "browserSupport": "Modern browsers, Chrome recommended"
+  },
+  "apiEndpoints": [
+    "/api/players/nfl",
+    "/api/projections/current",
+    "/api/ownership/latest",
+    "/api/contests/available",
+    "/api/optimize/lineup",
+    "/api/export/csv",
+    "/api/rules/validate"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "site": "FanDuel",
+  "sport": "NFL",
+  "salary_cap": 60000,
+  "roster_size": 9,
+  "positions": {
+    "QB": {
+      "min": 1,
+      "max": 1,
+      "eligible_positions": ["QB"]
+    },
+    "RB": {
+      "min": 2,
+      "max": 2,
+      "eligible_positions": ["RB"]
+    },
+    "WR": {
+      "min": 3,
+      "max": 3,
+      "eligible_positions": ["WR"]
+    },
+    "TE": {
+      "min": 1,
+      "max": 1,
+      "eligible_positions": ["TE"]
+    },
+    "FLEX": {
+      "min": 1,
+      "max": 1,
+      "eligible_positions": ["RB", "WR", "TE"]
+    },
+    "D": {
+      "min": 1,
+      "max": 1,
+      "eligible_positions": ["D"]
+    }
+  },
+  "constraints": {
+    "max_players_per_team": 4,
+    "max_players_per_game": null,
+    "min_salary_used": 59000,
+    "captain_mode": false
+  },
+  "stacking_rules": {
+    "qb_stack_positions": ["WR", "TE"],
+    "max_qb_stack": 3,
+    "bring_back_eligible": ["RB", "WR", "TE"],
+    "max_bring_back": 2
+  },
+  "late_swap": {
+    "enabled": true,
+    "lock_time_minutes_before_kickoff": 5
+  }
+}
