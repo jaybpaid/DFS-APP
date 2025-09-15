@@ -1,0 +1,67 @@
+{
+  "mcpServers": {
+    "sequential-thinking-docker": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@modelcontextprotocol/server-sequential-thinking"],
+      "env": {
+        "MCP_SERVER_PORT": "3001"
+      }
+    },
+    "puppeteer-docker": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@hisma/server-puppeteer"],
+      "env": {
+        "MCP_SERVER_PORT": "3002"
+      }
+    },
+    "filesystem-docker": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@modelcontextprotocol/server-filesystem", "/app/data", "/app/dfs-system-2"],
+      "env": {
+        "MCP_SERVER_PORT": "3003"
+      }
+    },
+    "memory-docker": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@modelcontextprotocol/server-memory"],
+      "env": {
+        "MCP_SERVER_PORT": "3004"
+      }
+    },
+    "everything-docker": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@modelcontextprotocol/server-everything"],
+      "env": {
+        "MCP_SERVER_PORT": "3005"
+      }
+    },
+    "brave-search-docker": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "MCP_SERVER_PORT": "3006"
+      }
+    },
+    "github-docker": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@modelcontextprotocol/server-github"],
+      "env": {
+        "MCP_SERVER_PORT": "3007"
+      }
+    },
+    "aws-kb-docker": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@modelcontextprotocol/server-aws-kb-retrieval"],
+      "env": {
+        "MCP_SERVER_PORT": "3008"
+      }
+    },
+    "fetch-docker": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "node", "/app/fetch-mcp/dist/index.js"],
+      "env": {
+        "MCP_SERVER_PORT": "3009"
+      }
+    }
+  }
+}

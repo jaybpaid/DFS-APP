@@ -1,0 +1,54 @@
+{
+  "servers": {
+    "sequential-thinking": {
+      "port": 3001,
+      "command": "npx @modelcontextprotocol/server-sequential-thinking",
+      "description": "Sequential thinking and problem-solving server"
+    },
+    "puppeteer": {
+      "port": 3002,
+      "command": "npx @hisma/server-puppeteer",
+      "description": "Browser automation and web scraping server"
+    },
+    "filesystem": {
+      "port": 3003,
+      "command": "npx @modelcontextprotocol/server-filesystem /app/data /app/dfs-system-2",
+      "description": "File system operations server"
+    },
+    "memory": {
+      "port": 3004,
+      "command": "npx @modelcontextprotocol/server-memory",
+      "description": "Memory and knowledge graph server"
+    },
+    "everything": {
+      "port": 3005,
+      "command": "npx @modelcontextprotocol/server-everything",
+      "description": "Everything server with multiple tools"
+    },
+    "brave-search": {
+      "port": 3006,
+      "command": "npx @modelcontextprotocol/server-brave-search",
+      "description": "Brave search API server"
+    },
+    "github": {
+      "port": 3007,
+      "command": "npx @modelcontextprotocol/server-github",
+      "description": "GitHub API integration server"
+    },
+    "aws-kb": {
+      "port": 3008,
+      "command": "npx @modelcontextprotocol/server-aws-kb-retrieval",
+      "description": "AWS Knowledge Base retrieval server"
+    },
+    "fetch": {
+      "port": 3009,
+      "command": "node /app/fetch-mcp/dist/index.js",
+      "description": "Web fetch and scraping server"
+    }
+  },
+  "health_check": {
+    "endpoint": "/health",
+    "interval": 30,
+    "timeout": 10
+  }
+}
