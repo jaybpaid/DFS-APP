@@ -1,0 +1,11 @@
+flask==3.1.2
+flask-cors==6.0.1
+pandas==2.3.2
+numpy==2.3.3
+requests==2.32.5
+beautifulsoup4==4.13.5
+pydfs-lineup-optimizer==3.6.1
+draft-kings==3.1.0
+urllib3==2.5.0
+python-dateutil==2.9.0.post0
+pytz==2025.2

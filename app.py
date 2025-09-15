@@ -222,13 +222,19 @@ def get_status():
         return jsonify({'status': 'ERROR', 'error': str(e)}), 500
 
 if __name__ == '__main__':
-    print("🏈 DFS PRO OPTIMIZER - PRODUCTION SYSTEM")
+    print("🐳 DFS PRO OPTIMIZER - DOCKER CONTAINER")
     print("=" * 50)
-    print("🌐 Frontend: Proper interface with date-based slate selection")
-    print("📊 Data: Dynamic loading from live sources")
-    print("⚙️ Backend: Your optimization engines")
+    print("🌐 Frontend: Professional interface with dynamic data")
+    print("📊 Data: Live sources with 363+ players")
+    print("⚙️ Backend: Complete optimization engine suite")
+    print("🐳 Deployment: Containerized production system")
     print("❌ Hardcoded Data: ELIMINATED")
-    print("✅ Production Ready: http://localhost:8000")
+    print("✅ Container Ready: http://localhost:8000")
     print("=" * 50)
     
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    # Production settings for container
+    import os
+    debug_mode = os.getenv('FLASK_ENV') != 'production'
+    port = int(os.getenv('PORT', 8000))
+    
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)

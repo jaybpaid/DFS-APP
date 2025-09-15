@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  dfs-optimizer:
+    build: .
+    container_name: dfs-pro-optimizer
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./dfs-system-2:/app/dfs-system-2
+    environment:
+      - FLASK_ENV=production
+      - PYTHONPATH=/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  data-sync:
+    build: .
+    container_name: dfs-data-sync
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PYTHONPATH=/app
+    command: ["python3", "dynamic_data_manager.py"]
+    restart: unless-stopped
+    depends_on:
+      - dfs-optimizer
+
+  redis:
+    image: redis:7-alpine
+    container_name: dfs-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+volumes:
+  redis_data:
