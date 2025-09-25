@@ -1,0 +1,26 @@
+{
+  "name": "@dfs/client-dk",
+  "version": "1.0.0",
+  "description": "DraftKings API client and salary loader",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:smoke": "vitest run --reporter=verbose smoke.test.ts",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+  },
+  "dependencies": {
+    "zod": "^3.23.8",
+    "csv-parser": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.2",
+    "vitest": "^2.0.0"
+  }
+}

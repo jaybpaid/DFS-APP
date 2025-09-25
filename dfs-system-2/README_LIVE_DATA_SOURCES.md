@@ -18,11 +18,13 @@ The system supports multiple live data sources:
 **Purpose**: Fetch betting odds, spreads, and totals for NFL/NBA games
 
 **Getting an API Key**:
+
 1. Visit [The Odds API](https://the-odds-api.com/)
 2. Sign up for a free account (500 requests/month free)
 3. Get your API key from the dashboard
 
 **Configuration**:
+
 ```bash
 # In your .env file
 THE_ODDS_API_KEY=your_actual_api_key_here
@@ -33,11 +35,13 @@ THE_ODDS_API_KEY=your_actual_api_key_here
 **Purpose**: Fetch weather conditions for NFL games
 
 **Getting an API Key**:
+
 1. Visit [OpenWeatherMap](https://openweathermap.org/api)
 2. Sign up for a free account (1,000 calls/day free)
 3. Get your API key from the dashboard
 
 **Configuration**:
+
 ```bash
 # In your .env file
 OPENWEATHER_API_KEY=your_actual_api_key_here
@@ -48,6 +52,7 @@ OPENWEATHER_API_KEY=your_actual_api_key_here
 The system includes an automated data fetcher that runs periodically:
 
 ### Manual Execution
+
 ```bash
 # Fetch all live data
 python scripts/fetch_live_data.py
@@ -73,7 +78,7 @@ Add to your crontab for automatic daily updates:
 Live data is stored in `public/data/` directory:
 
 - `dk_nfl_latest.json` - Latest NFL player pool
-- `dk_nba_latest.json` - Latest NBA player pool  
+- `dk_nba_latest.json` - Latest NBA player pool
 - `odds_*.json` - Betting odds data
 - `weather_*.json` - Weather data
 - `nflfastr_*.parquet` - NFL advanced stats
@@ -156,6 +161,7 @@ Live data is automatically integrated into:
 ## Support
 
 For issues with live data integration:
+
 1. Check the logs in `public/data/live_data_report.json`
 2. Verify API keys are valid and active
 3. Ensure network connectivity to external APIs

@@ -3,6 +3,7 @@
 ## 🖥️ Linux VM Specifications
 
 ### **Minimum Requirements**
+
 - **CPU**: 2 vCPUs (2.4GHz+)
 - **RAM**: 4GB
 - **Storage**: 20GB SSD
@@ -10,6 +11,7 @@
 - **OS**: Ubuntu 20.04+ LTS, CentOS 8+, or Debian 11+
 
 ### **Recommended Specifications**
+
 - **CPU**: 4 vCPUs (3.0GHz+)
 - **RAM**: 8GB
 - **Storage**: 40GB SSD
@@ -17,6 +19,7 @@
 - **OS**: Ubuntu 22.04 LTS (most tested)
 
 ### **Production/High-Load Specifications**
+
 - **CPU**: 8 vCPUs (3.2GHz+)
 - **RAM**: 16GB
 - **Storage**: 100GB NVMe SSD
@@ -26,12 +29,14 @@
 ## 🐳 Resource Allocation Breakdown
 
 ### **DFS Ultimate Optimizer**
+
 - **Base Application**: 1-2GB RAM, 1-2 CPU cores
 - **Live Data Processing**: 500MB-1GB RAM
 - **Player Database**: 200-500MB RAM
 - **Optimization Engine**: 1-2GB RAM (during optimization)
 
 ### **Supporting Services**
+
 - **Docker Engine**: 200-500MB RAM
 - **Portainer**: 100-200MB RAM
 - **Redis (optional)**: 100-500MB RAM
@@ -39,6 +44,7 @@
 - **System Overhead**: 1-2GB RAM
 
 ### **Total Resource Usage**
+
 - **Light Usage**: 3-4GB RAM, 2 CPU cores
 - **Normal Usage**: 5-6GB RAM, 3-4 CPU cores
 - **Heavy Usage**: 8-12GB RAM, 6-8 CPU cores
@@ -141,11 +147,13 @@ docker-compose logs -f
 ## 🎛️ Portainer Management
 
 ### **Access Portainer**
+
 - **URL**: `http://your-server-ip:9000`
 - **Initial Setup**: Create admin user on first access
 - **Dashboard**: Manage all containers from web interface
 
 ### **Portainer Features for DFS Optimizer**
+
 - **Container Management**: Start/stop/restart containers
 - **Log Viewing**: Real-time log monitoring
 - **Resource Monitoring**: CPU/RAM usage graphs
@@ -154,6 +162,7 @@ docker-compose logs -f
 - **Image Management**: Pull/build/manage Docker images
 
 ### **Managing DFS Optimizer via Portainer**
+
 1. **Navigate to Stacks** → Find your DFS optimizer stack
 2. **Container Actions**: Start, stop, restart individual services
 3. **Logs**: View real-time logs for debugging
@@ -163,6 +172,7 @@ docker-compose logs -f
 ## 📊 Monitoring & Maintenance
 
 ### **System Monitoring Commands**
+
 ```bash
 # Check system resources
 htop
@@ -180,6 +190,7 @@ journalctl -u docker.service -f
 ```
 
 ### **Automated Monitoring Setup**
+
 ```bash
 # Install monitoring tools
 sudo apt install -y prometheus node-exporter grafana
@@ -195,6 +206,7 @@ docker run -d \
 ## 🔒 Security Hardening
 
 ### **Basic Security Setup**
+
 ```bash
 # Configure SSH (disable root login)
 sudo nano /etc/ssh/sshd_config
@@ -212,6 +224,7 @@ sudo dpkg-reconfigure unattended-upgrades
 ```
 
 ### **Docker Security**
+
 ```bash
 # Limit Docker daemon exposure
 sudo nano /etc/docker/daemon.json
@@ -230,6 +243,7 @@ sudo systemctl restart docker
 ## 🔄 Backup & Recovery
 
 ### **Automated Backup Script**
+
 ```bash
 #!/bin/bash
 # backup-dfs.sh
@@ -253,6 +267,7 @@ echo "Backup completed: $DATE"
 ```
 
 ### **Cron Job for Automated Backups**
+
 ```bash
 # Add to crontab
 crontab -e
@@ -264,6 +279,7 @@ crontab -e
 ## 🌐 Domain & SSL Setup
 
 ### **Nginx Reverse Proxy with SSL**
+
 ```bash
 # Install Nginx
 sudo apt install nginx certbot python3-certbot-nginx
@@ -274,7 +290,7 @@ sudo nano /etc/nginx/sites-available/dfs-optimizer
 server {
     listen 80;
     server_name your-domain.com;
-    
+
     location / {
         proxy_pass http://localhost:8000;
         proxy_set_header Host $host;
@@ -282,7 +298,7 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
-    
+
     location /api/dk/ {
         proxy_pass http://localhost:8765/;
         proxy_set_header Host $host;
@@ -302,6 +318,7 @@ sudo certbot --nginx -d your-domain.com
 ## 📈 Performance Optimization
 
 ### **System Tuning**
+
 ```bash
 # Increase file limits
 echo "* soft nofile 65536" | sudo tee -a /etc/security/limits.conf
@@ -320,6 +337,7 @@ sudo nano /etc/docker/daemon.json
 ```
 
 ### **Resource Limits in Docker Compose**
+
 ```yaml
 # Add to docker-compose.yml
 services:
@@ -339,6 +357,7 @@ services:
 ### **Common Issues**
 
 #### **Out of Memory**
+
 ```bash
 # Check memory usage
 free -h
@@ -353,6 +372,7 @@ echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 ```
 
 #### **Port Conflicts**
+
 ```bash
 # Check what's using ports
 sudo netstat -tulpn | grep :8000
@@ -363,6 +383,7 @@ sudo kill -9 <PID>
 ```
 
 #### **Docker Issues**
+
 ```bash
 # Restart Docker service
 sudo systemctl restart docker
@@ -375,6 +396,7 @@ docker volume prune
 ## 📞 Support Commands
 
 ### **Quick Diagnostics**
+
 ```bash
 # System health check
 ./docker-test.sh
@@ -397,6 +419,7 @@ curl -s http://localhost:8765/health
 ## 🎯 Recommended VM Providers
 
 ### **Cloud Providers with Good Performance**
+
 1. **DigitalOcean**: $40/month (4GB RAM, 2 vCPUs, 80GB SSD)
 2. **Linode**: $36/month (4GB RAM, 2 vCPUs, 80GB SSD)
 3. **Vultr**: $24/month (4GB RAM, 2 vCPUs, 80GB SSD)
@@ -404,6 +427,7 @@ curl -s http://localhost:8765/health
 5. **Google Cloud**: e2-standard-2 ($35-55/month)
 
 ### **Budget Options**
+
 1. **Hetzner**: €15/month (4GB RAM, 2 vCPUs, 40GB SSD)
 2. **OVH**: $20/month (4GB RAM, 2 vCPUs, 80GB SSD)
 3. **Contabo**: $12/month (8GB RAM, 4 vCPUs, 200GB SSD)

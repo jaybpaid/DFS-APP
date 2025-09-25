@@ -1,4 +1,5 @@
 # MCP Server Health Status Report
+
 ## Generated: September 13, 2025
 
 ## Connected MCP Servers Status
@@ -9,7 +10,7 @@
    - Tools available: brave_web_search, brave_local_search, brave_video_search, brave_image_search, brave_news_search, brave_summarizer
    - Successfully tested DFS-related searches
 
-2. **read-website-fast** - ✅ FULLY OPERATIONAL  
+2. **read-website-fast** - ✅ FULLY OPERATIONAL
    - Tools available: read_website
    - Successfully scraped GitHub DraftKings topics (24 repositories found)
 
@@ -35,7 +36,7 @@
    - Required for web scraping automation
    - Installation needed: `npx -y @modelcontextprotocol/server-apify`
 
-2. **firecrawl-mcp** - ❌ NOT CONNECTED  
+2. **firecrawl-mcp** - ❌ NOT CONNECTED
    - Required for advanced web crawling
    - Installation needed: `npx -y @firecrawl/firecrawl-mcp-server`
 
@@ -74,6 +75,7 @@
 ## Recommendations
 
 1. **Install Missing MCP Servers**:
+
    ```bash
    npx -y @modelcontextprotocol/server-apify
    npx -y @firecrawl/firecrawl-mcp-server

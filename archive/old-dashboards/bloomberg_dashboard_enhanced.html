@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DFS Bloomberg Terminal</title>
+    <style>
+      /* Existing styles */
+    </style>
+  </head>
+  <body>
+    <div class="bloomberg-container">
+      <div class="top-bar">
+        <div class="logo">DFS TERMINAL</div>
+        <div class="ticker">
+          <div class="ticker-item">
+            <div class="status-indicator"></div>
+            <span id="api-connection">API ONLINE</span>
+          </div>
+          <div class="ticker-item">
+            <span>PLAYERS: <span id="total-players">0</span></span>
+          </div>
+          <div class="ticker-item">
+            <span>CONTESTS: <span id="total-contests">0</span></span>
+          </div>
+          <div class="ticker-item">
+            <span>LINEUPS: <span id="total-lineups">0</span></span>
+          </div>
+          <div class="ticker-item">
+            <span id="current-time">--:--:--</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <!-- Left Panel: Contests -->
+        <div class="left-panel">
+          <div class="panel-header">Available Contests</div>
+          <div class="contest-list" id="contest-list">
+            <div style="text-align: center; padding: 20px; opacity: 0.6">
+              Loading...
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Panel: Player Pool -->
+        <div class="center-panel">
+          <div class="panel-header">
+            Player Pool - <span id="selected-contest">Select Contest</span>
+          </div>
+          <div class="player-grid" id="player-grid">
+            <div style="text-align: center; padding: 50px; opacity: 0.6">
+              Select a contest to load player data
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Controls & Results -->
+        <div class="right-panel">
+          <div class="panel-header">Optimization Controls</div>
+          <div class="control-panel">
+            <div class="control-group">
+              <label class="control-label" for="num-lineups">Number of Lineups</label>
+              <input
+                type="number"
+                id="num-lineups"
+                value="20"
+                min="1"
+                max="150"
+                class="control-input"
+              />
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="uniqueness">Unique Players</label>
+              <input
+                type="number"
+                id="uniqueness"
+                value="6"
+                min="1"
+                max="9"
+                class="control-input"
+              />
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="min-salary">Min Salary</label>
+              <input
+                type="number"
+                id="min-salary"
+                value="49000"
+                min="40000"
+                max="50000"
+                class="control-input"
+              />
+            </div>
+
+            <button class="optimize-btn" id="optimize-btn" onclick="runOptimization()">
+              Execute Optimization
+            </button>
+          </div>
+
+          <div class="panel-header" style="margin-top: 20px">Market Analytics</div>
+          <div class="market-data">
+            <div class="market-row">
+              <span class="market-label">Avg Salary:</span>
+              <span class="market-value" id="avg-salary">$6,250</span>
+            </div>
+            <div class="market-row">
+              <span class="market-label">Top Value:</span>
+              <span class="market-value" id="top-value">3.2x</span>
+            </div>
+            <div class="market-row">
+              <span class="market-label">Chalk Play:</span>
+              <span class="market-value" id="chalk-play">Josh Allen</span>
+            </div>
+            <div class="market-row">
+              <span class="market-label">Contrarian:</span>
+              <span class="market-value" id="contrarian-play">T. Hill</span>
+            </div>
+          </div>
+
+          <div class="panel-header" style="margin-top: 20px">Generated Lineups</div>
+          <div class="lineup-results" id="lineup-results">
+            <div
+              style="text-align: center; padding: 20px; opacity: 0.6; font-size: 11px"
+            >
+              Run optimization to see results
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Existing JavaScript functionality
+    </script>
+  </body>
+</html>

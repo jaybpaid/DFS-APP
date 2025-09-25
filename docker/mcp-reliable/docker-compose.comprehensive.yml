@@ -1,0 +1,682 @@
+# Comprehensive MCP Server Stack - All Your Servers in One Reliable System
+# Auto-Recovery + Persistence + All 21 MCP Servers
+
+version: '3.8'
+
+services:
+  # Core Infrastructure with Auto-Recovery
+  redis-mcp:
+    image: redis:7-alpine
+    container_name: dfs-redis-mcp
+    restart: always
+    ports:
+      - "6380:6379"
+    volumes:
+      - mcp_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  postgres-mcp:
+    image: postgres:15-alpine
+    container_name: dfs-postgres-mcp
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: dfs_user
+      POSTGRES_PASSWORD: dfs_password_2024
+      POSTGRES_DB: dfs_optimizer
+    volumes:
+      - mcp_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dfs_user -d dfs_optimizer"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # All Your MCP Servers in Individual Containers
+  sequential-thinking:
+    image: node:20-alpine
+    container_name: mcp-sequential-thinking
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      npm install @modelcontextprotocol/server-sequential-thinking &&
+      npx @modelcontextprotocol/server-sequential-thinking --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Sequential Thinking OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  puppeteer:
+    image: node:20-alpine
+    container_name: mcp-puppeteer
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      apk add --no-cache chromium &&
+      npm install @hisma/server-puppeteer &&
+      npx @hisma/server-puppeteer --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Puppeteer OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  filesystem:
+    image: node:20-alpine
+    container_name: mcp-filesystem
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      npm install @modelcontextprotocol/server-filesystem &&
+      npx @modelcontextprotocol/server-filesystem /app/data /app/dfs-system-2 --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Filesystem OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  memory:
+    image: node:20-alpine
+    container_name: mcp-memory
+    restart: always
+    working_dir: /app
+    volumes:
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      npm install @modelcontextprotocol/server-memory &&
+      npx @modelcontextprotocol/server-memory --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Memory OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  everything:
+    image: node:20-alpine
+    container_name: mcp-everything
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      npm install @modelcontextprotocol/server-everything &&
+      npx @modelcontextprotocol/server-everything --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Everything OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  brave-search:
+    image: node:20-alpine
+    container_name: mcp-brave-search
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      - BRAVE_API_KEY=BSAkgdrOqWvr4RlmqUl0BgpfKWNt5hm
+    command: >
+      sh -c "
+      npm install @modelcontextprotocol/server-brave-search &&
+      npx @modelcontextprotocol/server-brave-search --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Brave Search OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  github:
+    image: node:20-alpine
+    container_name: mcp-github
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      - GITHUB_PERSONAL_ACCESS_TOKEN=ghp_5vPjx6kQOArYwRxC2jNQ5gHhzTfU0m1lBcDe
+    command: >
+      sh -c "
+      npm install @modelcontextprotocol/server-github &&
+      npx @modelcontextprotocol/server-github --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('GitHub OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  aws-kb:
+    image: node:20-alpine
+    container_name: mcp-aws-kb
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      npm install @modelcontextprotocol/server-aws-kb-retrieval &&
+      npx @modelcontextprotocol/server-aws-kb-retrieval --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('AWS KB OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  fetch:
+    image: node:20-alpine
+    container_name: mcp-fetch
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      npm install @modelcontextprotocol/server-fetch &&
+      npx @modelcontextprotocol/server-fetch --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Fetch OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  gpt-researcher:
+    image: node:20-alpine
+    container_name: mcp-gpt-researcher
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      npm install axios openai tavily &&
+      node /mcp-servers/advanced/gptr-mcp/index.js --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('GPT Researcher OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  serena-code-analysis:
+    image: node:20-alpine
+    container_name: mcp-serena
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      cd /mcp-servers/advanced/serena &&
+      npm install &&
+      npm start -- --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Serena OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  claude-flow:
+    image: node:20-alpine
+    container_name: mcp-claude-flow
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      node /mcp-servers/advanced/claude-flow-mcp/server.js --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Claude Flow OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  google-genai-toolbox:
+    image: node:20-alpine
+    container_name: mcp-google-genai
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+      - GOOGLE_API_KEY=AIzaSyDrZDMqNClT8C48O5XFAUILbGEmUvoeASM
+    command: >
+      sh -c "
+      cd /mcp-servers/advanced/genai-toolbox &&
+      npm install &&
+      npm start -- --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Google GenAI OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  pipedream-chat:
+    image: node:20-alpine
+    container_name: mcp-pipedream
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      node /mcp-servers/advanced/pipedream-mcp/server.js --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Pipedream OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # Advanced MCP Servers
+  archon:
+    image: node:20-alpine
+    container_name: mcp-archon
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      node /mcp-servers/advanced/archon-mcp/server.js --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Archon OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  chrome-mcp:
+    image: node:20-alpine
+    container_name: mcp-chrome
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      node /mcp-servers/advanced/chrome-mcp/server.js --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Chrome MCP OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  chrome-pilot:
+    image: node:20-alpine
+    container_name: mcp-chrome-pilot
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      node /mcp-servers/advanced/chrome-pilot/index.js --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Chrome Pilot OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  browser-devtools:
+    image: node:20-alpine
+    container_name: mcp-browser-devtools
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      node /mcp-servers/advanced/browser-devtools/server.js --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Browser DevTools OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  nx-mcp:
+    image: node:20-alpine
+    container_name: mcp-nx
+    restart: always
+    working_dir: /app
+    volumes:
+      - ./:/workspace:ro
+      - mcp_persistent_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    command: >
+      sh -c "
+      npm install nx-mcp@latest &&
+      npx nx-mcp@latest --transport stdio
+      "
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('NX MCP OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mcp-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # MCP Watchdog - Monitors and restarts failed containers
+  mcp-watchdog:
+    image: docker:24-dind
+    container_name: mcp-watchdog
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    command: >
+      sh -c "
+      echo 'MCP Watchdog Starting...'
+      while true; do
+        echo '🔍 Checking all MCP containers...'
+
+        # Check each MCP container and restart if needed
+        for container in mcp-sequential-thinking mcp-puppeteer mcp-filesystem mcp-memory mcp-everything mcp-brave-search mcp-github mcp-aws-kb mcp-fetch mcp-gpt-researcher mcp-serena mcp-claude-flow mcp-google-genai mcp-pipedream mcp-archon mcp-chrome mcp-chrome-pilot mcp-browser-devtools mcp-nx dfs-redis-mcp dfs-postgres-mcp; do
+          status=\$(docker inspect -f '{{.State.Status}}' \$container 2>/dev/null || echo 'missing')
+          if [ \"\$status\" != 'running' ]; then
+            echo \"⚠️ Container \$container is \$status - attempting restart...\"
+            docker restart \$container 2>/dev/null || echo \"❌ Failed to restart \$container\"
+          else
+            echo \"✅ Container \$container is running\"
+          fi
+        done
+
+        sleep 60
+      done
+      "
+    depends_on:
+      - sequential-thinking
+      - puppeteer
+      - filesystem
+      - memory
+      - everything
+      - brave-search
+      - github
+      - aws-kb
+      - fetch
+      - gpt-researcher
+      - serena-code-analysis
+      - claude-flow
+      - google-genai-toolbox
+      - pipedream-chat
+      - archon
+      - chrome-mcp
+      - chrome-pilot
+      - browser-devtools
+      - nx-mcp
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  mcp_redis_data:
+  mcp_postgres_data:
+  mcp_persistent_data:

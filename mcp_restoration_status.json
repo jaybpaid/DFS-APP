@@ -1,0 +1,39 @@
+{
+  "timestamp": "2025-09-20T22:45:00Z",
+  "status": "MCP Servers Restored (Non-Docker)",
+  "docker_available": false,
+  "configured_servers": 7,
+  "total_possible_servers": 21,
+  "working_servers": [
+    "taskmanager (custom)",
+    "filesystem (npx)",
+    "memory (npx)",
+    "fetch (npx)",
+    "sqlite (npx)",
+    "github (npx + API)",
+    "brave-search (npx + API)"
+  ],
+  "docker_only_servers": [
+    "sequential-thinking",
+    "everything",
+    "aws-kb",
+    "java-sdk",
+    "gpt-researcher",
+    "serena-code-analysis",
+    "claude-flow",
+    "google-genai-toolbox",
+    "phoenix-mcp",
+    "pipedream-chat",
+    "archon",
+    "chrome-mcp",
+    "chrome-pilot",
+    "browser-devtools",
+    "nx-mcp"
+  ],
+  "next_steps": [
+    "Restart Cline to load new configuration",
+    "Test working servers",
+    "Install Docker Desktop if full suite desired",
+    "Build containers after Docker installation"
+  ]
+}

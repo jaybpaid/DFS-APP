@@ -1,0 +1,75 @@
+{
+  "overall_status": "\ud83d\udfe1 MOSTLY READY - MINOR ISSUES",
+  "components": {
+    "data_files": {
+      "files_exist": true,
+      "files_fresh": true,
+      "details": {
+        "slates": {
+          "total": 4,
+          "active": 4,
+          "player_count": 725
+        },
+        "data/available_slates.json": "EXISTS_AND_VALID",
+        "players": {
+          "total_players": 363,
+          "has_salaries": 363
+        },
+        "data/current_player_pool.json": "EXISTS_AND_VALID",
+        "data/weather_data.json": "EXISTS_AND_VALID"
+      }
+    },
+    "today_slates": {
+      "slates_today": 0,
+      "active_slates": 0,
+      "total_players": 0,
+      "kc_phi_game": false,
+      "details": []
+    },
+    "player_data": {
+      "total_players": 363,
+      "players_with_salaries": 363,
+      "players_with_projections": 363,
+      "positions_covered": ["WR", "TE", "RB", "DST", "QB"],
+      "teams_covered": [
+        "BUF",
+        "JAX",
+        "PIT",
+        "CIN",
+        "DEN",
+        "DET",
+        "DAL",
+        "NYJ",
+        "PHI",
+        "CLE",
+        "SEA",
+        "TEN",
+        "NE",
+        "SF",
+        "KC",
+        "ARI",
+        "CHI",
+        "CAR",
+        "NO",
+        "IND",
+        "BAL",
+        "MIA",
+        "NYG",
+        "LAR"
+      ],
+      "data_freshness": "22.4 hours old"
+    },
+    "optimizers": {
+      "main_app": true,
+      "optimizer_files": 3,
+      "key_optimizers": [
+        "dfs-system-2/final_working_180_optimizer.py",
+        "dfs-system-2/bulletproof_late_swap_engine.py",
+        "dfs-system-2/industry_standard_hybrid_optimizer.py"
+      ],
+      "total_optimizer_files": 36
+    }
+  },
+  "recommendations": [],
+  "timestamp": "2025-09-16T11:23:15.491137"
+}

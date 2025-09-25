@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design 2: Split-Pane DFS Workflow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .tab-active {
+        background-color: #3b82f6;
+        color: white;
+      }
+      .player-card {
+        transition: all 0.2s ease;
+      }
+      .player-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+      .simulation-result {
+        background: linear-gradient(90deg, #f0f9ff 0%, #e0f2fe 100%);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 h-screen flex flex-col">
+    <!-- Top Navigation -->
+    <nav class="bg-white border-b border-gray-300 px-6 py-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-6">
+          <h1 class="text-lg font-bold text-gray-900">DFS Optimizer</h1>
+          <div class="flex space-x-1">
+            <button class="tab-active px-3 py-1 text-sm rounded">Players</button>
+            <button class="px-3 py-1 text-sm rounded hover:bg-gray-100">
+              Optimize
+            </button>
+            <button class="px-3 py-1 text-sm rounded hover:bg-gray-100">
+              Simulate
+            </button>
+            <button class="px-3 py-1 text-sm rounded hover:bg-gray-100">Results</button>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-600">Slate:</span>
+          <select class="text-sm border rounded px-2 py-1" aria-label="Select slate">
+            <option>NFL Main - $12.5M Prizes</option>
+          </select>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Split Layout -->
+    <div class="flex-1 flex">
+      <!-- Left Pane: Player Pool -->
+      <div class="w-1/2 p-4 border-r border-gray-300">
+        <div class="bg-white rounded-lg h-full flex flex-col">
+          <!-- Player Pool Header -->
+          <div class="p-4 border-b border-gray-200">
+            <div class="flex items-center justify-between mb-3">
+              <h2 class="text-lg font-semibold">Player Pool</h2>
+              <span class="text-sm text-gray-500">247 players • $50K cap</span>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <input
+                type="text"
+                placeholder="Search..."
+                class="text-sm border rounded px-2 py-1"
+                aria-label="Search players"
+              />
+              <select
+                class="text-sm border rounded px-2 py-1"
+                aria-label="Filter by position"
+              >
+                <option>All Positions</option>
+                <option>QB</option>
+                <option>RB</option>
+                <option>WR</option>
+                <option>TE</option>
+                <option>DST</option>
+              </select>
+              <select
+                class="text-sm border rounded px-2 py-1"
+                aria-label="Filter by team"
+              >
+                <option>All Teams</option>
+                <option>BUF</option>
+                <option>MIA</option>
+                <option>SF</option>
+                <option>NYG</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Player Cards Grid -->
+          <div class="flex-1 p-4 overflow-y-auto">
+            <div class="grid grid-cols-1 gap-3">
+              <div class="player-card bg-white border border-gray-200 rounded-lg p-3">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="font-medium text-sm">Josh Allen</span>
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded"
+                      >QB</span
+                    >
+                  </div>
+                  <div class="text-right">
+                    <div class="text-sm font-bold">$8,400</div>
+                    <div class="text-xs text-gray-500">BUF vs MIA</div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2 mb-2">
+                  <div class="text-center">
+                    <input
+                      type="number"
+                      class="w-full text-xs border rounded px-1 py-0.5"
+                      value="22.5"
+                      step="0.1"
+                      aria-label="Projection"
+                    />
+                    <div class="text-xs text-gray-500">Proj</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xs font-medium text-green-600">2.68x</div>
+                    <div class="text-xs text-gray-500">Value</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xs font-medium">18.5%</div>
+                    <div class="text-xs text-gray-500">Own</div>
+                  </div>
+                  <div class="text-center">
+                    <div
+                      class="bg-green-100 text-green-800 text-xs px-1 py-0.5 rounded font-medium"
+                    >
+                      A+
+                    </div>
+                    <div class="text-xs text-gray-500">AI</div>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <div class="flex space-x-1">
+                    <button
+                      class="text-green-600 hover:bg-green-50 px-2 py-1 rounded text-xs"
+                      title="Like"
+                    >
+                      👍
+                    </button>
+                    <button
+                      class="text-red-600 hover:bg-red-50 px-2 py-1 rounded text-xs"
+                      title="Dislike"
+                    >
+                      👎
+                    </button>
+                    <button
+                      class="text-yellow-600 hover:bg-yellow-50 px-2 py-1 rounded text-xs"
+                      title="Lock"
+                    >
+                      🔒
+                    </button>
+                    <button
+                      class="text-orange-600 hover:bg-orange-50 px-2 py-1 rounded text-xs"
+                      title="Boom"
+                    >
+                      ⚡
+                    </button>
+                  </div>
+                  <div class="flex space-x-1">
+                    <input
+                      type="number"
+                      class="w-10 text-xs border rounded px-1"
+                      value="0"
+                      min="0"
+                      max="100"
+                      aria-label="Min exposure"
+                    />
+                    <span class="text-xs text-gray-400">-</span>
+                    <input
+                      type="number"
+                      class="w-10 text-xs border rounded px-1"
+                      value="100"
+                      min="0"
+                      max="100"
+                      aria-label="Max exposure"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="player-card bg-white border border-gray-200 rounded-lg p-3">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <span class="font-medium text-sm">Christian McCaffrey</span>
+                    <span
+                      class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded"
+                      >RB</span
+                    >
+                  </div>
+                  <div class="text-right">
+                    <div class="text-sm font-bold">$8,800</div>
+                    <div class="text-xs text-gray-500">SF @ NYG</div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2 mb-2">
+                  <div class="text-center">
+                    <input
+                      type="number"
+                      class="w-full text-xs border rounded px-1 py-0.5"
+                      value="19.8"
+                      step="0.1"
+                      aria-label="Projection"
+                    />
+                    <div class="text-xs text-gray-500">Proj</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xs font-medium text-green-600">2.25x</div>
+                    <div class="text-xs text-gray-500">Value</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xs font-medium">22.1%</div>
+                    <div class="text-xs text-gray-500">Own</div>
+                  </div>
+                  <div class="text-center">
+                    <div
+                      class="bg-yellow-100 text-yellow-800 text-xs px-1 py-0.5 rounded font-medium"
+                    >
+                      B+
+                    </div>
+                    <div class="text-xs text-gray-500">AI</div>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <div class="flex space-x-1">
+                    <button
+                      class="text-green-600 hover:bg-green-50 px-2 py-1 rounded text-xs bg-green-50"
+                      title="Like"
+                    >
+                      👍
+                    </button>
+                    <button
+                      class="text-red-600 hover:bg-red-50 px-2 py-1 rounded text-xs"
+                      title="Dislike"
+                    >
+                      👎
+                    </button>
+                    <button
+                      class="text-gray-400 hover:bg-gray-50 px-2 py-1 rounded text-xs"
+                      title="Lock"
+                    >
+                      🔒
+                    </button>
+                    <button
+                      class="text-orange-600 hover:bg-orange-50 px-2 py-1 rounded text-xs"
+                      title="Boom"
+                    >
+                      ⚡
+                    </button>
+                  </div>
+                  <div class="flex space-x-1">
+                    <input
+                      type="number"
+                      class="w-10 text-xs border rounded px-1"
+                      value="10"
+                      min="0"
+                      max="100"
+                      aria-label="Min exposure"
+                    />
+                    <span class="text-xs text-gray-400">-</span>
+                    <input
+                      type="number"
+                      class="w-10 text-xs border rounded px-1"
+                      value="25"
+                      min="0"
+                      max="100"
+                      aria-label="Max exposure"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="player-card bg-white border border-gray-200 rounded-lg p-3">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span class="font-medium text-sm">Tyreek Hill</span>
+                    <span
+                      class="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded"
+                      >WR</span
+                    >
+                  </div>
+                  <div class="text-right">
+                    <div class="text-sm font-bold">$8,200</div>
+                    <div class="text-xs text-gray-500">MIA @ BUF</div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2 mb-2">
+                  <div class="text-center">
+                    <input
+                      type="number"
+                      class="w-full text-xs border rounded px-1 py-0.5"
+                      value="16.8"
+                      step="0.1"
+                      aria-label="Projection"
+                    />
+                    <div class="text-xs text-gray-500">Proj</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xs font-medium text-green-600">2.05x</div>
+                    <div class="text-xs text-gray-500">Value</div>
+                  </div>
+                  <div class="text-center">
+                    <div class="text-xs font-medium">15.3%</div>
+                    <div class="text-xs text-gray-500">Own</div>
+                  </div>
+                  <div class="text-center">
+                    <div
+                      class="bg-green-100 text-green-800 text-xs px-1 py-0.5 rounded font-medium"
+                    >
+                      A
+                    </div>
+                    <div class="text-xs text-gray-500">AI</div>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <div class="flex space-x-1">
+                    <button
+                      class="text-green-600 hover:bg-green-50 px-2 py-1 rounded text-xs bg-green-50"
+                      title="Like"
+                    >
+                      👍
+                    </button>
+                    <button
+                      class="text-red-600 hover:bg-red-50 px-2 py-1 rounded text-xs"
+                      title="Dislike"
+                    >
+                      👎
+                    </button>
+                    <button
+                      class="text-gray-400 hover:bg-gray-50 px-2 py-1 rounded text-xs"
+                      title="Lock"
+                    >
+                      🔒
+                    </button>
+                    <button
+                      class="text-orange-600 hover:bg-orange-50 px-2 py-1 rounded text-xs bg-orange-50"
+                      title="Boom"
+                    >
+                      ⚡
+                    </button>
+                  </div>
+                  <div class="flex space-x-1">
+                    <input
+                      type="number"
+                      class="w-10 text-xs border rounded px-1"
+                      value="0"
+                      min="0"
+                      max="100"
+                      aria-label="Min exposure"
+                    />
+                    <span class="text-xs text-gray-400">-</span>
+                    <input
+                      type="number"
+                      class="w-10 text-xs border rounded px-1"
+                      value="100"
+                      min="0"
+                      max="100"
+                      aria-label="Max exposure"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Pane: Optimization & Results -->
+      <div class="w-1/2 flex flex-col">
+        <!-- Optimization Controls -->
+        <div class="bg-white p-4 border-b border-gray-300">
+          <h3 class="font-semibold text-gray-900 mb-3">Optimization Settings</h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1"
+                >Number of Lineups</label
+              >
+              <input
+                type="number"
+                class="w-full text-sm border rounded px-3 py-2"
+                value="20"
+                min="1"
+                max="150"
+                aria-label="Number of lineups"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1"
+                >Unique Players</label
+              >
+              <input
+                type="number"
+                class="w-full text-sm border rounded px-3 py-2"
+                value="6"
+                min="1"
+                max="9"
+                aria-label="Unique players"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1"
+                >Min Salary</label
+              >
+              <input
+                type="number"
+                class="w-full text-sm border rounded px-3 py-2"
+                value="48000"
+                min="40000"
+                max="50000"
+                aria-label="Minimum salary"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-gray-700 mb-1"
+                >Max Salary</label
+              >
+              <input
+                type="number"
+                class="w-full text-sm border rounded px-3 py-2"
+                value="50000"
+                min="40000"
+                max="50000"
+                aria-label="Maximum salary"
+              />
+            </div>
+          </div>
+
+          <div class="flex space-x-2 mt-4">
+            <button
+              class="flex-1 bg-blue-600 text-white py-2 px-4 text-sm rounded hover:bg-blue-700"
+            >
+              Generate Lineups
+            </button>
+            <button
+              class="flex-1 bg-green-600 text-white py-2 px-4 text-sm rounded hover:bg-green-700"
+            >
+              Run Simulation
+            </button>
+          </div>
+        </div>
+
+        <!-- Simulation Results -->
+        <div class="flex-1 p-4 overflow-y-auto">
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="simulation-result rounded-lg p-3 border border-blue-200">
+              <div class="text-lg font-bold text-blue-600">12.7%</div>
+              <div class="text-xs text-gray-600">Average Win Rate</div>
+            </div>
+            <div class="simulation-result rounded-lg p-3 border border-green-200">
+              <div class="text-lg font-bold text-green-600">68.3%</div>
+              <div class="text-xs text-gray-600">Cash Rate</div>
+            </div>
+          </div>
+
+          <!-- Top Lineups -->
+          <div class="space-y-2">
+            <h4 class="font-medium text-gray-900">Top Lineups</h4>
+
+            <div class="bg-green-50 border border-green-200 rounded p-3">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium">#1 - Josh Allen Stack</span>
+                <div class="flex space-x-2">
+                  <span class="bg-green-600 text-white text-xs px-2 py-1 rounded"
+                    >ROI: 127%</span
+                  >
+                  <span class="text-xs text-gray-600">Win: 14.2%</span>
+                </div>
+              </div>
+              <div class="text-xs text-gray-600">
+                QB: J.Allen | RB: Barkley, Jones | WR: Hill, Smith, Cooper | TE: Kelce |
+                DST: Bills
+              </div>
+              <div class="flex justify-between mt-1 text-xs">
+                <span>Salary: $49,800</span>
+                <span>Proj: 142.6</span>
+                <span class="text-yellow-600">Dup: 3.2%</span>
+              </div>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded p-3">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium">#2 - Lamar Stack</span>
+                <div class="flex space-x-2">
+                  <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded"
+                    >ROI: 118%</span
+                  >
+                  <span class="text-xs text-gray-600">Win: 12.8%</span>
+                </div>
+              </div>
+              <div class="text-xs text-gray-600">
+                QB: L.Jackson | RB: McCaffrey, Hall | WR: Kupp, Evans, Chase | TE:
+                Andrews | DST: Ravens
+              </div>
+              <div class="flex justify-between mt-1 text-xs">
+                <span>Salary: $49,200</span>
+                <span>Proj: 138.9</span>
+                <span class="text-yellow-600">Dup: 5.7%</span>
+              </div>
+            </div>
+
+            <div class="bg-gray-50 border border-gray-200 rounded p-3">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium">#3 - Contrarian Build</span>
+                <div class="flex space-x-2">
+                  <span class="bg-gray-600 text-white text-xs px-2 py-1 rounded"
+                    >ROI: 102%</span
+                  >
+                  <span class="text-xs text-gray-600">Win: 11.1%</span>
+                </div>
+              </div>
+              <div class="text-xs text-gray-600">
+                QB: Prescott | RB: Henry, Jacobs | WR: Lamb, Diggs, St.Brown | TE:
+                Kittle | DST: Cowboys
+              </div>
+              <div class="flex justify-between mt-1 text-xs">
+                <span>Salary: $49,200</span>
+                <span>Proj: 135.2</span>
+                <span class="text-green-600">Dup: 1.8%</span>
+              </div>
+            </div>
+
+            <div class="bg-purple-50 border border-purple-200 rounded p-3">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium">#4 - High Ceiling</span>
+                <div class="flex space-x-2">
+                  <span class="bg-purple-600 text-white text-xs px-2 py-1 rounded"
+                    >ROI: 95%</span
+                  >
+                  <span class="text-xs text-gray-600">Win: 9.8%</span>
+                </div>
+              </div>
+              <div class="text-xs text-gray-600">
+                QB: Mahomes | RB: Taylor, Mixon | WR: Jefferson, Adams, Brown | TE:
+                Waller | DST: Chiefs
+              </div>
+              <div class="flex justify-between mt-1 text-xs">
+                <span>Salary: $49,600</span>
+                <span>Proj: 133.8</span>
+                <span class="text-red-600">Dup: 8.1%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Export & Actions -->
+          <div class="mt-4 pt-4 border-t border-gray-200">
+            <div class="flex space-x-2">
+              <button
+                class="flex-1 bg-gray-600 text-white py-2 px-3 text-sm rounded hover:bg-gray-700"
+              >
+                Export CSV
+              </button>
+              <button
+                class="flex-1 bg-green-600 text-white py-2 px-3 text-sm rounded hover:bg-green-700"
+              >
+                Save Settings
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      console.log('Design 2: Split-Pane DFS Workflow loaded');
+
+      // Tab switching
+      document.querySelectorAll('nav button').forEach(btn => {
+        btn.addEventListener('click', function () {
+          document
+            .querySelectorAll('nav button')
+            .forEach(b => b.classList.remove('tab-active'));
+          this.classList.add('tab-active');
+          console.log('Switched to tab:', this.textContent);
+        });
+      });
+
+      // Player controls with state management
+      document.querySelectorAll('.player-card button').forEach(btn => {
+        btn.addEventListener('click', function () {
+          const card = this.closest('.player-card');
+          const playerName = card.querySelector('.font-medium').textContent;
+          console.log(
+            `Player ${playerName} - ${this.title}: ${this.classList.contains('bg-green-50') ? 'activated' : 'deactivated'}`
+          );
+
+          // Toggle state
+          if (this.title === 'Like' || this.title === 'Boom') {
+            this.classList.toggle('bg-green-50');
+          } else if (this.title === 'Dislike') {
+            this.classList.toggle('bg-red-50');
+          } else if (this.title === 'Lock') {
+            this.classList.toggle('bg-yellow-50');
+          }
+        });
+      });
+
+      // Projection editing
+      document.querySelectorAll('input[step="0.1"]').forEach(input => {
+        input.addEventListener('change', function () {
+          const card = this.closest('.player-card');
+          const playerName = card.querySelector('.font-medium').textContent;
+          console.log(`${playerName} projection updated to: ${this.value}`);
+
+          // Recalculate value
+          const salary = parseFloat(
+            card
+              .querySelector('.font-bold')
+              .textContent.replace('$', '')
+              .replace(',', '')
+          );
+          const projection = parseFloat(this.value);
+          const value = ((projection * 1000) / salary).toFixed(2);
+          card.querySelector('.text-green-600').textContent = value + 'x';
+        });
+      });
+    </script>
+  </body>
+</html>

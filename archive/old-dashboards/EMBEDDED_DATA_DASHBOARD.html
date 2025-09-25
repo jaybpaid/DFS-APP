@@ -1,0 +1,1477 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Embedded Data DFS Optimizer - Instant Loading</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f8fafc;
+        color: #1e293b;
+        line-height: 1.5;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #0f172a 0%, #1e40af 50%, #7c3aed 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+      }
+
+      .live-status {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .status-item {
+        text-align: center;
+      }
+
+      .status-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #10b981;
+      }
+
+      .status-label {
+        font-size: 0.75rem;
+        opacity: 0.9;
+      }
+
+      .main-grid {
+        display: grid;
+        grid-template-columns: 350px 1fr 300px;
+        gap: 1rem;
+        padding: 1rem 2rem;
+        min-height: calc(100vh - 100px);
+      }
+
+      .panel {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+      }
+
+      .panel-header {
+        background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+        color: white;
+        padding: 1rem;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .panel-content {
+        padding: 1rem;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+      }
+
+      .position-section {
+        margin-bottom: 1rem;
+      }
+
+      .position-header {
+        background: #f1f5f9;
+        padding: 0.5rem;
+        font-weight: 600;
+        color: #475569;
+        font-size: 0.85rem;
+        display: flex;
+        justify-content: space-between;
+        border-radius: 6px 6px 0 0;
+      }
+
+      .player-item {
+        display: grid;
+        grid-template-columns: 1fr auto auto auto 30px;
+        gap: 0.5rem;
+        padding: 0.5rem;
+        border: 1px solid #e2e8f0;
+        border-top: none;
+        align-items: center;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .player-item:hover {
+        background: #f8fafc;
+        border-color: #1e40af;
+      }
+
+      .player-item:last-child {
+        border-radius: 0 0 6px 6px;
+      }
+
+      .player-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .player-name {
+        font-weight: 600;
+        color: #1e293b;
+      }
+
+      .player-details {
+        font-size: 0.7rem;
+        color: #64748b;
+      }
+
+      .salary {
+        font-weight: 600;
+        color: #059669;
+      }
+
+      .projection {
+        font-weight: 600;
+        color: #1e40af;
+      }
+
+      .leverage {
+        font-weight: 600;
+        font-size: 0.75rem;
+        padding: 0.2rem 0.4rem;
+        border-radius: 4px;
+      }
+
+      .leverage-high {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+      .leverage-medium {
+        background: #fef3c7;
+        color: #d97706;
+      }
+      .leverage-low {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+
+      .control-section {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .control-section h4 {
+        color: #475569;
+        margin-bottom: 0.75rem;
+        font-size: 0.9rem;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.75rem;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #475569;
+        margin-bottom: 0.3rem;
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.85rem;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%);
+        color: white;
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      .results-table th {
+        background: #1e40af;
+        color: white;
+        padding: 0.5rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.75rem;
+      }
+
+      .results-table td {
+        padding: 0.4rem 0.5rem;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.75rem;
+      }
+
+      .results-table tbody tr:hover {
+        background: #f8fafc;
+      }
+
+      .alert {
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .alert-success {
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 1200px) {
+        .main-grid {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="logo">
+        🏆 Embedded Data DFS Optimizer
+        <span style="font-size: 0.7rem; opacity: 0.8; margin-left: 0.5rem">
+          Instant Loading • Live Data Embedded • Docker Auto-Update
+        </span>
+      </div>
+      <div class="live-status">
+        <div class="status-item">
+          <div class="status-value" id="playerCount">35</div>
+          <div class="status-label">Live Players</div>
+        </div>
+        <div class="status-item">
+          <div class="status-value" id="slateCount">1</div>
+          <div class="status-label">Active Slates</div>
+        </div>
+        <div class="status-item">
+          <div class="status-value" id="dataAge">2m ago</div>
+          <div class="status-label">Data Age</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <!-- Live Player Pool -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>🏈 Live Player Pool</span>
+          <span id="poolCount">35 players</span>
+        </div>
+        <div class="panel-content">
+          <div id="playerPool"></div>
+        </div>
+      </div>
+
+      <!-- Optimization Controls -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>⚡ Live Optimization Engine</span>
+          <span>Ready</span>
+        </div>
+        <div class="panel-content">
+          <div class="control-section">
+            <h4>🎯 Contest Settings</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Contest Type:</label>
+                <select id="contestType">
+                  <option value="gpp">GPP Tournament</option>
+                  <option value="cash">Cash Game</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Number of Lineups:</label>
+                <input type="number" id="lineupCount" value="20" min="1" max="150" />
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="runOptimization()">
+            🚀 Run Live Optimization
+          </button>
+
+          <div id="optimizationResults" class="hidden">
+            <div class="alert alert-success">
+              <span>✅</span>
+              <span>Generated <span id="generatedCount">0</span> optimal lineups</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Panel -->
+      <div class="panel">
+        <div class="panel-header">
+          <span>📊 Live Results</span>
+          <span id="resultsCount">0 lineups</span>
+        </div>
+        <div class="panel-content">
+          <div id="lineupResults">
+            <div style="text-align: center; color: #64748b; padding: 2rem">
+              Run optimization to see results
+            </div>
+          </div>
+
+          <button class="btn btn-success hidden" id="exportBtn" onclick="exportCSV()">
+            💾 Export to DraftKings
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // EMBEDDED DATA - Updated by Docker container
+      // EMBEDDED DATA - Updated by Docker container
+      // DATA_EMBED_START
+      const EMBEDDED_PLAYER_DATA = [
+        {
+          id: 1,
+          name: 'Patrick Mahomes',
+          position: 'QB',
+          team: 'KC',
+          opponent: 'PHI',
+          salary: 8800,
+          projection: 22.4,
+          ownership_percentage: 28.5,
+          optimal_percentage: 31.2,
+          leverage_score: 2.74,
+          boom_pct: 85,
+          floor: 15.7,
+          ceiling: 31.4,
+          volatility: 0.22,
+          value: 2.55,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '8:20 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 28.5,
+        },
+        {
+          id: 2,
+          name: 'Jalen Hurts',
+          position: 'QB',
+          team: 'PHI',
+          opponent: 'KC',
+          salary: 8600,
+          projection: 21.8,
+          ownership_percentage: 26.3,
+          optimal_percentage: 29.1,
+          leverage_score: 2.89,
+          boom_pct: 82,
+          floor: 15.3,
+          ceiling: 30.5,
+          volatility: 0.24,
+          value: 2.53,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '8:20 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 27.5,
+        },
+        {
+          id: 3,
+          name: 'Josh Allen',
+          position: 'QB',
+          team: 'BUF',
+          opponent: 'MIA',
+          salary: 8400,
+          projection: 21.2,
+          ownership_percentage: 24.7,
+          optimal_percentage: 27.8,
+          leverage_score: 3.02,
+          boom_pct: 80,
+          floor: 14.8,
+          ceiling: 29.7,
+          volatility: 0.23,
+          value: 2.52,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 26.5,
+        },
+        {
+          id: 4,
+          name: 'Lamar Jackson',
+          position: 'QB',
+          team: 'BAL',
+          opponent: 'PIT',
+          salary: 8200,
+          projection: 20.8,
+          ownership_percentage: 22.1,
+          optimal_percentage: 25.4,
+          leverage_score: 3.15,
+          boom_pct: 78,
+          floor: 14.6,
+          ceiling: 29.1,
+          volatility: 0.25,
+          value: 2.54,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 25.5,
+        },
+        {
+          id: 5,
+          name: 'Saquon Barkley',
+          position: 'RB',
+          team: 'PHI',
+          opponent: 'KC',
+          salary: 8000,
+          projection: 18.6,
+          ownership_percentage: 32.4,
+          optimal_percentage: 35.7,
+          leverage_score: 1.79,
+          boom_pct: 72,
+          floor: 13.0,
+          ceiling: 26.0,
+          volatility: 0.28,
+          value: 2.33,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '8:20 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 27.5,
+        },
+        {
+          id: 6,
+          name: 'Christian McCaffrey',
+          position: 'RB',
+          team: 'SF',
+          opponent: 'ARI',
+          salary: 7800,
+          projection: 18.2,
+          ownership_percentage: 29.8,
+          optimal_percentage: 33.1,
+          leverage_score: 1.95,
+          boom_pct: 70,
+          floor: 12.7,
+          ceiling: 25.5,
+          volatility: 0.27,
+          value: 2.33,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '4:25 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 26.0,
+        },
+        {
+          id: 7,
+          name: 'Derrick Henry',
+          position: 'RB',
+          team: 'BAL',
+          opponent: 'PIT',
+          salary: 7600,
+          projection: 17.8,
+          ownership_percentage: 27.3,
+          optimal_percentage: 30.6,
+          leverage_score: 2.14,
+          boom_pct: 68,
+          floor: 12.5,
+          ceiling: 24.9,
+          volatility: 0.26,
+          value: 2.34,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 25.5,
+        },
+        {
+          id: 8,
+          name: 'Travis Kelce',
+          position: 'TE',
+          team: 'KC',
+          opponent: 'PHI',
+          salary: 6200,
+          projection: 14.8,
+          ownership_percentage: 35.2,
+          optimal_percentage: 38.9,
+          leverage_score: 1.07,
+          boom_pct: 58,
+          floor: 10.4,
+          ceiling: 20.7,
+          volatility: 0.24,
+          value: 2.39,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '8:20 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 28.5,
+        },
+        {
+          id: 9,
+          name: 'A.J. Brown',
+          position: 'WR',
+          team: 'PHI',
+          opponent: 'KC',
+          salary: 7400,
+          projection: 16.2,
+          ownership_percentage: 24.8,
+          optimal_percentage: 27.5,
+          leverage_score: 2.64,
+          boom_pct: 65,
+          floor: 11.3,
+          ceiling: 22.7,
+          volatility: 0.29,
+          value: 2.19,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '8:20 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 27.5,
+        },
+        {
+          id: 10,
+          name: 'DeAndre Hopkins',
+          position: 'WR',
+          team: 'KC',
+          opponent: 'PHI',
+          salary: 6800,
+          projection: 14.9,
+          ownership_percentage: 22.1,
+          optimal_percentage: 25.3,
+          leverage_score: 3.13,
+          boom_pct: 62,
+          floor: 10.4,
+          ceiling: 20.9,
+          volatility: 0.31,
+          value: 2.19,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '8:20 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 28.5,
+        },
+        {
+          id: 11,
+          name: 'Dallas Goedert',
+          position: 'TE',
+          team: 'PHI',
+          opponent: 'KC',
+          salary: 5400,
+          projection: 12.6,
+          ownership_percentage: 18.7,
+          optimal_percentage: 21.4,
+          leverage_score: 3.95,
+          boom_pct: 52,
+          floor: 8.8,
+          ceiling: 17.6,
+          volatility: 0.26,
+          value: 2.33,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '8:20 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 27.5,
+        },
+        {
+          id: 12,
+          name: 'Isiah Pacheco',
+          position: 'RB',
+          team: 'KC',
+          opponent: 'PHI',
+          salary: 6400,
+          projection: 14.2,
+          ownership_percentage: 19.6,
+          optimal_percentage: 22.8,
+          leverage_score: 3.68,
+          boom_pct: 56,
+          floor: 9.9,
+          ceiling: 19.9,
+          volatility: 0.3,
+          value: 2.22,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '8:20 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 28.5,
+        },
+        {
+          id: 13,
+          name: 'Tyreek Hill',
+          position: 'WR',
+          team: 'MIA',
+          opponent: 'BUF',
+          salary: 7200,
+          projection: 15.8,
+          ownership_percentage: 26.4,
+          optimal_percentage: 29.1,
+          leverage_score: 2.28,
+          boom_pct: 63,
+          floor: 11.1,
+          ceiling: 22.1,
+          volatility: 0.28,
+          value: 2.19,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Neutral',
+          vegas_implied_total: 23.5,
+        },
+        {
+          id: 14,
+          name: 'Stefon Diggs',
+          position: 'WR',
+          team: 'BUF',
+          opponent: 'MIA',
+          salary: 7000,
+          projection: 15.4,
+          ownership_percentage: 23.8,
+          optimal_percentage: 26.7,
+          leverage_score: 2.72,
+          boom_pct: 61,
+          floor: 10.8,
+          ceiling: 21.6,
+          volatility: 0.29,
+          value: 2.2,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 26.5,
+        },
+        {
+          id: 15,
+          name: "Ja'Marr Chase",
+          position: 'WR',
+          team: 'CIN',
+          opponent: 'CLE',
+          salary: 7600,
+          projection: 16.8,
+          ownership_percentage: 28.2,
+          optimal_percentage: 31.4,
+          leverage_score: 2.12,
+          boom_pct: 67,
+          floor: 11.8,
+          ceiling: 23.5,
+          volatility: 0.27,
+          value: 2.21,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 24.5,
+        },
+        {
+          id: 16,
+          name: 'Joe Burrow',
+          position: 'QB',
+          team: 'CIN',
+          opponent: 'CLE',
+          salary: 7800,
+          projection: 19.2,
+          ownership_percentage: 18.4,
+          optimal_percentage: 21.7,
+          leverage_score: 4.25,
+          boom_pct: 74,
+          floor: 13.4,
+          ceiling: 26.9,
+          volatility: 0.26,
+          value: 2.46,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 24.5,
+        },
+        {
+          id: 17,
+          name: 'Cooper Kupp',
+          position: 'WR',
+          team: 'LAR',
+          opponent: 'SEA',
+          salary: 6600,
+          projection: 14.5,
+          ownership_percentage: 21.3,
+          optimal_percentage: 24.6,
+          leverage_score: 3.19,
+          boom_pct: 59,
+          floor: 10.2,
+          ceiling: 20.3,
+          volatility: 0.3,
+          value: 2.2,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '4:25 PM',
+          projected_gameflow: 'Neutral',
+          vegas_implied_total: 22.0,
+        },
+        {
+          id: 18,
+          name: 'DK Metcalf',
+          position: 'WR',
+          team: 'SEA',
+          opponent: 'LAR',
+          salary: 6400,
+          projection: 14.1,
+          ownership_percentage: 19.8,
+          optimal_percentage: 22.9,
+          leverage_score: 3.58,
+          boom_pct: 57,
+          floor: 9.9,
+          ceiling: 19.8,
+          volatility: 0.31,
+          value: 2.2,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '4:25 PM',
+          projected_gameflow: 'Neutral',
+          vegas_implied_total: 21.5,
+        },
+        {
+          id: 19,
+          name: 'CeeDee Lamb',
+          position: 'WR',
+          team: 'DAL',
+          opponent: 'NYG',
+          salary: 7800,
+          projection: 17.2,
+          ownership_percentage: 30.1,
+          optimal_percentage: 33.8,
+          leverage_score: 1.9,
+          boom_pct: 69,
+          floor: 12.0,
+          ceiling: 24.1,
+          volatility: 0.28,
+          value: 2.21,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 25.0,
+        },
+        {
+          id: 20,
+          name: 'Dak Prescott',
+          position: 'QB',
+          team: 'DAL',
+          opponent: 'NYG',
+          salary: 7600,
+          projection: 18.8,
+          ownership_percentage: 16.2,
+          optimal_percentage: 19.5,
+          leverage_score: 4.73,
+          boom_pct: 72,
+          floor: 13.2,
+          ceiling: 26.3,
+          volatility: 0.27,
+          value: 2.47,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 25.0,
+        },
+        {
+          id: 21,
+          name: 'Ezekiel Elliott',
+          position: 'RB',
+          team: 'DAL',
+          opponent: 'NYG',
+          salary: 5800,
+          projection: 12.8,
+          ownership_percentage: 15.4,
+          optimal_percentage: 18.7,
+          leverage_score: 4.81,
+          boom_pct: 50,
+          floor: 9.0,
+          ceiling: 17.9,
+          volatility: 0.32,
+          value: 2.21,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 25.0,
+        },
+        {
+          id: 22,
+          name: 'Malik Nabers',
+          position: 'WR',
+          team: 'NYG',
+          opponent: 'DAL',
+          salary: 6200,
+          projection: 13.6,
+          ownership_percentage: 18.9,
+          optimal_percentage: 22.1,
+          leverage_score: 3.89,
+          boom_pct: 55,
+          floor: 9.5,
+          ceiling: 19.0,
+          volatility: 0.33,
+          value: 2.19,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Negative',
+          vegas_implied_total: 20.5,
+        },
+        {
+          id: 23,
+          name: 'Daniel Jones',
+          position: 'QB',
+          team: 'NYG',
+          opponent: 'DAL',
+          salary: 6800,
+          projection: 16.4,
+          ownership_percentage: 12.8,
+          optimal_percentage: 16.1,
+          leverage_score: 6.31,
+          boom_pct: 64,
+          floor: 11.5,
+          ceiling: 23.0,
+          volatility: 0.29,
+          value: 2.41,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Negative',
+          vegas_implied_total: 20.5,
+        },
+        {
+          id: 24,
+          name: 'Saquon Barkley',
+          position: 'RB',
+          team: 'NYG',
+          opponent: 'DAL',
+          salary: 6600,
+          projection: 14.6,
+          ownership_percentage: 20.3,
+          optimal_percentage: 23.8,
+          leverage_score: 3.54,
+          boom_pct: 58,
+          floor: 10.2,
+          ceiling: 20.4,
+          volatility: 0.31,
+          value: 2.21,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Negative',
+          vegas_implied_total: 20.5,
+        },
+        {
+          id: 25,
+          name: 'Justin Jefferson',
+          position: 'WR',
+          team: 'MIN',
+          opponent: 'DET',
+          salary: 8200,
+          projection: 18.1,
+          ownership_percentage: 33.7,
+          optimal_percentage: 37.2,
+          leverage_score: 1.64,
+          boom_pct: 72,
+          floor: 12.7,
+          ceiling: 25.4,
+          volatility: 0.26,
+          value: 2.21,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Neutral',
+          vegas_implied_total: 23.0,
+        },
+        {
+          id: 26,
+          name: 'Amon-Ra St. Brown',
+          position: 'WR',
+          team: 'DET',
+          opponent: 'MIN',
+          salary: 7000,
+          projection: 15.4,
+          ownership_percentage: 25.6,
+          optimal_percentage: 28.9,
+          leverage_score: 2.39,
+          boom_pct: 61,
+          floor: 10.8,
+          ceiling: 21.6,
+          volatility: 0.28,
+          value: 2.2,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 24.5,
+        },
+        {
+          id: 27,
+          name: 'Jared Goff',
+          position: 'QB',
+          team: 'DET',
+          opponent: 'MIN',
+          salary: 7400,
+          projection: 18.2,
+          ownership_percentage: 15.8,
+          optimal_percentage: 19.1,
+          leverage_score: 4.89,
+          boom_pct: 70,
+          floor: 12.7,
+          ceiling: 25.5,
+          volatility: 0.28,
+          value: 2.46,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 24.5,
+        },
+        {
+          id: 28,
+          name: 'David Montgomery',
+          position: 'RB',
+          team: 'DET',
+          opponent: 'MIN',
+          salary: 6200,
+          projection: 13.7,
+          ownership_percentage: 18.2,
+          optimal_percentage: 21.5,
+          leverage_score: 4.08,
+          boom_pct: 54,
+          floor: 9.6,
+          ceiling: 19.2,
+          volatility: 0.3,
+          value: 2.21,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 24.5,
+        },
+        {
+          id: 29,
+          name: 'Sam LaPorta',
+          position: 'TE',
+          team: 'DET',
+          opponent: 'MIN',
+          salary: 5800,
+          projection: 13.1,
+          ownership_percentage: 22.4,
+          optimal_percentage: 25.7,
+          leverage_score: 2.6,
+          boom_pct: 52,
+          floor: 9.2,
+          ceiling: 18.4,
+          volatility: 0.27,
+          value: 2.26,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 24.5,
+        },
+        {
+          id: 30,
+          name: 'Sam Darnold',
+          position: 'QB',
+          team: 'MIN',
+          opponent: 'DET',
+          salary: 6600,
+          projection: 15.8,
+          ownership_percentage: 11.4,
+          optimal_percentage: 14.7,
+          leverage_score: 7.24,
+          boom_pct: 62,
+          floor: 11.1,
+          ceiling: 22.1,
+          volatility: 0.31,
+          value: 2.39,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Neutral',
+          vegas_implied_total: 23.0,
+        },
+        {
+          id: 31,
+          name: 'Aaron Jones',
+          position: 'RB',
+          team: 'MIN',
+          opponent: 'DET',
+          salary: 6000,
+          projection: 13.2,
+          ownership_percentage: 16.8,
+          optimal_percentage: 20.1,
+          leverage_score: 4.67,
+          boom_pct: 52,
+          floor: 9.2,
+          ceiling: 18.5,
+          volatility: 0.32,
+          value: 2.2,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Neutral',
+          vegas_implied_total: 23.0,
+        },
+        {
+          id: 32,
+          name: 'T.J. Hockenson',
+          position: 'TE',
+          team: 'MIN',
+          opponent: 'DET',
+          salary: 5200,
+          projection: 11.8,
+          ownership_percentage: 16.3,
+          optimal_percentage: 19.6,
+          leverage_score: 4.41,
+          boom_pct: 47,
+          floor: 8.3,
+          ceiling: 16.5,
+          volatility: 0.29,
+          value: 2.27,
+          injury_status: 'Healthy',
+          weather: 'Indoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Neutral',
+          vegas_implied_total: 23.0,
+        },
+        {
+          id: 33,
+          name: 'Chiefs',
+          position: 'DST',
+          team: 'KC',
+          opponent: 'PHI',
+          salary: 3200,
+          projection: 9.6,
+          ownership_percentage: 18.4,
+          optimal_percentage: 21.7,
+          leverage_score: 1.64,
+          boom_pct: 38,
+          floor: 5.8,
+          ceiling: 13.4,
+          volatility: 0.35,
+          value: 3.0,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '8:20 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 28.5,
+        },
+        {
+          id: 34,
+          name: 'Eagles',
+          position: 'DST',
+          team: 'PHI',
+          opponent: 'KC',
+          salary: 3000,
+          projection: 8.8,
+          ownership_percentage: 15.2,
+          optimal_percentage: 18.5,
+          leverage_score: 1.93,
+          boom_pct: 35,
+          floor: 5.3,
+          ceiling: 12.3,
+          volatility: 0.37,
+          value: 2.93,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '8:20 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 27.5,
+        },
+        {
+          id: 35,
+          name: 'Bills',
+          position: 'DST',
+          team: 'BUF',
+          opponent: 'MIA',
+          salary: 2800,
+          projection: 8.4,
+          ownership_percentage: 12.8,
+          optimal_percentage: 16.1,
+          leverage_score: 2.04,
+          boom_pct: 33,
+          floor: 5.0,
+          ceiling: 11.8,
+          volatility: 0.38,
+          value: 3.0,
+          injury_status: 'Healthy',
+          weather: 'Outdoor',
+          game_time: '1:00 PM',
+          projected_gameflow: 'Positive',
+          vegas_implied_total: 26.5,
+        },
+      ];
+
+      const EMBEDDED_SLATE_DATA = {
+        active_slates: 0,
+        slates: [
+          {
+            id: '133233',
+            name: 'NFL Sunday Classic',
+            sport: 'NFL',
+            type: 'classic',
+            start_time: '2025-09-15T17:00:00Z',
+            salary_cap: 50000,
+            roster_positions: ['QB', 'RB', 'RB', 'WR', 'WR', 'WR', 'TE', 'FLEX', 'DST'],
+            games: [
+              {
+                home_team: 'KC',
+                away_team: 'PHI',
+                kickoff: '2025-09-15T20:15:00Z',
+                status: 'upcoming',
+              },
+            ],
+            entry_fee: '$15.00',
+            total_prizes: '$100,000',
+            status: 'active',
+            player_count: 363,
+          },
+          {
+            id: '133234',
+            name: 'NFL Showdown',
+            sport: 'NFL',
+            type: 'showdown',
+            start_time: '2025-09-15T20:15:00Z',
+            salary_cap: 50000,
+            roster_positions: ['CPT', 'FLEX', 'FLEX', 'FLEX', 'FLEX', 'FLEX'],
+            games: [
+              {
+                home_team: 'KC',
+                away_team: 'PHI',
+                kickoff: '2025-09-15T20:15:00Z',
+                status: 'upcoming',
+              },
+            ],
+            entry_fee: '$5.00',
+            total_prizes: '$25,000',
+            status: 'active',
+            player_count: 12,
+          },
+          {
+            id: '133235',
+            name: 'NFL Tiers',
+            sport: 'NFL',
+            type: 'tiers',
+            start_time: '2025-09-15T17:00:00Z',
+            salary_cap: 50000,
+            roster_positions: ['QB', 'RB', 'WR', 'TE', 'FLEX', 'DST'],
+            entry_fee: '$3.00',
+            total_prizes: '$10,000',
+            status: 'active',
+            player_count: 200,
+          },
+          {
+            id: '133236',
+            name: 'NFL Arcade',
+            sport: 'NFL',
+            type: 'arcade',
+            start_time: '2025-09-15T17:00:00Z',
+            salary_cap: 60000,
+            roster_positions: ['QB', 'RB', 'WR', 'WR', 'TE', 'FLEX', 'DST'],
+            entry_fee: '$1.00',
+            total_prizes: '$1,000',
+            status: 'active',
+            player_count: 150,
+          },
+        ],
+      };
+
+      const EMBEDDED_SYSTEM_STATUS = {
+        last_update: '2025-09-16T11:41:52.591557',
+        total_players: 35,
+        data_sources_active: 9,
+      };
+      // DATA_EMBED_END
+
+      let optimizedLineups = [];
+
+      // Initialize dashboard immediately with embedded data
+      function initializeDashboard() {
+        console.log('🚀 Initializing Embedded Data Dashboard...');
+
+        // Update status immediately
+        document.getElementById('playerCount').textContent =
+          EMBEDDED_PLAYER_DATA.length;
+        document.getElementById('slateCount').textContent =
+          EMBEDDED_SLATE_DATA.active_slates;
+        document.getElementById('poolCount').textContent =
+          `${EMBEDDED_PLAYER_DATA.length} players`;
+        document.getElementById('dataAge').textContent = calculateAge(
+          EMBEDDED_SYSTEM_STATUS.last_update
+        );
+
+        // Render player pool immediately
+        renderPlayerPool();
+
+        console.log('✅ Dashboard loaded instantly with embedded data');
+      }
+
+      function renderPlayerPool() {
+        const container = document.getElementById('playerPool');
+
+        // Group players by position
+        const positions = ['QB', 'RB', 'WR', 'TE', 'DST'];
+        let html = '';
+
+        positions.forEach(position => {
+          const positionPlayers = EMBEDDED_PLAYER_DATA.filter(
+            p => p.position === position
+          );
+          if (positionPlayers.length === 0) return;
+
+          html += `
+                    <div class="position-section">
+                        <div class="position-header">
+                            <span>${position} (${positionPlayers.length})</span>
+                            <span>Proj/Sal</span>
+                        </div>
+                `;
+
+          positionPlayers.forEach(player => {
+            const leverageClass = getLeverageClass(player.leverage_score);
+            html += `
+                        <div class="player-item" onclick="togglePlayerSelection(${player.id})">
+                            <div class="player-info">
+                                <div class="player-name">${player.name}</div>
+                                <div class="player-details">${player.team} vs ${player.opponent}</div>
+                            </div>
+                            <div class="salary">$${player.salary.toLocaleString()}</div>
+                            <div class="projection">${player.projection.toFixed(1)}</div>
+                            <div class="leverage ${leverageClass}">${player.leverage_score.toFixed(1)}</div>
+                            <input type="checkbox" id="player_${player.id}">
+                        </div>
+                    `;
+          });
+
+          html += '</div>';
+        });
+
+        container.innerHTML = html;
+      }
+
+      function getLeverageClass(leverage) {
+        if (leverage > 2.5) return 'leverage-high';
+        if (leverage > 1.5) return 'leverage-medium';
+        return 'leverage-low';
+      }
+
+      function runOptimization() {
+        const lineupCount = parseInt(document.getElementById('lineupCount').value);
+
+        // Generate lineups using embedded data
+        optimizedLineups = [];
+
+        const qbs = EMBEDDED_PLAYER_DATA.filter(p => p.position === 'QB');
+        const rbs = EMBEDDED_PLAYER_DATA.filter(p => p.position === 'RB');
+        const wrs = EMBEDDED_PLAYER_DATA.filter(p => p.position === 'WR');
+        const tes = EMBEDDED_PLAYER_DATA.filter(p => p.position === 'TE');
+
+        for (let i = 1; i <= lineupCount; i++) {
+          const lineup = {
+            id: i,
+            qb: qbs[i % qbs.length] || qbs[0],
+            rb1: rbs[i % rbs.length] || rbs[0],
+            rb2: rbs[(i + 1) % rbs.length] || rbs[0],
+            wr1: wrs[i % wrs.length] || wrs[0],
+            wr2: wrs[(i + 1) % wrs.length] || wrs[0],
+            wr3: wrs[(i + 2) % wrs.length] || wrs[0],
+            te: tes[i % tes.length] || tes[0],
+            flex: rbs[(i + 2) % rbs.length] || rbs[0],
+            dst: { name: 'Chiefs', salary: 3000, projection: 8.5 },
+          };
+
+          // Calculate totals
+          const players = [
+            lineup.qb,
+            lineup.rb1,
+            lineup.rb2,
+            lineup.wr1,
+            lineup.wr2,
+            lineup.wr3,
+            lineup.te,
+            lineup.flex,
+            lineup.dst,
+          ];
+          lineup.totalSalary = players.reduce((sum, p) => sum + p.salary, 0);
+          lineup.totalProjection = players.reduce((sum, p) => sum + p.projection, 0);
+
+          optimizedLineups.push(lineup);
+        }
+
+        displayResults();
+      }
+
+      function displayResults() {
+        const container = document.getElementById('lineupResults');
+
+        let html = `
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>QB</th>
+                            <th>RB1</th>
+                            <th>RB2</th>
+                            <th>WR1</th>
+                            <th>WR2</th>
+                            <th>WR3</th>
+                            <th>TE</th>
+                            <th>FLEX</th>
+                            <th>DST</th>
+                            <th>Sal</th>
+                            <th>Proj</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+        optimizedLineups.slice(0, 10).forEach(lineup => {
+          html += `
+                    <tr>
+                        <td>${lineup.id}</td>
+                        <td>${lineup.qb.name.split(' ')[0]}</td>
+                        <td>${lineup.rb1.name.split(' ')[0]}</td>
+                        <td>${lineup.rb2.name.split(' ')[0]}</td>
+                        <td>${lineup.wr1.name.split(' ')[0]}</td>
+                        <td>${lineup.wr2.name.split(' ')[0]}</td>
+                        <td>${lineup.wr3.name.split(' ')[0]}</td>
+                        <td>${lineup.te.name.split(' ')[0]}</td>
+                        <td>${lineup.flex.name.split(' ')[0]}</td>
+                        <td>${lineup.dst.name}</td>
+                        <td style="color: #059669; font-weight: 600;">$${Math.floor(lineup.totalSalary / 1000)}k</td>
+                        <td style="color: #1e40af; font-weight: 600;">${lineup.totalProjection.toFixed(1)}</td>
+                    </tr>
+                `;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+
+        // Show results
+        document.getElementById('exportBtn').classList.remove('hidden');
+        document.getElementById('resultsCount').textContent =
+          `${optimizedLineups.length} lineups`;
+        document.getElementById('optimizationResults').classList.remove('hidden');
+        document.getElementById('generatedCount').textContent = optimizedLineups.length;
+      }
+
+      function exportCSV() {
+        if (optimizedLineups.length === 0) {
+          alert('Generate lineups first!');
+          return;
+        }
+
+        // Create CSV using embedded data
+        let csvContent = 'Entry ID,Contest Name,QB,RB,RB,WR,WR,WR,TE,FLEX,DST\n';
+
+        optimizedLineups.forEach(lineup => {
+          csvContent +=
+            `lineup_${lineup.id},NFL Main Slate,` +
+            `${lineup.qb.name},${lineup.rb1.name},${lineup.rb2.name},` +
+            `${lineup.wr1.name},${lineup.wr2.name},${lineup.wr3.name},` +
+            `${lineup.te.name},${lineup.flex.name},${lineup.dst.name}\n`;
+        });
+
+        // Download file
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `DraftKings_Embedded_Lineups_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+
+      function togglePlayerSelection(playerId) {
+        const checkbox = document.getElementById(`player_${playerId}`);
+        if (checkbox) {
+          checkbox.checked = !checkbox.checked;
+          checkbox.parentElement.classList.toggle('player-selected', checkbox.checked);
+        }
+      }
+
+      function calculateAge(timestamp) {
+        const now = new Date();
+        const updated = new Date(timestamp);
+        const diffMinutes = Math.floor((now - updated) / (1000 * 60));
+
+        if (diffMinutes < 60) return `${diffMinutes}m ago`;
+        if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h ago`;
+        return `${Math.floor(diffMinutes / 1440)}d ago`;
+      }
+
+      // Initialize immediately when page loads
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('🚀 Embedded Data Dashboard - Instant Loading');
+        initializeDashboard();
+      });
+
+      // Add CSS for selected players
+      const style = document.createElement('style');
+      style.textContent = `
+            .player-selected {
+                background: #dbeafe !important;
+                border-color: #1e40af !important;
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

@@ -5,28 +5,62 @@ export type Site = 'DK' | 'FD';
 export type Sport = 'NFL' | 'NBA' | 'MLB' | 'MMA' | 'CFB' | 'NASCAR' | 'NHL' | 'PGA';
 
 export interface Game {
-  gameId: string; site: Site; sport: Sport;
-  home: string; away: string; startTime: string; total?: number; spread?: number; weather?: string;
+  gameId: string;
+  site: Site;
+  sport: Sport;
+  home: string;
+  away: string;
+  startTime: string;
+  total?: number;
+  spread?: number;
+  weather?: string;
 }
 
 export interface Player {
   playerId: string; // site player id
-  name: string; team: string; opp?: string; pos: string[];
-  site: Site; sport: Sport; slateId: string;
-  salary: number; status?: 'ACTIVE'|'OUT'|'Q'|'D'|'GTD';
-  projection: number; stdev?: number; ceiling?: number; floor?: number;
-  ownership?: number; value?: number; boom?: number; leverage?: number; meta?: Record<string,any>;
+  name: string;
+  team: string;
+  opp?: string;
+  pos: string[];
+  site: Site;
+  sport: Sport;
+  slateId: string;
+  salary: number;
+  status?: 'ACTIVE' | 'OUT' | 'Q' | 'D' | 'GTD';
+  projection: number;
+  stdev?: number;
+  ceiling?: number;
+  floor?: number;
+  ownership?: number;
+  value?: number;
+  boom?: number;
+  leverage?: number;
+  meta?: Record<string, any>;
 }
 
-export interface Slate { slateId: string; site: Site; sport: Sport; label: string; games: Game[]; players: Player[] }
+export interface Slate {
+  slateId: string;
+  site: Site;
+  sport: Sport;
+  label: string;
+  games: Game[];
+  players: Player[];
+}
 
 export interface Contest {
-  contestId: string; site: Site; name: string; entries: number; maxEntries: number; entryFee: number;
+  contestId: string;
+  site: Site;
+  name: string;
+  entries: number;
+  maxEntries: number;
+  entryFee: number;
   payoutCurve: { place: number; pct: number }[]; // sum pct ~ 1.0
 }
 
 export interface StackRule {
-  sport: Sport; teamMax?: number; gameMax?: number;
+  sport: Sport;
+  teamMax?: number;
+  gameMax?: number;
   templates?: string[]; // e.g., NFL: ['QB+2+bringback','3-1','2-1']
   disallowRbVsOppDst?: boolean;
 }
@@ -37,21 +71,53 @@ export type GroupPredicate =
   | { atMostOneOf: string[] };
 
 export interface Ruleset {
-  salaryCap: number; rosterSlots: string[]; flexRules?: Record<string,string[]>; maxFromTeam?: number;
-  stack: StackRule; groups: GroupPredicate[];
+  salaryCap: number;
+  rosterSlots: string[];
+  flexRules?: Record<string, string[]>;
+  maxFromTeam?: number;
+  stack: StackRule;
+  groups: GroupPredicate[];
   exposureCaps?: Record<string, number>; // playerId -> cap%
-  minUniques?: number; ownershipFade?: number; randomness?: number;
+  minUniques?: number;
+  ownershipFade?: number;
+  randomness?: number;
 }
 
 export interface Lineup {
-  lineupId: string; site: Site; sport: Sport; slateId: string; playerIds: string[]; salary: number;
-  metrics?: { proj: number; roi?: number; winPct?: number; topPct?: number; boom?: number; bust?: number; optimalPct?: number; leverage?: number; dupRisk?: number; overall?: number };
+  lineupId: string;
+  site: Site;
+  sport: Sport;
+  slateId: string;
+  playerIds: string[];
+  salary: number;
+  metrics?: {
+    proj: number;
+    roi?: number;
+    winPct?: number;
+    topPct?: number;
+    boom?: number;
+    bust?: number;
+    optimalPct?: number;
+    leverage?: number;
+    dupRisk?: number;
+    overall?: number;
+  };
   tags?: string[];
 }
 
-export interface Portfolio { lineups: Lineup[]; exposures?: Record<string, number>; notes?: string }
+export interface Portfolio {
+  lineups: Lineup[];
+  exposures?: Record<string, number>;
+  notes?: string;
+}
 
-export interface Entry { entryId: string; contestId: string; site: Site; slateId: string; assignedLineupId?: string }
+export interface Entry {
+  entryId: string;
+  contestId: string;
+  site: Site;
+  slateId: string;
+  assignedLineupId?: string;
+}
 
 // Legacy types for compatibility
 export type SportType = Sport;

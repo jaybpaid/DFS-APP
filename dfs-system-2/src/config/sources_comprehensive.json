@@ -394,7 +394,13 @@
       "ensemble_ml": {
         "enabled": true,
         "models": ["xgboost", "lightgbm", "linear_regression", "random_forest"],
-        "features": ["usage_rate", "pace", "matchup_rating", "rest_days", "injury_risk"],
+        "features": [
+          "usage_rate",
+          "pace",
+          "matchup_rating",
+          "rest_days",
+          "injury_risk"
+        ],
         "update_frequency": "daily"
       },
       "deep_learning": {

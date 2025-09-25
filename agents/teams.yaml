@@ -1,0 +1,53 @@
+dfs-analysis-team:
+  - dfs-optimizer
+  - data-scientist
+  - ai-engineer
+  - business-analyst
+
+dfs-frontend-team:
+  - ui-ux-designer
+  - frontend-developer
+  - seo-content-writer
+  - test-automator
+
+dfs-backend-team:
+  - backend-architect
+  - database-optimizer
+  - security-auditor
+  - devops-troubleshooter
+
+dfs-data-team:
+  - dfs-data-engineer
+  - data-scientist
+  - database-optimizer
+  - data-engineer
+
+dfs-security-team:
+  - dfs-security-specialist
+  - security-auditor
+  - backend-security-coder
+  - frontend-security-coder
+
+dfs-performance-team:
+  - dfs-performance-engineer
+  - performance-engineer
+  - database-optimizer
+  - observability-engineer
+
+dfs-devops-team:
+  - devops-troubleshooter
+  - deployment-engineer
+  - terraform-specialist
+  - cloud-architect
+
+dfs-testing-team:
+  - test-automator
+  - tdd-orchestrator
+  - debugger
+  - error-detective
+
+dfs-documentation-team:
+  - docs-architect
+  - api-documenter
+  - technical-writer
+  - mermaid-expert

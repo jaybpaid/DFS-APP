@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "title": "Player Pool Schema",
+  "description": "Schema for complete player pool with projections",
+  "items": {
+    "type": "object",
+    "required": ["id", "name", "position", "team", "salary", "ffpg"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Player identifier"
+      },
+      "name": {
+        "type": "string",
+        "description": "Player full name"
+      },
+      "position": {
+        "type": "string",
+        "enum": ["QB", "RB", "WR", "TE", "DST"],
+        "description": "Player position"
+      },
+      "team": {
+        "type": "string",
+        "pattern": "^[A-Z]{2,4}$",
+        "description": "Team abbreviation"
+      },
+      "opponent": {
+        "type": "string",
+        "pattern": "^[A-Z]{2,4}$",
+        "description": "Opponent team"
+      },
+      "salary": {
+        "type": "integer",
+        "minimum": 3000,
+        "maximum": 12000,
+        "description": "DraftKings salary"
+      },
+      "ffpg": {
+        "type": ["string", "number"],
+        "description": "Fantasy points per game projection"
+      },
+      "oprk": {
+        "type": "string",
+        "description": "Opponent rank vs position"
+      },
+      "game_info": {
+        "type": "string",
+        "description": "Game matchup information"
+      },
+      "last_updated": {
+        "type": "string",
+        "format": "date-time",
+        "description": "When data was last updated"
+      }
+    }
+  }
+}

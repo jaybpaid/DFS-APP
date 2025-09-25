@@ -26,15 +26,15 @@ export interface Player {
   boomPercentage?: number;
   floor?: number;
   ceiling?: number;
-  
+
   // AI-powered metrics
   bigPlayPotential?: number; // 0-1 scale
-  redZoneUsage?: number;     // 0-1 scale
-  injuryRisk?: number;      // 0-1 scale
+  redZoneUsage?: number; // 0-1 scale
+  injuryRisk?: number; // 0-1 scale
   matchupDifficulty?: number; // 0-1 scale
-  volatility?: number;       // 0-1 scale
-  weatherImpact?: number;   // 0-1 scale (1 = neutral, <1 = negative, >1 = positive)
-  stadiumFactor?: number;    // 0-1 scale (dome vs outdoor, turf vs grass)
+  volatility?: number; // 0-1 scale
+  weatherImpact?: number; // 0-1 scale (1 = neutral, <1 = negative, >1 = positive)
+  stadiumFactor?: number; // 0-1 scale (dome vs outdoor, turf vs grass)
 }
 
 export interface Slate {
@@ -92,11 +92,11 @@ export interface Lineup {
   projectedScore: number;
   simEV: number;
   constraints: ConstraintStatus[];
-  
+
   // AI-powered lineup metrics
-  boomBustScore?: number;   // 1-10 scale (higher = more boom potential)
-  bustRisk?: number;        // 1-10 scale (higher = more bust risk)
-  expectedROI?: number;     // Expected ROI percentage
+  boomBustScore?: number; // 1-10 scale (higher = more boom potential)
+  bustRisk?: number; // 1-10 scale (higher = more bust risk)
+  expectedROI?: number; // Expected ROI percentage
 }
 
 export interface ConstraintStatus {

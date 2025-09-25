@@ -11,10 +11,10 @@ export const usePlayerData = (sport: Sport = 'NFL') => {
   const loadPlayers = async (slateId?: string) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const provider = new DraftKingsProvider(sport);
-      
+
       // If no slate specified, get available slates and use the first one
       if (!slateId) {
         const slates = await provider.getAvailableSlates();
@@ -23,16 +23,16 @@ export const usePlayerData = (sport: Sport = 'NFL') => {
         }
         slateId = slates[0].id;
       }
-      
+
       await provider.selectSlate(slateId);
       const playerData = await provider.getPlayers();
-      
+
       // Validate the player pool
       const validation = await provider.validatePlayerPool(playerData);
       if (!validation.isValid) {
         console.warn('Player pool validation warnings:', validation.errors);
       }
-      
+
       setPlayers(playerData);
       setSelectedSlate(slateId);
     } catch (err) {
@@ -62,6 +62,6 @@ export const usePlayerData = (sport: Sport = 'NFL') => {
     error,
     selectedSlate,
     loadPlayers,
-    refreshPlayers
+    refreshPlayers,
   };
 };

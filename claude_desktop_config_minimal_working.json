@@ -1,0 +1,46 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/614759/Documents/MCP Workspace/DFS APP"
+      ]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "BSAqIgIC5hQ8x5lShDteZWUgEQIARAQ"
+      }
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+    },
+    "cipher": {
+      "command": "npx",
+      "args": ["-y", "@byterover/cipher", "--mode", "mcp"]
+    },
+    "magic": {
+      "command": "npx",
+      "args": ["-y", "@21st-dev/magic@latest"],
+      "env": {
+        "API_KEY": "ff5a75849190c5129fa9741c64e0d0f9a807a3d2e4ebc92e15eb8490231e9697"
+      }
+    },
+    "github.com/NightTrek/Software-planning-mcp": {
+      "command": "node",
+      "args": ["/Users/614759/Documents/Cline/MCP/Software-planning-mcp/build/index.js"]
+    }
+  }
+}

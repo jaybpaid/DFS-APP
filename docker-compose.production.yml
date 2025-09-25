@@ -1,0 +1,175 @@
+version: '3.9'
+
+services:
+  # Frontend - React/Vite Application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: dfs-frontend
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_URL=http://api-node:8000
+      - VITE_API_PYTHON_URL=http://api-python:8001
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      - api-node
+      - api-python
+
+  # Node.js API
+  api-node:
+    build:
+      context: .
+      dockerfile: Dockerfile.api-node
+    container_name: dfs-api-node
+    # REMOVED: No need to expose port directly if accessed via other containers
+    # ports:
+    #   - "8000:8000"
+    environment:
+      - NODE_ENV=production
+      - PORT=8000
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+    volumes:
+      - ./apps/api:/app
+      - /app/node_modules
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Python API with Analytics Engine
+  api-python:
+    build:
+      context: .
+      dockerfile: Dockerfile.api-python
+    container_name: dfs-api-python
+    # REMOVED: No need to expose port directly if accessed via other containers
+    # ports:
+    #   - "8001:8001"
+    environment:
+      - PYTHONPATH=/app
+      - FASTAPI_ENV=production
+      - PORT=8001
+    volumes:
+      - ./apps/api-python:/app
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# MCP Servers Gateway - commented out due to build issues
+# mcp-gateway:
+#   build:
+#     context: ./docker/mcp-servers
+#     dockerfile: Dockerfile
+#   container_name: dfs-mcp-gateway
+#   ports:
+#     - "4001:3001"  # Sequential Thinking
+#     - "4002:3002"  # Puppeteer
+#     - "4003:3003"  # Filesystem
+#     - "4004:3004"  # Memory
+#     - "4005:3005"  # Everything
+#     - "4006:3006"  # Brave Search
+#     - "4007:3007"  # GitHub
+#     - "4008:3008"  # AWS KB Retrieval
+#     - "4009:3009"  # Fetch
+#     - "4010:3010"  # Docker Gateway
+#   volumes:
+#     - ./data:/app/data
+#     - ./apps:/app/apps
+#     - mcp_data:/mcp-data
+#   environment:
+#     - NODE_ENV=production
+#     - MCP_GATEWAY_PORT=3010
+#   restart: unless-stopped
+#   healthcheck:
+#     test: ["CMD", "curl", "-f", "http://localhost:3010/health"]
+#     interval: 30s
+#     timeout: 10s
+#     retries: 3
+#     start_period: 60s
+
+  # Data Sync Service - commented out due to missing files
+  # data-sync:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.data-sync
+  #   container_name: dfs-data-sync
+  #   volumes:
+  #     - ./data:/app/data
+  #   environment:
+  #     - PYTHONPATH=/app
+  #     - SYNC_INTERVAL=300  # 5 minutes
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - api-python
+  #   healthcheck:
+  #     test: ["CMD", "python3", "-c", "import requests; requests.get('http://api-python:8001/api/healthz')"]
+  #     interval: 60s
+  #     timeout: 15s
+  #     retries: 3
+  #     start_period: 120s
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: dfs-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: dfs-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+    restart: unless-stopped
+    depends_on:
+      - frontend
+      - api-node
+      - api-python
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  redis_data:
+  mcp_data:
+
+networks:
+  default:
+    name: dfs-network
+    driver: bridge

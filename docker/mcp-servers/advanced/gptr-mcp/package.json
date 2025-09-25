@@ -1,0 +1,13 @@
+{
+  "name": "gpt-researcher-mcp",
+  "version": "1.0.0",
+  "description": "GPT Researcher MCP Server for DFS market analysis",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.1"
+  }
+}

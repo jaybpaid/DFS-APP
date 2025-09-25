@@ -1,0 +1,229 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "npx",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3001"
+      }
+    },
+    "puppeteer": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@hisma/server-puppeteer"],
+      "env": {
+        "MCP_SERVER_PORT": "3002"
+      }
+    },
+    "filesystem": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "npx",
+        "@modelcontextprotocol/server-filesystem",
+        "/app/data",
+        "/app/dfs-system-2"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3003"
+      }
+    },
+    "memory": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@modelcontextprotocol/server-memory"],
+      "env": {
+        "MCP_SERVER_PORT": "3004"
+      }
+    },
+    "everything": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "npx",
+        "@modelcontextprotocol/server-everything"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3005"
+      }
+    },
+    "brave-search": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "npx",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3006",
+        "BRAVE_API_KEY": "BSAkgdrOqWvr4RlmqUl0BgpfKWNt5hm"
+      }
+    },
+    "github": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "@modelcontextprotocol/server-github"],
+      "env": {
+        "MCP_SERVER_PORT": "3007",
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_5vPjx6kQOArYwRxC2jNQ5gHhzTfU0m1lBcDe"
+      }
+    },
+    "aws-kb": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "npx",
+        "@modelcontextprotocol/server-aws-kb-retrieval"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3008"
+      }
+    },
+    "fetch": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "node", "/app/fetch-mcp/dist/index.js"],
+      "env": {
+        "MCP_SERVER_PORT": "3009"
+      }
+    },
+    "java-sdk": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "mvn",
+        "exec:java",
+        "-Dexec.mainClass=io.modelcontextprotocol.Server"
+      ],
+      "cwd": "/mcp-servers/java-sdk",
+      "env": {
+        "MCP_SERVER_PORT": "3010"
+      }
+    },
+    "gpt-researcher": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "node",
+        "/mcp-servers/advanced/gptr-mcp/index.js"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3011",
+        "TAVILY_API_KEY": "",
+        "OPENAI_API_KEY": ""
+      }
+    },
+    "serena-code-analysis": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npm", "start"],
+      "cwd": "/mcp-servers/advanced/serena",
+      "env": {
+        "MCP_SERVER_PORT": "3012"
+      }
+    },
+    "claude-flow": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "node",
+        "/mcp-servers/advanced/claude-flow-mcp/server.js"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3013"
+      }
+    },
+    "google-genai-toolbox": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npm", "start"],
+      "cwd": "/mcp-servers/advanced/genai-toolbox",
+      "env": {
+        "MCP_SERVER_PORT": "3014",
+        "GOOGLE_API_KEY": "VF. AIzaSyDrZDMqNClT8C48O5XFAUILbGEmUvoeASM"
+      }
+    },
+    "phoenix-mcp": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "mix", "phx.server"],
+      "cwd": "/mcp-servers/advanced/mcphoenix",
+      "env": {
+        "MCP_SERVER_PORT": "3015"
+      }
+    },
+    "pipedream-chat": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "node",
+        "/mcp-servers/advanced/pipedream-mcp/server.js"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3016",
+        "PIPEDREAM_API_KEY": ""
+      }
+    },
+    "archon": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "node",
+        "/mcp-servers/advanced/archon-mcp/server.js"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3017"
+      }
+    },
+    "chrome-mcp": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "node",
+        "/mcp-servers/advanced/chrome-mcp/server.js"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3018"
+      }
+    },
+    "chrome-pilot": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "node",
+        "/mcp-servers/advanced/chrome-pilot/index.js"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3019"
+      }
+    },
+    "browser-devtools": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "dfs-mcp-servers",
+        "node",
+        "/mcp-servers/advanced/browser-devtools/server.js"
+      ],
+      "env": {
+        "MCP_SERVER_PORT": "3020"
+      }
+    },
+    "nx-mcp": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "npx", "nx-mcp@latest"],
+      "env": {
+        "MCP_SERVER_PORT": "3021"
+      }
+    }
+  }
+}

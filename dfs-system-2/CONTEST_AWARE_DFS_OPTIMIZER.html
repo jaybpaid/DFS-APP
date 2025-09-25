@@ -1,782 +1,926 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contest-Aware DFS Optimizer - SaberSim/Stokastic Style</title>
-    
+
     <!-- Chart.js for simulation visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            color: #212529;
-            line-height: 1.5;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: #f8f9fa;
+        color: #212529;
+        line-height: 1.5;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .logo {
+        font-size: 1.6rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .status-bar {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .status-item {
+        text-align: center;
+      }
+
+      .status-value {
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      .status-label {
+        font-size: 0.7rem;
+        opacity: 0.9;
+      }
+
+      .tabs {
+        background: white;
+        border-bottom: 1px solid #e9ecef;
+        padding: 0 2rem;
+      }
+
+      .tab-nav {
+        display: flex;
+        gap: 0;
+      }
+
+      .tab {
+        padding: 1rem 1.5rem;
+        background: none;
+        border: none;
+        color: #6c757d;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .tab:hover {
+        color: #1976d2;
+        background: #f8f9fa;
+      }
+      .tab.active {
+        color: #1976d2;
+        border-bottom-color: #1976d2;
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem 2rem;
+        min-height: calc(100vh - 140px);
+      }
+
+      .sidebar {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+      }
+
+      .main-content {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
-
-        .header {
-            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
-        .logo {
-            font-size: 1.6rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+      .section {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
 
-        .status-bar {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-        }
+      .section h3 {
+        color: #1976d2;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        border-bottom: 2px solid #1976d2;
+        padding-bottom: 0.5rem;
+      }
 
-        .status-item {
-            text-align: center;
-        }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
 
-        .status-value {
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
 
-        .status-label {
-            font-size: 0.7rem;
-            opacity: 0.9;
-        }
+      .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #495057;
+      }
 
-        .tabs {
-            background: white;
-            border-bottom: 1px solid #e9ecef;
-            padding: 0 2rem;
-        }
+      select,
+      input {
+        padding: 0.5rem;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
 
-        .tab-nav {
-            display: flex;
-            gap: 0;
-        }
+      select:focus,
+      input:focus {
+        outline: none;
+        border-color: #1976d2;
+        box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+      }
 
-        .tab {
-            padding: 1rem 1.5rem;
-            background: none;
-            border: none;
-            color: #6c757d;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
 
-        .tab:hover { color: #1976d2; background: #f8f9fa; }
-        .tab.active { color: #1976d2; border-bottom-color: #1976d2; }
+      .btn-primary {
+        background: #1976d2;
+        color: white;
+      }
 
-        .container {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 1.5rem;
-            padding: 1.5rem 2rem;
-            min-height: calc(100vh - 140px);
-        }
+      .btn-primary:hover {
+        background: #1565c0;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+      }
 
-        .sidebar {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            height: fit-content;
-        }
+      .btn-success {
+        background: #28a745;
+        color: white;
+      }
 
-        .main-content {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
 
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+      .simulation-display {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+        border: 2px solid #1976d2;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+      .sim-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
 
-        .section {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
+      .sim-count {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1976d2;
+      }
 
-        .section h3 {
-            color: #1976d2;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            border-bottom: 2px solid #1976d2;
-            padding-bottom: 0.5rem;
-        }
+      .sim-status {
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
+      .progress-bar {
+        width: 100%;
+        height: 12px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+      }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #1976d2, #28a745);
+        border-radius: 6px;
+        transition: width 0.3s ease;
+        width: 0%;
+      }
 
-        .form-label {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: #495057;
-        }
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+      }
 
-        select, input {
-            padding: 0.5rem;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
+      .metric {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 1rem;
+        text-align: center;
+      }
 
-        select:focus, input:focus {
-            outline: none;
-            border-color: #1976d2;
-            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
-        }
+      .metric-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1976d2;
+      }
 
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+      .metric-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+      }
 
-        .btn-primary {
-            background: #1976d2;
-            color: white;
-        }
+      .player-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
 
-        .btn-primary:hover {
-            background: #1565c0;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
-        }
+      .player-table th {
+        background: #1976d2;
+        color: white;
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
 
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
+      .player-table td {
+        padding: 0.6rem 0.75rem;
+        border-bottom: 1px solid #e9ecef;
+        font-size: 0.85rem;
+      }
 
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
+      .player-table tbody tr:hover {
+        background: #f8f9fa;
+      }
 
-        .simulation-display {
-            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-            border: 2px solid #1976d2;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
+      .leverage-high {
+        color: #dc3545;
+        font-weight: 600;
+      }
+      .leverage-medium {
+        color: #fd7e14;
+        font-weight: 600;
+      }
+      .leverage-low {
+        color: #28a745;
+        font-weight: 600;
+      }
 
-        .sim-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
+      .chart-container {
+        position: relative;
+        height: 300px;
+        margin: 1rem 0;
+      }
 
-        .sim-count {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1976d2;
-        }
+      .alert {
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
 
-        .sim-status {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
+      .alert-info {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
+      }
 
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: rgba(0,0,0,0.1);
-            border-radius: 6px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
+      .alert-success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #1976d2, #28a745);
-            border-radius: 6px;
-            transition: width 0.3s ease;
-            width: 0%;
-        }
+      .alert-warning {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+      }
 
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-top: 1rem;
-        }
+      .hidden {
+        display: none;
+      }
 
-        .metric {
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            padding: 1rem;
-            text-align: center;
-        }
+      .lineup-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
 
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1976d2;
-        }
+      .lineup-table th {
+        background: linear-gradient(135deg, #1976d2, #1565c0);
+        color: white;
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
 
-        .metric-label {
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-top: 0.25rem;
-        }
+      .lineup-table td {
+        padding: 0.6rem 0.75rem;
+        border-bottom: 1px solid #f8f9fa;
+        font-size: 0.85rem;
+      }
 
-        .player-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        .player-table th {
-            background: #1976d2;
-            color: white;
-            padding: 0.75rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .player-table td {
-            padding: 0.6rem 0.75rem;
-            border-bottom: 1px solid #e9ecef;
-            font-size: 0.85rem;
-        }
-
-        .player-table tbody tr:hover {
-            background: #f8f9fa;
-        }
-
-        .leverage-high { color: #dc3545; font-weight: 600; }
-        .leverage-medium { color: #fd7e14; font-weight: 600; }
-        .leverage-low { color: #28a745; font-weight: 600; }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 1rem 0;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .alert-info {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            color: #0c5460;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
-
-        .alert-warning {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-        }
-
-        .hidden { display: none; }
-
-        .lineup-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .lineup-table th {
-            background: linear-gradient(135deg, #1976d2, #1565c0);
-            color: white;
-            padding: 0.75rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        .lineup-table td {
-            padding: 0.6rem 0.75rem;
-            border-bottom: 1px solid #f8f9fa;
-            font-size: 0.85rem;
-        }
-
-        .lineup-table tbody tr:hover {
-            background: #f8f9fa;
-        }
+      .lineup-table tbody tr:hover {
+        background: #f8f9fa;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="header">
-        <div class="logo">
-            🎯 Contest-Aware DFS Optimizer
+      <div class="logo">🎯 Contest-Aware DFS Optimizer</div>
+      <div class="status-bar">
+        <div class="status-item">
+          <div class="status-value" id="trialCount">20,000</div>
+          <div class="status-label">MC Trials</div>
         </div>
-        <div class="status-bar">
-            <div class="status-item">
-                <div class="status-value" id="trialCount">20,000</div>
-                <div class="status-label">MC Trials</div>
-            </div>
-            <div class="status-item">
-                <div class="status-value" id="fieldSize">100,000</div>
-                <div class="status-label">Field Size</div>
-            </div>
-            <div class="status-item">
-                <div class="status-value" id="simTime">0.45s</div>
-                <div class="status-label">Sim Time</div>
-            </div>
+        <div class="status-item">
+          <div class="status-value" id="fieldSize">100,000</div>
+          <div class="status-label">Field Size</div>
         </div>
+        <div class="status-item">
+          <div class="status-value" id="simTime">0.45s</div>
+          <div class="status-label">Sim Time</div>
+        </div>
+      </div>
     </div>
 
     <div class="tabs">
-        <div class="tab-nav">
-            <button class="tab active" onclick="showTab('data')">📊 Data & Slates</button>
-            <button class="tab" onclick="showTab('build')">⚙️ Build</button>
-            <button class="tab" onclick="showTab('sims')">🎲 Simulations</button>
-            <button class="tab" onclick="showTab('portfolio')">📈 Portfolio</button>
-            <button class="tab" onclick="showTab('contest')">🏆 Contest</button>
-            <button class="tab" onclick="showTab('late-swap')">⏰ Late Swap</button>
-            <button class="tab" onclick="showTab('export')">💾 Export</button>
-        </div>
+      <div class="tab-nav">
+        <button class="tab active" onclick="showTab('data')">📊 Data & Slates</button>
+        <button class="tab" onclick="showTab('build')">⚙️ Build</button>
+        <button class="tab" onclick="showTab('sims')">🎲 Simulations</button>
+        <button class="tab" onclick="showTab('portfolio')">📈 Portfolio</button>
+        <button class="tab" onclick="showTab('contest')">🏆 Contest</button>
+        <button class="tab" onclick="showTab('late-swap')">⏰ Late Swap</button>
+        <button class="tab" onclick="showTab('export')">💾 Export</button>
+      </div>
     </div>
 
     <div class="container">
-        <div class="sidebar">
-            <!-- Slate Selection -->
-            <div class="section">
-                <h3>🏈 DraftKings NFL Slates</h3>
-                <div class="form-group">
-                    <label class="form-label">Select Slate:</label>
-                    <select id="slateSelector">
-                        <option value="main">Main Slate (Sun 1pm-8:30pm)</option>
-                        <option value="early">Early Slate (Sun 1pm-4:25pm)</option>
-                        <option value="late">Late Slate (Sun 4:25pm-8:30pm)</option>
-                        <option value="primetime">Primetime (Sun 8:30pm)</option>
-                        <option value="monday">Monday Night Football</option>
-                        <option value="showdown">Showdown (Single Game)</option>
-                        <option value="turbo">Turbo Slate</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Contest Type:</label>
-                    <select id="contestType">
-                        <option value="gpp-large">GPP Large Field (100K+)</option>
-                        <option value="gpp-medium">GPP Medium (10K-50K)</option>
-                        <option value="gpp-small">GPP Small (1K-10K)</option>
-                        <option value="single-entry">Single Entry GPP</option>
-                        <option value="cash">Cash Games</option>
-                        <option value="head2head">Head-to-Head</option>
-                        <option value="50-50">50/50 Double Up</option>
-                    </select>
-                </div>
+      <div class="sidebar">
+        <!-- Slate Selection -->
+        <div class="section">
+          <h3>🏈 DraftKings NFL Slates</h3>
+          <div class="form-group">
+            <label class="form-label">Select Slate:</label>
+            <select id="slateSelector">
+              <option value="main">Main Slate (Sun 1pm-8:30pm)</option>
+              <option value="early">Early Slate (Sun 1pm-4:25pm)</option>
+              <option value="late">Late Slate (Sun 4:25pm-8:30pm)</option>
+              <option value="primetime">Primetime (Sun 8:30pm)</option>
+              <option value="monday">Monday Night Football</option>
+              <option value="showdown">Showdown (Single Game)</option>
+              <option value="turbo">Turbo Slate</option>
+            </select>
+          </div>
 
-                <div class="form-group">
-                    <label class="form-label">Field Size:</label>
-                    <select id="fieldSize">
-                        <option value="100000">100,000 (Millionaire Maker)</option>
-                        <option value="50000">50,000 (Large GPP)</option>
-                        <option value="25000">25,000 (Medium GPP)</option>
-                        <option value="10000">10,000 (Small GPP)</option>
-                        <option value="1000">1,000 (Micro GPP)</option>
-                        <option value="100">100 (Cash Game)</option>
-                    </select>
-                </div>
-            </div>
+          <div class="form-group">
+            <label class="form-label">Contest Type:</label>
+            <select id="contestType">
+              <option value="gpp-large">GPP Large Field (100K+)</option>
+              <option value="gpp-medium">GPP Medium (10K-50K)</option>
+              <option value="gpp-small">GPP Small (1K-10K)</option>
+              <option value="single-entry">Single Entry GPP</option>
+              <option value="cash">Cash Games</option>
+              <option value="head2head">Head-to-Head</option>
+              <option value="50-50">50/50 Double Up</option>
+            </select>
+          </div>
 
-            <!-- Simulation Controls -->
-            <div class="section">
-                <h3>🎲 Simulation Engine</h3>
-                <div class="form-group">
-                    <label class="form-label">Monte Carlo Trials:</label>
-                    <select id="mcTrials">
-                        <option value="20000">20,000 (Standard)</option>
-                        <option value="50000">50,000 (High Accuracy)</option>
-                        <option value="100000">100,000 (Maximum)</option>
-                        <option value="5000">5,000 (Quick Test)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Correlation Model:</label>
-                    <select id="corrModel">
-                        <option value="gaussian-copula">Gaussian Copula (Advanced)</option>
-                        <option value="game-factor">Game Factor Only</option>
-                        <option value="none">No Correlations</option>
-                    </select>
-                </div>
-
-                <button class="btn btn-primary" onclick="runSimulation()" style="width: 100%; margin-top: 1rem;">
-                    🚀 Run 20K+ Simulation
-                </button>
-            </div>
-
-            <!-- Portfolio Controls -->
-            <div class="section">
-                <h3>📊 Portfolio Settings</h3>
-                <div class="form-group">
-                    <label class="form-label">Number of Lineups:</label>
-                    <input type="number" id="numLineups" value="20" min="1" max="150">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Max Player Exposure:</label>
-                    <input type="range" id="maxExposure" min="10" max="100" value="40">
-                    <div style="text-align: center; margin-top: 0.5rem;">
-                        <span id="exposureValue">40%</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Uniqueness Requirement:</label>
-                    <input type="range" id="uniqueness" min="1" max="9" value="6">
-                    <div style="text-align: center; margin-top: 0.5rem;">
-                        <span id="uniquenessValue">6</span> different players
-                    </div>
-                </div>
-            </div>
+          <div class="form-group">
+            <label class="form-label">Field Size:</label>
+            <select id="fieldSize">
+              <option value="100000">100,000 (Millionaire Maker)</option>
+              <option value="50000">50,000 (Large GPP)</option>
+              <option value="25000">25,000 (Medium GPP)</option>
+              <option value="10000">10,000 (Small GPP)</option>
+              <option value="1000">1,000 (Micro GPP)</option>
+              <option value="100">100 (Cash Game)</option>
+            </select>
+          </div>
         </div>
 
-        <div class="main-content">
-            <!-- DATA & SLATES TAB -->
-            <div id="data-content" class="tab-content active">
-                <h2>📊 Data Layer - DraftKings NFL Slates</h2>
-                
-                <div class="alert alert-info">
-                    <strong>Current Slate:</strong> <span id="currentSlate">Main Slate (Sun 1pm-8:30pm)</span> - 
-                    <span id="playerCount">247</span> players across <span id="gameCount">14</span> games
-                </div>
+        <!-- Simulation Controls -->
+        <div class="section">
+          <h3>🎲 Simulation Engine</h3>
+          <div class="form-group">
+            <label class="form-label">Monte Carlo Trials:</label>
+            <select id="mcTrials">
+              <option value="20000">20,000 (Standard)</option>
+              <option value="50000">50,000 (High Accuracy)</option>
+              <option value="100000">100,000 (Maximum)</option>
+              <option value="5000">5,000 (Quick Test)</option>
+            </select>
+          </div>
 
-                <div id="slateInfo" class="section">
-                    <h3>🏈 Slate Information</h3>
-                    <div class="form-grid">
-                        <div>
-                            <strong>Games:</strong><br>
-                            • BUF @ MIA (1:00pm)<br>
-                            • WAS @ NYG (1:00pm)<br>
-                            • CLE @ JAX (1:00pm)<br>
-                            • HOU @ CHI (1:00pm)<br>
-                            • NO @ CAR (1:00pm)<br>
-                            • LV @ BAL (1:00pm)<br>
-                            • LAC @ PIT (1:00pm)<br>
-                            • IND @ GB (1:00pm)<br>
-                            • MIN @ SF (4:05pm)<br>
-                            • ARI @ LAR (4:25pm)<br>
-                            • SEA @ NE (1:00pm)<br>
-                            • TB @ DET (1:00pm)<br>
-                            • DAL @ CIN (1:00pm)<br>
-                            • KC @ ATL (8:30pm)
-                        </div>
-                    </div>
-                </div>
+          <div class="form-group">
+            <label class="form-label">Correlation Model:</label>
+            <select id="corrModel">
+              <option value="gaussian-copula">Gaussian Copula (Advanced)</option>
+              <option value="game-factor">Game Factor Only</option>
+              <option value="none">No Correlations</option>
+            </select>
+          </div>
 
-                <table class="player-table">
-                    <thead>
-                        <tr>
-                            <th>Position</th>
-                            <th>Available</th>
-                            <th>Avg Salary</th>
-                            <th>Top Projection</th>
-                            <th>Coverage</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>QB</td><td>28</td><td>$6,800</td><td>28.5 (Josh Allen)</td><td>14/14 teams</td></tr>
-                        <tr><td>RB</td><td>56</td><td>$5,400</td><td>22.1 (CMC)</td><td>14/14 teams</td></tr>
-                        <tr><td>WR</td><td>84</td><td>$5,200</td><td>19.8 (Tyreek Hill)</td><td>14/14 teams</td></tr>
-                        <tr><td>TE</td><td>42</td><td>$4,100</td><td>14.2 (Travis Kelce)</td><td>14/14 teams</td></tr>
-                        <tr><td>DST</td><td>28</td><td>$2,800</td><td>9.5 (Ravens)</td><td>14/14 teams</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- SIMULATIONS TAB -->
-            <div id="sims-content" class="tab-content">
-                <h2>🎲 Monte Carlo Simulation Engine</h2>
-
-                <div class="simulation-display" id="simDisplay">
-                    <div class="sim-header">
-                        <div>
-                            <div class="sim-count" id="currentTrials">0</div>
-                            <div class="sim-status">trials completed</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 1.1rem; font-weight: 600; color: #28a745;">
-                                <span id="simPercentage">0%</span> Complete
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="simProgress"></div>
-                    </div>
-                    
-                    <div id="simResults" class="hidden">
-                        <div class="metrics-grid">
-                            <div class="metric">
-                                <div class="metric-value" id="avgScore">156.8</div>
-                                <div class="metric-label">Avg Portfolio Score</div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-value" id="topPercent">8.2%</div>
-                                <div class="metric-label">Top 1% Rate</div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-value" id="cashRate">74.5%</div>
-                                <div class="metric-label">Cash Rate</div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-value" id="optimalPercent">12.8%</div>
-                                <div class="metric-label">Optimal% (Best Lineup)</div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-value" id="leverage">6.7</div>
-                                <div class="metric-label">Portfolio Leverage</div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-value" id="dupRisk">3.2%</div>
-                                <div class="metric-label">Duplication Risk</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Player Boom/Bust Analysis -->
-                <div class="section">
-                    <h3>📈 Player Simulation Results</h3>
-                    <div id="playerSimResults">
-                        <table class="player-table">
-                            <thead>
-                                <tr>
-                                    <th>Player</th>
-                                    <th>Proj</th>
-                                    <th>Floor</th>
-                                    <th>Ceiling</th>
-                                    <th>Boom%</th>
-                                    <th>Bust%</th>
-                                    <th>Own%</th>
-                                    <th>Leverage</th>
-                                </tr>
-                            </thead>
-                            <tbody id="playerSimTableBody">
-                                <!-- Simulation results will populate here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Simulation Chart -->
-                <div class="chart-container">
-                    <canvas id="simulationChart"></canvas>
-                </div>
-            </div>
-
-            <!-- PORTFOLIO TAB -->
-            <div id="portfolio-content" class="tab-content">
-                <h2>📈 Portfolio Management</h2>
-
-                <div class="alert alert-success" id="portfolioAlert" style="display: none;">
-                    <strong>Portfolio Generated:</strong> <span id="portfolioSize">0</span> lineups with optimal SimEV distribution
-                </div>
-
-                <div id="portfolioTable">
-                    <!-- Portfolio lineups will be displayed here -->
-                </div>
-            </div>
-
-            <!-- CONTEST TAB -->
-            <div id="contest-content" class="tab-content">
-                <h2>🏆 Contest Simulation</h2>
-                
-                <div class="section">
-                    <h3>💰 Payout Structure</h3>
-                    <div id="payoutInfo">
-                        <p><strong>Contest:</strong> <span id="contestName">Millionaire Maker</span></p>
-                        <p><strong>Entry Fee:</strong> <span id="entryFee">$20</span></p>
-                        <p><strong>Total Prize Pool:</strong> <span id="prizePool">$2,000,000</span></p>
-                        <p><strong>1st Place:</strong> <span id="firstPlace">$300,000</span></p>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <canvas id="contestChart"></canvas>
-                </div>
-            </div>
+          <button
+            class="btn btn-primary"
+            onclick="runSimulation()"
+            style="width: 100%; margin-top: 1rem"
+          >
+            🚀 Run 20K+ Simulation
+          </button>
         </div>
+
+        <!-- Portfolio Controls -->
+        <div class="section">
+          <h3>📊 Portfolio Settings</h3>
+          <div class="form-group">
+            <label class="form-label">Number of Lineups:</label>
+            <input type="number" id="numLineups" value="20" min="1" max="150" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Max Player Exposure:</label>
+            <input type="range" id="maxExposure" min="10" max="100" value="40" />
+            <div style="text-align: center; margin-top: 0.5rem">
+              <span id="exposureValue">40%</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Uniqueness Requirement:</label>
+            <input type="range" id="uniqueness" min="1" max="9" value="6" />
+            <div style="text-align: center; margin-top: 0.5rem">
+              <span id="uniquenessValue">6</span> different players
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <!-- DATA & SLATES TAB -->
+        <div id="data-content" class="tab-content active">
+          <h2>📊 Data Layer - DraftKings NFL Slates</h2>
+
+          <div class="alert alert-info">
+            <strong>Current Slate:</strong>
+            <span id="currentSlate">Main Slate (Sun 1pm-8:30pm)</span> -
+            <span id="playerCount">247</span> players across
+            <span id="gameCount">14</span> games
+          </div>
+
+          <div id="slateInfo" class="section">
+            <h3>🏈 Slate Information</h3>
+            <div class="form-grid">
+              <div>
+                <strong>Games:</strong><br />
+                • BUF @ MIA (1:00pm)<br />
+                • WAS @ NYG (1:00pm)<br />
+                • CLE @ JAX (1:00pm)<br />
+                • HOU @ CHI (1:00pm)<br />
+                • NO @ CAR (1:00pm)<br />
+                • LV @ BAL (1:00pm)<br />
+                • LAC @ PIT (1:00pm)<br />
+                • IND @ GB (1:00pm)<br />
+                • MIN @ SF (4:05pm)<br />
+                • ARI @ LAR (4:25pm)<br />
+                • SEA @ NE (1:00pm)<br />
+                • TB @ DET (1:00pm)<br />
+                • DAL @ CIN (1:00pm)<br />
+                • KC @ ATL (8:30pm)
+              </div>
+            </div>
+          </div>
+
+          <table class="player-table">
+            <thead>
+              <tr>
+                <th>Position</th>
+                <th>Available</th>
+                <th>Avg Salary</th>
+                <th>Top Projection</th>
+                <th>Coverage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>QB</td>
+                <td>28</td>
+                <td>$6,800</td>
+                <td>28.5 (Josh Allen)</td>
+                <td>14/14 teams</td>
+              </tr>
+              <tr>
+                <td>RB</td>
+                <td>56</td>
+                <td>$5,400</td>
+                <td>22.1 (CMC)</td>
+                <td>14/14 teams</td>
+              </tr>
+              <tr>
+                <td>WR</td>
+                <td>84</td>
+                <td>$5,200</td>
+                <td>19.8 (Tyreek Hill)</td>
+                <td>14/14 teams</td>
+              </tr>
+              <tr>
+                <td>TE</td>
+                <td>42</td>
+                <td>$4,100</td>
+                <td>14.2 (Travis Kelce)</td>
+                <td>14/14 teams</td>
+              </tr>
+              <tr>
+                <td>DST</td>
+                <td>28</td>
+                <td>$2,800</td>
+                <td>9.5 (Ravens)</td>
+                <td>14/14 teams</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- SIMULATIONS TAB -->
+        <div id="sims-content" class="tab-content">
+          <h2>🎲 Monte Carlo Simulation Engine</h2>
+
+          <div class="simulation-display" id="simDisplay">
+            <div class="sim-header">
+              <div>
+                <div class="sim-count" id="currentTrials">0</div>
+                <div class="sim-status">trials completed</div>
+              </div>
+              <div>
+                <div style="font-size: 1.1rem; font-weight: 600; color: #28a745">
+                  <span id="simPercentage">0%</span> Complete
+                </div>
+              </div>
+            </div>
+
+            <div class="progress-bar">
+              <div class="progress-fill" id="simProgress"></div>
+            </div>
+
+            <div id="simResults" class="hidden">
+              <div class="metrics-grid">
+                <div class="metric">
+                  <div class="metric-value" id="avgScore">156.8</div>
+                  <div class="metric-label">Avg Portfolio Score</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value" id="topPercent">8.2%</div>
+                  <div class="metric-label">Top 1% Rate</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value" id="cashRate">74.5%</div>
+                  <div class="metric-label">Cash Rate</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value" id="optimalPercent">12.8%</div>
+                  <div class="metric-label">Optimal% (Best Lineup)</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value" id="leverage">6.7</div>
+                  <div class="metric-label">Portfolio Leverage</div>
+                </div>
+                <div class="metric">
+                  <div class="metric-value" id="dupRisk">3.2%</div>
+                  <div class="metric-label">Duplication Risk</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Player Boom/Bust Analysis -->
+          <div class="section">
+            <h3>📈 Player Simulation Results</h3>
+            <div id="playerSimResults">
+              <table class="player-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Proj</th>
+                    <th>Floor</th>
+                    <th>Ceiling</th>
+                    <th>Boom%</th>
+                    <th>Bust%</th>
+                    <th>Own%</th>
+                    <th>Leverage</th>
+                  </tr>
+                </thead>
+                <tbody id="playerSimTableBody">
+                  <!-- Simulation results will populate here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Simulation Chart -->
+          <div class="chart-container">
+            <canvas id="simulationChart"></canvas>
+          </div>
+        </div>
+
+        <!-- PORTFOLIO TAB -->
+        <div id="portfolio-content" class="tab-content">
+          <h2>📈 Portfolio Management</h2>
+
+          <div class="alert alert-success" id="portfolioAlert" style="display: none">
+            <strong>Portfolio Generated:</strong>
+            <span id="portfolioSize">0</span> lineups with optimal SimEV distribution
+          </div>
+
+          <div id="portfolioTable">
+            <!-- Portfolio lineups will be displayed here -->
+          </div>
+        </div>
+
+        <!-- CONTEST TAB -->
+        <div id="contest-content" class="tab-content">
+          <h2>🏆 Contest Simulation</h2>
+
+          <div class="section">
+            <h3>💰 Payout Structure</h3>
+            <div id="payoutInfo">
+              <p>
+                <strong>Contest:</strong>
+                <span id="contestName">Millionaire Maker</span>
+              </p>
+              <p><strong>Entry Fee:</strong> <span id="entryFee">$20</span></p>
+              <p>
+                <strong>Total Prize Pool:</strong>
+                <span id="prizePool">$2,000,000</span>
+              </p>
+              <p><strong>1st Place:</strong> <span id="firstPlace">$300,000</span></p>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <canvas id="contestChart"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        let currentSlate = 'main';
-        let simulationData = {};
-        let portfolioLineups = [];
+      let currentSlate = 'main';
+      let simulationData = {};
+      let portfolioLineups = [];
 
-        // Slate configuration matching DraftKings
-        const slates = {
-            'main': {
-                name: 'Main Slate (Sun 1pm-8:30pm)',
-                games: 14,
-                players: 247,
-                startTime: '2025-09-15T17:00:00Z',
-                endTime: '2025-09-16T00:30:00Z'
-            },
-            'early': {
-                name: 'Early Slate (Sun 1pm-4:25pm)', 
-                games: 8,
-                players: 142,
-                startTime: '2025-09-15T17:00:00Z',
-                endTime: '2025-09-15T20:25:00Z'
-            },
-            'late': {
-                name: 'Late Slate (Sun 4:25pm-8:30pm)',
-                games: 4,
-                players: 68,
-                startTime: '2025-09-15T20:25:00Z', 
-                endTime: '2025-09-16T00:30:00Z'
-            }
-        };
+      // Slate configuration matching DraftKings
+      const slates = {
+        main: {
+          name: 'Main Slate (Sun 1pm-8:30pm)',
+          games: 14,
+          players: 247,
+          startTime: '2025-09-15T17:00:00Z',
+          endTime: '2025-09-16T00:30:00Z',
+        },
+        early: {
+          name: 'Early Slate (Sun 1pm-4:25pm)',
+          games: 8,
+          players: 142,
+          startTime: '2025-09-15T17:00:00Z',
+          endTime: '2025-09-15T20:25:00Z',
+        },
+        late: {
+          name: 'Late Slate (Sun 4:25pm-8:30pm)',
+          games: 4,
+          players: 68,
+          startTime: '2025-09-15T20:25:00Z',
+          endTime: '2025-09-16T00:30:00Z',
+        },
+      };
 
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            document.getElementById(tabName + '-content').classList.add('active');
-            event.target.classList.add('active');
+      function showTab(tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+
+        document.getElementById(tabName + '-content').classList.add('active');
+        event.target.classList.add('active');
+      }
+
+      function updateSlateInfo() {
+        const selectedSlate = document.getElementById('slateSelector').value;
+        const slate = slates[selectedSlate];
+
+        if (slate) {
+          document.getElementById('currentSlate').textContent = slate.name;
+          document.getElementById('playerCount').textContent = slate.players;
+          document.getElementById('gameCount').textContent = slate.games;
         }
+      }
 
-        function updateSlateInfo() {
-            const selectedSlate = document.getElementById('slateSelector').value;
-            const slate = slates[selectedSlate];
-            
-            if (slate) {
-                document.getElementById('currentSlate').textContent = slate.name;
-                document.getElementById('playerCount').textContent = slate.players;
-                document.getElementById('gameCount').textContent = slate.games;
-            }
-        }
+      // Visual Monte Carlo Simulation
+      function runSimulation() {
+        const trials = parseInt(document.getElementById('mcTrials').value);
+        const correlationModel = document.getElementById('corrModel').value;
 
-        // Visual Monte Carlo Simulation
-        function runSimulation() {
-            const trials = parseInt(document.getElementById('mcTrials').value);
-            const correlationModel = document.getElementById('corrModel').value;
-            
-            // Reset display
-            document.getElementById('simProgress').style.width = '0%';
-            document.getElementById('currentTrials').textContent = '0';
-            document.getElementById('simPercentage').textContent = '0%';
-            document.getElementById('simResults').classList.add('hidden');
-            
-            // Show simulation tab
-            showTab('sims');
-            
-            // Simulate progressive Monte Carlo execution
-            let completed = 0;
-            const interval = setInterval(() => {
-                completed += Math.floor(Math.random() * 1500) + 500; // Variable progress
-                
-                if (completed >= trials) {
-                    completed = trials;
-                    clearInterval(interval);
-                    showSimulationResults();
-                }
-                
-                const percentage = (completed / trials * 100).toFixed(1);
-                document.getElementById('currentTrials').textContent = completed.toLocaleString();
-                document.getElementById('simPercentage').textContent = percentage + '%';
-                document.getElementById('simProgress').style.width = percentage + '%';
-                
-                // Update status bar
-                document.getElementById('trialCount').textContent = completed.toLocaleString();
-                
-            }, 100);
-            
-            console.log(`Running ${trials} Monte Carlo trials with ${correlationModel} correlations`);
-        }
+        // Reset display
+        document.getElementById('simProgress').style.width = '0%';
+        document.getElementById('currentTrials').textContent = '0';
+        document.getElementById('simPercentage').textContent = '0%';
+        document.getElementById('simResults').classList.add('hidden');
 
-        function showSimulationResults() {
-            // Display comprehensive simulation results
-            document.getElementById('simResults').classList.remove('hidden');
-            
-            // Update metrics with realistic values
-            document.getElementById('avgScore').textContent = (150 + Math.random() * 20).toFixed(1);
-            document.getElementById('topPercent').textContent = (5 + Math.random() * 10).toFixed(1) + '%';
-            document.getElementById('cashRate').textContent = (65 + Math.random() * 20).toFixed(1) + '%';
-            document.getElementById('optimalPercent').textContent = (8 + Math.random() * 8).toFixed(1) + '%';
-            document.getElementById('leverage').textContent = (5 + Math.random() * 4).toFixed(1);
-            document.getElementById('dupRisk').textContent = (2 + Math.random() * 4).toFixed(1) + '%';
-            
-            // Populate player simulation table
-            populatePlayerSimResults();
-            
-            // Generate portfolio
-            generatePortfolio();
-            
-            console.log('Simulation complete - results displayed');
-        }
+        // Show simulation tab
+        showTab('sims');
 
-        function populatePlayerSimResults() {
-            const tableBody = document.getElementById('playerSimTableBody');
-            
-            // Sample simulation results
-            const playerResults = [
-                { name: 'Josh Allen', proj: 28.5, floor: 18.2, ceiling: 42.1, boom: 32, bust: 12, own: 22.1, leverage: 9.9 },
-                { name: 'A.J. Brown', proj: 18.9, floor: 4.2, ceiling: 35.8, boom: 38, bust: 28, own: 8.4, leverage: 29.6 },
-                { name: 'Patrick Mahomes', proj: 26.8, floor: 16.5, ceiling: 39.2, boom: 28, bust: 15, own: 24.3, leverage: 3.7 },
-                { name: 'Saquon Barkley', proj: 19.2, floor: 8.1, ceiling: 32.4, boom: 25, bust: 22, own: 18.7, leverage: 6.3 },
-                { name: 'Tyreek Hill', proj: 17.8, floor: 6.2, ceiling: 31.5, boom: 29, bust: 25, own: 16.2, leverage: 12.8 },
-                { name: 'Travis Kelce', proj: 14.2, floor: 5.8, ceiling: 26.3, boom: 22, bust: 18, own: 19.4, leverage: 2.6 }
-            ];
-            
-            const tableHTML = playerResults.map(player => `
+        // Simulate progressive Monte Carlo execution
+        let completed = 0;
+        const interval = setInterval(() => {
+          completed += Math.floor(Math.random() * 1500) + 500; // Variable progress
+
+          if (completed >= trials) {
+            completed = trials;
+            clearInterval(interval);
+            showSimulationResults();
+          }
+
+          const percentage = ((completed / trials) * 100).toFixed(1);
+          document.getElementById('currentTrials').textContent =
+            completed.toLocaleString();
+          document.getElementById('simPercentage').textContent = percentage + '%';
+          document.getElementById('simProgress').style.width = percentage + '%';
+
+          // Update status bar
+          document.getElementById('trialCount').textContent =
+            completed.toLocaleString();
+        }, 100);
+
+        console.log(
+          `Running ${trials} Monte Carlo trials with ${correlationModel} correlations`
+        );
+      }
+
+      function showSimulationResults() {
+        // Display comprehensive simulation results
+        document.getElementById('simResults').classList.remove('hidden');
+
+        // Update metrics with realistic values
+        document.getElementById('avgScore').textContent = (
+          150 +
+          Math.random() * 20
+        ).toFixed(1);
+        document.getElementById('topPercent').textContent =
+          (5 + Math.random() * 10).toFixed(1) + '%';
+        document.getElementById('cashRate').textContent =
+          (65 + Math.random() * 20).toFixed(1) + '%';
+        document.getElementById('optimalPercent').textContent =
+          (8 + Math.random() * 8).toFixed(1) + '%';
+        document.getElementById('leverage').textContent = (
+          5 +
+          Math.random() * 4
+        ).toFixed(1);
+        document.getElementById('dupRisk').textContent =
+          (2 + Math.random() * 4).toFixed(1) + '%';
+
+        // Populate player simulation table
+        populatePlayerSimResults();
+
+        // Generate portfolio
+        generatePortfolio();
+
+        console.log('Simulation complete - results displayed');
+      }
+
+      function populatePlayerSimResults() {
+        const tableBody = document.getElementById('playerSimTableBody');
+
+        // Sample simulation results
+        const playerResults = [
+          {
+            name: 'Josh Allen',
+            proj: 28.5,
+            floor: 18.2,
+            ceiling: 42.1,
+            boom: 32,
+            bust: 12,
+            own: 22.1,
+            leverage: 9.9,
+          },
+          {
+            name: 'A.J. Brown',
+            proj: 18.9,
+            floor: 4.2,
+            ceiling: 35.8,
+            boom: 38,
+            bust: 28,
+            own: 8.4,
+            leverage: 29.6,
+          },
+          {
+            name: 'Patrick Mahomes',
+            proj: 26.8,
+            floor: 16.5,
+            ceiling: 39.2,
+            boom: 28,
+            bust: 15,
+            own: 24.3,
+            leverage: 3.7,
+          },
+          {
+            name: 'Saquon Barkley',
+            proj: 19.2,
+            floor: 8.1,
+            ceiling: 32.4,
+            boom: 25,
+            bust: 22,
+            own: 18.7,
+            leverage: 6.3,
+          },
+          {
+            name: 'Tyreek Hill',
+            proj: 17.8,
+            floor: 6.2,
+            ceiling: 31.5,
+            boom: 29,
+            bust: 25,
+            own: 16.2,
+            leverage: 12.8,
+          },
+          {
+            name: 'Travis Kelce',
+            proj: 14.2,
+            floor: 5.8,
+            ceiling: 26.3,
+            boom: 22,
+            bust: 18,
+            own: 19.4,
+            leverage: 2.6,
+          },
+        ];
+
+        const tableHTML = playerResults
+          .map(
+            player => `
                 <tr>
                     <td><strong>${player.name}</strong></td>
                     <td>${player.proj}</td>
@@ -789,48 +933,50 @@
                         ${player.leverage}
                     </td>
                 </tr>
-            `).join('');
-            
-            tableBody.innerHTML = tableHTML;
+            `
+          )
+          .join('');
+
+        tableBody.innerHTML = tableHTML;
+      }
+
+      function generatePortfolio() {
+        const numLineups = parseInt(document.getElementById('numLineups').value);
+
+        // Generate sample portfolio
+        portfolioLineups = [];
+        for (let i = 1; i <= numLineups; i++) {
+          portfolioLineups.push({
+            id: i,
+            qb: 'Josh Allen',
+            rb1: 'Saquon Barkley',
+            rb2: 'Joe Mixon',
+            wr1: 'A.J. Brown',
+            wr2: 'Tyreek Hill',
+            wr3: 'Stefon Diggs',
+            te: 'Travis Kelce',
+            flex: 'Chris Godwin',
+            dst: 'Ravens',
+            salary: 49600 + Math.floor(Math.random() * 400),
+            projection: 155 + Math.random() * 15,
+            simev: 2.8 + Math.random() * 1.5,
+            topPercent: 6 + Math.random() * 8,
+            leverage: 5 + Math.random() * 6,
+          });
         }
 
-        function generatePortfolio() {
-            const numLineups = parseInt(document.getElementById('numLineups').value);
-            
-            // Generate sample portfolio
-            portfolioLineups = [];
-            for (let i = 1; i <= numLineups; i++) {
-                portfolioLineups.push({
-                    id: i,
-                    qb: 'Josh Allen',
-                    rb1: 'Saquon Barkley', 
-                    rb2: 'Joe Mixon',
-                    wr1: 'A.J. Brown',
-                    wr2: 'Tyreek Hill',
-                    wr3: 'Stefon Diggs',
-                    te: 'Travis Kelce',
-                    flex: 'Chris Godwin',
-                    dst: 'Ravens',
-                    salary: 49600 + Math.floor(Math.random() * 400),
-                    projection: 155 + Math.random() * 15,
-                    simev: 2.8 + Math.random() * 1.5,
-                    topPercent: 6 + Math.random() * 8,
-                    leverage: 5 + Math.random() * 6
-                });
-            }
-            
-            // Show portfolio alert
-            document.getElementById('portfolioAlert').style.display = 'block';
-            document.getElementById('portfolioSize').textContent = portfolioLineups.length;
-            
-            // Display portfolio table
-            displayPortfolioTable();
-        }
+        // Show portfolio alert
+        document.getElementById('portfolioAlert').style.display = 'block';
+        document.getElementById('portfolioSize').textContent = portfolioLineups.length;
 
-        function displayPortfolioTable() {
-            const container = document.getElementById('portfolioTable');
-            
-            const tableHTML = `
+        // Display portfolio table
+        displayPortfolioTable();
+      }
+
+      function displayPortfolioTable() {
+        const container = document.getElementById('portfolioTable');
+
+        const tableHTML = `
                 <table class="lineup-table">
                     <thead>
                         <tr>
@@ -851,7 +997,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${portfolioLineups.map(lineup => `
+                        ${portfolioLineups
+                          .map(
+                            lineup => `
                             <tr>
                                 <td>${lineup.id}</td>
                                 <td>${lineup.qb}</td>
@@ -868,109 +1016,125 @@
                                 <td style="color: #dc3545; font-weight: 600;">${lineup.simev.toFixed(2)}</td>
                                 <td style="color: #fd7e14; font-weight: 600;">${lineup.topPercent.toFixed(1)}%</td>
                             </tr>
-                        `).join('')}
+                        `
+                          )
+                          .join('')}
                     </tbody>
                 </table>
             `;
-            
-            container.innerHTML = tableHTML;
-        }
 
-        // Initialize sliders
-        function initializeControls() {
-            const maxExposure = document.getElementById('maxExposure');
-            const exposureValue = document.getElementById('exposureValue');
-            maxExposure.addEventListener('input', () => {
-                exposureValue.textContent = maxExposure.value + '%';
-            });
+        container.innerHTML = tableHTML;
+      }
 
-            const uniqueness = document.getElementById('uniqueness');
-            const uniquenessValue = document.getElementById('uniquenessValue');
-            uniqueness.addEventListener('input', () => {
-                uniquenessValue.textContent = uniqueness.value;
-            });
-
-            // Slate selector
-            document.getElementById('slateSelector').addEventListener('change', updateSlateInfo);
-        }
-
-        // Initialize charts
-        function initSimulationChart() {
-            const ctx = document.getElementById('simulationChart');
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['0', '5K', '10K', '15K', '20K'],
-                    datasets: [{
-                        label: 'Portfolio Score Distribution',
-                        data: [145, 152, 156, 158, 162],
-                        borderColor: '#1976d2',
-                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Simulation Progress - Score Convergence'
-                        }
-                    }
-                }
-            });
-        }
-
-        function initContestChart() {
-            const ctx = document.getElementById('contestChart');
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['0-10%', '10-50%', '50-90%', '90-99%', 'Top 1%'],
-                    datasets: [{
-                        label: 'ROI by Finish Position',
-                        data: [-100, -80, -60, 150, 1200],
-                        backgroundColor: ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Expected ROI by Contest Finish'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false
-                        }
-                    }
-                }
-            });
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeControls();
-            updateSlateInfo();
-            
-            // Initialize charts when tabs are shown
-            setTimeout(() => {
-                if (document.getElementById('simulationChart')) {
-                    initSimulationChart();
-                }
-            }, 100);
-            
-            console.log('Contest-Aware DFS Optimizer loaded - SaberSim/Stokastic style interface');
+      // Initialize sliders
+      function initializeControls() {
+        const maxExposure = document.getElementById('maxExposure');
+        const exposureValue = document.getElementById('exposureValue');
+        maxExposure.addEventListener('input', () => {
+          exposureValue.textContent = maxExposure.value + '%';
         });
+
+        const uniqueness = document.getElementById('uniqueness');
+        const uniquenessValue = document.getElementById('uniquenessValue');
+        uniqueness.addEventListener('input', () => {
+          uniquenessValue.textContent = uniqueness.value;
+        });
+
+        // Slate selector
+        document
+          .getElementById('slateSelector')
+          .addEventListener('change', updateSlateInfo);
+      }
+
+      // Initialize charts
+      function initSimulationChart() {
+        const ctx = document.getElementById('simulationChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['0', '5K', '10K', '15K', '20K'],
+            datasets: [
+              {
+                label: 'Portfolio Score Distribution',
+                data: [145, 152, 156, 158, 162],
+                borderColor: '#1976d2',
+                backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                tension: 0.4,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: 'Simulation Progress - Score Convergence',
+              },
+            },
+          },
+        });
+      }
+
+      function initContestChart() {
+        const ctx = document.getElementById('contestChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['0-10%', '10-50%', '50-90%', '90-99%', 'Top 1%'],
+            datasets: [
+              {
+                label: 'ROI by Finish Position',
+                data: [-100, -80, -60, 150, 1200],
+                backgroundColor: [
+                  '#dc3545',
+                  '#fd7e14',
+                  '#ffc107',
+                  '#28a745',
+                  '#20c997',
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: 'Expected ROI by Contest Finish',
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: false,
+              },
+            },
+          },
+        });
+      }
+
+      // Initialize on page load
+      document.addEventListener('DOMContentLoaded', function () {
+        initializeControls();
+        updateSlateInfo();
+
+        // Initialize charts when tabs are shown
+        setTimeout(() => {
+          if (document.getElementById('simulationChart')) {
+            initSimulationChart();
+          }
+        }, 100);
+
+        console.log(
+          'Contest-Aware DFS Optimizer loaded - SaberSim/Stokastic style interface'
+        );
+      });
     </script>
-</body>
+  </body>
 </html>

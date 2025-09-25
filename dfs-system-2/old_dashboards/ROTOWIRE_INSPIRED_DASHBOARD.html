@@ -1,496 +1,553 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RotoWire-Inspired DFS Optimizer</title>
     <style>
-        /* RotoWire-inspired styling */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      /* RotoWire-inspired styling */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Arial', sans-serif;
-            background: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
-        }
+      body {
+        font-family: 'Arial', sans-serif;
+        background: #f5f5f5;
+        color: #333;
+        line-height: 1.6;
+      }
 
-        .header {
-            background: #1e3a8a;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+      .header {
+        background: #1e3a8a;
+        color: white;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
+      .logo {
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
 
-        .nav-tabs {
-            display: flex;
-            gap: 2rem;
-            margin-left: 2rem;
-        }
+      .nav-tabs {
+        display: flex;
+        gap: 2rem;
+        margin-left: 2rem;
+      }
 
-        .nav-tab {
-            padding: 0.5rem 1rem;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
+      .nav-tab {
+        padding: 0.5rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background 0.2s;
+      }
 
-        .nav-tab:hover,
-        .nav-tab.active {
-            background: rgba(255,255,255,0.2);
-        }
+      .nav-tab:hover,
+      .nav-tab.active {
+        background: rgba(255, 255, 255, 0.2);
+      }
 
-        .main-container {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            min-height: calc(100vh - 80px);
-        }
+      .main-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        min-height: calc(100vh - 80px);
+      }
 
-        .sidebar {
-            background: white;
-            border-right: 1px solid #ddd;
-            padding: 1.5rem;
-            overflow-y: auto;
-        }
+      .sidebar {
+        background: white;
+        border-right: 1px solid #ddd;
+        padding: 1.5rem;
+        overflow-y: auto;
+      }
 
-        .sidebar h3 {
-            color: #1e3a8a;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            border-bottom: 2px solid #1e3a8a;
-            padding-bottom: 0.5rem;
-        }
+      .sidebar h3 {
+        color: #1e3a8a;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        border-bottom: 2px solid #1e3a8a;
+        padding-bottom: 0.5rem;
+      }
 
-        .player-pool {
-            margin-bottom: 2rem;
-        }
+      .player-pool {
+        margin-bottom: 2rem;
+      }
 
-        .position-group {
-            margin-bottom: 1rem;
-        }
+      .position-group {
+        margin-bottom: 1rem;
+      }
 
-        .position-header {
-            background: #e5e7eb;
-            padding: 0.5rem;
-            font-weight: bold;
-            color: #374151;
-            border-radius: 4px 4px 0 0;
-        }
+      .position-header {
+        background: #e5e7eb;
+        padding: 0.5rem;
+        font-weight: bold;
+        color: #374151;
+        border-radius: 4px 4px 0 0;
+      }
 
-        .player-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.3rem 0.5rem;
-            border: 1px solid #e5e7eb;
-            border-top: none;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
+      .player-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.3rem 0.5rem;
+        border: 1px solid #e5e7eb;
+        border-top: none;
+        cursor: pointer;
+        font-size: 0.85rem;
+      }
 
-        .player-row:hover {
-            background: #f3f4f6;
-        }
+      .player-row:hover {
+        background: #f3f4f6;
+      }
 
-        .player-row:last-child {
-            border-radius: 0 0 4px 4px;
-        }
+      .player-row:last-child {
+        border-radius: 0 0 4px 4px;
+      }
 
-        .player-name {
-            font-weight: 500;
-        }
+      .player-name {
+        font-weight: 500;
+      }
 
-        .player-salary {
-            color: #059669;
-            font-weight: bold;
-        }
+      .player-salary {
+        color: #059669;
+        font-weight: bold;
+      }
 
-        .player-proj {
-            color: #dc2626;
-            font-weight: bold;
-        }
+      .player-proj {
+        color: #dc2626;
+        font-weight: bold;
+      }
 
-        .content-area {
-            background: white;
-            padding: 2rem;
-            overflow-y: auto;
-        }
+      .content-area {
+        background: white;
+        padding: 2rem;
+        overflow-y: auto;
+      }
 
-        .optimizer-controls {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: #f9fafb;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
+      .optimizer-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f9fafb;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+      }
 
-        .control-group {
-            display: flex;
-            flex-direction: column;
-        }
+      .control-group {
+        display: flex;
+        flex-direction: column;
+      }
 
-        .control-group label {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: #374151;
-        }
+      .control-group label {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #374151;
+      }
 
-        .control-group select,
-        .control-group input {
-            padding: 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
+      .control-group select,
+      .control-group input {
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
 
-        .optimize-btn {
+      .optimize-btn {
+        background: #059669;
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+        grid-column: span 2;
+        justify-self: center;
+      }
+
+      .optimize-btn:hover {
+        background: #047857;
+      }
+
+      .lineups-container {
+        margin-top: 2rem;
+      }
+
+      .lineup-header {
+        background: #1e3a8a;
+        color: white;
+        padding: 1rem;
+        border-radius: 8px 8px 0 0;
+        font-weight: bold;
+      }
+
+      .lineup-table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #e5e7eb;
+        border-radius: 0 0 8px 8px;
+        overflow: hidden;
+      }
+
+      .lineup-table th {
+        background: #f3f4f6;
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: bold;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .lineup-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #f3f4f6;
+      }
+
+      .lineup-table tbody tr:hover {
+        background: #f9fafb;
+      }
+
+      .position-col {
+        font-weight: bold;
+        color: #1e3a8a;
+        width: 60px;
+      }
+
+      .player-col {
+        width: 180px;
+      }
+
+      .salary-col {
+        color: #059669;
+        font-weight: bold;
+        width: 80px;
+      }
+
+      .proj-col {
+        color: #dc2626;
+        font-weight: bold;
+        width: 60px;
+      }
+
+      .stats-row {
+        background: #f3f4f6;
+        font-weight: bold;
+      }
+
+      .leverage-indicator {
+        background: #fbbf24;
+        color: #92400e;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+      }
+
+      .high-leverage {
+        background: #dc2626;
+        color: white;
+      }
+
+      .news-ticker {
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        border-radius: 4px;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        color: #991b1b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div style="display: flex; align-items: center">
+        <div class="logo">RotoWire DFS Optimizer</div>
+        <div class="nav-tabs">
+          <button class="nav-tab active">NFL</button>
+          <button class="nav-tab">NBA</button>
+          <button class="nav-tab">MLB</button>
+          <button class="nav-tab">NHL</button>
+        </div>
+      </div>
+      <div style="display: flex; gap: 1rem">
+        <button
+          style="
             background: #059669;
             color: white;
-            padding: 1rem 2rem;
             border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-            grid-column: span 2;
-            justify-self: center;
-        }
-
-        .optimize-btn:hover {
-            background: #047857;
-        }
-
-        .lineups-container {
-            margin-top: 2rem;
-        }
-
-        .lineup-header {
-            background: #1e3a8a;
-            color: white;
-            padding: 1rem;
-            border-radius: 8px 8px 0 0;
-            font-weight: bold;
-        }
-
-        .lineup-table {
-            width: 100%;
-            border-collapse: collapse;
-            border: 1px solid #e5e7eb;
-            border-radius: 0 0 8px 8px;
-            overflow: hidden;
-        }
-
-        .lineup-table th {
-            background: #f3f4f6;
-            padding: 0.75rem;
-            text-align: left;
-            font-weight: bold;
-            color: #374151;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .lineup-table td {
-            padding: 0.75rem;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .lineup-table tbody tr:hover {
-            background: #f9fafb;
-        }
-
-        .position-col {
-            font-weight: bold;
-            color: #1e3a8a;
-            width: 60px;
-        }
-
-        .player-col {
-            width: 180px;
-        }
-
-        .salary-col {
-            color: #059669;
-            font-weight: bold;
-            width: 80px;
-        }
-
-        .proj-col {
-            color: #dc2626;
-            font-weight: bold;
-            width: 60px;
-        }
-
-        .stats-row {
-            background: #f3f4f6;
-            font-weight: bold;
-        }
-
-        .leverage-indicator {
-            background: #fbbf24;
-            color: #92400e;
-            padding: 0.2rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        .high-leverage {
-            background: #dc2626;
-            color: white;
-        }
-
-        .news-ticker {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
+            padding: 0.5rem 1rem;
             border-radius: 4px;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            color: #991b1b;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div style="display: flex; align-items: center;">
-            <div class="logo">RotoWire DFS Optimizer</div>
-            <div class="nav-tabs">
-                <button class="nav-tab active">NFL</button>
-                <button class="nav-tab">NBA</button>
-                <button class="nav-tab">MLB</button>
-                <button class="nav-tab">NHL</button>
-            </div>
-        </div>
-        <div style="display: flex; gap: 1rem;">
-            <button style="background: #059669; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px;">Export CSV</button>
-            <button style="background: #7c3aed; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px;">Save Lineups</button>
-        </div>
+          "
+        >
+          Export CSV
+        </button>
+        <button
+          style="
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+          "
+        >
+          Save Lineups
+        </button>
+      </div>
     </div>
 
     <div class="main-container">
-        <div class="sidebar">
-            <h3>Player Pool</h3>
-            
-            <div class="player-pool">
-                <div class="position-group">
-                    <div class="position-header">QB - PHI@KC (4:25 PM)</div>
-                    <div class="player-row">
-                        <div class="player-name">P. Mahomes KC</div>
-                        <div class="player-salary">$6200</div>
-                        <div class="player-proj">26.8</div>
-                    </div>
-                    <div class="player-row">
-                        <div class="player-name">J. Hurts PHI</div>
-                        <div class="player-salary">$6800</div>
-                        <div class="player-proj">24.5</div>
-                    </div>
-                </div>
+      <div class="sidebar">
+        <h3>Player Pool</h3>
 
-                <div class="position-group">
-                    <div class="position-header">RB - PHI@KC (4:25 PM)</div>
-                    <div class="player-row">
-                        <div class="player-name">S. Barkley PHI</div>
-                        <div class="player-salary">$8000</div>
-                        <div class="player-proj">19.2</div>
-                    </div>
-                    <div class="player-row">
-                        <div class="player-name">I. Pacheco KC</div>
-                        <div class="player-salary">$5500</div>
-                        <div class="player-proj">4.8</div>
-                    </div>
-                </div>
-
-                <div class="position-group">
-                    <div class="position-header">WR - PHI@KC (4:25 PM)</div>
-                    <div class="player-row">
-                        <div class="player-name">H. Brown KC <span class="leverage-indicator">HOT</span></div>
-                        <div class="player-salary">$5200</div>
-                        <div class="player-proj">19.9</div>
-                    </div>
-                    <div class="player-row">
-                        <div class="player-name">A.J. Brown PHI <span class="leverage-indicator high-leverage">MAX LEV</span></div>
-                        <div class="player-salary">$6600</div>
-                        <div class="player-proj">12.4</div>
-                    </div>
-                    <div class="player-row">
-                        <div class="player-name">JuJu Smith-Schuster KC</div>
-                        <div class="player-salary">$4000</div>
-                        <div class="player-proj">10.5</div>
-                    </div>
-                </div>
-
-                <div class="position-group">
-                    <div class="position-header">TE - PHI@KC (4:25 PM)</div>
-                    <div class="player-row">
-                        <div class="player-name">D. Goedert PHI</div>
-                        <div class="player-salary">$3800</div>
-                        <div class="player-proj">11.4</div>
-                    </div>
-                </div>
+        <div class="player-pool">
+          <div class="position-group">
+            <div class="position-header">QB - PHI@KC (4:25 PM)</div>
+            <div class="player-row">
+              <div class="player-name">P. Mahomes KC</div>
+              <div class="player-salary">$6200</div>
+              <div class="player-proj">26.8</div>
             </div>
-
-            <h3>Filters & Settings</h3>
-            <div style="margin-top: 1rem;">
-                <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Contest Type:</label>
-                <select style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
-                    <option>GPP (Tournament)</option>
-                    <option>Cash (Head-to-Head)</option>
-                </select>
+            <div class="player-row">
+              <div class="player-name">J. Hurts PHI</div>
+              <div class="player-salary">$6800</div>
+              <div class="player-proj">24.5</div>
             </div>
+          </div>
+
+          <div class="position-group">
+            <div class="position-header">RB - PHI@KC (4:25 PM)</div>
+            <div class="player-row">
+              <div class="player-name">S. Barkley PHI</div>
+              <div class="player-salary">$8000</div>
+              <div class="player-proj">19.2</div>
+            </div>
+            <div class="player-row">
+              <div class="player-name">I. Pacheco KC</div>
+              <div class="player-salary">$5500</div>
+              <div class="player-proj">4.8</div>
+            </div>
+          </div>
+
+          <div class="position-group">
+            <div class="position-header">WR - PHI@KC (4:25 PM)</div>
+            <div class="player-row">
+              <div class="player-name">
+                H. Brown KC <span class="leverage-indicator">HOT</span>
+              </div>
+              <div class="player-salary">$5200</div>
+              <div class="player-proj">19.9</div>
+            </div>
+            <div class="player-row">
+              <div class="player-name">
+                A.J. Brown PHI
+                <span class="leverage-indicator high-leverage">MAX LEV</span>
+              </div>
+              <div class="player-salary">$6600</div>
+              <div class="player-proj">12.4</div>
+            </div>
+            <div class="player-row">
+              <div class="player-name">JuJu Smith-Schuster KC</div>
+              <div class="player-salary">$4000</div>
+              <div class="player-proj">10.5</div>
+            </div>
+          </div>
+
+          <div class="position-group">
+            <div class="position-header">TE - PHI@KC (4:25 PM)</div>
+            <div class="player-row">
+              <div class="player-name">D. Goedert PHI</div>
+              <div class="player-salary">$3800</div>
+              <div class="player-proj">11.4</div>
+            </div>
+          </div>
         </div>
 
-        <div class="content-area">
-            <div class="news-ticker">
-                🚨 <strong>BREAKING:</strong> Travis Kelce ruled OUT for PHI@KC game. Increases targets for Hollywood Brown and JuJu Smith-Schuster.
-            </div>
-
-            <div class="optimizer-controls">
-                <div class="control-group">
-                    <label>Site:</label>
-                    <select>
-                        <option>DraftKings</option>
-                        <option>FanDuel</option>
-                    </select>
-                </div>
-                
-                <div class="control-group">
-                    <label>Lineups:</label>
-                    <input type="number" value="6" min="1" max="150">
-                </div>
-                
-                <div class="control-group">
-                    <label>Unique Players:</label>
-                    <input type="number" value="6" min="1" max="9">
-                </div>
-                
-                <div class="control-group">
-                    <label>Max Exposure:</label>
-                    <input type="number" value="40" min="1" max="100">%
-                </div>
-
-                <button class="optimize-btn">Generate Optimal Lineups</button>
-            </div>
-
-            <div class="lineups-container">
-                <div class="lineup-header">
-                    Generated Lineups - Late Swap Optimized (PHI@KC Only)
-                </div>
-                
-                <table class="lineup-table">
-                    <thead>
-                        <tr>
-                            <th>Lineup</th>
-                            <th>QB</th>
-                            <th>RB</th>
-                            <th>RB</th>
-                            <th>WR</th>
-                            <th>WR</th>
-                            <th>WR</th>
-                            <th>TE</th>
-                            <th>FLEX</th>
-                            <th>D/ST</th>
-                            <th>Salary</th>
-                            <th>Proj</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="position-col">1</td>
-                            <td>J. Hurts</td>
-                            <td>S. Barkley</td>
-                            <td>T. Benson (L)</td>
-                            <td>A.J. Brown <span class="leverage-indicator high-leverage">LEV</span></td>
-                            <td>J. Dotson</td>
-                            <td>M. Harrison (L)</td>
-                            <td>D. Goedert</td>
-                            <td>J. Taylor (L)</td>
-                            <td>Panthers (L)</td>
-                            <td class="salary-col">$49,800</td>
-                            <td class="proj-col">156.3</td>
-                        </tr>
-                        <tr>
-                            <td class="position-col">2</td>
-                            <td>P. Mahomes</td>
-                            <td>J. Conner (L)</td>
-                            <td>C. Hubbard (L)</td>
-                            <td>H. Brown</td>
-                            <td>JuJu Smith</td>
-                            <td>M. Pittman (L)</td>
-                            <td>T. Warren (L)</td>
-                            <td>J.K. Dobbins (L)</td>
-                            <td>Colts (L)</td>
-                            <td class="salary-col">$48,400</td>
-                            <td class="proj-col">142.7</td>
-                        </tr>
-                        <tr>
-                            <td class="position-col">3</td>
-                            <td>D. Jones (L)</td>
-                            <td>J. Taylor (L)</td>
-                            <td>J.K. Dobbins (L)</td>
-                            <td>A.J. Brown <span class="leverage-indicator high-leverage">LEV</span></td>
-                            <td>H. Brown</td>
-                            <td>M. Harrison (L)</td>
-                            <td>T. Warren (L)</td>
-                            <td>C. Sutton (L)</td>
-                            <td>Colts (L)</td>
-                            <td class="salary-col">$49,900</td>
-                            <td class="proj-col">138.4</td>
-                        </tr>
-                        <tr class="stats-row">
-                            <td colspan="9"><strong>Totals:</strong></td>
-                            <td class="salary-col">$148,100</td>
-                            <td class="proj-col">437.4</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div style="margin-top: 2rem; padding: 1rem; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px;">
-                <h4 style="color: #065f46; margin-bottom: 0.5rem;">🎯 Optimization Summary</h4>
-                <ul style="color: #047857; margin-left: 1.5rem;">
-                    <li><strong>A.J. Brown Leverage:</strong> 9.8/10 - Elite WR1 in 54.5 total shootout</li>
-                    <li><strong>Hollywood Brown:</strong> Highest available projection (19.9 pts)</li>
-                    <li><strong>Kelce Impact:</strong> Ruled out - increases Chiefs passing volume</li>
-                    <li><strong>Late Swap:</strong> Only PHI@KC (4:25 PM) players available</li>
-                </ul>
-            </div>
+        <h3>Filters & Settings</h3>
+        <div style="margin-top: 1rem">
+          <label style="display: block; margin-bottom: 0.5rem; font-weight: bold"
+            >Contest Type:</label
+          >
+          <select
+            style="
+              width: 100%;
+              padding: 0.5rem;
+              border: 1px solid #ddd;
+              border-radius: 4px;
+            "
+          >
+            <option>GPP (Tournament)</option>
+            <option>Cash (Head-to-Head)</option>
+          </select>
         </div>
+      </div>
+
+      <div class="content-area">
+        <div class="news-ticker">
+          🚨 <strong>BREAKING:</strong> Travis Kelce ruled OUT for PHI@KC game.
+          Increases targets for Hollywood Brown and JuJu Smith-Schuster.
+        </div>
+
+        <div class="optimizer-controls">
+          <div class="control-group">
+            <label>Site:</label>
+            <select>
+              <option>DraftKings</option>
+              <option>FanDuel</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label>Lineups:</label>
+            <input type="number" value="6" min="1" max="150" />
+          </div>
+
+          <div class="control-group">
+            <label>Unique Players:</label>
+            <input type="number" value="6" min="1" max="9" />
+          </div>
+
+          <div class="control-group">
+            <label>Max Exposure:</label>
+            <input type="number" value="40" min="1" max="100" />%
+          </div>
+
+          <button class="optimize-btn">Generate Optimal Lineups</button>
+        </div>
+
+        <div class="lineups-container">
+          <div class="lineup-header">
+            Generated Lineups - Late Swap Optimized (PHI@KC Only)
+          </div>
+
+          <table class="lineup-table">
+            <thead>
+              <tr>
+                <th>Lineup</th>
+                <th>QB</th>
+                <th>RB</th>
+                <th>RB</th>
+                <th>WR</th>
+                <th>WR</th>
+                <th>WR</th>
+                <th>TE</th>
+                <th>FLEX</th>
+                <th>D/ST</th>
+                <th>Salary</th>
+                <th>Proj</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="position-col">1</td>
+                <td>J. Hurts</td>
+                <td>S. Barkley</td>
+                <td>T. Benson (L)</td>
+                <td>
+                  A.J. Brown <span class="leverage-indicator high-leverage">LEV</span>
+                </td>
+                <td>J. Dotson</td>
+                <td>M. Harrison (L)</td>
+                <td>D. Goedert</td>
+                <td>J. Taylor (L)</td>
+                <td>Panthers (L)</td>
+                <td class="salary-col">$49,800</td>
+                <td class="proj-col">156.3</td>
+              </tr>
+              <tr>
+                <td class="position-col">2</td>
+                <td>P. Mahomes</td>
+                <td>J. Conner (L)</td>
+                <td>C. Hubbard (L)</td>
+                <td>H. Brown</td>
+                <td>JuJu Smith</td>
+                <td>M. Pittman (L)</td>
+                <td>T. Warren (L)</td>
+                <td>J.K. Dobbins (L)</td>
+                <td>Colts (L)</td>
+                <td class="salary-col">$48,400</td>
+                <td class="proj-col">142.7</td>
+              </tr>
+              <tr>
+                <td class="position-col">3</td>
+                <td>D. Jones (L)</td>
+                <td>J. Taylor (L)</td>
+                <td>J.K. Dobbins (L)</td>
+                <td>
+                  A.J. Brown <span class="leverage-indicator high-leverage">LEV</span>
+                </td>
+                <td>H. Brown</td>
+                <td>M. Harrison (L)</td>
+                <td>T. Warren (L)</td>
+                <td>C. Sutton (L)</td>
+                <td>Colts (L)</td>
+                <td class="salary-col">$49,900</td>
+                <td class="proj-col">138.4</td>
+              </tr>
+              <tr class="stats-row">
+                <td colspan="9"><strong>Totals:</strong></td>
+                <td class="salary-col">$148,100</td>
+                <td class="proj-col">437.4</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div
+          style="
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+          "
+        >
+          <h4 style="color: #065f46; margin-bottom: 0.5rem">🎯 Optimization Summary</h4>
+          <ul style="color: #047857; margin-left: 1.5rem">
+            <li>
+              <strong>A.J. Brown Leverage:</strong> 9.8/10 - Elite WR1 in 54.5 total
+              shootout
+            </li>
+            <li>
+              <strong>Hollywood Brown:</strong> Highest available projection (19.9 pts)
+            </li>
+            <li>
+              <strong>Kelce Impact:</strong> Ruled out - increases Chiefs passing volume
+            </li>
+            <li><strong>Late Swap:</strong> Only PHI@KC (4:25 PM) players available</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <script>
-        // RotoWire-style functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('RotoWire-inspired DFS Optimizer loaded');
-            
-            // Player row click handlers
-            document.querySelectorAll('.player-row').forEach(row => {
-                row.addEventListener('click', function() {
-                    this.style.background = this.style.background === 'rgb(219, 234, 254)' ? '' : '#dbeafe';
-                });
-            });
-            
-            // Optimize button
-            document.querySelector('.optimize-btn').addEventListener('click', function() {
-                alert('🚀 Optimization complete! Your DKEntries (7).csv has been updated with the best PHI@KC late swap options.');
-            });
+      // RotoWire-style functionality
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('RotoWire-inspired DFS Optimizer loaded');
+
+        // Player row click handlers
+        document.querySelectorAll('.player-row').forEach(row => {
+          row.addEventListener('click', function () {
+            this.style.background =
+              this.style.background === 'rgb(219, 234, 254)' ? '' : '#dbeafe';
+          });
         });
+
+        // Optimize button
+        document.querySelector('.optimize-btn').addEventListener('click', function () {
+          alert(
+            '🚀 Optimization complete! Your DKEntries (7).csv has been updated with the best PHI@KC late swap options.'
+          );
+        });
+      });
     </script>
-</body>
+  </body>
 </html>

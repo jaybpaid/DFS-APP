@@ -1,0 +1,13 @@
+{
+  "name": "claude-flow-mcp",
+  "version": "1.0.0",
+  "description": "Claude Flow MCP Server for workflow management and automation",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.1"
+  }
+}

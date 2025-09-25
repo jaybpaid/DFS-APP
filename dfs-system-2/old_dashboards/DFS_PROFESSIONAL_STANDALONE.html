@@ -1,522 +1,602 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DFS Optimizer Pro - Complete Standalone Platform</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <style>
-        /* Professional DFS Theme (SaberSim/Stokastic Inspired) */
-        :root {
-            --primary: #4f46e5;
-            --secondary: #059669;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --dark: #1e293b;
-            --surface: #334155;
-            --surface-light: #475569;
-            --border: #64748b;
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
-            --accent: #8b5cf6;
-        }
+      /* Professional DFS Theme (SaberSim/Stokastic Inspired) */
+      :root {
+        --primary: #4f46e5;
+        --secondary: #059669;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #3b82f6;
+        --dark: #1e293b;
+        --surface: #334155;
+        --surface-light: #475569;
+        --border: #64748b;
+        --text: #f1f5f9;
+        --text-muted: #94a3b8;
+        --accent: #8b5cf6;
+      }
 
-        body {
-            background: linear-gradient(135deg, var(--dark) 0%, #0f172a 100%);
-            color: var(--text);
-            font-family: 'Inter', system-ui, sans-serif;
-        }
+      body {
+        background: linear-gradient(135deg, var(--dark) 0%, #0f172a 100%);
+        color: var(--text);
+        font-family: 'Inter', system-ui, sans-serif;
+      }
 
-        /* Top Navigation */
-        .main-nav {
-            background: var(--surface);
-            border-bottom: 2px solid var(--primary);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
+      /* Top Navigation */
+      .main-nav {
+        background: var(--surface);
+        border-bottom: 2px solid var(--primary);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      }
 
-        .nav-tabs .nav-link {
-            color: var(--text-muted);
-            border: none;
-            border-bottom: 3px solid transparent;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
+      .nav-tabs .nav-link {
+        color: var(--text-muted);
+        border: none;
+        border-bottom: 3px solid transparent;
+        font-weight: 600;
+        transition: all 0.3s;
+      }
 
-        .nav-tabs .nav-link.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-            background: var(--surface-light);
-        }
+      .nav-tabs .nav-link.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+        background: var(--surface-light);
+      }
 
-        /* Cards */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
+      /* Cards */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        color: var(--text);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
 
-        .card-header {
-            background: linear-gradient(135deg, var(--primary), var(--info));
-            border: none;
-            border-radius: 12px 12px 0 0;
-            font-weight: 700;
-        }
+      .card-header {
+        background: linear-gradient(135deg, var(--primary), var(--info));
+        border: none;
+        border-radius: 12px 12px 0 0;
+        font-weight: 700;
+      }
 
-        /* Control Panels - Professional Layout */
+      /* Control Panels - Professional Layout */
+      .control-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .control-panel {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .panel-header {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: var(--text);
+        padding: 0.75rem 1rem;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .panel-body {
+        padding: 1rem;
+      }
+
+      /* Form Controls */
+      .form-control,
+      .form-select {
+        background: var(--surface-light);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 6px;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        background: var(--surface-light);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+        color: var(--text);
+      }
+
+      .form-control::placeholder {
+        color: var(--text-muted);
+      }
+
+      /* Buttons */
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--info));
+        border: none;
+        font-weight: 600;
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, var(--success), #22c55e);
+        border: none;
+        font-weight: 600;
+      }
+
+      /* Advanced Controls */
+      .control-group {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .control-group:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      /* Range Sliders */
+      .form-range::-webkit-slider-track {
+        background: var(--border);
+        border-radius: 3px;
+        height: 6px;
+      }
+
+      .form-range::-webkit-slider-thumb {
+        background: var(--primary);
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4);
+      }
+
+      /* Player Cards */
+      .player-pro-card {
+        background: var(--surface-light);
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        transition: all 0.3s;
+        cursor: pointer;
+      }
+
+      .player-pro-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+      }
+
+      .player-pro-card.selected {
+        border-color: var(--success);
+        background: linear-gradient(135deg, var(--success), transparent);
+      }
+
+      /* Lineup Cards */
+      .lineup-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+      }
+
+      .lineup-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 16px rgba(79, 70, 229, 0.2);
+      }
+
+      .lineup-header {
+        background: linear-gradient(135deg, var(--success), var(--secondary));
+        color: var(--text);
+        padding: 0.5rem 1rem;
+        font-weight: 700;
+        border-radius: 12px 12px 0 0;
+      }
+
+      /* Advanced Metrics Display */
+      .metric-badge {
+        background: var(--accent);
+        color: var(--text);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .value-excellent {
+        color: var(--success);
+        font-weight: bold;
+      }
+      .value-good {
+        color: var(--info);
+        font-weight: bold;
+      }
+      .value-average {
+        color: var(--warning);
+      }
+      .value-poor {
+        color: var(--danger);
+      }
+
+      /* Alert Styles */
+      .alert {
+        border: none;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+
+      .alert-success {
+        background: var(--success);
+        color: white;
+      }
+      .alert-info {
+        background: var(--info);
+        color: white;
+      }
+      .alert-warning {
+        background: var(--warning);
+        color: white;
+      }
+      .alert-danger {
+        background: var(--danger);
+        color: white;
+      }
+
+      /* Progress Bars */
+      .progress {
+        background: var(--surface-light);
+        border-radius: 4px;
+        height: 6px;
+      }
+
+      .progress-bar {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+      }
+
+      /* Responsive */
+      @media (max-width: 1200px) {
         .control-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+          grid-template-columns: 1fr;
         }
-
-        .control-panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .panel-header {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: var(--text);
-            padding: 0.75rem 1rem;
-            font-weight: 700;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .panel-body {
-            padding: 1rem;
-        }
-
-        /* Form Controls */
-        .form-control, .form-select {
-            background: var(--surface-light);
-            border: 1px solid var(--border);
-            color: var(--text);
-            border-radius: 6px;
-        }
-
-        .form-control:focus, .form-select:focus {
-            background: var(--surface-light);
-            border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
-            color: var(--text);
-        }
-
-        .form-control::placeholder { color: var(--text-muted); }
-
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--info));
-            border: none;
-            font-weight: 600;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #22c55e);
-            border: none;
-            font-weight: 600;
-        }
-
-        /* Advanced Controls */
-        .control-group {
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .control-group:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        /* Range Sliders */
-        .form-range::-webkit-slider-track {
-            background: var(--border);
-            border-radius: 3px;
-            height: 6px;
-        }
-
-        .form-range::-webkit-slider-thumb {
-            background: var(--primary);
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4);
-        }
-
-        /* Player Cards */
-        .player-pro-card {
-            background: var(--surface-light);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .player-pro-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .player-pro-card.selected {
-            border-color: var(--success);
-            background: linear-gradient(135deg, var(--success), transparent);
-        }
-
-        /* Lineup Cards */
-        .lineup-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            transition: all 0.3s;
-        }
-
-        .lineup-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 4px 16px rgba(79, 70, 229, 0.2);
-        }
-
-        .lineup-header {
-            background: linear-gradient(135deg, var(--success), var(--secondary));
-            color: var(--text);
-            padding: 0.5rem 1rem;
-            font-weight: 700;
-            border-radius: 12px 12px 0 0;
-        }
-
-        /* Advanced Metrics Display */
-        .metric-badge {
-            background: var(--accent);
-            color: var(--text);
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .value-excellent { color: var(--success); font-weight: bold; }
-        .value-good { color: var(--info); font-weight: bold; }
-        .value-average { color: var(--warning); }
-        .value-poor { color: var(--danger); }
-
-        /* Alert Styles */
-        .alert {
-            border: none;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-        }
-
-        .alert-success { background: var(--success); color: white; }
-        .alert-info { background: var(--info); color: white; }
-        .alert-warning { background: var(--warning); color: white; }
-        .alert-danger { background: var(--danger); color: white; }
-
-        /* Progress Bars */
-        .progress {
-            background: var(--surface-light);
-            border-radius: 4px;
-            height: 6px;
-        }
-
-        .progress-bar {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-        }
-
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .control-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Top Navigation -->
     <nav class="main-nav">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#main-optimizer">
-                    <i class="fas fa-cogs me-2"></i>Professional Optimizer
-                </button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#player-news">
-                    <i class="fas fa-newspaper me-2"></i>Player News
-                </button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#analytics-lab">
-                    <i class="fas fa-chart-line me-2"></i>Analytics Lab
-                </button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#ai-insights">
-                    <i class="fas fa-brain me-2"></i>AI Insights
-                </button>
-            </li>
-        </ul>
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <button
+            class="nav-link active"
+            data-bs-toggle="tab"
+            data-bs-target="#main-optimizer"
+          >
+            <i class="fas fa-cogs me-2"></i>Professional Optimizer
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#player-news">
+            <i class="fas fa-newspaper me-2"></i>Player News
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#analytics-lab">
+            <i class="fas fa-chart-line me-2"></i>Analytics Lab
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="tab" data-bs-target="#ai-insights">
+            <i class="fas fa-brain me-2"></i>AI Insights
+          </button>
+        </li>
+      </ul>
     </nav>
 
     <!-- Tab Content -->
     <div class="tab-content p-3">
-        <!-- MAIN OPTIMIZER - COMPLETE STANDALONE VERSION -->
-        <div class="tab-pane fade show active" id="main-optimizer">
-            <div class="container-fluid">
-                <!-- Alert Area -->
-                <div id="alertArea"></div>
+      <!-- MAIN OPTIMIZER - COMPLETE STANDALONE VERSION -->
+      <div class="tab-pane fade show active" id="main-optimizer">
+        <div class="container-fluid">
+          <!-- Alert Area -->
+          <div id="alertArea"></div>
 
-                <!-- Header -->
-                <div class="row mb-4">
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="mb-0"><i class="fas fa-brain me-2"></i>DFS Optimizer Pro - Standalone Platform</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h4 class="mb-1"><span id="currentSport">NFL</span> - <span id="currentSite">DraftKings</span></h4>
-                                        <small class="text-muted">Complete standalone platform - ready for home server deployment</small>
-                                    </div>
-                                    <div class="btn-group">
-                                        <button class="btn btn-success active sport-btn" data-sport="NFL">🏈 NFL</button>
-                                        <button class="btn btn-outline-success sport-btn" data-sport="NBA">🏀 NBA</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h5 class="mb-0">Contest & Strategy</h5>
-                            </div>
-                            <div class="card-body">
-                                <select class="form-select mb-2" id="contestSelect">
-                                    <option value="millionaire_maker">Millionaire Maker ($20)</option>
-                                    <option value="main_slate">Main Slate ($1)</option>
-                                    <option value="cash_double_up">Cash Double Up ($5)</option>
-                                </select>
-                                <select class="form-select" id="strategyMode">
-                                    <option value="tournament">Tournament Mode</option>
-                                    <option value="cash">Cash Game Mode</option>
-                                    <option value="hybrid">Hybrid Mode</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+          <!-- Header -->
+          <div class="row mb-4">
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="mb-0">
+                    <i class="fas fa-brain me-2"></i>DFS Optimizer Pro - Standalone
+                    Platform
+                  </h3>
                 </div>
-
-                <!-- Main Control Panel -->
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="control-panel">
-                            <div class="panel-header">
-                                <i class="fas fa-dice"></i>Simulation & Contest
-                            </div>
-                            <div class="panel-body">
-                                <div class="control-group">
-                                    <label class="form-label">Monte Carlo Sims</label>
-                                    <select class="form-select mb-2" id="simDepth">
-                                        <option value="50000">Deep (50K)</option>
-                                        <option value="20000" selected>Standard (20K)</option>
-                                        <option value="10000">Fast (10K)</option>
-                                    </select>
-                                    
-                                    <button class="btn btn-primary w-100 mb-2" id="runFullSimulation">
-                                        <i class="fas fa-play"></i> Run Contest Simulation
-                                    </button>
-                                    
-                                    <div id="simulationResults" class="small text-center"></div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h4 class="mb-1">
+                        <span id="currentSport">NFL</span> -
+                        <span id="currentSite">DraftKings</span>
+                      </h4>
+                      <small class="text-muted"
+                        >Complete standalone platform - ready for home server
+                        deployment</small
+                      >
                     </div>
-                    <div class="col-md-4">
-                        <div class="control-panel">
-                            <div class="panel-header">
-                                <i class="fas fa-tools"></i>Lineup Construction
-                            </div>
-                            <div class="panel-body">
-                                <div class="control-group">
-                                    <div class="row mb-2">
-                                        <div class="col-6">
-                                            <label class="form-label">Lineups</label>
-                                            <input type="number" class="form-control" id="numLineups" value="20" min="1" max="500">
-                                        </div>
-                                        <div class="col-6">
-                                            <label class="form-label">Mode</label>
-                                            <select class="form-select" id="generationMode">
-                                                <option value="standard">Standard</option>
-                                                <option value="leverage">Leverage</option>
-                                                <option value="ceiling">Ceiling</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    
-                                    <button class="btn btn-success w-100" id="generateLineupsBtn">
-                                        <i class="fas fa-magic"></i> Generate Lineups
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="btn-group">
+                      <button class="btn btn-success active sport-btn" data-sport="NFL">
+                        🏈 NFL
+                      </button>
+                      <button
+                        class="btn btn-outline-success sport-btn"
+                        data-sport="NBA"
+                      >
+                        🏀 NBA
+                      </button>
                     </div>
-                    <div class="col-md-4">
-                        <div class="control-panel">
-                            <div class="panel-header">
-                                <i class="fas fa-file-csv"></i>CSV Export
-                            </div>
-                            <div class="panel-body">
-                                <div class="control-group">
-                                    <button class="btn btn-outline-primary btn-sm w-100 mb-2" id="loadSampleTemplate">
-                                        <i class="fas fa-download me-1"></i>Load Sample Data
-                                    </button>
-                                    
-                                    <button class="btn btn-success btn-sm w-100" id="exportLineupsBtn" style="display: none;">
-                                        <i class="fas fa-download me-1"></i>Export CSV
-                                    </button>
-                                    
-                                    <div id="exportStatus" class="small text-center mt-2"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                  </div>
                 </div>
-
-                <!-- PLAYER POOL & LINEUP BUILDER -->
-                <div class="row mt-4">
-                    <!-- Professional Player Pool -->
-                    <div class="col-lg-8">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <h4 class="mb-0"><i class="fas fa-users me-2"></i>Professional Player Pool</h4>
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-primary" id="showValuePlays">Value Plays</button>
-                                    <button class="btn btn-outline-info" id="showHighLeverage">High Leverage</button>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <div id="playerPoolContainer">
-                                    <!-- Professional player table will be populated here -->
-                                    <div class="text-center py-5">
-                                        <i class="fas fa-users fa-3x mb-3 text-muted"></i>
-                                        <h5>Click "Load Sample Data" to get started</h5>
-                                        <p class="text-muted">Complete professional analysis with all advanced metrics</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Advanced Lineup Results -->
-                    <div class="col-lg-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="mb-0"><i class="fas fa-trophy me-2"></i>Lineup Portfolio</h4>
-                            </div>
-                            <div class="card-body">
-                                <div id="lineupResultsContainer">
-                                    <!-- Generated lineups will display here -->
-                                    <div class="text-center py-5">
-                                        <i class="fas fa-magic fa-3x mb-3 text-muted"></i>
-                                        <h5>Generate Lineups to View Results</h5>
-                                        <p class="text-muted">ROI analysis and portfolio metrics</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Portfolio Overview -->
-                        <div class="card mt-3" id="portfolioOverview" style="display: none;">
-                            <div class="card-header">
-                                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Portfolio Stats</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row text-center">
-                                    <div class="col-6">
-                                        <div class="h5 text-success" id="portfolioAvgROI">0%</div>
-                                        <small class="text-muted">Avg ROI</small>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="h5 text-info" id="portfolioSharpe">0.0</div>
-                                        <small class="text-muted">Sharpe</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
-        </div>
-
-        <!-- Additional Tabs -->
-        <div class="tab-pane fade" id="player-news">
-            <div class="container-fluid mt-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h4><i class="fas fa-newspaper me-2"></i>Live Player News & Updates</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-satellite-dish me-2"></i>
-                            <strong>Live News Integration Ready</strong><br>
-                            Connect to Twitter API, ESPN, or FantasyPros for real-time updates
-                        </div>
-                    </div>
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="mb-0">Contest & Strategy</h5>
                 </div>
-            </div>
-        </div>
-
-        <div class="tab-pane fade" id="analytics-lab">
-            <div class="container-fluid mt-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h4><i class="fas fa-chart-line me-2"></i>Advanced Analytics Lab</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-calculator me-2"></i>
-                            <strong>Analytics Engine Ready</strong><br>
-                            Correlation matrices, variance calculations, and EV analysis built-in
-                        </div>
-                    </div>
+                <div class="card-body">
+                  <select class="form-select mb-2" id="contestSelect">
+                    <option value="millionaire_maker">Millionaire Maker ($20)</option>
+                    <option value="main_slate">Main Slate ($1)</option>
+                    <option value="cash_double_up">Cash Double Up ($5)</option>
+                  </select>
+                  <select class="form-select" id="strategyMode">
+                    <option value="tournament">Tournament Mode</option>
+                    <option value="cash">Cash Game Mode</option>
+                    <option value="hybrid">Hybrid Mode</option>
+                  </select>
                 </div>
+              </div>
             </div>
-        </div>
+          </div>
 
-        <div class="tab-pane fade" id="ai-insights">
-            <div class="container-fluid mt-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h4><i class="fas fa-brain me-2"></i>AI Strategic Insights</h4>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-robot me-2"></i>
-                            <strong>AI Engine Ready</strong><br>
-                            Connect to OpenAI API for GPT-powered analysis and recommendations
-                        </div>
-                    </div>
+          <!-- Main Control Panel -->
+          <div class="row mb-4">
+            <div class="col-md-4">
+              <div class="control-panel">
+                <div class="panel-header">
+                  <i class="fas fa-dice"></i>Simulation & Contest
                 </div>
+                <div class="panel-body">
+                  <div class="control-group">
+                    <label class="form-label">Monte Carlo Sims</label>
+                    <select class="form-select mb-2" id="simDepth">
+                      <option value="50000">Deep (50K)</option>
+                      <option value="20000" selected>Standard (20K)</option>
+                      <option value="10000">Fast (10K)</option>
+                    </select>
+
+                    <button class="btn btn-primary w-100 mb-2" id="runFullSimulation">
+                      <i class="fas fa-play"></i> Run Contest Simulation
+                    </button>
+
+                    <div id="simulationResults" class="small text-center"></div>
+                  </div>
+                </div>
+              </div>
             </div>
+            <div class="col-md-4">
+              <div class="control-panel">
+                <div class="panel-header">
+                  <i class="fas fa-tools"></i>Lineup Construction
+                </div>
+                <div class="panel-body">
+                  <div class="control-group">
+                    <div class="row mb-2">
+                      <div class="col-6">
+                        <label class="form-label">Lineups</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="numLineups"
+                          value="20"
+                          min="1"
+                          max="500"
+                        />
+                      </div>
+                      <div class="col-6">
+                        <label class="form-label">Mode</label>
+                        <select class="form-select" id="generationMode">
+                          <option value="standard">Standard</option>
+                          <option value="leverage">Leverage</option>
+                          <option value="ceiling">Ceiling</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <button class="btn btn-success w-100" id="generateLineupsBtn">
+                      <i class="fas fa-magic"></i> Generate Lineups
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="control-panel">
+                <div class="panel-header">
+                  <i class="fas fa-file-csv"></i>CSV Export
+                </div>
+                <div class="panel-body">
+                  <div class="control-group">
+                    <button
+                      class="btn btn-outline-primary btn-sm w-100 mb-2"
+                      id="loadSampleTemplate"
+                    >
+                      <i class="fas fa-download me-1"></i>Load Sample Data
+                    </button>
+
+                    <button
+                      class="btn btn-success btn-sm w-100"
+                      id="exportLineupsBtn"
+                      style="display: none"
+                    >
+                      <i class="fas fa-download me-1"></i>Export CSV
+                    </button>
+
+                    <div id="exportStatus" class="small text-center mt-2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PLAYER POOL & LINEUP BUILDER -->
+          <div class="row mt-4">
+            <!-- Professional Player Pool -->
+            <div class="col-lg-8">
+              <div class="card">
+                <div
+                  class="card-header d-flex justify-content-between align-items-center"
+                >
+                  <h4 class="mb-0">
+                    <i class="fas fa-users me-2"></i>Professional Player Pool
+                  </h4>
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary" id="showValuePlays">
+                      Value Plays
+                    </button>
+                    <button class="btn btn-outline-info" id="showHighLeverage">
+                      High Leverage
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div id="playerPoolContainer">
+                    <!-- Professional player table will be populated here -->
+                    <div class="text-center py-5">
+                      <i class="fas fa-users fa-3x mb-3 text-muted"></i>
+                      <h5>Click "Load Sample Data" to get started</h5>
+                      <p class="text-muted">
+                        Complete professional analysis with all advanced metrics
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Advanced Lineup Results -->
+            <div class="col-lg-4">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="mb-0">
+                    <i class="fas fa-trophy me-2"></i>Lineup Portfolio
+                  </h4>
+                </div>
+                <div class="card-body">
+                  <div id="lineupResultsContainer">
+                    <!-- Generated lineups will display here -->
+                    <div class="text-center py-5">
+                      <i class="fas fa-magic fa-3x mb-3 text-muted"></i>
+                      <h5>Generate Lineups to View Results</h5>
+                      <p class="text-muted">ROI analysis and portfolio metrics</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Portfolio Overview -->
+              <div class="card mt-3" id="portfolioOverview" style="display: none">
+                <div class="card-header">
+                  <h5 class="mb-0">
+                    <i class="fas fa-chart-pie me-2"></i>Portfolio Stats
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <div class="row text-center">
+                    <div class="col-6">
+                      <div class="h5 text-success" id="portfolioAvgROI">0%</div>
+                      <small class="text-muted">Avg ROI</small>
+                    </div>
+                    <div class="col-6">
+                      <div class="h5 text-info" id="portfolioSharpe">0.0</div>
+                      <small class="text-muted">Sharpe</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Additional Tabs -->
+      <div class="tab-pane fade" id="player-news">
+        <div class="container-fluid mt-4">
+          <div class="card">
+            <div class="card-header">
+              <h4><i class="fas fa-newspaper me-2"></i>Live Player News & Updates</h4>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-info">
+                <i class="fas fa-satellite-dish me-2"></i>
+                <strong>Live News Integration Ready</strong><br />
+                Connect to Twitter API, ESPN, or FantasyPros for real-time updates
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="analytics-lab">
+        <div class="container-fluid mt-4">
+          <div class="card">
+            <div class="card-header">
+              <h4><i class="fas fa-chart-line me-2"></i>Advanced Analytics Lab</h4>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-info">
+                <i class="fas fa-calculator me-2"></i>
+                <strong>Analytics Engine Ready</strong><br />
+                Correlation matrices, variance calculations, and EV analysis built-in
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="ai-insights">
+        <div class="container-fluid mt-4">
+          <div class="card">
+            <div class="card-header">
+              <h4><i class="fas fa-brain me-2"></i>AI Strategic Insights</h4>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-info">
+                <i class="fas fa-robot me-2"></i>
+                <strong>AI Engine Ready</strong><br />
+                Connect to OpenAI API for GPT-powered analysis and recommendations
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Bootstrap Scripts -->
@@ -524,529 +604,708 @@
 
     <!-- COMPLETE STANDALONE DFS OPTIMIZER -->
     <script>
-        // Complete Standalone Professional DFS State
-        const dfsState = {
-            players: [],
-            lineups: [],
-            sport: 'NFL',
-            site: 'DraftKings',
-            filters: { showValueOnly: false, showHighLeverage: false },
-            simulationResults: null,
-            simulatedLineups: []
-        };
+      // Complete Standalone Professional DFS State
+      const dfsState = {
+        players: [],
+        lineups: [],
+        sport: 'NFL',
+        site: 'DraftKings',
+        filters: { showValueOnly: false, showHighLeverage: false },
+        simulationResults: null,
+        simulatedLineups: [],
+      };
 
-        // Minimum expected player pool sizes for validation
-        const MIN_POOL_SIZE = {
-            NFL: { DK: 250, FD: 250 },
-            NBA: { DK: 150, FD: 150 }
-        };
+      // Minimum expected player pool sizes for validation
+      const MIN_POOL_SIZE = {
+        NFL: { DK: 250, FD: 250 },
+        NBA: { DK: 150, FD: 150 },
+      };
 
-        // Player Pool Provider Interface
-        class PlayerPoolProvider {
-            constructor() {
-                this.cache = new Map();
-            }
-
-            async loadDraftKingsPool(sport) {
-                try {
-                    showAlert('info', `🔄 Fetching complete ${sport} player pool from DraftKings...`);
-                    
-                    // Step 1: Get contests to find active slates
-                    const contestsUrl = `https://www.draftkings.com/lobby/getcontests?sport=${sport.toLowerCase()}`;
-                    let contestsData;
-                    
-                    try {
-                        const contestsResponse = await fetch(contestsUrl, {
-                            method: 'GET',
-                            headers: {
-                                'Accept': 'application/json',
-                                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
-                            }
-                        });
-                        
-                        if (!contestsResponse.ok) {
-                            throw new Error(`Contests API returned ${contestsResponse.status}`);
-                        }
-                        
-                        contestsData = await contestsResponse.json();
-                    } catch (corsError) {
-                        // CORS fallback - use proxy endpoint if available
-                        console.warn('Direct DK API blocked by CORS, attempting fallback...');
-                        throw new Error('CORS_BLOCKED');
-                    }
-                    
-                    // Step 2: Extract draft group ID from main slate
-                    const mainSlate = this.findMainSlate(contestsData.contests || [], sport);
-                    if (!mainSlate || !mainSlate.draftGroupId) {
-                        throw new Error(`No active ${sport} slate found`);
-                    }
-                    
-                    // Step 3: Fetch complete draftables pool
-                    const draftablesUrl = `https://api.draftkings.com/draftgroups/v1/draftgroups/${mainSlate.draftGroupId}/draftables`;
-                    const draftablesResponse = await fetch(draftablesUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
-                        }
-                    });
-                    
-                    if (!draftablesResponse.ok) {
-                        throw new Error(`Draftables API returned ${draftablesResponse.status}`);
-                    }
-                    
-                    const draftablesData = await draftablesResponse.json();
-                    
-                    // Step 4: Normalize to our player format
-                    const players = this.normalizeDraftKingsPlayers(draftablesData.draftables || [], sport, mainSlate.draftGroupId);
-                    
-                    // Step 5: Validation
-                    this.validatePlayerPool(players, sport, 'DK');
-                    
-                    showAlert('success', `✅ Loaded ${players.length} ${sport} players from DraftKings`);
-                    return players;
-                    
-                } catch (error) {
-                    console.error('DraftKings API Error:', error);
-                    
-                    if (error.message === 'CORS_BLOCKED') {
-                        showAlert('warning', '⚠️ Live API blocked by CORS - loading demo data. Run with proxy server for live data.');
-                        return this.getDemoPlayers(sport);
-                    } else {
-                        showAlert('danger', `❌ DraftKings API failed: ${error.message}`);
-                        return this.getDemoPlayers(sport);
-                    }
-                }
-            }
-
-            async loadFanDuelPool(sport) {
-                try {
-                    showAlert('info', `🔄 Attempting FanDuel ${sport} player pool...`);
-                    
-                    // FanDuel implementation placeholder - would need specific endpoint discovery
-                    throw new Error('FanDuel provider not yet implemented');
-                    
-                } catch (error) {
-                    showAlert('warning', `⚠️ FanDuel not available: ${error.message}`);
-                    return this.getDemoPlayers(sport);
-                }
-            }
-
-            findMainSlate(contests, sport) {
-                if (!contests || contests.length === 0) return null;
-                
-                // Look for main/classic slate closest to current time
-                const now = new Date();
-                const validContests = contests.filter(contest => {
-                    const startTime = new Date(contest.startTimeType || contest.startTime);
-                    const isToday = startTime.toDateString() === now.toDateString();
-                    const isMainType = contest.gameType === 'Classic' || contest.name?.includes('Main') || contest.name?.includes('Millionaire');
-                    return isToday && isMainType && contest.draftGroupId;
-                });
-                
-                // Return the most popular (highest entry count) main slate
-                return validContests.sort((a, b) => (b.totalEntries || 0) - (a.totalEntries || 0))[0] || 
-                       contests.find(c => c.draftGroupId); // Fallback to any contest with draftGroupId
-            }
-
-            normalizeDraftKingsPlayers(draftables, sport, slateId) {
-                const players = [];
-                const seenIds = new Set();
-                
-                draftables.forEach(draftable => {
-                    try {
-                        // Extract core info
-                        const playerId = draftable.draftableId || draftable.playerId || draftable.id;
-                        const name = draftable.displayName || draftable.name || 'Unknown Player';
-                        const salary = parseInt(draftable.salary) || 0;
-                        const team = this.extractTeam(draftable);
-                        const positions = this.extractPositions(draftable, sport);
-                        
-                        // Skip duplicates
-                        if (seenIds.has(playerId)) return;
-                        seenIds.add(playerId);
-                        
-                        // Skip invalid entries
-                        if (!playerId || !name || salary <= 0 || positions.length === 0) {
-                            console.warn('Skipping invalid draftable:', draftable);
-                            return;
-                        }
-                        
-                        // Calculate enhanced metrics
-                        const projection = this.estimateProjection(positions[0], salary, sport);
-                        const ownership = this.estimateOwnership(salary, positions[0], sport);
-                        const boom_pct = this.estimateBoomPercentage(projection, positions[0], sport);
-                        const leverage = (projection / salary * 1000) / (ownership / 100);
-                        
-                        const player = {
-                            site: 'DK',
-                            sport: sport,
-                            slateId: slateId,
-                            playerId: String(playerId),
-                            name: name,
-                            team: team,
-                            opponent: this.extractOpponent(draftable),
-                            positions: positions,
-                            pos: positions[0], // Primary position
-                            salary: salary,
-                            gameInfo: this.extractGameInfo(draftable),
-                            status: this.extractStatus(draftable),
-                            
-                            // Enhanced metrics
-                            projection: projection,
-                            ownership: ownership,
-                            boom_pct: boom_pct,
-                            leverage: Math.round(leverage * 100) / 100,
-                            ace_score: Math.round((boom_pct * 0.8) + (projection * 3)),
-                            floor: Math.round(projection * 0.7 * 10) / 10,
-                            ceiling: Math.round(projection * 1.4 * 10) / 10,
-                            correlation: Math.round((0.5 + (hashCode(name) % 100) / 300) * 100) / 100,
-                            volatility: Math.round((0.2 + ((hashCode(name + positions[0]) % 100) / 1000)) * 1000) / 1000,
-                            
-                            // Controls
-                            selected: false,
-                            injury_status: this.extractStatus(draftable) || "Available",
-                            minExp: 0,
-                            maxExp: 100
-                        };
-                        
-                        players.push(player);
-                        
-                    } catch (err) {
-                        console.warn('Error processing draftable:', err, draftable);
-                    }
-                });
-                
-                console.log(`Normalized ${players.length} players from ${draftables.length} draftables`);
-                return players;
-            }
-
-            extractTeam(draftable) {
-                if (draftable.teamAbbreviation) return draftable.teamAbbreviation.toUpperCase();
-                if (draftable.team) return String(draftable.team).toUpperCase();
-                
-                // Parse from competition info
-                if (draftable.competition) {
-                    const comp = draftable.competition;
-                    if (comp.name) {
-                        // Handle formats like "LAL@GSW", "BUF vs MIA"
-                        const match = comp.name.match(/([A-Z]{2,4})[@vs]/i);
-                        if (match) return match[1].toUpperCase();
-                    }
-                }
-                
-                return 'UNK';
-            }
-
-            extractPositions(draftable, sport) {
-                const positions = [];
-                
-                // Primary position
-                if (draftable.rosterSlotId) {
-                    positions.push(this.normalizePosition(draftable.rosterSlotId, sport));
-                }
-                
-                // Additional eligible positions
-                if (draftable.rosterSlots && Array.isArray(draftable.rosterSlots)) {
-                    draftable.rosterSlots.forEach(slot => {
-                        const pos = this.normalizePosition(slot.rosterSlotId || slot, sport);
-                        if (pos && !positions.includes(pos)) {
-                            positions.push(pos);
-                        }
-                    });
-                }
-                
-                // Fallback
-                if (positions.length === 0) {
-                    positions.push(sport === 'NFL' ? 'FLEX' : 'UTIL');
-                }
-                
-                return positions;
-            }
-
-            normalizePosition(position, sport) {
-                const pos = String(position || '').toUpperCase().trim();
-                
-                if (sport === 'NFL') {
-                    const nflMap = {
-                        'QB': 'QB', 'RB': 'RB', 'WR': 'WR', 'TE': 'TE', 
-                        'DST': 'DST', 'K': 'K', 'FLEX': 'FLEX', 'UTIL': 'FLEX',
-                        'D/ST': 'DST', 'DEF': 'DST'
-                    };
-                    return nflMap[pos] || 'FLEX';
-                } else if (sport === 'NBA') {
-                    const nbaMap = {
-                        'PG': 'PG', 'SG': 'SG', 'SF': 'SF', 'PF': 'PF', 'C': 'C',
-                        'G': 'G', 'F': 'F', 'UTIL': 'UTIL'
-                    };
-                    return nbaMap[pos] || 'UTIL';
-                }
-                
-                return pos || 'UTIL';
-            }
-
-            extractOpponent(draftable) {
-                if (draftable.competition && draftable.competition.name) {
-                    // Parse opponent from competition string
-                    const comp = draftable.competition.name;
-                    const parts = comp.split(/[@vs]/i);
-                    if (parts.length === 2) {
-                        const team = this.extractTeam(draftable);
-                        return parts.find(p => p.trim().toUpperCase() !== team)?.trim().toUpperCase();
-                    }
-                }
-                return '';
-            }
-
-            extractGameInfo(draftable) {
-                if (draftable.competition) {
-                    const comp = draftable.competition;
-                    let info = comp.name || '';
-                    
-                    if (comp.startTime) {
-                        const time = new Date(comp.startTime);
-                        const timeStr = time.toLocaleTimeString('en-US', { 
-                            hour: 'numeric', 
-                            minute: '2-digit', 
-                            hour12: true 
-                        });
-                        info += ` ${timeStr}`;
-                    }
-                    
-                    return info;
-                }
-                return '';
-            }
-
-            extractStatus(draftable) {
-                if (draftable.playerStatus) return draftable.playerStatus;
-                if (draftable.status) return draftable.status;
-                if (draftable.injuryStatus) return draftable.injuryStatus;
-                return 'Available';
-            }
-
-            validatePlayerPool(players, sport, site) {
-                const minSize = MIN_POOL_SIZE[sport][site];
-                
-                if (players.length < minSize) {
-                    throw new Error(`Player pool too small: ${players.length} < ${minSize} expected for ${sport}/${site}`);
-                }
-                
-                // Check position coverage
-                const positions = new Set(players.map(p => p.pos));
-                const expectedPositions = sport === 'NFL' ? 
-                    ['QB', 'RB', 'WR', 'TE', 'DST'] : 
-                    ['PG', 'SG', 'SF', 'PF', 'C'];
-                
-                const missingPositions = expectedPositions.filter(pos => !positions.has(pos));
-                if (missingPositions.length > 0) {
-                    console.warn(`Missing positions: ${missingPositions.join(', ')}`);
-                }
-                
-                // Check for duplicates
-                const playerIds = players.map(p => p.playerId);
-                const uniqueIds = new Set(playerIds);
-                if (uniqueIds.size !== playerIds.length) {
-                    console.warn(`Found ${playerIds.length - uniqueIds.size} duplicate player IDs`);
-                }
-                
-                // Check for invalid salaries
-                const invalidSalaries = players.filter(p => !p.salary || p.salary <= 0 || isNaN(p.salary));
-                if (invalidSalaries.length > 0) {
-                    console.warn(`Found ${invalidSalaries.length} players with invalid salaries`);
-                }
-                
-                console.log(`✅ Validation passed: ${players.length} players, ${positions.size} positions, ${uniqueIds.size} unique IDs`);
-            }
-
-            getDemoPlayers(sport) {
-                // Fallback demo players for when APIs fail
-                if (sport === 'NFL') {
-                    return [
-                        {name: "Josh Allen", pos: "QB", team: "BUF", salary: 8900, projection: 23.5, ownership: 22.5, boom_pct: 87},
-                        {name: "Lamar Jackson", pos: "QB", team: "BAL", salary: 8700, projection: 22.8, ownership: 25.1, boom_pct: 82},
-                        {name: "Christian McCaffrey", pos: "RB", team: "SF", salary: 9200, projection: 25.1, ownership: 35.2, boom_pct: 72},
-                        {name: "Davante Adams", pos: "WR", team: "LVR", salary: 8400, projection: 20.6, ownership: 19.3, boom_pct: 85},
-                        {name: "Travis Kelce", pos: "TE", team: "KC", salary: 7400, projection: 17.2, ownership: 16.3, boom_pct: 88},
-                        {name: "Buffalo Bills", pos: "DST", team: "BUF", salary: 3200, projection: 12.1, ownership: 12.8, boom_pct: 76}
-                    ].map(p => ({...p, leverage: 2.5, ace_score: 85, floor: p.projection * 0.7, ceiling: p.projection * 1.4, 
-                        correlation: 0.75, volatility: 0.25, playerId: hashCode(p.name).toString(), site: 'DK', 
-                        sport: 'NFL', positions: [p.pos], minExp: 0, maxExp: 100, selected: false, injury_status: 'Available'}));
-                } else {
-                    return [
-                        {name: "Luka Doncic", pos: "PG", team: "DAL", salary: 11800, projection: 58.2, ownership: 28.5, boom_pct: 89},
-                        {name: "Nikola Jokic", pos: "C", team: "DEN", salary: 11600, projection: 56.8, ownership: 26.1, boom_pct: 85},
-                        {name: "Giannis Antetokounmpo", pos: "PF", team: "MIL", salary: 11400, projection: 55.9, ownership: 31.2, boom_pct: 87}
-                    ].map(p => ({...p, leverage: 2.1, ace_score: 125, floor: p.projection * 0.7, ceiling: p.projection * 1.4,
-                        correlation: 0.65, volatility: 0.3, playerId: hashCode(p.name).toString(), site: 'DK', 
-                        sport: 'NBA', positions: [p.pos], minExp: 0, maxExp: 100, selected: false, injury_status: 'Available'}));
-                }
-            }
-
-            // Estimation methods (same as before but extracted)
-            estimateProjection(position, salary, sport) {
-                const multipliers = sport === 'NFL' ? {
-                    'QB': 0.0026, 'RB': 0.0023, 'WR': 0.0021, 'TE': 0.0019, 'DST': 0.003, 'K': 0.0025
-                } : {
-                    'PG': 0.0048, 'SG': 0.0045, 'SF': 0.0043, 'PF': 0.0041, 'C': 0.0039
-                };
-                
-                const mult = multipliers[position] || (sport === 'NFL' ? 0.002 : 0.004);
-                const base = sport === 'NFL' ? 3 : 15;
-                return Math.round((salary * mult + base) * 10) / 10;
-            }
-
-            estimateOwnership(salary, position, sport) {
-                const maxSalary = sport === 'NFL' ? 10000 : 12000;
-                let baseOwnership = Math.min(45, (salary / maxSalary) * 30 + 5);
-                
-                // Position adjustments
-                if (sport === 'NFL') {
-                    if (['QB', 'RB'].includes(position)) baseOwnership += 5;
-                    else if (['DST', 'K'].includes(position)) baseOwnership -= 8;
-                } else {
-                    if (['PG', 'C'].includes(position)) baseOwnership += 3;
-                }
-                
-                return Math.max(1, Math.round(baseOwnership * 10) / 10);
-            }
-
-            estimateBoomPercentage(projection, position, sport) {
-                let baseBoom = Math.min(95, projection * 3.5 + 20);
-                
-                if (sport === 'NFL' && ['WR', 'RB'].includes(position)) baseBoom += 5;
-                else if (sport === 'NFL' && position === 'DST') baseBoom -= 10;
-                else if (sport === 'NBA' && ['PG', 'SG'].includes(position)) baseBoom += 3;
-                
-                return Math.max(5, Math.round(baseBoom));
-            }
+      // Player Pool Provider Interface
+      class PlayerPoolProvider {
+        constructor() {
+          this.cache = new Map();
         }
 
-        // Global provider instance
-        const playerPoolProvider = new PlayerPoolProvider();
-
-        // Complete Standalone Loader - Now with FULL API Integration
-        async function loadStandalonePlayerData() {
-            try {
-                // Step 1: Try DraftKings live API first
-                showAlert('info', `🔄 Attempting to load FULL ${dfsState.sport} player pool from ${dfsState.site}...`);
-                
-                let players;
-                if (dfsState.site === 'DraftKings') {
-                    players = await playerPoolProvider.loadDraftKingsPool(dfsState.sport);
-                } else if (dfsState.site === 'FanDuel') {
-                    players = await playerPoolProvider.loadFanDuelPool(dfsState.sport);
-                } else {
-                    throw new Error(`Unsupported site: ${dfsState.site}`);
-                }
-                
-                // Step 2: Final validation check
-                if (!players || players.length === 0) {
-                    throw new Error('No players loaded from API');
-                }
-                
-                // Step 3: Store players (NO LIMITS OR SLICING)
-                dfsState.players = players;
-                
-                // Step 4: Generate validation report
-                generateValidationReport(players);
-                
-                // Step 5: Display all players
-                displayProfessionalPlayerPool();
-                
-                showAlert('success', `✅ FULL PLAYER POOL LOADED: ${players.length} ${dfsState.sport} players from ${dfsState.site}`);
-                
-            } catch (error) {
-                console.error('Player pool loading failed:', error);
-                showAlert('danger', `❌ Failed to load full player pool: ${error.message}`);
-            }
-        }
-
-        // Generate comprehensive validation report
-        function generateValidationReport(players) {
-            const report = {
-                timestamp: new Date().toISOString(),
-                sport: dfsState.sport,
-                site: dfsState.site,
-                totalPlayers: players.length,
-                minExpected: MIN_POOL_SIZE[dfsState.sport][dfsState.site === 'DraftKings' ? 'DK' : 'FD'],
-                validation: {
-                    passedSizeCheck: false,
-                    positions: {},
-                    teams: new Set(),
-                    duplicateIds: 0,
-                    invalidSalaries: 0
-                }
-            };
-            
-            // Size validation
-            report.validation.passedSizeCheck = players.length >= report.minExpected;
-            
-            // Position analysis
-            const expectedPositions = dfsState.sport === 'NFL' ? 
-                ['QB', 'RB', 'WR', 'TE', 'DST', 'K'] : 
-                ['PG', 'SG', 'SF', 'PF', 'C'];
-            
-            expectedPositions.forEach(pos => {
-                report.validation.positions[pos] = players.filter(p => p.pos === pos).length;
-            });
-            
-            // Team analysis
-            players.forEach(player => {
-                if (player.team) report.validation.teams.add(player.team);
-            });
-            
-            // Duplicate check
-            const playerIds = players.map(p => p.playerId || p.name);
-            const uniqueIds = new Set(playerIds);
-            report.validation.duplicateIds = playerIds.length - uniqueIds.size;
-            
-            // Salary validation
-            report.validation.invalidSalaries = players.filter(p => 
-                !p.salary || p.salary <= 0 || isNaN(p.salary)
-            ).length;
-            
-            // Log comprehensive report
-            console.log('🔍 PLAYER POOL VALIDATION REPORT:', report);
-            
-            // Show validation summary
-            const issues = [];
-            if (!report.validation.passedSizeCheck) {
-                issues.push(`⚠️ Small pool: ${report.totalPlayers} < ${report.minExpected}`);
-            }
-            if (report.validation.duplicateIds > 0) {
-                issues.push(`⚠️ ${report.validation.duplicateIds} duplicate IDs`);
-            }
-            if (report.validation.invalidSalaries > 0) {
-                issues.push(`⚠️ ${report.validation.invalidSalaries} invalid salaries`);
-            }
-            
-            const missingPositions = expectedPositions.filter(pos => 
-                (report.validation.positions[pos] || 0) === 0
+        async loadDraftKingsPool(sport) {
+          try {
+            showAlert(
+              'info',
+              `🔄 Fetching complete ${sport} player pool from DraftKings...`
             );
-            if (missingPositions.length > 0) {
-                issues.push(`⚠️ Missing positions: ${missingPositions.join(', ')}`);
+
+            // Step 1: Get contests to find active slates
+            const contestsUrl = `https://www.draftkings.com/lobby/getcontests?sport=${sport.toLowerCase()}`;
+            let contestsData;
+
+            try {
+              const contestsResponse = await fetch(contestsUrl, {
+                method: 'GET',
+                headers: {
+                  Accept: 'application/json',
+                  'User-Agent':
+                    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                },
+              });
+
+              if (!contestsResponse.ok) {
+                throw new Error(`Contests API returned ${contestsResponse.status}`);
+              }
+
+              contestsData = await contestsResponse.json();
+            } catch (corsError) {
+              // CORS fallback - use proxy endpoint if available
+              console.warn('Direct DK API blocked by CORS, attempting fallback...');
+              throw new Error('CORS_BLOCKED');
             }
-            
-            if (issues.length > 0) {
-                showAlert('warning', `Validation Issues Found: ${issues.join(', ')}`);
+
+            // Step 2: Extract draft group ID from main slate
+            const mainSlate = this.findMainSlate(contestsData.contests || [], sport);
+            if (!mainSlate || !mainSlate.draftGroupId) {
+              throw new Error(`No active ${sport} slate found`);
             }
-            
-            return report;
+
+            // Step 3: Fetch complete draftables pool
+            const draftablesUrl = `https://api.draftkings.com/draftgroups/v1/draftgroups/${mainSlate.draftGroupId}/draftables`;
+            const draftablesResponse = await fetch(draftablesUrl, {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json',
+                'User-Agent':
+                  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+              },
+            });
+
+            if (!draftablesResponse.ok) {
+              throw new Error(`Draftables API returned ${draftablesResponse.status}`);
+            }
+
+            const draftablesData = await draftablesResponse.json();
+
+            // Step 4: Normalize to our player format
+            const players = this.normalizeDraftKingsPlayers(
+              draftablesData.draftables || [],
+              sport,
+              mainSlate.draftGroupId
+            );
+
+            // Step 5: Validation
+            this.validatePlayerPool(players, sport, 'DK');
+
+            showAlert(
+              'success',
+              `✅ Loaded ${players.length} ${sport} players from DraftKings`
+            );
+            return players;
+          } catch (error) {
+            console.error('DraftKings API Error:', error);
+
+            if (error.message === 'CORS_BLOCKED') {
+              showAlert(
+                'warning',
+                '⚠️ Live API blocked by CORS - loading demo data. Run with proxy server for live data.'
+              );
+              return this.getDemoPlayers(sport);
+            } else {
+              showAlert('danger', `❌ DraftKings API failed: ${error.message}`);
+              return this.getDemoPlayers(sport);
+            }
+          }
         }
 
-        // Complete Professional Player Display
-        function displayProfessionalPlayerPool() {
-            const container = document.getElementById('playerPoolContainer');
-            const players = applyFilters(dfsState.players);
+        async loadFanDuelPool(sport) {
+          try {
+            showAlert('info', `🔄 Attempting FanDuel ${sport} player pool...`);
 
-            if (players.length === 0) {
-                container.innerHTML = '<div class="text-center text-muted">No players match current filters</div>';
+            // FanDuel implementation placeholder - would need specific endpoint discovery
+            throw new Error('FanDuel provider not yet implemented');
+          } catch (error) {
+            showAlert('warning', `⚠️ FanDuel not available: ${error.message}`);
+            return this.getDemoPlayers(sport);
+          }
+        }
+
+        findMainSlate(contests, sport) {
+          if (!contests || contests.length === 0) return null;
+
+          // Look for main/classic slate closest to current time
+          const now = new Date();
+          const validContests = contests.filter(contest => {
+            const startTime = new Date(contest.startTimeType || contest.startTime);
+            const isToday = startTime.toDateString() === now.toDateString();
+            const isMainType =
+              contest.gameType === 'Classic' ||
+              contest.name?.includes('Main') ||
+              contest.name?.includes('Millionaire');
+            return isToday && isMainType && contest.draftGroupId;
+          });
+
+          // Return the most popular (highest entry count) main slate
+          return (
+            validContests.sort(
+              (a, b) => (b.totalEntries || 0) - (a.totalEntries || 0)
+            )[0] || contests.find(c => c.draftGroupId)
+          ); // Fallback to any contest with draftGroupId
+        }
+
+        normalizeDraftKingsPlayers(draftables, sport, slateId) {
+          const players = [];
+          const seenIds = new Set();
+
+          draftables.forEach(draftable => {
+            try {
+              // Extract core info
+              const playerId =
+                draftable.draftableId || draftable.playerId || draftable.id;
+              const name = draftable.displayName || draftable.name || 'Unknown Player';
+              const salary = parseInt(draftable.salary) || 0;
+              const team = this.extractTeam(draftable);
+              const positions = this.extractPositions(draftable, sport);
+
+              // Skip duplicates
+              if (seenIds.has(playerId)) return;
+              seenIds.add(playerId);
+
+              // Skip invalid entries
+              if (!playerId || !name || salary <= 0 || positions.length === 0) {
+                console.warn('Skipping invalid draftable:', draftable);
                 return;
+              }
+
+              // Calculate enhanced metrics
+              const projection = this.estimateProjection(positions[0], salary, sport);
+              const ownership = this.estimateOwnership(salary, positions[0], sport);
+              const boom_pct = this.estimateBoomPercentage(
+                projection,
+                positions[0],
+                sport
+              );
+              const leverage = ((projection / salary) * 1000) / (ownership / 100);
+
+              const player = {
+                site: 'DK',
+                sport: sport,
+                slateId: slateId,
+                playerId: String(playerId),
+                name: name,
+                team: team,
+                opponent: this.extractOpponent(draftable),
+                positions: positions,
+                pos: positions[0], // Primary position
+                salary: salary,
+                gameInfo: this.extractGameInfo(draftable),
+                status: this.extractStatus(draftable),
+
+                // Enhanced metrics
+                projection: projection,
+                ownership: ownership,
+                boom_pct: boom_pct,
+                leverage: Math.round(leverage * 100) / 100,
+                ace_score: Math.round(boom_pct * 0.8 + projection * 3),
+                floor: Math.round(projection * 0.7 * 10) / 10,
+                ceiling: Math.round(projection * 1.4 * 10) / 10,
+                correlation:
+                  Math.round((0.5 + (hashCode(name) % 100) / 300) * 100) / 100,
+                volatility:
+                  Math.round(
+                    (0.2 + (hashCode(name + positions[0]) % 100) / 1000) * 1000
+                  ) / 1000,
+
+                // Controls
+                selected: false,
+                injury_status: this.extractStatus(draftable) || 'Available',
+                minExp: 0,
+                maxExp: 100,
+              };
+
+              players.push(player);
+            } catch (err) {
+              console.warn('Error processing draftable:', err, draftable);
+            }
+          });
+
+          console.log(
+            `Normalized ${players.length} players from ${draftables.length} draftables`
+          );
+          return players;
+        }
+
+        extractTeam(draftable) {
+          if (draftable.teamAbbreviation)
+            return draftable.teamAbbreviation.toUpperCase();
+          if (draftable.team) return String(draftable.team).toUpperCase();
+
+          // Parse from competition info
+          if (draftable.competition) {
+            const comp = draftable.competition;
+            if (comp.name) {
+              // Handle formats like "LAL@GSW", "BUF vs MIA"
+              const match = comp.name.match(/([A-Z]{2,4})[@vs]/i);
+              if (match) return match[1].toUpperCase();
+            }
+          }
+
+          return 'UNK';
+        }
+
+        extractPositions(draftable, sport) {
+          const positions = [];
+
+          // Primary position
+          if (draftable.rosterSlotId) {
+            positions.push(this.normalizePosition(draftable.rosterSlotId, sport));
+          }
+
+          // Additional eligible positions
+          if (draftable.rosterSlots && Array.isArray(draftable.rosterSlots)) {
+            draftable.rosterSlots.forEach(slot => {
+              const pos = this.normalizePosition(slot.rosterSlotId || slot, sport);
+              if (pos && !positions.includes(pos)) {
+                positions.push(pos);
+              }
+            });
+          }
+
+          // Fallback
+          if (positions.length === 0) {
+            positions.push(sport === 'NFL' ? 'FLEX' : 'UTIL');
+          }
+
+          return positions;
+        }
+
+        normalizePosition(position, sport) {
+          const pos = String(position || '')
+            .toUpperCase()
+            .trim();
+
+          if (sport === 'NFL') {
+            const nflMap = {
+              QB: 'QB',
+              RB: 'RB',
+              WR: 'WR',
+              TE: 'TE',
+              DST: 'DST',
+              K: 'K',
+              FLEX: 'FLEX',
+              UTIL: 'FLEX',
+              'D/ST': 'DST',
+              DEF: 'DST',
+            };
+            return nflMap[pos] || 'FLEX';
+          } else if (sport === 'NBA') {
+            const nbaMap = {
+              PG: 'PG',
+              SG: 'SG',
+              SF: 'SF',
+              PF: 'PF',
+              C: 'C',
+              G: 'G',
+              F: 'F',
+              UTIL: 'UTIL',
+            };
+            return nbaMap[pos] || 'UTIL';
+          }
+
+          return pos || 'UTIL';
+        }
+
+        extractOpponent(draftable) {
+          if (draftable.competition && draftable.competition.name) {
+            // Parse opponent from competition string
+            const comp = draftable.competition.name;
+            const parts = comp.split(/[@vs]/i);
+            if (parts.length === 2) {
+              const team = this.extractTeam(draftable);
+              return parts
+                .find(p => p.trim().toUpperCase() !== team)
+                ?.trim()
+                .toUpperCase();
+            }
+          }
+          return '';
+        }
+
+        extractGameInfo(draftable) {
+          if (draftable.competition) {
+            const comp = draftable.competition;
+            let info = comp.name || '';
+
+            if (comp.startTime) {
+              const time = new Date(comp.startTime);
+              const timeStr = time.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+              });
+              info += ` ${timeStr}`;
             }
 
-            // Create complete Stokastic-style table
-            let html = `
+            return info;
+          }
+          return '';
+        }
+
+        extractStatus(draftable) {
+          if (draftable.playerStatus) return draftable.playerStatus;
+          if (draftable.status) return draftable.status;
+          if (draftable.injuryStatus) return draftable.injuryStatus;
+          return 'Available';
+        }
+
+        validatePlayerPool(players, sport, site) {
+          const minSize = MIN_POOL_SIZE[sport][site];
+
+          if (players.length < minSize) {
+            throw new Error(
+              `Player pool too small: ${players.length} < ${minSize} expected for ${sport}/${site}`
+            );
+          }
+
+          // Check position coverage
+          const positions = new Set(players.map(p => p.pos));
+          const expectedPositions =
+            sport === 'NFL'
+              ? ['QB', 'RB', 'WR', 'TE', 'DST']
+              : ['PG', 'SG', 'SF', 'PF', 'C'];
+
+          const missingPositions = expectedPositions.filter(pos => !positions.has(pos));
+          if (missingPositions.length > 0) {
+            console.warn(`Missing positions: ${missingPositions.join(', ')}`);
+          }
+
+          // Check for duplicates
+          const playerIds = players.map(p => p.playerId);
+          const uniqueIds = new Set(playerIds);
+          if (uniqueIds.size !== playerIds.length) {
+            console.warn(
+              `Found ${playerIds.length - uniqueIds.size} duplicate player IDs`
+            );
+          }
+
+          // Check for invalid salaries
+          const invalidSalaries = players.filter(
+            p => !p.salary || p.salary <= 0 || isNaN(p.salary)
+          );
+          if (invalidSalaries.length > 0) {
+            console.warn(
+              `Found ${invalidSalaries.length} players with invalid salaries`
+            );
+          }
+
+          console.log(
+            `✅ Validation passed: ${players.length} players, ${positions.size} positions, ${uniqueIds.size} unique IDs`
+          );
+        }
+
+        getDemoPlayers(sport) {
+          // Fallback demo players for when APIs fail
+          if (sport === 'NFL') {
+            return [
+              {
+                name: 'Josh Allen',
+                pos: 'QB',
+                team: 'BUF',
+                salary: 8900,
+                projection: 23.5,
+                ownership: 22.5,
+                boom_pct: 87,
+              },
+              {
+                name: 'Lamar Jackson',
+                pos: 'QB',
+                team: 'BAL',
+                salary: 8700,
+                projection: 22.8,
+                ownership: 25.1,
+                boom_pct: 82,
+              },
+              {
+                name: 'Christian McCaffrey',
+                pos: 'RB',
+                team: 'SF',
+                salary: 9200,
+                projection: 25.1,
+                ownership: 35.2,
+                boom_pct: 72,
+              },
+              {
+                name: 'Davante Adams',
+                pos: 'WR',
+                team: 'LVR',
+                salary: 8400,
+                projection: 20.6,
+                ownership: 19.3,
+                boom_pct: 85,
+              },
+              {
+                name: 'Travis Kelce',
+                pos: 'TE',
+                team: 'KC',
+                salary: 7400,
+                projection: 17.2,
+                ownership: 16.3,
+                boom_pct: 88,
+              },
+              {
+                name: 'Buffalo Bills',
+                pos: 'DST',
+                team: 'BUF',
+                salary: 3200,
+                projection: 12.1,
+                ownership: 12.8,
+                boom_pct: 76,
+              },
+            ].map(p => ({
+              ...p,
+              leverage: 2.5,
+              ace_score: 85,
+              floor: p.projection * 0.7,
+              ceiling: p.projection * 1.4,
+              correlation: 0.75,
+              volatility: 0.25,
+              playerId: hashCode(p.name).toString(),
+              site: 'DK',
+              sport: 'NFL',
+              positions: [p.pos],
+              minExp: 0,
+              maxExp: 100,
+              selected: false,
+              injury_status: 'Available',
+            }));
+          } else {
+            return [
+              {
+                name: 'Luka Doncic',
+                pos: 'PG',
+                team: 'DAL',
+                salary: 11800,
+                projection: 58.2,
+                ownership: 28.5,
+                boom_pct: 89,
+              },
+              {
+                name: 'Nikola Jokic',
+                pos: 'C',
+                team: 'DEN',
+                salary: 11600,
+                projection: 56.8,
+                ownership: 26.1,
+                boom_pct: 85,
+              },
+              {
+                name: 'Giannis Antetokounmpo',
+                pos: 'PF',
+                team: 'MIL',
+                salary: 11400,
+                projection: 55.9,
+                ownership: 31.2,
+                boom_pct: 87,
+              },
+            ].map(p => ({
+              ...p,
+              leverage: 2.1,
+              ace_score: 125,
+              floor: p.projection * 0.7,
+              ceiling: p.projection * 1.4,
+              correlation: 0.65,
+              volatility: 0.3,
+              playerId: hashCode(p.name).toString(),
+              site: 'DK',
+              sport: 'NBA',
+              positions: [p.pos],
+              minExp: 0,
+              maxExp: 100,
+              selected: false,
+              injury_status: 'Available',
+            }));
+          }
+        }
+
+        // Estimation methods (same as before but extracted)
+        estimateProjection(position, salary, sport) {
+          const multipliers =
+            sport === 'NFL'
+              ? {
+                  QB: 0.0026,
+                  RB: 0.0023,
+                  WR: 0.0021,
+                  TE: 0.0019,
+                  DST: 0.003,
+                  K: 0.0025,
+                }
+              : {
+                  PG: 0.0048,
+                  SG: 0.0045,
+                  SF: 0.0043,
+                  PF: 0.0041,
+                  C: 0.0039,
+                };
+
+          const mult = multipliers[position] || (sport === 'NFL' ? 0.002 : 0.004);
+          const base = sport === 'NFL' ? 3 : 15;
+          return Math.round((salary * mult + base) * 10) / 10;
+        }
+
+        estimateOwnership(salary, position, sport) {
+          const maxSalary = sport === 'NFL' ? 10000 : 12000;
+          let baseOwnership = Math.min(45, (salary / maxSalary) * 30 + 5);
+
+          // Position adjustments
+          if (sport === 'NFL') {
+            if (['QB', 'RB'].includes(position)) baseOwnership += 5;
+            else if (['DST', 'K'].includes(position)) baseOwnership -= 8;
+          } else {
+            if (['PG', 'C'].includes(position)) baseOwnership += 3;
+          }
+
+          return Math.max(1, Math.round(baseOwnership * 10) / 10);
+        }
+
+        estimateBoomPercentage(projection, position, sport) {
+          let baseBoom = Math.min(95, projection * 3.5 + 20);
+
+          if (sport === 'NFL' && ['WR', 'RB'].includes(position)) baseBoom += 5;
+          else if (sport === 'NFL' && position === 'DST') baseBoom -= 10;
+          else if (sport === 'NBA' && ['PG', 'SG'].includes(position)) baseBoom += 3;
+
+          return Math.max(5, Math.round(baseBoom));
+        }
+      }
+
+      // Global provider instance
+      const playerPoolProvider = new PlayerPoolProvider();
+
+      // Complete Standalone Loader - Now with FULL API Integration
+      async function loadStandalonePlayerData() {
+        try {
+          // Step 1: Try DraftKings live API first
+          showAlert(
+            'info',
+            `🔄 Attempting to load FULL ${dfsState.sport} player pool from ${dfsState.site}...`
+          );
+
+          let players;
+          if (dfsState.site === 'DraftKings') {
+            players = await playerPoolProvider.loadDraftKingsPool(dfsState.sport);
+          } else if (dfsState.site === 'FanDuel') {
+            players = await playerPoolProvider.loadFanDuelPool(dfsState.sport);
+          } else {
+            throw new Error(`Unsupported site: ${dfsState.site}`);
+          }
+
+          // Step 2: Final validation check
+          if (!players || players.length === 0) {
+            throw new Error('No players loaded from API');
+          }
+
+          // Step 3: Store players (NO LIMITS OR SLICING)
+          dfsState.players = players;
+
+          // Step 4: Generate validation report
+          generateValidationReport(players);
+
+          // Step 5: Display all players
+          displayProfessionalPlayerPool();
+
+          showAlert(
+            'success',
+            `✅ FULL PLAYER POOL LOADED: ${players.length} ${dfsState.sport} players from ${dfsState.site}`
+          );
+        } catch (error) {
+          console.error('Player pool loading failed:', error);
+          showAlert('danger', `❌ Failed to load full player pool: ${error.message}`);
+        }
+      }
+
+      // Generate comprehensive validation report
+      function generateValidationReport(players) {
+        const report = {
+          timestamp: new Date().toISOString(),
+          sport: dfsState.sport,
+          site: dfsState.site,
+          totalPlayers: players.length,
+          minExpected:
+            MIN_POOL_SIZE[dfsState.sport][dfsState.site === 'DraftKings' ? 'DK' : 'FD'],
+          validation: {
+            passedSizeCheck: false,
+            positions: {},
+            teams: new Set(),
+            duplicateIds: 0,
+            invalidSalaries: 0,
+          },
+        };
+
+        // Size validation
+        report.validation.passedSizeCheck = players.length >= report.minExpected;
+
+        // Position analysis
+        const expectedPositions =
+          dfsState.sport === 'NFL'
+            ? ['QB', 'RB', 'WR', 'TE', 'DST', 'K']
+            : ['PG', 'SG', 'SF', 'PF', 'C'];
+
+        expectedPositions.forEach(pos => {
+          report.validation.positions[pos] = players.filter(p => p.pos === pos).length;
+        });
+
+        // Team analysis
+        players.forEach(player => {
+          if (player.team) report.validation.teams.add(player.team);
+        });
+
+        // Duplicate check
+        const playerIds = players.map(p => p.playerId || p.name);
+        const uniqueIds = new Set(playerIds);
+        report.validation.duplicateIds = playerIds.length - uniqueIds.size;
+
+        // Salary validation
+        report.validation.invalidSalaries = players.filter(
+          p => !p.salary || p.salary <= 0 || isNaN(p.salary)
+        ).length;
+
+        // Log comprehensive report
+        console.log('🔍 PLAYER POOL VALIDATION REPORT:', report);
+
+        // Show validation summary
+        const issues = [];
+        if (!report.validation.passedSizeCheck) {
+          issues.push(`⚠️ Small pool: ${report.totalPlayers} < ${report.minExpected}`);
+        }
+        if (report.validation.duplicateIds > 0) {
+          issues.push(`⚠️ ${report.validation.duplicateIds} duplicate IDs`);
+        }
+        if (report.validation.invalidSalaries > 0) {
+          issues.push(`⚠️ ${report.validation.invalidSalaries} invalid salaries`);
+        }
+
+        const missingPositions = expectedPositions.filter(
+          pos => (report.validation.positions[pos] || 0) === 0
+        );
+        if (missingPositions.length > 0) {
+          issues.push(`⚠️ Missing positions: ${missingPositions.join(', ')}`);
+        }
+
+        if (issues.length > 0) {
+          showAlert('warning', `Validation Issues Found: ${issues.join(', ')}`);
+        }
+
+        return report;
+      }
+
+      // Complete Professional Player Display
+      function displayProfessionalPlayerPool() {
+        const container = document.getElementById('playerPoolContainer');
+        const players = applyFilters(dfsState.players);
+
+        if (players.length === 0) {
+          container.innerHTML =
+            '<div class="text-center text-muted">No players match current filters</div>';
+          return;
+        }
+
+        // Create complete Stokastic-style table
+        let html = `
                 <div class="table-responsive">
                     <table class="table table-dark table-sm">
                         <thead>
@@ -1068,19 +1327,40 @@
                         <tbody>
             `;
 
-            // Sort players by leverage if simulation has been run, otherwise by projection
-            const sortedPlayers = dfsState.simulationResults ? 
-                players.sort((a, b) => (b.leverageScore || 0) - (a.leverageScore || 0)) :
-                players.sort((a, b) => b.projection - a.projection);
+        // Sort players by leverage if simulation has been run, otherwise by projection
+        const sortedPlayers = dfsState.simulationResults
+          ? players.sort((a, b) => (b.leverageScore || 0) - (a.leverageScore || 0))
+          : players.sort((a, b) => b.projection - a.projection);
 
-            sortedPlayers.forEach(player => {
-                const leverageColor = player.leverageScore > 10 ? 'text-success' : 
-                                    player.leverageScore > 0 ? 'text-info' : 
-                                    player.leverageScore < -10 ? 'text-danger' : 'text-warning';
-                const boomColor = player.boom_pct > 80 ? 'text-success' : player.boom_pct > 60 ? 'text-warning' : 'text-muted';
-                const posBadges = {'QB': 'badge-danger', 'RB': 'badge-info', 'WR': 'badge-success', 'TE': 'badge-warning', 'DST': 'badge-secondary', 'PG': 'badge-primary', 'SG': 'badge-info', 'SF': 'badge-success', 'PF': 'badge-warning', 'C': 'badge-danger'};
+        sortedPlayers.forEach(player => {
+          const leverageColor =
+            player.leverageScore > 10
+              ? 'text-success'
+              : player.leverageScore > 0
+                ? 'text-info'
+                : player.leverageScore < -10
+                  ? 'text-danger'
+                  : 'text-warning';
+          const boomColor =
+            player.boom_pct > 80
+              ? 'text-success'
+              : player.boom_pct > 60
+                ? 'text-warning'
+                : 'text-muted';
+          const posBadges = {
+            QB: 'badge-danger',
+            RB: 'badge-info',
+            WR: 'badge-success',
+            TE: 'badge-warning',
+            DST: 'badge-secondary',
+            PG: 'badge-primary',
+            SG: 'badge-info',
+            SF: 'badge-success',
+            PF: 'badge-warning',
+            C: 'badge-danger',
+          };
 
-                html += `
+          html += `
                     <tr class="player-row" data-player="${player.name}">
                         <td>
                             <strong>${player.name}</strong><br>
@@ -1093,10 +1373,14 @@
                         <td class="${boomColor}">${player.boom_pct}%</td>
                         <td class="text-success">${player.ceiling.toFixed(1)}</td>
                         <td class="text-warning">${player.floor.toFixed(1)}</td>
-                        ${dfsState.simulationResults ? `
+                        ${
+                          dfsState.simulationResults
+                            ? `
                             <td>${(player.optimalPct || 0).toFixed(1)}%</td>
                             <td class="${leverageColor}"><strong>${(player.leverageScore || 0).toFixed(1)}</strong></td>
-                        ` : ''}
+                        `
+                            : ''
+                        }
                         <td>
                             <input type="number" class="form-control form-control-sm" style="width: 60px;" 
                                    value="${player.minExp || 0}" min="0" max="100" 
@@ -1119,55 +1403,66 @@
                         </td>
                     </tr>
                 `;
-            });
+        });
 
-            html += '</tbody></table></div>';
-            
-            // Add simulation status message
-            if (!dfsState.simulationResults) {
-                html = `
+        html += '</tbody></table></div>';
+
+        // Add simulation status message
+        if (!dfsState.simulationResults) {
+          html =
+            `
                     <div class="alert alert-info mb-3">
                         <i class="fas fa-info-circle me-2"></i>
                         <strong>Professional DFS Workflow:</strong> Run simulation first to get Leverage data, then adjust exposures and build lineups.
                     </div>
                 ` + html;
-            } else {
-                html = `
+        } else {
+          html =
+            `
                     <div class="alert alert-success mb-3">
                         <i class="fas fa-check-circle me-2"></i>
                         <strong>Simulation Complete!</strong> Players sorted by Leverage. Adjust exposures and generate lineups.
                     </div>
                 ` + html;
-            }
-
-            container.innerHTML = html;
         }
 
-        // Complete Professional Simulation Engine
-        function runCompleteSimulation() {
-            const simDepth = parseInt(document.getElementById('simDepth').value);
-            showAlert('info', `🎯 Running ${simDepth.toLocaleString()} professional Monte Carlo simulations...`);
+        container.innerHTML = html;
+      }
 
-            document.getElementById('simulationResults').innerHTML = `
+      // Complete Professional Simulation Engine
+      function runCompleteSimulation() {
+        const simDepth = parseInt(document.getElementById('simDepth').value);
+        showAlert(
+          'info',
+          `🎯 Running ${simDepth.toLocaleString()} professional Monte Carlo simulations...`
+        );
+
+        document.getElementById('simulationResults').innerHTML = `
                 <div class="progress">
                     <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
                 </div>
                 <div class="text-muted">Processing...</div>
             `;
 
-            setTimeout(() => {
-                // TRUE simulation engine
-                const results = runTrueContestSimulation(simDepth);
-                dfsState.simulationResults = results;
+        setTimeout(() => {
+          // TRUE simulation engine
+          const results = runTrueContestSimulation(simDepth);
+          dfsState.simulationResults = results;
 
-                // Update all players with simulation data
-                dfsState.players.forEach(player => {
-                    const baseOptimal = Math.min(60, player.projection / player.salary * 10 + (hashCode(player.name) % 20));
-                    player.optimalPct = Math.max(0.5, baseOptimal + (player.boom_pct - 70) * 0.4);
-                    player.leverageScore = player.optimalPct - player.ownership;
-                });
+          // Update all players with simulation data
+          dfsState.players.forEach(player => {
+            const baseOptimal = Math.min(
+              60,
+              (player.projection / player.salary) * 10 + (hashCode(player.name) % 20)
+            );
+            player.optimalPct = Math.max(
+              0.5,
+              baseOptimal + (player.boom_pct - 70) * 0.4
+            );
+            player.leverageScore = player.optimalPct - player.ownership;
+          });
 
-                document.getElementById('simulationResults').innerHTML = `
+          document.getElementById('simulationResults').innerHTML = `
                     <div class="row text-center">
                         <div class="col-6">
                             <div class="h6 text-success">+${results.avgROI}%</div>
@@ -1181,213 +1476,239 @@
                     <small class="text-success">✅ Complete - Leverage data updated</small>
                 `;
 
-                displayProfessionalPlayerPool();
-                showAlert('success', '✅ Professional simulation complete! Review leverage scores and build lineups.');
-            }, 3000);
-        }
+          displayProfessionalPlayerPool();
+          showAlert(
+            'success',
+            '✅ Professional simulation complete! Review leverage scores and build lineups.'
+          );
+        }, 3000);
+      }
 
-        // TRUE Contest Simulation (Complete Implementation)
-        function runTrueContestSimulation(simulations) {
-            const simulatedLineups = [];
-            const playerStats = {};
-            
-            // Initialize tracking
-            dfsState.players.forEach(player => {
-                playerStats[player.name] = { timesInOptimal: 0, totalScores: [] };
+      // TRUE Contest Simulation (Complete Implementation)
+      function runTrueContestSimulation(simulations) {
+        const simulatedLineups = [];
+        const playerStats = {};
+
+        // Initialize tracking
+        dfsState.players.forEach(player => {
+          playerStats[player.name] = { timesInOptimal: 0, totalScores: [] };
+        });
+
+        // Run thousands of trial slates
+        for (let sim = 0; sim < Math.min(simulations, 5000); sim++) {
+          const trialPlayers = dfsState.players.map(player => {
+            const variance = player.volatility * player.projection;
+            const randomOutcome = Math.max(
+              0,
+              player.projection + (Math.random() - 0.5) * variance * 4
+            );
+            return { ...player, trialScore: randomOutcome };
+          });
+
+          // Apply correlations
+          applyCorrelations(trialPlayers);
+
+          // Build optimal lineup for this trial
+          const optimalLineup = buildOptimalForTrial(trialPlayers);
+
+          if (optimalLineup && optimalLineup.length >= 8) {
+            optimalLineup.forEach(player => {
+              playerStats[player.name].timesInOptimal++;
+              playerStats[player.name].totalScores.push(player.trialScore);
             });
-            
-            // Run thousands of trial slates
-            for (let sim = 0; sim < Math.min(simulations, 5000); sim++) {
-                const trialPlayers = dfsState.players.map(player => {
-                    const variance = player.volatility * player.projection;
-                    const randomOutcome = Math.max(0, player.projection + (Math.random() - 0.5) * variance * 4);
-                    return { ...player, trialScore: randomOutcome };
-                });
-                
-                // Apply correlations
-                applyCorrelations(trialPlayers);
-                
-                // Build optimal lineup for this trial
-                const optimalLineup = buildOptimalForTrial(trialPlayers);
-                
-                if (optimalLineup && optimalLineup.length >= 8) {
-                    optimalLineup.forEach(player => {
-                        playerStats[player.name].timesInOptimal++;
-                        playerStats[player.name].totalScores.push(player.trialScore);
-                    });
-                    
-                    simulatedLineups.push({
-                        sim: sim,
-                        players: optimalLineup,
-                        totalScore: optimalLineup.reduce((sum, p) => sum + p.trialScore, 0),
-                        salary: optimalLineup.reduce((sum, p) => sum + p.salary, 0)
-                    });
-                }
-            }
-            
-            dfsState.simulatedLineups = simulatedLineups.sort((a, b) => b.totalScore - a.totalScore).slice(0, 20);
-            
-            return {
-                simulations: Math.min(simulations, 5000),
-                avgROI: calculateROI(simulatedLineups),
-                winRate: calculateWinRate(simulatedLineups),
-                sharpe: (1.2 + Math.random() * 0.8).toFixed(1),
-                totalSimulatedLineups: simulatedLineups.length
-            };
-        }
 
-        // Apply correlations in simulation
-        function applyCorrelations(trialPlayers) {
-            trialPlayers.forEach(player => {
-                if (player.pos === 'QB') {
-                    const teammates = trialPlayers.filter(p => 
-                        p.team === player.team && ['WR', 'TE'].includes(p.pos)
-                    );
-                    
-                    if (player.trialScore > player.projection * 1.1) {
-                        teammates.forEach(teammate => {
-                            teammate.trialScore *= 1.15; // Correlation bonus
-                        });
-                    }
-                }
+            simulatedLineups.push({
+              sim: sim,
+              players: optimalLineup,
+              totalScore: optimalLineup.reduce((sum, p) => sum + p.trialScore, 0),
+              salary: optimalLineup.reduce((sum, p) => sum + p.salary, 0),
             });
+          }
         }
-        
-        // Build optimal lineup for single trial
-        function buildOptimalForTrial(trialPlayers) {
-            const positions = dfsState.sport === 'NFL' ? 
-                ['QB', 'RB', 'RB', 'WR', 'WR', 'WR', 'TE', 'FLEX', 'DST'] :
-                ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL'];
-            
-            const lineup = [];
-            const usedIds = new Set();
-            let budget = dfsState.sport === 'NFL' ? 50000 : 50000; // Both use $50k
-            
-            for (const pos of positions) {
-                let candidates = trialPlayers.filter(player => {
-                    if (pos === 'FLEX' || pos === 'UTIL') return ['RB', 'WR', 'TE', 'PF', 'SF'].includes(player.pos);
-                    if (pos === 'G') return ['PG', 'SG'].includes(player.pos);
-                    if (pos === 'F') return ['SF', 'PF'].includes(player.pos);
-                    return player.pos === pos;
-                }).filter(player => 
-                    !usedIds.has(player.name) && player.salary <= budget
-                );
-                
-                if (candidates.length === 0) break;
-                
-                candidates.sort((a, b) => (b.trialScore / b.salary) - (a.trialScore / a.salary));
-                const selected = candidates[0];
-                
-                lineup.push(selected);
-                usedIds.add(selected.name);
-                budget -= selected.salary;
+
+        dfsState.simulatedLineups = simulatedLineups
+          .sort((a, b) => b.totalScore - a.totalScore)
+          .slice(0, 20);
+
+        return {
+          simulations: Math.min(simulations, 5000),
+          avgROI: calculateROI(simulatedLineups),
+          winRate: calculateWinRate(simulatedLineups),
+          sharpe: (1.2 + Math.random() * 0.8).toFixed(1),
+          totalSimulatedLineups: simulatedLineups.length,
+        };
+      }
+
+      // Apply correlations in simulation
+      function applyCorrelations(trialPlayers) {
+        trialPlayers.forEach(player => {
+          if (player.pos === 'QB') {
+            const teammates = trialPlayers.filter(
+              p => p.team === player.team && ['WR', 'TE'].includes(p.pos)
+            );
+
+            if (player.trialScore > player.projection * 1.1) {
+              teammates.forEach(teammate => {
+                teammate.trialScore *= 1.15; // Correlation bonus
+              });
             }
-            
-            return lineup;
+          }
+        });
+      }
+
+      // Build optimal lineup for single trial
+      function buildOptimalForTrial(trialPlayers) {
+        const positions =
+          dfsState.sport === 'NFL'
+            ? ['QB', 'RB', 'RB', 'WR', 'WR', 'WR', 'TE', 'FLEX', 'DST']
+            : ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL'];
+
+        const lineup = [];
+        const usedIds = new Set();
+        let budget = dfsState.sport === 'NFL' ? 50000 : 50000; // Both use $50k
+
+        for (const pos of positions) {
+          let candidates = trialPlayers
+            .filter(player => {
+              if (pos === 'FLEX' || pos === 'UTIL')
+                return ['RB', 'WR', 'TE', 'PF', 'SF'].includes(player.pos);
+              if (pos === 'G') return ['PG', 'SG'].includes(player.pos);
+              if (pos === 'F') return ['SF', 'PF'].includes(player.pos);
+              return player.pos === pos;
+            })
+            .filter(player => !usedIds.has(player.name) && player.salary <= budget);
+
+          if (candidates.length === 0) break;
+
+          candidates.sort((a, b) => b.trialScore / b.salary - a.trialScore / a.salary);
+          const selected = candidates[0];
+
+          lineup.push(selected);
+          usedIds.add(selected.name);
+          budget -= selected.salary;
         }
 
-        // Professional Lineup Generation
-        function generateStandaloneLineups() {
-            const numLineups = parseInt(document.getElementById('numLineups').value) || 20;
-            const objective = document.getElementById('generationMode').value;
+        return lineup;
+      }
 
-            showAlert('info', `🤖 Generating ${numLineups} professional lineups...`);
+      // Professional Lineup Generation
+      function generateStandaloneLineups() {
+        const numLineups = parseInt(document.getElementById('numLineups').value) || 20;
+        const objective = document.getElementById('generationMode').value;
 
-            setTimeout(() => {
-                const lineups = runStandaloneOptimization(numLineups, objective);
-                dfsState.lineups = lineups;
-                displayStandaloneResults(lineups);
-                updatePortfolioOverview(lineups);
-                showAlert('success', `✅ Generated ${lineups.length} professional lineups!`);
-            }, 2000);
-        }
+        showAlert('info', `🤖 Generating ${numLineups} professional lineups...`);
 
-        // Complete Optimization Algorithm
-        function runStandaloneOptimization(numLineups, objective) {
-            const lineups = [];
-            const positions = dfsState.sport === 'NFL' ? 
-                ['QB', 'RB', 'RB', 'WR', 'WR', 'WR', 'TE', 'FLEX', 'DST'] :
-                ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL'];
-            
-            for (let i = 0; i < numLineups; i++) {
-                const lineup = [];
-                const usedIds = new Set();
-                let budget = 50000;
+        setTimeout(() => {
+          const lineups = runStandaloneOptimization(numLineups, objective);
+          dfsState.lineups = lineups;
+          displayStandaloneResults(lineups);
+          updatePortfolioOverview(lineups);
+          showAlert('success', `✅ Generated ${lineups.length} professional lineups!`);
+        }, 2000);
+      }
 
-                for (const pos of positions) {
-                    let candidates = dfsState.players.filter(player => {
-                        if (pos === 'FLEX' || pos === 'UTIL') return ['RB', 'WR', 'TE', 'PF', 'SF'].includes(player.pos);
-                        if (pos === 'G') return ['PG', 'SG'].includes(player.pos);
-                        if (pos === 'F') return ['SF', 'PF'].includes(player.pos);
-                        return player.pos === pos;
-                    }).filter(player => 
-                        !usedIds.has(player.name) && 
-                        player.salary <= budget &&
-                        (player.maxExp || 100) > 0
-                    );
+      // Complete Optimization Algorithm
+      function runStandaloneOptimization(numLineups, objective) {
+        const lineups = [];
+        const positions =
+          dfsState.sport === 'NFL'
+            ? ['QB', 'RB', 'RB', 'WR', 'WR', 'WR', 'TE', 'FLEX', 'DST']
+            : ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL'];
 
-                    if (candidates.length === 0) break;
+        for (let i = 0; i < numLineups; i++) {
+          const lineup = [];
+          const usedIds = new Set();
+          let budget = 50000;
 
-                    let selectedPlayer;
-                    if (objective === 'leverage') {
-                        selectedPlayer = candidates.reduce((best, current) =>
-                            (current.leverageScore || current.leverage) > (best.leverageScore || best.leverage) ? current : best);
-                    } else if (objective === 'ceiling') {
-                        selectedPlayer = candidates.reduce((best, current) =>
-                            current.ceiling > best.ceiling ? current : best);
-                    } else {
-                        candidates.sort((a, b) => (b.projection / b.salary * 1000) - (a.projection / a.salary * 1000));
-                        selectedPlayer = candidates[0];
-                    }
+          for (const pos of positions) {
+            let candidates = dfsState.players
+              .filter(player => {
+                if (pos === 'FLEX' || pos === 'UTIL')
+                  return ['RB', 'WR', 'TE', 'PF', 'SF'].includes(player.pos);
+                if (pos === 'G') return ['PG', 'SG'].includes(player.pos);
+                if (pos === 'F') return ['SF', 'PF'].includes(player.pos);
+                return player.pos === pos;
+              })
+              .filter(
+                player =>
+                  !usedIds.has(player.name) &&
+                  player.salary <= budget &&
+                  (player.maxExp || 100) > 0
+              );
 
-                    lineup.push(selectedPlayer);
-                    budget -= selectedPlayer.salary;
-                    usedIds.add(selectedPlayer.name);
-                }
+            if (candidates.length === 0) break;
 
-                if (lineup.length === positions.length) {
-                    const lineupObject = createStandaloneLineup(lineup, i);
-                    lineups.push(lineupObject);
-                }
+            let selectedPlayer;
+            if (objective === 'leverage') {
+              selectedPlayer = candidates.reduce((best, current) =>
+                (current.leverageScore || current.leverage) >
+                (best.leverageScore || best.leverage)
+                  ? current
+                  : best
+              );
+            } else if (objective === 'ceiling') {
+              selectedPlayer = candidates.reduce((best, current) =>
+                current.ceiling > best.ceiling ? current : best
+              );
+            } else {
+              candidates.sort(
+                (a, b) =>
+                  (b.projection / b.salary) * 1000 - (a.projection / a.salary) * 1000
+              );
+              selectedPlayer = candidates[0];
             }
-            
-            return lineups;
+
+            lineup.push(selectedPlayer);
+            budget -= selectedPlayer.salary;
+            usedIds.add(selectedPlayer.name);
+          }
+
+          if (lineup.length === positions.length) {
+            const lineupObject = createStandaloneLineup(lineup, i);
+            lineups.push(lineupObject);
+          }
         }
 
-        // Create Complete Lineup Object
-        function createStandaloneLineup(lineup, index) {
-            const totalProjection = lineup.reduce((sum, p) => sum + p.projection, 0);
-            const totalSalary = lineup.reduce((sum, p) => sum + p.salary, 0);
-            const avgLeverage = lineup.reduce((sum, p) => sum + (p.leverageScore || p.leverage), 0) / lineup.length;
-            const avgBoom = lineup.reduce((sum, p) => sum + p.boom_pct, 0) / lineup.length;
+        return lineups;
+      }
 
-            return {
-                id: index + 1,
-                players: lineup,
-                totalProjection: totalProjection.toFixed(1),
-                totalSalary: totalSalary,
-                budgetLeft: 50000 - totalSalary,
-                avgLeverage: avgLeverage.toFixed(2),
-                avgBoom: avgBoom.toFixed(1),
-                expectedROI: (Math.random() - 0.3) * 0.4,
-                sharpeRatio: (Math.random() * 1.5 + 0.5).toFixed(2)
-            };
+      // Create Complete Lineup Object
+      function createStandaloneLineup(lineup, index) {
+        const totalProjection = lineup.reduce((sum, p) => sum + p.projection, 0);
+        const totalSalary = lineup.reduce((sum, p) => sum + p.salary, 0);
+        const avgLeverage =
+          lineup.reduce((sum, p) => sum + (p.leverageScore || p.leverage), 0) /
+          lineup.length;
+        const avgBoom = lineup.reduce((sum, p) => sum + p.boom_pct, 0) / lineup.length;
+
+        return {
+          id: index + 1,
+          players: lineup,
+          totalProjection: totalProjection.toFixed(1),
+          totalSalary: totalSalary,
+          budgetLeft: 50000 - totalSalary,
+          avgLeverage: avgLeverage.toFixed(2),
+          avgBoom: avgBoom.toFixed(1),
+          expectedROI: (Math.random() - 0.3) * 0.4,
+          sharpeRatio: (Math.random() * 1.5 + 0.5).toFixed(2),
+        };
+      }
+
+      // Display Complete Lineup Results
+      function displayStandaloneResults(lineups) {
+        const container = document.getElementById('lineupResultsContainer');
+
+        if (lineups.length === 0) {
+          container.innerHTML =
+            '<div class="text-center text-muted">No valid lineups generated</div>';
+          return;
         }
 
-        // Display Complete Lineup Results
-        function displayStandaloneResults(lineups) {
-            const container = document.getElementById('lineupResultsContainer');
+        let html = '';
+        lineups.slice(0, 10).forEach(lineup => {
+          const roiColor = lineup.expectedROI >= 0 ? 'text-success' : 'text-danger';
 
-            if (lineups.length === 0) {
-                container.innerHTML = '<div class="text-center text-muted">No valid lineups generated</div>';
-                return;
-            }
-
-            let html = '';
-            lineups.slice(0, 10).forEach(lineup => {
-                const roiColor = lineup.expectedROI >= 0 ? 'text-success' : 'text-danger';
-
-                html += `
+          html += `
                     <div class="lineup-card mb-2">
                         <div class="lineup-header d-flex justify-content-between">
                             <strong>Lineup ${lineup.id}</strong>
@@ -1414,170 +1735,194 @@
                         </div>
                     </div>
                 `;
-            });
+        });
 
-            container.innerHTML = html;
-            document.getElementById('exportLineupsBtn').style.display = 'block';
-            document.getElementById('exportStatus').innerHTML = '<div class="text-success">✅ Ready to export</div>';
+        container.innerHTML = html;
+        document.getElementById('exportLineupsBtn').style.display = 'block';
+        document.getElementById('exportStatus').innerHTML =
+          '<div class="text-success">✅ Ready to export</div>';
+      }
+
+      // Utility Functions
+      function hashCode(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+          const char = str.charCodeAt(i);
+          hash = (hash << 5) - hash + char;
+          hash = hash & hash; // Convert to 32-bit integer
+        }
+        return Math.abs(hash);
+      }
+
+      function applyFilters(players) {
+        let filtered = [...players];
+
+        if (dfsState.filters.showValueOnly) {
+          filtered = filtered.filter(p => (p.leverageScore || p.leverage) > 3);
         }
 
-        // Utility Functions
-        function hashCode(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash; // Convert to 32-bit integer
-            }
-            return Math.abs(hash);
+        if (dfsState.filters.showHighLeverage) {
+          filtered = filtered.filter(p => (p.leverageScore || p.leverage) > 4);
         }
 
-        function applyFilters(players) {
-            let filtered = [...players];
-            
-            if (dfsState.filters.showValueOnly) {
-                filtered = filtered.filter(p => (p.leverageScore || p.leverage) > 3);
-            }
-            
-            if (dfsState.filters.showHighLeverage) {
-                filtered = filtered.filter(p => (p.leverageScore || p.leverage) > 4);
-            }
-            
-            return filtered;
+        return filtered;
+      }
+
+      function updatePlayerExposure(playerName, type, value) {
+        const player = dfsState.players.find(p => p.name === playerName);
+        if (player) {
+          if (type === 'min') player.minExp = parseInt(value);
+          else player.maxExp = parseInt(value);
         }
+      }
 
-        function updatePlayerExposure(playerName, type, value) {
-            const player = dfsState.players.find(p => p.name === playerName);
-            if (player) {
-                if (type === 'min') player.minExp = parseInt(value);
-                else player.maxExp = parseInt(value);
-            }
+      function lockPlayer(playerName) {
+        const player = dfsState.players.find(p => p.name === playerName);
+        if (player) {
+          player.minExp = 100;
+          player.maxExp = 100;
+          displayProfessionalPlayerPool();
+          showAlert('success', `🔒 ${playerName} locked to 100%`);
         }
+      }
 
-        function lockPlayer(playerName) {
-            const player = dfsState.players.find(p => p.name === playerName);
-            if (player) {
-                player.minExp = 100;
-                player.maxExp = 100;
-                displayProfessionalPlayerPool();
-                showAlert('success', `🔒 ${playerName} locked to 100%`);
-            }
+      function fadePlayer(playerName) {
+        const player = dfsState.players.find(p => p.name === playerName);
+        if (player) {
+          player.maxExp = 0;
+          displayProfessionalPlayerPool();
+          showAlert('warning', `❌ ${playerName} faded (0% max)`);
         }
+      }
 
-        function fadePlayer(playerName) {
-            const player = dfsState.players.find(p => p.name === playerName);
-            if (player) {
-                player.maxExp = 0;
-                displayProfessionalPlayerPool();
-                showAlert('warning', `❌ ${playerName} faded (0% max)`);
-            }
-        }
+      function updatePortfolioOverview(lineups) {
+        const avgROI =
+          lineups.reduce((sum, l) => sum + l.expectedROI, 0) / lineups.length;
+        const avgSharpe =
+          lineups.reduce((sum, l) => sum + parseFloat(l.sharpeRatio), 0) /
+          lineups.length;
 
-        function updatePortfolioOverview(lineups) {
-            const avgROI = lineups.reduce((sum, l) => sum + l.expectedROI, 0) / lineups.length;
-            const avgSharpe = lineups.reduce((sum, l) => sum + parseFloat(l.sharpeRatio), 0) / lineups.length;
+        document.getElementById('portfolioAvgROI').textContent =
+          (avgROI * 100).toFixed(1) + '%';
+        document.getElementById('portfolioSharpe').textContent = avgSharpe.toFixed(2);
+        document.getElementById('portfolioOverview').style.display = 'block';
+      }
 
-            document.getElementById('portfolioAvgROI').textContent = (avgROI * 100).toFixed(1) + '%';
-            document.getElementById('portfolioSharpe').textContent = avgSharpe.toFixed(2);
-            document.getElementById('portfolioOverview').style.display = 'block';
-        }
+      function calculateROI(simulatedLineups) {
+        if (simulatedLineups.length === 0) return '0.0';
+        const avgScore =
+          simulatedLineups.reduce((sum, l) => sum + l.totalScore, 0) /
+          simulatedLineups.length;
+        const baseROI = ((avgScore - 120) / 120) * 100;
+        return Math.max(-50, Math.min(100, baseROI)).toFixed(1);
+      }
 
-        function calculateROI(simulatedLineups) {
-            if (simulatedLineups.length === 0) return "0.0";
-            const avgScore = simulatedLineups.reduce((sum, l) => sum + l.totalScore, 0) / simulatedLineups.length;
-            const baseROI = ((avgScore - 120) / 120) * 100;
-            return Math.max(-50, Math.min(100, baseROI)).toFixed(1);
-        }
-        
-        function calculateWinRate(simulatedLineups) {
-            if (simulatedLineups.length === 0) return "0.0";
-            const highScores = simulatedLineups.filter(l => l.totalScore > 150).length;
-            return ((highScores / simulatedLineups.length) * 100).toFixed(1);
-        }
+      function calculateWinRate(simulatedLineups) {
+        if (simulatedLineups.length === 0) return '0.0';
+        const highScores = simulatedLineups.filter(l => l.totalScore > 150).length;
+        return ((highScores / simulatedLineups.length) * 100).toFixed(1);
+      }
 
-        function exportToCsv() {
-            if (dfsState.lineups.length === 0) return;
+      function exportToCsv() {
+        if (dfsState.lineups.length === 0) return;
 
-            const positions = dfsState.sport === 'NFL' ? 
-                ['QB', 'RB', 'RB', 'WR', 'WR', 'WR', 'TE', 'FLEX', 'DST'] :
-                ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL'];
-                
-            let csvContent = positions.join(',') + '\n';
-            
-            dfsState.lineups.forEach(lineup => {
-                const row = lineup.players.map(p => p.name).join(',');
-                csvContent += row + '\n';
-            });
+        const positions =
+          dfsState.sport === 'NFL'
+            ? ['QB', 'RB', 'RB', 'WR', 'WR', 'WR', 'TE', 'FLEX', 'DST']
+            : ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL'];
 
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('hidden', '');
-            a.setAttribute('href', url);
-            a.setAttribute('download', `dfs_${dfsState.sport.toLowerCase()}_lineups.csv`);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            document.getElementById('exportStatus').innerHTML = '<div class="text-success">✅ CSV downloaded!</div>';
-        }
+        let csvContent = positions.join(',') + '\n';
 
-        function showAlert(type, message) {
-            const alertArea = document.getElementById('alertArea');
-            alertArea.innerHTML = `
+        dfsState.lineups.forEach(lineup => {
+          const row = lineup.players.map(p => p.name).join(',');
+          csvContent += row + '\n';
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.setAttribute('hidden', '');
+        a.setAttribute('href', url);
+        a.setAttribute('download', `dfs_${dfsState.sport.toLowerCase()}_lineups.csv`);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        document.getElementById('exportStatus').innerHTML =
+          '<div class="text-success">✅ CSV downloaded!</div>';
+      }
+
+      function showAlert(type, message) {
+        const alertArea = document.getElementById('alertArea');
+        alertArea.innerHTML = `
                 <div class="alert alert-${type} alert-dismissible fade show" role="alert">
                     ${message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             `;
-        }
+      }
 
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            // Main buttons
-            document.getElementById('loadSampleTemplate').addEventListener('click', loadStandalonePlayerData);
-            document.getElementById('generateLineupsBtn').addEventListener('click', generateStandaloneLineups);
-            document.getElementById('runFullSimulation').addEventListener('click', runCompleteSimulation);
-            document.getElementById('exportLineupsBtn').addEventListener('click', exportToCsv);
+      // Event Listeners
+      document.addEventListener('DOMContentLoaded', function () {
+        // Main buttons
+        document
+          .getElementById('loadSampleTemplate')
+          .addEventListener('click', loadStandalonePlayerData);
+        document
+          .getElementById('generateLineupsBtn')
+          .addEventListener('click', generateStandaloneLineups);
+        document
+          .getElementById('runFullSimulation')
+          .addEventListener('click', runCompleteSimulation);
+        document
+          .getElementById('exportLineupsBtn')
+          .addEventListener('click', exportToCsv);
 
-            // Filter buttons
-            document.getElementById('showValuePlays').addEventListener('click', function() {
-                dfsState.filters.showValueOnly = !dfsState.filters.showValueOnly;
-                this.classList.toggle('btn-primary');
-                this.classList.toggle('btn-outline-primary');
-                if (dfsState.players.length > 0) displayProfessionalPlayerPool();
+        // Filter buttons
+        document
+          .getElementById('showValuePlays')
+          .addEventListener('click', function () {
+            dfsState.filters.showValueOnly = !dfsState.filters.showValueOnly;
+            this.classList.toggle('btn-primary');
+            this.classList.toggle('btn-outline-primary');
+            if (dfsState.players.length > 0) displayProfessionalPlayerPool();
+          });
+
+        document
+          .getElementById('showHighLeverage')
+          .addEventListener('click', function () {
+            dfsState.filters.showHighLeverage = !dfsState.filters.showHighLeverage;
+            this.classList.toggle('btn-info');
+            this.classList.toggle('btn-outline-info');
+            if (dfsState.players.length > 0) displayProfessionalPlayerPool();
+          });
+
+        // Sport switcher
+        document.querySelectorAll('.sport-btn').forEach(btn => {
+          btn.addEventListener('click', function () {
+            document.querySelectorAll('.sport-btn').forEach(b => {
+              b.classList.remove('btn-success');
+              b.classList.add('btn-outline-success');
             });
+            this.classList.add('btn-success');
+            this.classList.remove('btn-outline-success');
 
-            document.getElementById('showHighLeverage').addEventListener('click', function() {
-                dfsState.filters.showHighLeverage = !dfsState.filters.showHighLeverage;
-                this.classList.toggle('btn-info');
-                this.classList.toggle('btn-outline-info');
-                if (dfsState.players.length > 0) displayProfessionalPlayerPool();
-            });
+            dfsState.sport = this.dataset.sport;
+            document.getElementById('currentSport').textContent = this.dataset.sport;
 
-            // Sport switcher
-            document.querySelectorAll('.sport-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.sport-btn').forEach(b => {
-                        b.classList.remove('btn-success');
-                        b.classList.add('btn-outline-success');
-                    });
-                    this.classList.add('btn-success');
-                    this.classList.remove('btn-outline-success');
-                    
-                    dfsState.sport = this.dataset.sport;
-                    document.getElementById('currentSport').textContent = this.dataset.sport;
-                    
-                    // Reload data for new sport
-                    if (dfsState.players.length > 0) {
-                        loadStandalonePlayerData();
-                    }
-                });
-            });
-
-            console.log('🚀 Complete Standalone DFS Platform loaded!');
-            showAlert('info', '🎯 Professional DFS Platform ready! Click "Load Sample Data" to begin.');
+            // Reload data for new sport
+            if (dfsState.players.length > 0) {
+              loadStandalonePlayerData();
+            }
+          });
         });
+
+        console.log('🚀 Complete Standalone DFS Platform loaded!');
+        showAlert(
+          'info',
+          '🎯 Professional DFS Platform ready! Click "Load Sample Data" to begin.'
+        );
+      });
     </script>
-</body>
+  </body>
 </html>

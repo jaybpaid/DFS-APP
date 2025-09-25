@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFS Optimizer Pro - Professional Daily Fantasy Sports Platform</title>
+    <!-- Tailwind CSS for a modern, utility-first approach -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Recharts for advanced charts -->
+    <script src="https://cdn.jsdelivr.net/npm/recharts@2.8.0/umd/Recharts.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Framer Motion for animations -->
+    <script src="https://cdn.jsdelivr.net/npm/framer-motion@10.0.0/dist/framer-motion.js"></script>
+    <style>
+        /* Professional DFS Dark Theme inspired by industry leaders */
+        :root {
+            --primary: #4f46e5;
+            --secondary: #059669;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --surface-100: #0f172a; /* Deepest background */
+            --surface-200: #1e293b; /* Cards, modals */
+            --surface-300: #334155; /* Hover, active elements */
+            --border: #475569;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+
+        body {
+            background-color: var(--surface-100);
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--surface-100); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* Active tab styling */
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary) !important;
+        }
+        .secondary-tab-button.active {
+            background-color: var(--surface-300);
+            color: var(--text-primary);
+        }
+
+        /* Form Controls */
+        .form-input, .form-select {
+            background-color: var(--surface-300);
+            border-color: var(--border);
+            color: var(--text-primary);
+        }
+        .form-input:focus, .form-select:focus {
+            --tw-ring-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .player-action-btn:hover { transform: scale(1.1); }
+        
+        .modal-backdrop {
+            background-color: rgba(15, 23, 42, 0.8);
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type='number'] { -moz-appearance: textfield; appearance: textfield; }
+        
+        .lineup-row:hover { background-color: var(--surface-300); }
+        .favorite-btn.favorited { color: var(--danger); }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100">
+
+    <div id="app" class="flex h-screen bg-slate-900">
+        <!-- PROFESSIONAL SIDEBAR NAVIGATION (STOKASTIC-STYLE) -->
+        <aside class="w-64 bg-slate-800 border-r border-slate-700 flex flex-col">
+            <!-- Logo & Brand -->
+            <div class="p-4 border-b border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-rocket text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-white">DFS Optimizer Pro</h1>
+                        <p class="text-xs text-slate-400">Professional Platform</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Sections -->
+            <nav class="flex-1 overflow-y-auto p-2">
+                <!-- DFS Tools Section -->
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">DFS Tools</h3>
+                    <div class="space-y-1">
+                        <button data-nav="dashboard-live" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                            <i class="fas fa-chart-line"></i>
+                            <span>Live Dashboard</span>
+                        </button>
+                        <button data-nav="optimizer" class="nav-item active w-full flex items-center space-x-3 px-3 py-2 text-sm text-white bg-slate-700 rounded-lg">
+                            <i class="fas fa-cogs"></i>
+                            <span>Optimizer</span>
+                        </button>
+                        <button data-nav="simulations" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Simulations</span>
+                        </button>
+                        <button data-nav="player-pool" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <i class="fas fa-users"></i>
+                            <span>Player Pool</span>
+                        </button>
+                        <button data-nav="slates" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Slates</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sports Section -->
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Sports</h3>
+                    <div class="space-y-1">
+                        <button data-nav="nfl" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <span>🏈</span>
+                            <span>NFL</span>
+                        </button>
+                        <button data-nav="nba" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <span>🏀</span>
+                            <span>NBA</span>
+                        </button>
+                        <button data-nav="mlb" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <span>⚾</span>
+                            <span>MLB</span>
+                        </button>
+                        <button data-nav="nhl" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <span>🏒</span>
+                            <span>NHL</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Analytics Section -->
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Analytics</h3>
+                    <div class="space-y-1">
+                        <button data-nav="analytics-roi" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>ROI Tracker</span>
+                        </button>
+                        <button data-nav="analytics-winrate" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <i class="fas fa-trophy"></i>
+                            <span>Win Rate</span>
+                        </button>
+                        <button data-nav="analytics-leverage" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <i class="fas fa-bolt"></i>
+                            <span>Leverage Plays</span>
+                        </button>
+                        <button data-nav="analytics-ownership" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <i class="fas fa-eye"></i>
+                            <span>Ownership</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tools Section -->
+                <div class="mb-6">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Tools</h3>
+                    <div class="space-y-1">
+                        <button data-nav="uploads" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <i class="fas fa-upload"></i>
+                            <span>CSV Upload</span>
+                        </button>
+                        <button data-nav="settings" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </button>
+                        <button data-nav="help" class="nav-item w-full flex items-center space-x-3 px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 hover:text-white rounded-lg transition-all">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- User Status -->
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-white text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-white truncate">Pro User</p>
+                        <p class="text-xs text-slate-400">Live Session</p>
+                    </div>
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="flex-1 flex flex-col">
+            <!-- TOP HEADER BAR -->
+            <header class="bg-slate-800 border-b border-slate-700 px-6 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <h2 id="page-title" class="text-xl font-semibold text-white">DFS Optimizer</h2>
+                        <div class="flex items-center space-x-2 text-sm text-slate-400">
+                            <span class="flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span>Live Data</span>
+                            </span>
+                            <span>•</span>
+                            <span>Last Updated: <span id="last-updated">Just now</span></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right text-sm">
+                            <div class="text-slate-400">Slate: <span id="headerSlateStatus" class="text-white font-medium">NFL Main</span></div>
+                            <div class="text-slate-400">Lineups: <span id="headerLineupsStatus" class="text-white font-medium">0</span></div>
+                        </div>
+                        <button id="entry-manager-btn" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-all text-sm">
+                            <i class="fas fa-plus mr-2"></i>Entry Manager
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- MAIN CONTENT -->
+            <main class="flex-1 overflow-auto p-6">
+
+            <!-- LIVE DASHBOARD SECTION -->
+            <div id="dashboard-live" class="hidden">
+                <!-- Live Data Header -->
+                <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg p-6 mb-6 text-white">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-2xl font-bold mb-2">🔴 Live DFS Dashboard</h1>
+                            <p class="text-indigo-100">Real-time data • Auto-refresh every 30 seconds</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-90">Last Updated</div>
+                            <div id="live-last-updated" class="font-mono text-lg">Just now</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Metrics Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                    <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-400 text-sm">Live ROI</p>
+                                <p class="text-2xl font-bold text-green-400" id="live-roi">87.3%</p>
+                            </div>
+                            <i class="fas fa-dollar-sign text-green-400 text-xl"></i>
+                        </div>
+                        <div class="mt-2 text-xs text-green-400">
+                            <i class="fas fa-arrow-up mr-1"></i>+5.2% from yesterday
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-400 text-sm">Win Rate</p>
+                                <p class="text-2xl font-bold text-blue-400" id="live-winrate">12.5%</p>
+                            </div>
+                            <i class="fas fa-trophy text-blue-400 text-xl"></i>
+                        </div>
+                        <div class="mt-2 text-xs text-blue-400">
+                            <i class="fas fa-arrow-up mr-1"></i>+2.1% improvement
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-400 text-sm">Top 5%</p>
+                                <p class="text-2xl font-bold text-purple-400" id="live-top5">34.2%</p>
+                            </div>
+                            <i class="fas fa-crown text-purple-400 text-xl"></i>
+                        </div>
+                        <div class="mt-2 text-xs text-purple-400">
+                            <i class="fas fa-arrow-up mr-1"></i>+8.7% this week
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-400 text-sm">Cash Rate</p>
+                                <p class="text-2xl font-bold text-yellow-400" id="live-cash">67.3%</p>
+                            </div>
+                            <i class="fas fa-coins text-yellow-400 text-xl"></i>
+                        </div>
+                        <div class="mt-2 text-xs text-yellow-400">
+                            <i class="fas fa-arrow-up mr-1"></i>+1.4% consistency
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-400 text-sm">Active Slates</p>
+                                <p class="text-2xl font-bold text-indigo-400" id="live-slates">3</p>
+                            </div>
+                            <i class="fas fa-calendar-alt text-indigo-400 text-xl"></i>
+                        </div>
+                        <div class="mt-2 text-xs text-indigo-400">
+                            <i class="fas fa-circle text-green-500 mr-1"></i>All systems live
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Slate Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-slate-800 rounded-lg border border-slate-700 p-4">
+                        <h3 class="font-bold text-white mb-3 flex items-center">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                            NFL Main Slate
+                        </h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Status:</span>
+                                <span class="text-green-400 font-medium">Live</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Lock Time:</span>
+                                <span class="text-white">1:00 PM ET</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Entries:</span>
+                                <span class="text-white">150K+</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Prize Pool:</span>
+                                <span class="text-green-400 font-bold">$2.5M</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 rounded-lg border border-slate-700 p-4">
+                        <h3 class="font-bold text-white mb-3 flex items-center">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                            NBA Main Slate
+                        </h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Status:</span>
+                                <span class="text-blue-400 font-medium">Building</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Lock Time:</span>
+                                <span class="text-white">7:00 PM ET</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Entries:</span>
+                                <span class="text-white">85K+</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Prize Pool:</span>
+                                <span class="text-green-400 font-bold">$1.2M</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 rounded-lg border border-slate-700 p-4">
+                        <h3 class="font-bold text-white mb-3 flex items-center">
+                            <span class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
+                            MLB Early Slate
+                        </h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Status:</span>
+                                <span class="text-yellow-400 font-medium">Filling</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Lock Time:</span>
+                                <span class="text-white">12:35 PM ET</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Entries:</span>
+                                <span class="text-white">42K+</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">Prize Pool:</span>
+                                <span class="text-green-400 font-bold">$750K</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Simulation Results -->
+                <div class="bg-slate-800 rounded-lg border border-slate-700 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-bold text-white">📊 Advanced Simulation Results</h2>
+                        <div class="text-sm text-slate-400">
+                            <i class="fas fa-sync-alt mr-1"></i>20,000+ iterations • Updated every minute
+                        </div>
+                    </div>
+
+                    <!-- Simulation Metrics -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="text-center p-4 bg-slate-700 rounded-lg">
+                            <div class="text-3xl font-bold text-green-400 mb-1">142.6</div>
+                            <div class="text-sm text-slate-400">Avg Score</div>
+                        </div>
+                        <div class="text-center p-4 bg-slate-700 rounded-lg">
+                            <div class="text-3xl font-bold text-blue-400 mb-1">12.5%</div>
+                            <div class="text-sm text-slate-400">Win Rate</div>
+                        </div>
+                        <div class="text-center p-4 bg-slate-700 rounded-lg">
+                            <div class="text-3xl font-bold text-purple-400 mb-1">87%</div>
+                            <div class="text-sm text-slate-400">ROI</div>
+                        </div>
+                    </div>
+
+                    <!-- Simulation Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-slate-700 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-3">ROI Distribution</h4>
+                            <canvas id="roi-chart" height="200"></canvas>
+                        </div>
+                        <div class="bg-slate-700 p-4 rounded-lg">
+                            <h4 class="font-semibold text-white mb-3">Win Rate by Score</h4>
+                            <canvas id="winrate-chart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OPTIMIZER TAB -->
+            <div id="optimizer-tab" class="tab-content">
+                <!-- Control Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-4">
+                    <!-- Slate Selection -->
+                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                        <h3 class="font-bold text-indigo-400 mb-2 flex items-center"><i class="fas fa-calendar-alt mr-2"></i><span>Slate & Contest</span></h3>
+                        <select id="sport-select" class="form-select w-full mb-2 bg-slate-700 border-slate-600 rounded-md" title="Select sport">
+                            <option value="NFL">🏈 NFL</option>
+                            <option value="NBA">🏀 NBA</option>
+                            <option value="MLB">⚾ MLB</option>
+                        </select>
+                        <select id="site-select" class="form-select w-full bg-slate-700 border-slate-600 rounded-md" title="Select site">
+                            <option value="DraftKings">DraftKings</option>
+                            <option value="FanDuel">FanDuel</option>
+                        </select>
+                    </div>
+                    <!-- Build Settings -->
+                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                         <h3 class="font-bold text-indigo-400 mb-2 flex items-center"><i class="fas fa-sliders-h mr-2"></i><span>Build Settings</span></h3>
+                         <div class="flex space-x-4">
+                            <div class="flex-1">
+                                <label for="lineup-count" class="text-xs text-slate-400"># of Lineups</label>
+                                <input type="number" id="lineup-count" class="form-input w-full mt-1 bg-slate-700 border-slate-600 rounded-md" value="20" min="1" max="150" title="Number of lineups to generate">
+                            </div>
+                            <div class="flex-1">
+                                <label for="randomness-percent" class="text-xs text-slate-400">Randomness %</label>
+                                <input type="number" id="randomness-percent" class="form-input w-full mt-1 bg-slate-700 border-slate-600 rounded-md" value="15" min="0" max="100" title="Randomness percentage">
+                            </div>
+                         </div>
+                    </div>
+                    <!-- Stacking Rules -->
+                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                        <h3 class="font-bold text-indigo-400 mb-2 flex items-center"><i class="fas fa-layer-group mr-2"></i><span>Stacking Rules</span></h3>
+                        <button id="add-stack-rule-btn" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-md transition-all">
+                            <i class="fas fa-plus-circle mr-2"></i>Create Stack Rule
+                        </button>
+                    </div>
+                    <!-- Player Rules -->
+                    <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                        <h3 class="font-bold text-indigo-400 mb-2 flex items-center"><i class="fas fa-user-friends mr-2"></i><span>Player Rules</span></h3>
+                        <button id="add-player-rule-btn" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-4 rounded-md transition-all">
+                            <i class="fas fa-plus-circle mr-2"></i>Create Player Rule
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Secondary Nav & Action Bar -->
+                <div class="flex flex-col sm:flex-row items-center justify-between mb-4 bg-slate-800 p-2 rounded-lg border border-slate-700 gap-2">
+                     <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-md">
+                        <button data-view="lineups" class="secondary-tab-button active px-3 py-1 text-xs font-semibold rounded-md">LINEUPS</button>
+                        <button data-view="exposures" class="secondary-tab-button px-3 py-1 text-xs font-semibold rounded-md">EXPOSURES</button>
+                        <button data-view="player-roi" class="secondary-tab-button px-3 py-1 text-xs font-semibold rounded-md">PLAYER ROI</button>
+                        <button data-view="stack-roi" class="secondary-tab-button px-3 py-1 text-xs font-semibold rounded-md">STACK ROI</button>
+                    </div>
+                    <div id="rules-display-area" class="flex items-center space-x-2 overflow-x-auto text-xs">
+                        <span class="text-slate-400">No rules applied.</span>
+                    </div>
+                    <button id="generate-lineups-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-md transition-all whitespace-nowrap">
+                        <i class="fas fa-magic mr-2"></i>Generate Lineups
+                    </button>
+                </div>
+
+                <!-- Main View Area -->
+                <div id="optimizer-view-container" class="bg-slate-800 rounded-lg border border-slate-700 overflow-hidden">
+                    <!-- Lineups View -->
+                    <div id="lineups-view" class="overflow-auto" style="height: 60vh;">
+                         <div class="text-center p-8 text-slate-500">
+                            <i class="fas fa-trophy fa-3x mb-3"></i>
+                            <h3 class="font-bold">No Lineups Yet</h3>
+                            <p>Adjust settings and generate lineups to begin analysis.</p>
+                        </div>
+                    </div>
+                     <!-- Exposures View -->
+                    <div id="exposures-view" class="hidden p-4" style="height: 60vh;">
+                         <canvas id="player-exposure-chart"></canvas>
+                    </div>
+                    <!-- Player ROI View -->
+                    <div id="player-roi-view" class="hidden p-4" style="height: 60vh;">
+                        <div class="text-center p-8 text-slate-500">
+                            <i class="fas fa-chart-line fa-3x mb-3"></i>
+                            <h3 class="font-bold">Player ROI Analysis</h3>
+                            <p>Generate lineups to see player ROI analysis.</p>
+                        </div>
+                    </div>
+                    <!-- Stack ROI View -->
+                    <div id="stack-roi-view" class="hidden p-4" style="height: 60vh;">
+                        <div class="text-center p-8 text-slate-500">
+                            <i class="fas fa-layer-group fa-3x mb-3"></i>
+                            <h3 class="font-bold">Stack ROI Analysis</h3>
+                            <p>Generate lineups to see stack performance analysis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OTHER TABS (PLACEHOLDERS) -->
+            <div id="data-hub-tab" class="tab-content hidden">
+                <div class="text-center p-16 bg-slate-800 rounded-lg border border-slate-700">
+                    <i class="fas fa-database fa-4x text-indigo-500 mb-4"></i>
+                    <h2 class="text-2xl font-bold">Data Hub</h2>
+                    <p class="text-slate-400 mt-2">Manage player projections, ownership, and custom data sources.</p>
+                </div>
+            </div>
+            <div id="contest-sim-tab" class="tab-content hidden">
+                 <div class="text-center p-16 bg-slate-800 rounded-lg border border-slate-700">
+                    <i class="fas fa-trophy fa-4x text-indigo-500 mb-4"></i>
+                    <h2 class="text-2xl font-bold">Contest Simulator</h2>
+                    <p class="text-slate-400 mt-2">Simulate your lineups against the field for specific contests.</p>
+                </div>
+            </div>
+            <div id="late-swap-tab" class="tab-content hidden">
+                <div class="text-center p-16 bg-slate-800 rounded-lg border border-slate-700">
+                    <i class="fas fa-exchange-alt fa-4x text-indigo-500 mb-4"></i>
+                    <h2 class="text-2xl font-bold">Late Swap</h2>
+                    <p class="text-slate-400 mt-2">Re-optimize your lineups after lock when news breaks.</p>
+                </div>
+            </div>
+             <div id="pickem-tab" class="tab-content hidden">
+                <div class="text-center p-16 bg-slate-800 rounded-lg border border-slate-700">
+                    <i class="fas fa-check-double fa-4x text-indigo-500 mb-4"></i>
+                    <h2 class="text-2xl font-bold">Pick'em Optimizer</h2>
+                    <p class="text-slate-400 mt-2">Find the best value on player prop sites like PrizePicks and Underdog.</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <div id="stack-rule-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-backdrop absolute inset-0"></div>
+        <div class="relative h-full flex items-center justify-center p-4">
+            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 w-full max-w-lg">
+                <h3 class="text-lg font-bold mb-4">Create Stack Rule</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Stack Type</label>
+                        <select id="stack-type-select" class="form-select w-full bg-slate-700 border-slate-600" title="Select stack type">
+                            <option value="QB+2WR">QB + 2 WR</option>
+                            <option value="QB+WR+TE">QB + WR + TE</option>
+                            <option value="RB+DST">RB + DST</option>
+                        </select>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button id="cancel-stack-rule" class="flex-1 bg-slate-700 text-white py-2 px-4 rounded-md">Cancel</button>
+                        <button id="save-stack-rule" class="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md">Save Rule</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="player-rule-modal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-backdrop absolute inset-0"></div>
+        <div class="relative h-full flex items-center justify-center p-4">
+            <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 w-full max-w-lg">
+                <h3 class="text-lg font-bold mb-4">Create Player Rule</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label for="player-rule-search" class="block text-sm font-medium mb-2">Search Players</label>
+                        <input type="text" id="player-rule-search" class="form-input w-full bg-slate-700 border-slate-600" placeholder="Type player name...">
+                    </div>
+                    <div id="player-rule-search-results" class="max-h-32 overflow-y-auto"></div>
+                    <div id="player-rule-selected-group" class="space-y-2"></div>
+                    <div class="flex space-x-2">
+                        <button id="cancel-player-rule" class="flex-1 bg-slate-700 text-white py-2 px-4 rounded-md">Cancel</button>
+                        <button id="save-player-rule" class="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md">Save Rule</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast" class="fixed top-4 right-4 z-50 hidden">
+        <div class="bg-slate-800 border border-slate-700 p-4 rounded-lg shadow-lg">
+            <div class="flex items-center space-x-3">
+                <i id="toast-icon" class="fas fa-info-circle text-blue-400"></i>
+                <span id="toast-message">Message here</span>
+            </div>
+        </div>
+    </div>
+
+<script>
+// --- CORE APPLICATION LOGIC --- //
+document.addEventListener('DOMContentLoaded', () => {
+    // State Management
+    const dfsState = {
+        activeTab: 'optimizer',
+        activeView: 'lineups',
+        selectedSport: 'NFL',
+        selectedSite: 'DraftKings',
+        playerPool: [],
+        generatedLineups: [],
+        stackRules: [],
+        playerRules: [],
+        isLoading: false
+    };
+
+    // Mock Player Data
+    const nflPlayerData = [
+        { id: 1, name: 'Josh Allen', position: 'QB', team: 'BUF', salary: 8400, projection: 25.2, ownership: 25.5, opponent: '@MIA' },
+        { id: 2, name: 'Saquon Barkley', position: 'RB', team: 'NYG', salary: 7400, projection: 20.1, ownership: 18.3, opponent: 'vs DAL' },
+        { id: 3, name: 'Tyreek Hill', position: 'WR', team: 'MIA', salary: 8200, projection: 22.3, ownership: 28.7, opponent: 'vs BUF' },
+        { id: 4, name: 'Travis Kelce', position: 'TE', team: 'KC', salary: 6800, projection: 16.4, ownership: 22.1, opponent: '@NYJ' },
+        { id: 5, name: 'Bills DST', position: 'DST', team: 'BUF', salary: 3000, projection: 8.2, ownership: 12.5, opponent: '@MIA' },
+    ];
+
+    // DOM Elements
+    const DOMElements = {
+        // Sidebar Navigation
+        navItems: document.querySelectorAll('.nav-item'),
+        pageTitle: document.getElementById('page-title'),
+        lastUpdated: document.getElementById('last-updated'),
+
+        // Header
+        headerSlateStatus: document.getElementById('headerSlateStatus'),
+        headerLineupsStatus: document.getElementById('headerLineupsStatus'),
+        entryManagerBtn: document.getElementById('entry-manager-btn'),
+
+        // Live Dashboard Elements
+        liveRoi: document.getElementById('live-roi'),
+        liveWinrate: document.getElementById('live-winrate'),
+        liveTop5: document.getElementById('live-top5'),
+        liveCash: document.getElementById('live-cash'),
+        liveSlates: document.getElementById('live-slates'),
+        liveLastUpdated: document.getElementById('live-last-updated'),
+
+        // Optimizer Tab - Controls
+        sportSelect: document.getElementById('sport-select'),
+        siteSelect: document.getElementById('site-select'),
+        lineupCount: document.getElementById('lineup-count'),
+        randomnessPercent: document.getElementById('randomness-percent'),
+        addStackRuleBtn: document.getElementById('add-stack-rule-btn'),
+        addPlayerRuleBtn: document.getElementById('add-player-rule-btn'),
+
+        // Optimizer Tab - Secondary Nav & Action
+        secondaryTabButtons: document.querySelectorAll('.secondary-tab-button'),
+        rulesDisplayArea: document.getElementById('rules-display-area'),
+        generateLineupsBtn: document.getElementById('generate-lineups-btn'),
+
+        // Optimizer Tab - Views
+        optimizerViewContainer: document.getElementById('optimizer-view-container'),
+        lineupsView: document.getElementById('lineups-view'),
+        exposuresView: document.getElementById('exposures-view'),
+        playerRoiView: document.getElementById('player-roi-view'),
+        stackRoiView: document.getElementById('stack-roi-view'),
+        playerExposureChartCanvas: document.getElementById('player-exposure-chart'),
+
+        // Charts
+        roiChartCanvas: document.getElementById('roi-chart'),
+        winrateChartCanvas: document.getElementById('winrate-chart'),
+
+        // Modals & Rules
+        stackRuleModal: document.getElementById('stack-rule-modal'),
+        playerRuleModal: document.getElementById('player-rule-modal'),
+        cancelStackRuleBtn: document.getElementById('cancel-stack-rule'),
+        saveStackRuleBtn: document.getElementById('save-stack-rule'),
+        cancelPlayerRuleBtn: document.getElementById('cancel-player-rule'),
+        savePlayerRuleBtn: document.getElementById('save-player-rule'),
+        playerRuleSearch: document.getElementById('player-rule-search'),
+        playerRuleSearchResults: document.getElementById('player-rule-search-results'),
+        playerRuleSelectedGroup: document.getElementById('player-rule-selected-group'),
+
+        // Toast
+        toast: document.getElementById('toast'),
+        toastMessage: document.getElementById('toast-message'),
+        toastIcon: document.getElementById('toast-icon')
+    };
+    
+    function initializeApp() {
+        bindEventListeners();
+        loadInitialData();
+        renderActiveTab();
+    }
+
+    function bindEventListeners() {
+        // Sidebar navigation
+        DOMElements.navItems.forEach(btn => btn.addEventListener('click', () => switchNavigation(btn.dataset.nav)));
+
+        // Main tabs
+        DOMElements.tabButtons.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+        // Secondary tabs
+        DOMElements.secondaryTabButtons.forEach(btn => btn.addEventListener('click', () => switchOptimizerView(btn.dataset.view)));
+
+        // Controls
+        DOMElements.generateLineupsBtn.addEventListener('click', handleGenerateLineups);
+        DOMElements.addStackRuleBtn.addEventListener('click', () => showModal('stack-rule-modal'));
+        DOMElements.addPlayerRuleBtn.addEventListener('click', () => showModal('player-rule-modal'));
+
+        // Modal controls
+        DOMElements.cancelStackRuleBtn.addEventListener('click', () => hideModal('stack-rule-modal'));
+        DOMElements.saveStackRuleBtn.addEventListener('click', saveStackRule);
+        DOMElements.cancelPlayerRuleBtn.addEventListener('click', () => hideModal('player-rule-modal'));
+        DOMElements.savePlayerRuleBtn.addEventListener('click', savePlayerRule);
+
+        // Player search
+        DOMElements.playerRuleSearch.addEventListener('input', handlePlayerSearch);
+
+        // Lineup favorites
+        document.body.addEventListener('click', (e) => {
+            const favoriteBtn = e.target.closest('.favorite-btn');
+            if(favoriteBtn) {
+                toggleFavoriteLineup(parseInt(favoriteBtn.dataset.lineupId));
+            }
+        });
+    }
+
+    // --- SIDEBAR NAVIGATION LOGIC --- //
+    function switchNavigation(navId) {
+        // Update active state in sidebar
+        DOMElements.navItems.forEach(item => {
+            item.classList.toggle('active', item.dataset.nav === navId);
+        });
+
+        // Hide all main content sections
+        const allContent = document.querySelectorAll('[id$="-tab"], [id="dashboard-live"]');
+        allContent.forEach(content => content.classList.add('hidden'));
+
+        // Show the selected content
+        const targetContent = document.getElementById(navId === 'dashboard-live' ? 'dashboard-live' : `${navId}-tab`);
+        if(targetContent) {
+            targetContent.classList.remove('hidden');
+        }
+
+        // Update page title
+        const pageTitles = {
+            'dashboard-live': '🔴 Live DFS Dashboard',
+            'optimizer': 'DFS Optimizer',
+            'simulations': 'Contest Simulator',
+            'player-pool': 'Player Pool',
+            'slates': 'Slates',
+            'nfl': 'NFL',
+            'nba': 'NBA',
+            'mlb': 'MLB',
+            'nhl': 'NHL',
+            'analytics-roi': 'ROI Tracker',
+            'analytics-winrate': 'Win Rate',
+            'analytics-leverage': 'Leverage Plays',
+            'analytics-ownership': 'Ownership',
+            'uploads': 'CSV Upload',
+            'settings': 'Settings',
+            'help': 'Help'
+        };
+
+        if(DOMElements.pageTitle) {
+            DOMElements.pageTitle.textContent = pageTitles[navId] || 'DFS Optimizer Pro';
+        }
+
+        // Initialize specific functionality based on navigation
+        if(navId === 'dashboard-live') {
+            initializeLiveDashboard();
+        }
+    }
+
+    // --- VIEW SWITCHING LOGIC --- //
+    function switchTab(tabId) {
+        dfsState.activeTab = tabId;
+        
+        // Update button styles
+        DOMElements.tabButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === tabId);
+        });
+        
+        // Show/hide content
+        DOMElements.tabContents.forEach(content => {
+            content.classList.toggle('hidden', !content.id.startsWith(tabId));
+        });
+    }
+
+    function switchOptimizerView(view) {
+        dfsState.activeView = view;
+        
+        // Hide all views first
+        DOMElements.optimizerViewContainer.querySelectorAll(':scope > div').forEach(v => v.classList.add('hidden'));
+        // Show the active view
+        document.getElementById(`${view}-view`).classList.remove('hidden');
+
+        // Update button styles
+        DOMElements.secondaryTabButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === view);
+        });
+
+        // Re-render chart if switching to exposures
+        if (view === 'exposures') {
+            renderExposures();
+        }
+    }
+    
+    function renderActiveTab() {
+        // Initial render based on active tab
+        if (dfsState.activeTab === 'optimizer') {
+            switchOptimizerView(dfsState.activeView);
+        }
+    }
+
+    // --- DATA & OPTIMIZATION LOGIC --- //
+    class DFSAPIClient {
+        constructor() {
+            this.pythonBaseURL = 'http://localhost:8000';
+            this.nodeBaseURL = 'http://localhost:3000';
+        }
+
+        async fetchSlates() {
+            try {
+                const res = await fetch(`${this.pythonBaseURL}/api/slates`);
+                if (!res.ok) throw new Error('Fetch slates failed');
+                return await res.json();
+            } catch (e) {
+                console.warn('fetchSlates failed, falling back to fixtures', e);
+                // Try local fixture if available
+                try {
+                    const fixture = await fetch('/apps/api-python/fixtures/slates.json').then(r => r.json());
+                    return fixture;
+                } catch (_) {
+                    return [];
+                }
+            }
+        }
+
+        async fetchPlayers(slateId) {
+            try {
+                const res = await fetch(`${this.pythonBaseURL}/api/players/${slateId}`);
+                if (!res.ok) throw new Error('Fetch players failed');
+                return await res.json();
+            } catch (e) {
+                console.warn('fetchPlayers failed, falling back to local fixtures', e);
+                // Return local fixture if available
+                return typeof nflPlayerData !== 'undefined' ? nflPlayerData : [];
+            }
+        }
+
+        async generateLineups(params) {
+            try {
+                const res = await fetch(`${this.pythonBaseURL}/api/optimize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(params)
+                });
+                if (!res.ok) throw new Error('Optimization request failed');
+                return await res.json();
+            } catch (e) {
+                console.warn('generateLineups failed, falling back to client-side mock', e);
+                return { lineups: null, error: e.message };
+            }
+        }
+    }
+
+    const apiClient = new DFSAPIClient();
+    async function loadInitialData() {
+        try {
+            // Attempt to load slates and players from the Python API
+            const slates = await apiClient.fetchSlates();
+            if (slates && slates.length > 0) {
+                const firstSlateId = slates[0].id ?? slates[0].slug ?? slates[0].name ?? slates[0];
+                const players = await apiClient.fetchPlayers(firstSlateId);
+                dfsState.playerPool = Array.isArray(players) && players.length ? players : nflPlayerData;
+            } else {
+                // No slates returned; fallback to local fixture
+                dfsState.playerPool = nflPlayerData;
+            }
+        } catch (err) {
+            console.warn('loadInitialData error, using local fixtures', err);
+            dfsState.playerPool = nflPlayerData;
+        }
+        updateHeaderStatus();
+    }
+
+    async function handleGenerateLineups() {
+        if (dfsState.isLoading || dfsState.playerPool.length === 0) return;
+        setLoading(true);
+        showToast('info', 'Starting optimization engine...');
+
+        const params = {
+            lineup_count: parseInt(DOMElements.lineupCount.value) || 20,
+            randomness: parseInt(DOMElements.randomnessPercent.value) || 15,
+            rules: { stacks: dfsState.stackRules, players: dfsState.playerRules },
+            sport: dfsState.selectedSport,
+            site: dfsState.selectedSite,
+            func: "standard_optimization" // Added missing 'func' field
+        };
+
+        try {
+            const result = await apiClient.generateLineups(params);
+            let lineups = null;
+
+            // Support different backend response shapes
+            if (result && Array.isArray(result.lineups)) {
+                lineups = result.lineups;
+            } else if (Array.isArray(result)) {
+                lineups = result;
+            } else {
+                // Backend did not return lineups — fallback to client-side mock
+                lineups = runMockOptimization();
+            }
+
+            dfsState.generatedLineups = lineups;
+            renderGeneratedLineups();
+            switchOptimizerView('lineups');
+            showToast('success', `${lineups.length} lineups generated!`);
+            updateHeaderStatus();
+        } catch (err) {
+            console.error('Optimization error, falling back to mock', err);
+            showToast('error', 'Optimization failed — using local mock.');
+            dfsState.generatedLineups = runMockOptimization();
+            renderGeneratedLineups();
+            switchOptimizerView('lineups');
+            updateHeaderStatus();
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    function runMockOptimization() {
+        const lineupCount = parseInt(DOMElements.lineupCount.value) || 20;
+        const lineups = [];
+        
+        for(let i = 0; i < lineupCount; i++) {
+            const players = [...dfsState.playerPool].sort(() => Math.random() - 0.5).slice(0, 9);
+            const totalSalary = players.reduce((sum, p) => sum + p.salary, 0);
+            const totalProjection = players.reduce((sum, p) => sum + p.projection, 0);
+            const totalOwnership = players.reduce((sum, p) => sum + p.ownership, 0) / players.length;
+            
+            lineups.push({
+                id: i + 1,
+                players: players,
+                totalSalary: totalSalary,
+                totalProjection: totalProjection,
+                totalOwnership: totalOwnership,
+                simulatedRoi: (totalProjection / 150 - 1) * 100 + (Math.random() - 0.5) * 20,
+                winPct: Math.random() / 100,
+                top10Pct: Math.random() * 2,
+                cashPct: 30 + Math.random() * 20,
+                duplicates: Math.floor(Math.random() * 5),
+                stackType: ['QB+WR', 'RB+DST', 'Game', 'None'][Math.floor(Math.random() * 4)],
+                isFavorite: false
+            });
+        }
+        
+        return lineups.sort((a, b) => b.simulatedRoi - a.simulatedRoi);
+    }
+
+    // --- RENDER FUNCTIONS --- //
+    function renderGeneratedLineups() {
+        const container = DOMElements.lineupsView;
+        if(dfsState.generatedLineups.length === 0) {
+            container.innerHTML = `<div class="text-center p-8 text-slate-500"><i class="fas fa-trophy fa-3x mb-3"></i><h3 class="font-bold">No Lineups Yet</h3></div>`;
+            return;
+        }
+
+        let tableHtml = `<table class="w-full text-left text-xs whitespace-nowrap">
+            <thead class="sticky top-0 bg-slate-800 z-10">
+                <tr>
+                    <th class="p-2">Sim ROI</th>
+                    <th class="p-2">Proj. FP</th>
+                    <th class="p-2">OwnSum%</th>
+                    <th class="p-2">Stack</th>
+                    <th class="p-2">Win%</th>
+                    <th class="p-2">Top 10%</th>
+                    <th class="p-2">Cash%</th>
+                    <th class="p-2">Dups</th>
+                    <th class="p-2">Lineup</th>
+                    <th class="p-2">Salary</th>
+                    <th class="p-2">Fav.</th>
+                </tr>
+            </thead>
+            <tbody>`;
+        
+        dfsState.generatedLineups.forEach(lineup => {
+            const roiColor = lineup.simulatedRoi > 15 ? 'text-green-400' : lineup.simulatedRoi > 0 ? 'text-yellow-400' : 'text-red-400';
+            tableHtml += `<tr class="border-b border-slate-700 lineup-row">
+                <td class="p-2 font-bold ${roiColor}">${lineup.simulatedRoi.toFixed(1)}%</td>
+                <td class="p-2 font-semibold text-green-400">${lineup.totalProjection.toFixed(1)}</td>
+                <td class="p-2 text-blue-400">${lineup.totalOwnership.toFixed(1)}%</td>
+                <td class="p-2"><span class="bg-indigo-600 px-1.5 py-0.5 rounded text-white font-semibold">${lineup.stackType}</span></td>
+                <td class="p-2">${(lineup.winPct * 100).toFixed(3)}%</td>
+                <td class="p-2">${lineup.top10Pct.toFixed(3)}%</td>
+                <td class="p-2">${lineup.cashPct.toFixed(2)}%</td>
+                <td class="p-2">${lineup.duplicates}</td>
+                <td class="p-2 text-slate-400 truncate max-w-xs">${lineup.players.map(p => p.name).join(', ')}</td>
+                <td class="p-2">$${lineup.totalSalary.toLocaleString()}</td>
+                <td class="p-2 text-center">
+                    <button class="favorite-btn text-slate-500 hover:text-red-400 text-lg ${lineup.isFavorite ? 'favorited' : ''}" data-lineup-id="${lineup.id}">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                </td>
+            </tr>`;
+        });
+
+        tableHtml += `</tbody></table>`;
+        container.innerHTML = tableHtml;
+    }
+
+    function renderExposures() {
+        if(!DOMElements.playerExposureChartCanvas) return;
+        
+        // Mock exposure data
+        const exposureData = dfsState.playerPool.map(player => ({
+            name: player.name,
+            exposure: Math.random() * 30,
+            target: 15
+        }));
+
+        new Chart(DOMElements.playerExposureChartCanvas, {
+            type: 'bar',
+            data: {
+                labels: exposureData.map(p => p.name),
+                datasets: [{
+                    label: 'Actual Exposure',
+                    data: exposureData.map(p => p.exposure),
+                    backgroundColor: 'rgba(79, 70, 229, 0.8)'
+                }, {
+                    label: 'Target Exposure',
+                    data: exposureData.map(p => p.target),
+                    backgroundColor: 'rgba(16, 185, 129, 0.8)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { labels: { color: '#f1f5f9' } }
+                },
+                scales: {
+                    y: { ticks: { color: '#f1f5f9' } },
+                    x: { ticks: { color: '#f1f5f9' } }
+                }
+            }
+        });
+    }
+
+    // --- MODAL FUNCTIONS --- //
+    function showModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function hideModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+    }
+
+    function saveStackRule() {
+        const stackType = document.getElementById('stack-type-select').value;
+        dfsState.stackRules.push({ type: stackType, id: Date.now() });
+        updateRulesDisplay();
+        hideModal('stack-rule-modal');
+        showToast('success', 'Stack rule added');
+    }
+
+    function savePlayerRule() {
+        // Mock player rule save
+        dfsState.playerRules.push({ type: 'player', id: Date.now() });
+        updateRulesDisplay();
+        hideModal('player-rule-modal');
+        showToast('success', 'Player rule added');
+    }
+
+    function handlePlayerSearch() {
+        // Mock player search functionality
+        const query = DOMElements.playerRuleSearch.value.toLowerCase();
+        const results = dfsState.playerPool.filter(p => p.name.toLowerCase().includes(query));
+        
+        let html = '';
+        results.slice(0, 5).forEach(player => {
+            html += `<div class="p-2 bg-slate-700 rounded mb-1 cursor-pointer hover:bg-slate-600">${player.name} - ${player.position} - ${player.team}</div>`;
+        });
+        
+        DOMElements.playerRuleSearchResults.innerHTML = html;
+    }
+
+    // --- LIVE DASHBOARD FUNCTIONALITY --- //
+    function initializeLiveDashboard() {
+        // Initialize charts
+        renderLiveCharts();
+
+        // Start real-time updates
+        startLiveDataUpdates();
+
+        // Update timestamps
+        updateLiveTimestamps();
+    }
+
+    function renderLiveCharts() {
+        // ROI Distribution Chart
+        if(DOMElements.roiChartCanvas) {
+            new Chart(DOMElements.roiChartCanvas, {
+                type: 'line',
+                data: {
+                    labels: ['-50%', '-25%', '0%', '25%', '50%', '75%', '100%', '150%'],
+                    datasets: [{
+                        label: 'ROI Distribution',
+                        data: [2, 8, 15, 25, 30, 15, 4, 1],
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: '#f1f5f9' } }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#f1f5f9' },
+                            grid: { color: 'rgba(71, 85, 105, 0.3)' }
+                        },
+                        x: {
+                            ticks: { color: '#f1f5f9' },
+                            grid: { color: 'rgba(71, 85, 105, 0.3)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Win Rate Chart
+        if(DOMElements.winrateChartCanvas) {
+            new Chart(DOMElements.winrateChartCanvas, {
+                type: 'bar',
+                data: {
+                    labels: ['120-130', '130-140', '140-150', '150-160', '160-170', '170+'],
+                    datasets: [{
+                        label: 'Win Rate by Score',
+                        data: [5, 12, 18, 25, 35, 45],
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { labels: { color: '#f1f5f9' } }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#f1f5f9' },
+                            grid: { color: 'rgba(71, 85, 105, 0.3)' }
+                        },
+                        x: {
+                            ticks: { color: '#f1f5f9' },
+                            grid: { color: 'rgba(71, 85, 105, 0.3)' }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    function startLiveDataUpdates() {
+        // Simulate real-time data updates every 30 seconds
+        setInterval(() => {
+            updateLiveData();
+            updateLiveTimestamps();
+        }, 30000);
+    }
+
+    function updateLiveData() {
+        // Simulate live data changes
+        const roiChange = (Math.random() - 0.5) * 2; // -1% to +1%
+        const winrateChange = (Math.random() - 0.5) * 0.5; // -0.25% to +0.25%
+        const top5Change = (Math.random() - 0.5) * 1; // -0.5% to +0.5%
+        const cashChange = (Math.random() - 0.5) * 0.8; // -0.4% to +0.4%
+
+        // Update ROI
+        if(DOMElements.liveRoi) {
+            const currentRoi = parseFloat(DOMElements.liveRoi.textContent);
+            const newRoi = Math.max(0, currentRoi + roiChange);
+            DOMElements.liveRoi.textContent = `${newRoi.toFixed(1)}%`;
+
+            // Update trend indicator
+            const trendIndicator = DOMElements.liveRoi.parentElement.querySelector('.mt-2');
+            if(trendIndicator) {
+                const isPositive = roiChange > 0;
+                trendIndicator.className = `mt-2 text-xs ${isPositive ? 'text-green-400' : 'text-red-400'}`;
+                trendIndicator.innerHTML = `<i class="fas fa-arrow-${isPositive ? 'up' : 'down'} mr-1"></i>${isPositive ? '+' : ''}${roiChange.toFixed(1)}% from last update`;
+            }
+        }
+
+        // Update Win Rate
+        if(DOMElements.liveWinrate) {
+            const currentWinrate = parseFloat(DOMElements.liveWinrate.textContent);
+            const newWinrate = Math.max(0, currentWinrate + winrateChange);
+            DOMElements.liveWinrate.textContent = `${newWinrate.toFixed(1)}%`;
+
+            const trendIndicator = DOMElements.liveWinrate.parentElement.querySelector('.mt-2');
+            if(trendIndicator) {
+                const isPositive = winrateChange > 0;
+                trendIndicator.className = `mt-2 text-xs ${isPositive ? 'text-blue-400' : 'text-red-400'}`;
+                trendIndicator.innerHTML = `<i class="fas fa-arrow-${isPositive ? 'up' : 'down'} mr-1"></i>${isPositive ? '+' : ''}${winrateChange.toFixed(1)}% improvement`;
+            }
+        }
+
+        // Update Top 5%
+        if(DOMElements.liveTop5) {
+            const currentTop5 = parseFloat(DOMElements.liveTop5.textContent);
+            const newTop5 = Math.max(0, currentTop5 + top5Change);
+            DOMElements.liveTop5.textContent = `${newTop5.toFixed(1)}%`;
+
+            const trendIndicator = DOMElements.liveTop5.parentElement.querySelector('.mt-2');
+            if(trendIndicator) {
+                const isPositive = top5Change > 0;
+                trendIndicator.className = `mt-2 text-xs ${isPositive ? 'text-purple-400' : 'text-red-400'}`;
+                trendIndicator.innerHTML = `<i class="fas fa-arrow-${isPositive ? 'up' : 'down'} mr-1"></i>${isPositive ? '+' : ''}${top5Change.toFixed(1)}% this week`;
+            }
+        }
+
+        // Update Cash Rate
+        if(DOMElements.liveCash) {
+            const currentCash = parseFloat(DOMElements.liveCash.textContent);
+            const newCash = Math.max(0, currentCash + cashChange);
+            DOMElements.liveCash.textContent = `${newCash.toFixed(1)}%`;
+
+            const trendIndicator = DOMElements.liveCash.parentElement.querySelector('.mt-2');
+            if(trendIndicator) {
+                const isPositive = cashChange > 0;
+                trendIndicator.className = `mt-2 text-xs ${isPositive ? 'text-yellow-400' : 'text-red-400'}`;
+                trendIndicator.innerHTML = `<i class="fas fa-arrow-${isPositive ? 'up' : 'down'} mr-1"></i>${isPositive ? '+' : ''}${cashChange.toFixed(1)}% consistency`;
+            }
+        }
+
+        // Update Active Slates
+        if(DOMElements.liveSlates) {
+            const currentSlates = parseInt(DOMElements.liveSlates.textContent);
+            const newSlates = Math.max(1, currentSlates + Math.floor(Math.random() * 3) - 1);
+            DOMElements.liveSlates.textContent = newSlates;
+        }
+
+        // Update timestamps
+        updateLiveTimestamps();
+    }
+
+    function updateLiveTimestamps() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+
+        if(DOMElements.lastUpdated) {
+            DOMElements.lastUpdated.textContent = timeString;
+        }
+
+        if(DOMElements.liveLastUpdated) {
+            DOMElements.liveLastUpdated.textContent = timeString;
+        }
+    }
+
+    // --- UTILITY FUNCTIONS --- //
+    function updateHeaderStatus() {
+        if(DOMElements.headerSlateStatus) {
+            DOMElements.headerSlateStatus.textContent = `${dfsState.selectedSport} Main`;
+        }
+        if(DOMElements.headerLineupsStatus) {
+            DOMElements.headerLineupsStatus.textContent = dfsState.generatedLineups.length;
+        }
+    }
+
+    function updateRulesDisplay() {
+        const totalRules = dfsState.stackRules.length + dfsState.playerRules.length;
+        if(totalRules === 0) {
+            DOMElements.rulesDisplayArea.innerHTML = '<span class="text-slate-400">No rules applied.</span>';
+        } else {
+            DOMElements.rulesDisplayArea.innerHTML = `<span class="text-indigo-400">${totalRules} rules active</span>`;
+        }
+    }
+
+    function setLoading(loading) {
+        dfsState.isLoading = loading;
+        DOMElements.generateLineupsBtn.disabled = loading;
+        if(loading) {
+            DOMElements.generateLineupsBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
+        } else {
+            DOMElements.generateLineupsBtn.innerHTML = '<i class="fas fa-magic mr-2"></i>Generate Lineups';
+        }
+    }
+
+    function toggleFavoriteLineup(lineupId) {
+        const lineup = dfsState.generatedLineups.find(l => l.id === lineupId);
+        if(lineup) {
+            lineup.isFavorite = !lineup.isFavorite;
+            renderGeneratedLineups();
+        }
+    }
+
+    function showToast(type, message) {
+        const iconClasses = {
+            'info': 'fas fa-info-circle text-blue-400',
+            'success': 'fas fa-check-circle text-green-400',
+            'error': 'fas fa-exclamation-circle text-red-400'
+        };
+        
+        DOMElements.toastIcon.className = iconClasses[type];
+        DOMElements.toastMessage.textContent = message;
+        DOMElements.toast.classList.remove('hidden');
+        
+        setTimeout(() => {
+            DOMElements.toast.classList.add('hidden');
+        }, 3000);
+    }
+
+    initializeApp();
+});
+</script>
+</body>
+</html>

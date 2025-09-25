@@ -5,6 +5,7 @@ A production-grade Daily Fantasy Sports (DFS) optimization system that ingests m
 ## 🏆 Features
 
 ### Core Capabilities
+
 - **Multi-Source Data Ingestion**: Automated data collection from NFL and NBA sources with ToS compliance
 - **AI-Assisted Projections**: Ensemble modeling with learning-to-rank fusion
 - **Monte Carlo Simulation**: Advanced risk assessment with player correlations
@@ -15,10 +16,12 @@ A production-grade Daily Fantasy Sports (DFS) optimization system that ingests m
 - **CLI Interface**: Full command-line automation
 
 ### Sports Supported
+
 - **NFL**: DraftKings and FanDuel formats
 - **NBA**: DraftKings and FanDuel formats
 
 ### Data Sources (ToS Compliant)
+
 - **NFL**: nflfastR, TheOddsAPI, OpenWeatherMap, Official injury reports
 - **NBA**: Ball Don't Lie API, NBA API, TheOddsAPI, Official injury reports
 
@@ -27,17 +30,20 @@ A production-grade Daily Fantasy Sports (DFS) optimization system that ingests m
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
 git clone <repository-url>
 cd dfs-system-2
 ```
 
 2. **Install dependencies**
+
 ```bash
 pip install -r requirements.txt
 ```
 
 3. **Set up environment variables**
+
 ```bash
 cp .env.example .env
 # Edit .env with your API keys
@@ -46,11 +52,13 @@ cp .env.example .env
 ### Basic Usage
 
 #### Import Salary Data
+
 ```bash
 python -m src.cli import-salaries tests/fixtures/dk_nfl_sample.csv --output players.json
 ```
 
 #### Run Full Demo
+
 ```bash
 # NFL Demo (DraftKings)
 python -m src.cli demo --sport NFL
@@ -60,6 +68,7 @@ python -m src.cli demo --sport NBA
 ```
 
 #### Generate Optimal Lineups
+
 ```bash
 python -m src.cli optimize --sport NFL --site DraftKings --n 10 --salary-file tests/fixtures/dk_nfl_sample.csv --output lineups.csv
 ```
@@ -161,6 +170,7 @@ Configure data sources in `src/config/sources.json`:
 ### CLI Commands
 
 #### Data Ingestion
+
 ```bash
 # Ingest all enabled sources for NFL
 python -m src.cli ingest --sport NFL
@@ -170,6 +180,7 @@ python -m src.cli ingest --sport NFL --force-refresh
 ```
 
 #### Projections
+
 ```bash
 # Generate ensemble projections
 python -m src.cli project --sport NFL --method ensemble
@@ -179,6 +190,7 @@ python -m src.cli project --sport NBA --method ml-only
 ```
 
 #### Simulations
+
 ```bash
 # Run 20,000 Monte Carlo simulations
 python -m src.cli simulate --sport NFL --sims 20000
@@ -188,6 +200,7 @@ python -m src.cli simulate --sport NBA --lineup-file lineups.json --sims 10000
 ```
 
 #### Optimization
+
 ```bash
 # Basic optimization
 python -m src.cli optimize --sport NFL --site DraftKings --n 50
@@ -204,6 +217,7 @@ python -m src.cli optimize \
 ```
 
 #### Late Swap
+
 ```bash
 # Re-optimize with locked players
 python -m src.cli late-swap \
@@ -214,6 +228,7 @@ python -m src.cli late-swap \
 ```
 
 #### Export
+
 ```bash
 # Export for DraftKings upload
 python -m src.cli export \
@@ -239,18 +254,21 @@ python -m src.cli export \
 ### Key Components
 
 #### MIP Optimizer (`src/optimize/mip_solver.py`)
+
 - Uses OR-Tools SCIP solver
 - Handles complex constraints (salary cap, positions, exposures)
 - Supports stacking and diversification
 - Multi-lineup generation with overlap control
 
 #### Data Ingestion (`src/ingest/`)
+
 - Modular source-specific ingestors
 - Automatic caching with TTL
 - Rate limiting and retry logic
 - ToS compliance checking
 
 #### CSV Import/Export (`src/io/csv_import_export.py`)
+
 - Auto-detection of site and sport
 - Robust column mapping
 - Export formatting for DK/FD upload
@@ -260,6 +278,7 @@ python -m src.cli export \
 ### Fixtures
 
 Sample data files are provided for testing:
+
 - `tests/fixtures/dk_nfl_sample.csv` - DraftKings NFL sample
 - `tests/fixtures/fd_nba_sample.csv` - FanDuel NBA sample
 
@@ -289,12 +308,14 @@ The system uses ensemble methods to combine multiple projection sources:
 ### Feature Engineering
 
 Advanced features include:
+
 - **NFL**: Snap share, air yards, red zone usage, weather impact, DvP
 - **NBA**: Usage rate, pace adjustments, rest, back-to-back games
 
 ### Monte Carlo Simulation
 
 Player correlations account for:
+
 - **NFL**: QB-WR stacks, game environment, weather
 - **NBA**: Pace correlations, blowout scenarios, rotation overlaps
 

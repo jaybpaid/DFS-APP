@@ -1,7 +1,7 @@
-import React from 'react'
-import ProfessionalTabs from './components/ProfessionalTabs'
-import { usePlayerData } from './hooks/usePlayerData'
-import { Player } from './data/types'
+import React from 'react';
+import ProfessionalTabs from './components/ProfessionalTabs';
+import { usePlayerData } from './hooks/usePlayerData';
+import { Player } from './data/types';
 
 function App() {
   const { players, loading, error, refreshPlayers } = usePlayerData('NFL');
@@ -13,9 +13,16 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <header className="text-center mb-8">
-        <h1 style={{ color: 'white', fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '8px' }}>
+    <div className='container'>
+      <header className='text-center mb-8'>
+        <h1
+          style={{
+            color: 'white',
+            fontSize: '2.5rem',
+            fontWeight: 'bold',
+            marginBottom: '8px',
+          }}
+        >
           DFS Optimizer Pro
         </h1>
         <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '1.1rem' }}>
@@ -24,17 +31,17 @@ function App() {
       </header>
 
       {loading && (
-        <div className="card text-center">
-          <div className="spinner"></div>
+        <div className='card text-center'>
+          <div className='spinner'></div>
           <p>Loading player data...</p>
         </div>
       )}
 
       {error && (
-        <div className="card text-center error">
+        <div className='card text-center error'>
           <h3>Error Loading Data</h3>
           <p>{error}</p>
-          <button onClick={refreshPlayers} className="btn btn-primary">
+          <button onClick={refreshPlayers} className='btn btn-primary'>
             Retry
           </button>
         </div>
@@ -44,7 +51,7 @@ function App() {
         <ProfessionalTabs players={players} onPlayersUpdate={handlePlayersUpdate} />
       )}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

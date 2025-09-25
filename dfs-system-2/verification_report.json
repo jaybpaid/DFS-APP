@@ -1,0 +1,18 @@
+{
+  "timestamp": "2025-09-15T19:09:24.925896",
+  "tests_passed": 9,
+  "tests_failed": 4,
+  "issues_found": [
+    "SF Stack Generation: Insufficient SF players for stack",
+    "Optimizer API Connection: Server not running or not accessible",
+    "NBA API Connection: Connection failed: HTTPSConnectionPool(host='www.balldontlie.io', port=443): Max retries exceeded with url: /api/v1/players?per_page=1 (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)')))",
+    "NFL Data Source: HTTP 404"
+  ],
+  "fixes_applied": [
+    "Generated and saved corrected stack data",
+    "Saved test CSV export to dfs-system-2/test_export.csv"
+  ],
+  "recommendations": [
+    "Start the optimizer API server with: python dfs-system-2/live_optimizer_api.py"
+  ]
+}

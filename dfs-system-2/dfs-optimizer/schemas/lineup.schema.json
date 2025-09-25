@@ -2,15 +2,15 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "lineup.schema.json",
   "type": "object",
-  "required": ["lineupId","site","sport","slateId","playerIds","salary"],
+  "required": ["lineupId", "site", "sport", "slateId", "playerIds", "salary"],
   "properties": {
-    "lineupId": {"type": "string"},
-    "site": {"enum": ["DK","FD"]},
-    "sport": {"enum": ["NFL","NBA","MLB","MMA","CFB","NASCAR","NHL","PGA"]},
-    "slateId": {"type": "string"},
-    "playerIds": {"type": "array","items": {"type": "string"},"minItems": 6},
-    "salary": {"type": "number"},
-    "metrics": {"type": "object","additionalProperties": true}
+    "lineupId": { "type": "string" },
+    "site": { "enum": ["DK", "FD"] },
+    "sport": { "enum": ["NFL", "NBA", "MLB", "MMA", "CFB", "NASCAR", "NHL", "PGA"] },
+    "slateId": { "type": "string" },
+    "playerIds": { "type": "array", "items": { "type": "string" }, "minItems": 6 },
+    "salary": { "type": "number" },
+    "metrics": { "type": "object", "additionalProperties": true }
   },
   "additionalProperties": false
 }

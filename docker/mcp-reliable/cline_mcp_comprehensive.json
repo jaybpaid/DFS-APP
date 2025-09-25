@@ -1,0 +1,258 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-sequential-thinking",
+        "npx",
+        "@modelcontextprotocol/server-sequential-thinking",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "puppeteer": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-puppeteer",
+        "npx",
+        "@hisma/server-puppeteer",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "filesystem": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-filesystem",
+        "npx",
+        "@modelcontextprotocol/server-filesystem",
+        "/app/data",
+        "/app/dfs-system-2",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "memory": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-memory",
+        "npx",
+        "@modelcontextprotocol/server-memory",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "everything": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-everything",
+        "npx",
+        "@modelcontextprotocol/server-everything",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "brave-search": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-brave-search",
+        "npx",
+        "@modelcontextprotocol/server-brave-search",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production",
+        "BRAVE_API_KEY": "BSAkgdrOqWvr4RlmqUl0BgpfKWNt5hm"
+      }
+    },
+    "github": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-github",
+        "npx",
+        "@modelcontextprotocol/server-github",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production",
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_5vPjx6kQOArYwRxC2jNQ5gHhzTfU0m1lBcDe"
+      }
+    },
+    "aws-kb": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-aws-kb",
+        "npx",
+        "@modelcontextprotocol/server-aws-kb-retrieval",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "fetch": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-fetch",
+        "npx",
+        "@modelcontextprotocol/server-fetch",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "gpt-researcher": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-gpt-researcher",
+        "node",
+        "/mcp-servers/advanced/gptr-mcp/index.js",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "serena-code-analysis": {
+      "command": "docker",
+      "args": ["exec", "mcp-serena", "npm", "start", "--transport", "stdio"],
+      "cwd": "/mcp-servers/advanced/serena",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "claude-flow": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-claude-flow",
+        "node",
+        "/mcp-servers/advanced/claude-flow-mcp/server.js",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "google-genai-toolbox": {
+      "command": "docker",
+      "args": ["exec", "mcp-google-genai", "npm", "start", "--transport", "stdio"],
+      "cwd": "/mcp-servers/advanced/genai-toolbox",
+      "env": {
+        "NODE_ENV": "production",
+        "GOOGLE_API_KEY": "AIzaSyDrZDMqNClT8C48O5XFAUILbGEmUvoeASM"
+      }
+    },
+    "pipedream-chat": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-pipedream",
+        "node",
+        "/mcp-servers/advanced/pipedream-mcp/server.js",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "archon": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-archon",
+        "node",
+        "/mcp-servers/advanced/archon-mcp/server.js",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "chrome-mcp": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-chrome",
+        "node",
+        "/mcp-servers/advanced/chrome-mcp/server.js",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "chrome-pilot": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-chrome-pilot",
+        "node",
+        "/mcp-servers/advanced/chrome-pilot/index.js",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "browser-devtools": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "mcp-browser-devtools",
+        "node",
+        "/mcp-servers/advanced/browser-devtools/server.js",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "nx-mcp": {
+      "command": "docker",
+      "args": ["exec", "mcp-nx", "npx", "nx-mcp@latest", "--transport", "stdio"],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "mcpServerStdioKillSignal": "SIGTERM",
+  "globalShortcut": "Cmd+Shift+Space"
+}

@@ -22,44 +22,55 @@ That's it! All services will start and your dashboard will open automatically.
 If you prefer to start services individually:
 
 ### Step 1: Install Dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### Step 2: Start DraftKings API Server
+
 ```bash
 python draftkings_api_server.py
 ```
-*Runs on http://localhost:8765*
+
+_Runs on http://localhost:8765_
 
 ### Step 3: Start FastAPI Optimizer
+
 ```bash
 python live_optimizer_api.py
 ```
-*Runs on http://localhost:8000*
+
+_Runs on http://localhost:8000_
 
 ### Step 4: Open Dashboard
+
 Open `dfs_ultimate_optimizer_with_live_data.html` in your browser.
 
 ## 🔧 Troubleshooting
 
 ### Services Won't Start
+
 Run the test script to diagnose issues:
+
 ```bash
 python test_services.py
 ```
 
 Common fixes:
+
 - **Missing dependencies**: `pip install -r requirements.txt`
 - **Python version**: Requires Python 3.8+
 - **Port conflicts**: Check if ports 8000/8765 are available
 
 ### Dashboard Won't Load
+
 - Make sure both API servers are running
 - Check browser console for CORS errors
 - Try refreshing the page
 
 ### Live Data Not Working
+
 - Check DraftKings API server logs
 - Verify internet connection
 - Some features may be rate-limited
@@ -67,19 +78,23 @@ Common fixes:
 ## 🎮 How to Use
 
 ### 1. Load Live Data
+
 Click "Load Live DraftKings Data" - this fetches real salaries and generates optimized lineups automatically.
 
 ### 2. Review Lineups
+
 - View 20 optimized lineups with projections
 - See win rates, ROI, and Sharpe ratios
 - Check player correlations and diversity scores
 
 ### 3. Late Swaps (Advanced)
+
 - Lock your favorite players
 - Get AI recommendations for replacements
 - See salary impact and projection changes
 
 ### 4. Run Simulations
+
 - Monte Carlo analysis with 50K+ simulations
 - Tournament win probability estimates
 - ROI projections for different field sizes

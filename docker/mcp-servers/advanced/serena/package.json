@@ -1,0 +1,13 @@
+{
+  "name": "serena-code-analysis-mcp",
+  "version": "1.0.0",
+  "description": "Serena cod analysis MCP Server for advanced code reviews and quality checks",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.1"
+  }
+}

@@ -1,4 +1,5 @@
 # Data Feeds Architecture
+
 ## Multi-Source Data Integration for DFS Optimizer
 
 ---
@@ -12,32 +13,37 @@ The DFS Optimizer integrates multiple data sources to provide comprehensive play
 ## 1. Data Source Categories
 
 ### A. Primary Data Sources (Required)
+
 - **DraftKings API**: Unofficial endpoints for draftgroups/draftables (brittle, may change)
 - **FanDuel API**: No stable public endpoints; prefer paid feeds or user-owned logged-in access
 - **Vegas Odds**: The Odds API, SportsDataIO, Sportradar (enterprise)
 - **Weather API**: OpenWeatherMap, WeatherAPI, Weather.gov (free tiers available)
 
 ### B. Projection Sources (Configurable)
+
 - **Internal Projections**: Algorithm-based projections using Vegas lines, historical data
 - **Custom CSV Upload**: User-provided projections and ownership estimates
-- **Third-Party APIs**: 
+- **Third-Party APIs**:
   - **FantasyNerds**: DFS slates → player salaries/projections for DK/FD/Yahoo
   - **SportsDataIO**: Salaries, projections, ownership (sports dependent)
   - **RotoWire**: Depth charts & injury data (API requires license)
 - **Consensus Projections**: Weighted average of multiple sources with reliability scoring
 
 ### C. Ownership Sources (Premium)
+
 - **Historical Ownership**: Platform-specific ownership patterns from past contests
 - **Projected Ownership**: Algorithm-based ownership predictions using Vegas lines, player popularity
 - **Real-Time Ownership**: Live ownership tracking (where available through paid services)
 - **Custom Ownership**: User-provided ownership estimates via CSV upload
 
 ### D. Injury & News Sources
+
 - **RotoWire**: Depth charts and injury reports (web scraping with respect to ToS)
 - **Sleeper API**: Public endpoints for news/alerts (community references)
 - **Team Websites**: Official injury reports and depth charts
 
 ### E. Open Source References & Community Tools
+
 - **jaebradley/draftkings_client**: Python client for DraftKings API
 - **pydfs-lineup-optimizer**: Multi-site ILP optimizer with constraint support
 - **draftfast**: Lineup automation/optimizer for DK/FD
@@ -48,6 +54,7 @@ The DFS Optimizer integrates multiple data sources to provide comprehensive play
 ## 2. Data Feed Pipeline
 
 ### A. Ingestion Layer
+
 ```typescript
 interface DataIngestionPipeline {
   sources: DataFeed[];
@@ -59,11 +66,13 @@ interface DataIngestionPipeline {
 ```
 
 ### B. Processing Flow
+
 ```
 Raw Data → Validation → Normalization → Enrichment → Caching → API Serving
 ```
 
 ### C. Update Frequencies
+
 - **Salary Data**: Every 15 minutes
 - **Injury Reports**: Every 5 minutes
 - **Weather Data**: Every 30 minutes
@@ -75,6 +84,7 @@ Raw Data → Validation → Normalization → Enrichment → Caching → API Ser
 ## 3. API Endpoints
 
 ### A. Slate Management
+
 ```typescript
 GET /api/slates/:sport/:date
 GET /api/slates/:id/players
@@ -83,6 +93,7 @@ POST /api/slates/refresh
 ```
 
 ### B. Player Data
+
 ```typescript
 GET /api/players/:slate_id
 GET /api/players/:id/projections
@@ -91,6 +102,7 @@ POST /api/players/bulk-update
 ```
 
 ### C. Contest Data
+
 ```typescript
 GET /api/contests/:slate_id
 GET /api/contests/:id/payouts
@@ -98,13 +110,15 @@ GET /api/contests/:id/field-analysis
 ```
 
 ### D. Optimization
+
 ```typescript
-POST /api/optimize/lineups
-POST /api/optimize/simulate
-POST /api/optimize/late-swap
+POST / api / optimize / lineups;
+POST / api / optimize / simulate;
+POST / api / optimize / late - swap;
 ```
 
 ### E. CSV Management
+
 ```typescript
 POST /api/csv/import
 POST /api/csv/export
@@ -116,10 +130,11 @@ GET /api/csv/validate
 ## 4. Data Schemas
 
 ### A. Player Data Schema
+
 ```json
 {
   "id": "string",
-  "name": "string", 
+  "name": "string",
   "position": "string",
   "team": "string",
   "salary": "number",
@@ -153,7 +168,7 @@ GET /api/csv/validate
   },
   "advanced_metrics": {
     "boom_pct": "number",
-    "bust_pct": "number", 
+    "bust_pct": "number",
     "floor": "number",
     "ceiling": "number",
     "leverage_score": "number",
@@ -169,13 +184,14 @@ GET /api/csv/validate
 ```
 
 ### B. Contest Schema
+
 ```json
 {
   "id": "string",
   "name": "string",
   "site": "string",
   "entry_fee": "number",
-  "max_entries": "number", 
+  "max_entries": "number",
   "total_entries": "number",
   "prize_pool": "number",
   "payout_structure": {
@@ -183,7 +199,7 @@ GET /api/csv/validate
     "payouts": [
       {
         "place_start": "number",
-        "place_end": "number", 
+        "place_end": "number",
         "amount": "number"
       }
     ],
@@ -195,6 +211,7 @@ GET /api/csv/validate
 ```
 
 ### C. Simulation Results Schema
+
 ```json
 {
   "lineup_id": "string",
@@ -204,7 +221,7 @@ GET /api/csv/validate
     "std_dev": "number",
     "percentiles": {
       "10": "number",
-      "25": "number", 
+      "25": "number",
       "50": "number",
       "75": "number",
       "90": "number",
@@ -224,26 +241,29 @@ GET /api/csv/validate
 ## 5. Data Source Adapters
 
 ### A. DraftKings Adapter
+
 ```typescript
 class DraftKingsAdapter implements DataFeedAdapter {
-  async getSlates(sport: string, date: string): Promise<Slate[]>
-  async getPlayers(slateId: string): Promise<Player[]>
-  async getContests(slateId: string): Promise<Contest[]>
+  async getSlates(sport: string, date: string): Promise<Slate[]>;
+  async getPlayers(slateId: string): Promise<Player[]>;
+  async getContests(slateId: string): Promise<Contest[]>;
 }
 ```
 
 ### B. Vegas Odds Adapter
+
 ```typescript
 class VegasOddsAdapter implements DataFeedAdapter {
-  async getGameOdds(gameIds: string[]): Promise<GameOdds[]>
-  async getPlayerProps(playerIds: string[]): Promise<PlayerProp[]>
+  async getGameOdds(gameIds: string[]): Promise<GameOdds[]>;
+  async getPlayerProps(playerIds: string[]): Promise<PlayerProp[]>;
 }
 ```
 
 ### C. Weather Adapter
+
 ```typescript
 class WeatherAdapter implements DataFeedAdapter {
-  async getGameWeather(gameIds: string[]): Promise<WeatherData[]>
+  async getGameWeather(gameIds: string[]): Promise<WeatherData[]>;
 }
 ```
 
@@ -252,11 +272,13 @@ class WeatherAdapter implements DataFeedAdapter {
 ## 6. Caching Strategy
 
 ### A. Redis Cache Layers
+
 - **L1 Cache**: Frequently accessed data (5 min TTL)
 - **L2 Cache**: Player projections (15 min TTL)
 - **L3 Cache**: Historical data (24 hour TTL)
 
 ### B. Cache Keys
+
 ```
 slate:{sport}:{date}
 players:{slate_id}
@@ -270,12 +292,14 @@ ownership:{player_id}:{date}
 ## 7. Data Quality & Validation
 
 ### A. Validation Rules
+
 - **Salary Validation**: Must be positive integer
 - **Projection Validation**: Must be positive number with reasonable bounds
 - **Ownership Validation**: Must be 0-100%
 - **Game Validation**: Start times must be future dates
 
 ### B. Data Quality Metrics
+
 - **Completeness**: % of required fields populated
 - **Freshness**: Time since last update
 - **Accuracy**: Validation against known good sources
@@ -286,12 +310,14 @@ ownership:{player_id}:{date}
 ## 8. Error Handling
 
 ### A. Graceful Degradation
+
 - **Primary Source Failure**: Fall back to cached data
 - **Projection Source Failure**: Use consensus of available sources
 - **API Rate Limiting**: Implement exponential backoff
 - **Network Issues**: Retry with circuit breaker pattern
 
 ### B. Error Reporting
+
 ```typescript
 interface DataFeedError {
   source: string;
@@ -332,6 +358,7 @@ ENABLE_OWNERSHIP_TRACKING=true
 ## 10. Implementation Checklist
 
 ### Phase 1: Basic Data Feeds
+
 - [ ] DraftKings salary data adapter
 - [ ] FanDuel salary data adapter
 - [ ] Basic projection engine
@@ -339,6 +366,7 @@ ENABLE_OWNERSHIP_TRACKING=true
 - [ ] API endpoint structure
 
 ### Phase 2: Enhanced Data
+
 - [ ] Vegas odds integration
 - [ ] Weather data for outdoor sports
 - [ ] Injury report integration
@@ -346,6 +374,7 @@ ENABLE_OWNERSHIP_TRACKING=true
 - [ ] Ownership projection engine
 
 ### Phase 3: Advanced Features
+
 - [ ] Real-time data updates
 - [ ] Custom projection upload
 - [ ] Historical data analysis
@@ -354,4 +383,4 @@ ENABLE_OWNERSHIP_TRACKING=true
 
 ---
 
-**__CLINE_DONE__ DATA_FEEDS**
+\***\*CLINE_DONE** DATA_FEEDS\*\*

@@ -1,0 +1,23 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy data updater script
+COPY docker_data_updater.py .
+
+# Copy data directories
+COPY data/ ./data/
+COPY public/ ./public/
+
+# Copy HTML file to update
+COPY EMBEDDED_DATA_DASHBOARD.html .
+
+# Make script executable
+RUN chmod +x docker_data_updater.py
+
+# Run data updater
+CMD ["python3", "docker_data_updater.py"]

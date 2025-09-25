@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DFS Player Projections",
+  "type": "object",
+  "properties": {
+    "slate_id": {
+      "type": "string",
+      "description": "Internal slate identifier"
+    },
+    "source": {
+      "type": "string",
+      "description": "Projection source identifier"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When projections were last updated"
+    },
+    "model_version": {
+      "type": "string",
+      "description": "Projection model version"
+    },
+    "players": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "player_id": {
+            "type": "string",
+            "description": "Player identifier matching DK data"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "projection": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Mean projected fantasy points"
+          },
+          "floor": {
+            "type": "number",
+            "minimum": 0,
+            "description": "10th percentile projection"
+          },
+          "ceiling": {
+            "type": "number",
+            "minimum": 0,
+            "description": "90th percentile projection"
+          },
+          "std_dev": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Standard deviation of projections"
+          },
+          "consistency": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Consistency score (0-1)"
+          },
+          "upside": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Upside score for tournaments"
+          },
+          "value": {
+            "type": "number",
+            "description": "Points per dollar value score"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Projection confidence level"
+          }
+        },
+        "required": ["player_id", "display_name", "projection"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["slate_id", "source", "last_updated", "players"],
+  "additionalProperties": false
+}

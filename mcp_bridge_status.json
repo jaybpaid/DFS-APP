@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-09-20T22:38:00Z",
+  "diagnosis": "MCP Bridge Connection Analysis",
+  "working_servers": 0,
+  "broken_servers": 3,
+  "test_results": {
+    "@modelcontextprotocol/server-memory": "\u274c TIMEOUT",
+    "@modelcontextprotocol/server-fetch": "\u274c FAILED: npm error code E404\nnpm error 404 Not Found - GET https://registry.npmjs.org/@modelcontextprotocol%2fserver-fetch - Not found\nnpm error 404\nnpm error 404  The requested resource '@modelcontextprotocol/server-fetch@latest' could not be found or you do not have permission to access it.\nnpm error 404\nnpm error 404 Note that you can also install from a\nnpm error 404 tarball, folder, http url, or git url.\nnpm error A complete log of this run can be found in: /Users/614759/.npm/_logs/2025-09-21T03_39_37_501Z-debug-0.log\n",
+    "@modelcontextprotocol/server-sqlite": "\u274c FAILED: npm error code E404\nnpm error 404 Not Found - GET https://registry.npmjs.org/@modelcontextprotocol%2fserver-sqlite - Not found\nnpm error 404\nnpm error 404  The requested resource '@modelcontextprotocol/server-sqlite@latest' could not be found or you do not have permission to access it.\nnpm error 404\nnpm error 404 Note that you can also install from a\nnpm error 404 tarball, folder, http url, or git url.\nnpm error A complete log of this run can be found in: /Users/614759/.npm/_logs/2025-09-21T03_39_38_720Z-debug-0.log\n"
+  },
+  "recommendations": [
+    "Use only working servers in production",
+    "Implement fallbacks for broken servers",
+    "Monitor server health regularly",
+    "Use minimal configuration to reduce failures"
+  ]
+}

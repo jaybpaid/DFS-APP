@@ -1,0 +1,78 @@
+{
+  "slateId": "133233",
+  "players": [
+    {
+      "id": "0",
+      "name": "Derrick Henry",
+      "position": "RB",
+      "team": "BAL",
+      "opponent": "CLE",
+      "salary": 8200,
+      "gameInfo": "CLE @ BAL",
+      "rosterPercentage": 85.2,
+      "isLocked": false
+    },
+    {
+      "id": "2",
+      "name": "Ja'Marr Chase",
+      "position": "WR",
+      "team": "CIN",
+      "opponent": "JAX",
+      "salary": 8100,
+      "gameInfo": "JAX @ CIN",
+      "rosterPercentage": 78.1,
+      "isLocked": false
+    },
+    {
+      "id": "4",
+      "name": "Saquon Barkley",
+      "position": "RB",
+      "team": "PHI",
+      "opponent": "KC",
+      "salary": 8000,
+      "gameInfo": "PHI @ KC",
+      "rosterPercentage": 82.3,
+      "isLocked": false
+    },
+    {
+      "id": "14",
+      "name": "Josh Allen",
+      "position": "QB",
+      "team": "BUF",
+      "opponent": "NYJ",
+      "salary": 7100,
+      "gameInfo": "BUF @ NYJ",
+      "rosterPercentage": 65.4,
+      "isLocked": false
+    },
+    {
+      "id": "152",
+      "name": "Travis Kelce",
+      "position": "TE",
+      "team": "KC",
+      "opponent": "PHI",
+      "salary": 5000,
+      "gameInfo": "PHI @ KC",
+      "rosterPercentage": 45.7,
+      "isLocked": false
+    },
+    {
+      "id": "501",
+      "name": "Ravens",
+      "position": "DST",
+      "team": "BAL",
+      "opponent": "CLE",
+      "salary": 3700,
+      "gameInfo": "CLE @ BAL",
+      "rosterPercentage": 22.1,
+      "isLocked": false
+    }
+  ],
+  "metadata": {
+    "timestamp": "2025-09-15T21:00:00.000Z",
+    "salaryCap": 50000,
+    "rosterPositions": ["QB", "RB", "RB", "WR", "WR", "WR", "TE", "FLEX", "DST"],
+    "contestType": "classic",
+    "lateSwapEnabled": true
+  }
+}

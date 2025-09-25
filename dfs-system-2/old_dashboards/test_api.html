@@ -1,55 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>API Test</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>API Connectivity Test</h1>
     <button onclick="testAPI()">Test API Calls</button>
     <div id="results"></div>
 
     <script>
-        async function testAPI() {
-            const results = document.getElementById('results');
-            results.innerHTML = 'Testing API calls...<br>';
+      async function testAPI() {
+        const results = document.getElementById('results');
+        results.innerHTML = 'Testing API calls...<br>';
 
-            try {
-                // Test DraftKings API
-                const dkResponse = await fetch('http://localhost:8765/health');
-                const dkData = await dkResponse.json();
-                results.innerHTML += '✅ DraftKings API: ' + JSON.stringify(dkData) + '<br>';
-            } catch (e) {
-                results.innerHTML += '❌ DraftKings API Error: ' + e.message + '<br>';
-            }
-
-            try {
-                // Test FastAPI Optimizer
-                const optResponse = await fetch('http://localhost:8000/health');
-                const optData = await optResponse.json();
-                results.innerHTML += '✅ FastAPI Optimizer: ' + JSON.stringify(optData) + '<br>';
-            } catch (e) {
-                results.innerHTML += '❌ FastAPI Optimizer Error: ' + e.message + '<br>';
-            }
-
-            try {
-                // Test lineup generation
-                const lineupResponse = await fetch('http://localhost:8000/api/generate-lineups', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        sport: 'NFL',
-                        site: 'DraftKings',
-                        num_lineups: 1
-                    })
-                });
-                const lineupData = await lineupResponse.json();
-                results.innerHTML += '✅ Lineup Generation: ' + lineupData.success + ' (' + lineupData.lineups.length + ' lineups)<br>';
-            } catch (e) {
-                results.innerHTML += '❌ Lineup Generation Error: ' + e.message + '<br>';
-            }
+        try {
+          // Test DraftKings API
+          const dkResponse = await fetch('http://localhost:8765/health');
+          const dkData = await dkResponse.json();
+          results.innerHTML += '✅ DraftKings API: ' + JSON.stringify(dkData) + '<br>';
+        } catch (e) {
+          results.innerHTML += '❌ DraftKings API Error: ' + e.message + '<br>';
         }
+
+        try {
+          // Test FastAPI Optimizer
+          const optResponse = await fetch('http://localhost:8000/health');
+          const optData = await optResponse.json();
+          results.innerHTML +=
+            '✅ FastAPI Optimizer: ' + JSON.stringify(optData) + '<br>';
+        } catch (e) {
+          results.innerHTML += '❌ FastAPI Optimizer Error: ' + e.message + '<br>';
+        }
+
+        try {
+          // Test lineup generation
+          const lineupResponse = await fetch(
+            'http://localhost:8000/api/generate-lineups',
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                sport: 'NFL',
+                site: 'DraftKings',
+                num_lineups: 1,
+              }),
+            }
+          );
+          const lineupData = await lineupResponse.json();
+          results.innerHTML +=
+            '✅ Lineup Generation: ' +
+            lineupData.success +
+            ' (' +
+            lineupData.lineups.length +
+            ' lineups)<br>';
+        } catch (e) {
+          results.innerHTML += '❌ Lineup Generation Error: ' + e.message + '<br>';
+        }
+      }
     </script>
-</body>
+  </body>
 </html>

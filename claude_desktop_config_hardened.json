@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "./shims/hardened_filesystem.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production",
+        "MCP_SERVER_TYPE": "filesystem",
+        "MCP_SECURITY_MODE": "hardened"
+      }
+    },
+    "memory": {
+      "command": "./shims/hardened_memory.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production",
+        "MCP_SERVER_TYPE": "memory",
+        "MCP_SECURITY_MODE": "hardened"
+      }
+    },
+    "process": {
+      "command": "./shims/hardened_process.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production",
+        "MCP_SERVER_TYPE": "process",
+        "MCP_SECURITY_MODE": "hardened"
+      }
+    }
+  },
+  "globalShortcut": null,
+  "allowedDirectories": [
+    "/Users/614759/Documents/MCP Workspace/DFS APP",
+    "/Users/614759/Desktop",
+    "/Users/614759/Downloads"
+  ]
+}

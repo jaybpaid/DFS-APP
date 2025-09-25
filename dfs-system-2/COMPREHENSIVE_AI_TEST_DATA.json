@@ -2,13 +2,8 @@
   "slate_info": {
     "date": "2025-09-14",
     "type": "NFL Week 2",
-    "available_games": [
-      "KC@PHI"
-    ],
-    "locked_games": [
-      "DEN@IND",
-      "CAR@ARI"
-    ],
+    "available_games": ["KC@PHI"],
+    "locked_games": ["DEN@IND", "CAR@ARI"],
     "total_players": 50,
     "salary_cap": 50000
   },

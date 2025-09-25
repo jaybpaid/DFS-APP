@@ -1,0 +1,106 @@
+version: '3.9'
+
+services:
+  # Python API with Analytics Engine (Core Service)
+  dfs-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api-python
+    container_name: dfs-api-python-simplified
+    ports:
+      - "8001:8001"
+    environment:
+      - PYTHONPATH=/app
+      - FASTAPI_ENV=production
+      - PORT=8001
+    volumes:
+      - ./apps/api-python:/app
+      - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: dfs-postgres-simplified
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=dfs_db
+      - POSTGRES_USER=dfs_user
+      - POSTGRES_PASSWORD=dfs_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "dfs_user", "-d", "dfs_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: dfs-redis-simplified
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Frontend (Optional - can run with npm run dev)
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: dfs-frontend-simplified
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:8001
+      - VITE_API_PYTHON_URL=http://localhost:8001
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    restart: unless-stopped
+    depends_on:
+      - dfs-api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  default:
+    name: dfs-network-simplified
+    driver: bridge
+
+# NOTE: MCP Servers are NOT included in Docker
+# Use Cline's native MCP servers instead - they work perfectly and don't need containerization
+# Available MCP servers through Cline:
+# - Sequential Thinking
+# - Filesystem  
+# - Memory
+# - Puppeteer
+# - GitHub
+# - Brave Search
+# - Docker Gateway (this tool)
+# - AWS KB Retrieval
+# - Fetch

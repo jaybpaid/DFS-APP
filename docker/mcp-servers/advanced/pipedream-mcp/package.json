@@ -1,0 +1,13 @@
+{
+  "name": "pipedream-chat-mcp",
+  "version": "1.0.0",
+  "description": "Pipedream Chat MCP Server for API integration and webhook automation",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.1"
+  }
+}

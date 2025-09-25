@@ -10,8 +10,8 @@ services:
     container_name: dfs-ultimate-optimizer
     restart: unless-stopped
     ports:
-      - "8000:8000"  # Live Optimizer API
-      - "8765:8765"  # DraftKings API Server
+      - '8000:8000' # Live Optimizer API
+      - '8765:8765' # DraftKings API Server
     environment:
       - PYTHONPATH=/app
       - FLASK_ENV=production
@@ -23,7 +23,17 @@ services:
       - dfs_logs:/app/logs
       - dfs_cache:/app/cache
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health", "&&", "curl", "-f", "http://localhost:8765/health"]
+      test:
+        [
+          'CMD',
+          'curl',
+          '-f',
+          'http://localhost:8000/health',
+          '&&',
+          'curl',
+          '-f',
+          'http://localhost:8765/health',
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -45,12 +55,12 @@ services:
     container_name: dfs-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -71,8 +81,8 @@ services:
     container_name: dfs-nginx
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     volumes:
       - nginx_config:/etc/nginx/conf.d
       - nginx_ssl:/etc/nginx/ssl
@@ -96,7 +106,7 @@ services:
     container_name: dfs-grafana
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin123
       - GF_USERS_ALLOW_SIGN_UP=false

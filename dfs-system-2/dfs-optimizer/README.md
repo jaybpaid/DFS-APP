@@ -1,4 +1,5 @@
 # DFS Optimizer - Battle-Ready Sim-First Platform
+
 ## Professional DFS lineup optimization with contest simulation and CSV round-trip
 
 ---
@@ -8,6 +9,7 @@
 A comprehensive DFS optimization platform that replicates the workflows of industry leaders like Stokastic and SaberSim. Features sim-first optimization, contest-aware ROI ranking, and complete CSV round-trip functionality.
 
 ### Key Features
+
 - **Sim-First Workflow**: Contest Generator → Simulate → Rank by ROI → Export
 - **40K+ Monte Carlo Simulations**: Full correlation modeling and payout awareness
 - **CSV Round-Trip**: Import DK/FD contest CSV → Optimize → Export upload-ready CSV
@@ -20,6 +22,7 @@ A comprehensive DFS optimization platform that replicates the workflows of indus
 ## 🚀 Quick Start
 
 ### 1. Setup Environment
+
 ```bash
 # Copy environment template
 cp .env.example .env
@@ -32,6 +35,7 @@ make mcp-health
 ```
 
 ### 2. Start Development
+
 ```bash
 # Start all services
 make dev
@@ -42,6 +46,7 @@ open ../dfs_ultimate_optimizer_with_live_data.html  # Dashboard
 ```
 
 ### 3. Run Demo
+
 ```bash
 # Test all systems
 make demo
@@ -52,6 +57,7 @@ make demo
 ## 📋 Architecture
 
 ### Monorepo Structure
+
 ```
 dfs-optimizer/
 ├── apps/web/              # Next.js frontend (future)
@@ -74,18 +80,21 @@ dfs-optimizer/
 ## 🔧 Core Components
 
 ### 1. Simulation Engine (`services/sim/model.py`)
+
 - **PlayerOutcomeSampler**: Samples player performance with correlation
 - **ContestSimulator**: Runs 40K+ Monte Carlo simulations
 - **MetricsAggregator**: Calculates Boom/Bust/ROI/Win%/Leverage scores
 - **FieldModel**: Models contest field for realistic simulation
 
 ### 2. Optimization Engine (`services/sim/optimizer.py`)
+
 - **ConstraintOptimizer**: ILP/MIP-based optimization with PuLP
 - **SimGuidedSampler**: SaberSim-style sampling with correlation
 - **StackBuilder**: QB+WR, QB+2WR, Game stacks, Bring-back stacks
 - **LineupBuilder**: Orchestrates optimization strategies
 
 ### 3. CSV Manager (`services/ingest/csv_manager.py`)
+
 - **CSVImporter**: Parses DraftKings/FanDuel contest CSV files
 - **CSVExporter**: Generates site-compatible upload CSV files
 - **EntryManager**: Assigns lineups to contest entries
@@ -96,6 +105,7 @@ dfs-optimizer/
 ## 📊 Metrics & Scoring
 
 ### Core Metrics (Stokastic/SaberSim Style)
+
 - **Boom%**: P(lineup_score ≥ 80th percentile)
 - **Bust%**: P(lineup_score ≤ 20th percentile)
 - **ROI**: Expected return from contest-aware simulations
@@ -103,11 +113,13 @@ dfs-optimizer/
 - **Leverage**: (Optimal% - Ownership%) for contrarian edge
 
 ### Overall Score Formula
+
 ```
 Overall Score = w1*Z(ROI) + w2*Z(Win%) + w3*Z(Boom% - Bust%) + w4*Z(Leverage)
 ```
 
 **Weight Presets**:
+
 - **Balanced**: ROI(40%) + Win%(25%) + Boom/Bust(20%) + Leverage(15%)
 - **ROI Focused**: ROI(60%) + Win%(20%) + Boom/Bust(10%) + Leverage(10%)
 - **Win Focused**: ROI(20%) + Win%(50%) + Boom/Bust(20%) + Leverage(10%)
@@ -118,6 +130,7 @@ Overall Score = w1*Z(ROI) + w2*Z(Win%) + w3*Z(Boom% - Bust%) + w4*Z(Leverage)
 ## 🔄 Workflows
 
 ### A. Contest Generator → Sims Workflow (Stokastic Style)
+
 1. **Choose site & slate** (DK/FD, Main/Showdown)
 2. **Generate lineup pool** (or upload existing)
 3. **Simulate contests** (40K+ iterations with payout curves)
@@ -125,6 +138,7 @@ Overall Score = w1*Z(ROI) + w2*Z(Win%) + w3*Z(Boom% - Bust%) + w4*Z(Leverage)
 5. **Export via Entry Manager** (upload-ready CSV)
 
 ### B. Late Swap Workflow
+
 1. **Import contest CSV** (your existing entries)
 2. **Lock played positions** (games already started)
 3. **Generate swappable variants** (updated projections)
@@ -132,6 +146,7 @@ Overall Score = w1*Z(ROI) + w2*Z(Win%) + w3*Z(Boom% - Bust%) + w4*Z(Leverage)
 5. **Export optimized swaps** (DK/FD compatible CSV)
 
 ### C. CSV Round-Trip
+
 1. **Upload DK/FD contest CSV** → Parse entries and lineups
 2. **Assign optimized lineups** → Map lineups to entries
 3. **Export upload-ready CSV** → Proper format and file limits
@@ -142,6 +157,7 @@ Overall Score = w1*Z(ROI) + w2*Z(Win%) + w3*Z(Boom% - Bust%) + w4*Z(Leverage)
 ## 🎮 API Endpoints
 
 ### Core Optimization
+
 ```
 POST /api/generate-lineups     # Generate optimized lineups
 POST /api/run-simulation       # Run Monte Carlo simulation
@@ -149,6 +165,7 @@ POST /api/calculate-swaps      # Calculate late swap opportunities
 ```
 
 ### CSV Management
+
 ```
 POST /api/upload-csv           # Upload and parse contest CSV
 POST /api/generate-swap-variants  # Generate lineup variants
@@ -157,6 +174,7 @@ POST /api/export-optimized     # Export optimized CSV
 ```
 
 ### Data Feeds
+
 ```
 GET /api/slates/:sport/:date   # Get available slates
 GET /api/players/:slate_id     # Get player pool
@@ -168,11 +186,12 @@ GET /api/contests/:slate_id    # Get contest information
 ## 🏗️ Data Model
 
 ### Player Schema
+
 ```json
 {
   "id": "string",
   "name": "string",
-  "position": "string", 
+  "position": "string",
   "team": "string",
   "salary": "number",
   "projection": {
@@ -193,12 +212,13 @@ GET /api/contests/:slate_id    # Get contest information
 ```
 
 ### Simulation Results Schema
+
 ```json
 {
   "lineup_id": "string",
   "iterations": "number",
   "boom_pct": "number",
-  "bust_pct": "number", 
+  "bust_pct": "number",
   "roi": "number",
   "win_pct": "number",
   "optimal_pct": "number",
@@ -212,6 +232,7 @@ GET /api/contests/:slate_id    # Get contest information
 ## 🔧 Configuration
 
 ### Environment Variables (.env)
+
 ```bash
 # Data Providers (user-owned keys)
 SPORTSDATAIO_API_KEY=your_key_here
@@ -236,7 +257,9 @@ ENABLE_LATE_SWAP=true
 ```
 
 ### MCP Server Configuration
+
 MCP servers provide additional tools and data sources:
+
 - **filesystem**: File operations
 - **brave-search**: Web research and data gathering
 - **browser-use**: Automated browser testing
@@ -247,6 +270,7 @@ MCP servers provide additional tools and data sources:
 ## 🧪 Testing
 
 ### Unit Tests
+
 ```bash
 # Run all tests
 make test
@@ -258,6 +282,7 @@ cd services/ingest && python csv_manager.py
 ```
 
 ### E2E Testing
+
 ```bash
 # Full workflow test
 make demo
@@ -275,6 +300,7 @@ python ../live_optimizer_api.py  # Start API
 ## 📈 Performance Benchmarks
 
 ### Target Performance
+
 - **Player pool loading**: <2 seconds
 - **Lineup generation**: <10 seconds for 20 lineups
 - **40K simulation**: <30 seconds
@@ -282,6 +308,7 @@ python ../live_optimizer_api.py  # Start API
 - **CSV round-trip**: <15 seconds end-to-end
 
 ### Optimization Strategies
+
 - **Constraint-based**: ILP/MIP for exact solutions
 - **Sim-guided**: Sampling with correlation awareness
 - **Hybrid**: Combine both for best results
@@ -291,42 +318,48 @@ python ../live_optimizer_api.py  # Start API
 ## 🎯 Competitive Feature Parity
 
 ### vs. Stokastic
+
 ✅ Contest Generator with field size matching  
 ✅ Sim-first workflow with ROI ranking  
 ✅ Entry Manager with CSV round-trip  
 ✅ Late swap with 4-step process  
-✅ Upload-ready CSV export  
+✅ Upload-ready CSV export
 
 ### vs. SaberSim
+
 ✅ Sim-aware optimizer with correlation  
 ✅ Contest Sims for ROI optimization  
 ✅ Min Uniques & Portfolio Diversifier  
 ✅ Ownership fade/boost controls  
-✅ Entry Editor functionality  
+✅ Entry Editor functionality
 
 ### vs. RotoWire/DailyFantasyFuel
+
 ✅ Multi-site support (DK/FD/Yahoo)  
 ✅ Advanced filtering and constraints  
 ✅ Stacking rules and templates  
 ✅ Exposure controls and limits  
-✅ Custom projection upload  
+✅ Custom projection upload
 
 ---
 
 ## 🚀 Deployment
 
 ### Local Development
+
 ```bash
 make dev
 ```
 
 ### Docker Deployment
+
 ```bash
 cd ..
 docker-compose up -d
 ```
 
 ### Production Deployment
+
 ```bash
 make build
 # Deploy to your preferred platform
@@ -346,6 +379,7 @@ make build
 ## 🎮 Usage Examples
 
 ### 1. Basic Lineup Generation
+
 ```python
 import asyncio
 from services.sim.optimizer import generate_optimized_lineups
@@ -366,6 +400,7 @@ async def generate_lineups():
 ```
 
 ### 2. Contest Simulation
+
 ```python
 from services.sim.model import run_simulation
 
@@ -380,6 +415,7 @@ async def simulate_contest():
 ```
 
 ### 3. CSV Round-Trip
+
 ```python
 from services.ingest.csv_manager import import_csv, export_csv
 
@@ -388,8 +424,8 @@ import_result = await import_csv(csv_content, 'draftkings')
 
 # Export optimized lineups
 export_result = await export_csv(
-    optimized_lineups, 
-    import_result['entries'], 
+    optimized_lineups,
+    import_result['entries'],
     'draftkings',
     include_projections=True
 )
@@ -400,12 +436,14 @@ export_result = await export_csv(
 ## 🏆 Success Metrics
 
 ### User Engagement Targets
+
 - Time to first lineup: <60 seconds
 - Lineup generation success: >95%
 - CSV round-trip success: >98%
 - User retention (week 1): >40%
 
 ### Feature Adoption Targets
+
 - Stacking usage: >60% of users
 - Simulation usage: >80% of pro users
 - CSV import/export: >90% of active users
@@ -416,18 +454,21 @@ export_result = await export_csv(
 ## 🔮 Roadmap
 
 ### Phase 1: Core Platform ✅
+
 - [x] Simulation engine with Boom/Bust/ROI/Win%
 - [x] Constraint-based optimizer
 - [x] CSV import/export with DK/FD formats
 - [x] Late swap workflow
 
 ### Phase 2: Advanced Features
+
 - [ ] Next.js web application
 - [ ] Real-time data feeds
 - [ ] Multi-source projection blending
 - [ ] Advanced portfolio management
 
 ### Phase 3: Premium Features
+
 - [ ] Live ownership tracking
 - [ ] AI-enhanced projections
 - [ ] Social features and sharing
@@ -438,12 +479,14 @@ export_result = await export_csv(
 ## 🤝 Contributing
 
 ### Development Setup
+
 1. Clone repository
 2. Copy `.env.example` to `.env` and configure
 3. Run `make setup`
 4. Start development with `make dev`
 
 ### Testing
+
 - Run `make test` for unit tests
 - Run `make demo` for E2E testing
 - Manual testing via dashboard
@@ -459,12 +502,14 @@ This project is for educational and personal use. Respect DFS site terms of serv
 ## 🆘 Support
 
 ### Common Issues
+
 1. **MCP servers failing**: Run `make mcp-health` and check environment variables
 2. **API server not starting**: Check port 8000 availability
 3. **CSV import errors**: Validate CSV format matches DK/FD specification
 4. **Simulation timeouts**: Reduce iteration count for testing
 
 ### Getting Help
+
 - Check documentation in `docs/` folder
 - Review API logs for error details
 - Test individual components with `make demo`

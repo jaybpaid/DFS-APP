@@ -1,0 +1,118 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "enabled": true
+    },
+    "fetch-mcp": {
+      "command": "node",
+      "args": ["/Users/614759/Documents/Cline/MCP/fetch-mcp/dist/index.js"],
+      "enabled": true
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@hisma/server-puppeteer"],
+      "enabled": true
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/614759/Repo/cline/Gaming Arc/gaming-portfolio",
+        "/Users/614759/Documents/Cline/MCP",
+        "/Users/614759/Desktop"
+      ],
+      "enabled": true
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "enabled": true
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "enabled": true,
+      "env": {
+        "BRAVE_API_KEY": "BSAkgdrOqWvr4RlmqUl0BgpfKWNt5hm"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "enabled": true,
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_5vPjx6kQOArYwRxC2jNQ5gHhzTfU0m1lBcDe"
+      }
+    },
+    "aws-kb-retrieval": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-aws-kb-retrieval"],
+      "enabled": true
+    },
+    "gpt-researcher": {
+      "command": "node",
+      "args": [
+        "/Users/614759/Documents/MCP Workspace/DFS APP/docker/mcp-servers/advanced/gptr-mcp/index.js"
+      ],
+      "enabled": true,
+      "env": {
+        "TAVILY_API_KEY": "",
+        "OPENAI_API_KEY": ""
+      }
+    },
+    "serena-code-analysis": {
+      "command": "node",
+      "args": [
+        "/Users/614759/Documents/MCP Workspace/DFS APP/docker/mcp-servers/advanced/serena/src/server.js"
+      ],
+      "enabled": true
+    },
+    "claude-flow": {
+      "command": "node",
+      "args": [
+        "/Users/614759/Documents/MCP Workspace/DFS APP/docker/mcp-servers/advanced/claude-flow-mcp/server.js"
+      ],
+      "enabled": true
+    },
+    "google-genai-toolbox": {
+      "command": "node",
+      "args": [
+        "/Users/614759/Documents/MCP Workspace/DFS APP/docker/mcp-servers/advanced/genai-toolbox/server.js"
+      ],
+      "enabled": true,
+      "env": {
+        "GOOGLE_API_KEY": ""
+      }
+    },
+    "pipedream-chat": {
+      "command": "node",
+      "args": [
+        "/Users/614759/Documents/MCP Workspace/DFS APP/docker/mcp-servers/advanced/pipedream-mcp/server.js"
+      ],
+      "enabled": true,
+      "env": {
+        "PIPEDREAM_API_KEY": ""
+      }
+    },
+    "phoenix-mcp": {
+      "command": "mix",
+      "args": ["phx.server"],
+      "cwd": "/Users/614759/Documents/MCP Workspace/DFS APP/docker/mcp-servers/advanced/mcphoenix",
+      "enabled": false,
+      "env": {
+        "PORT": "3015"
+      }
+    },
+    "docker-mcp-gateway": {
+      "command": "docker",
+      "args": ["exec", "dfs-mcp-servers", "curl", "http://localhost:3001/health"],
+      "enabled": true,
+      "env": {
+        "DOCKER_MCP_HOST": "localhost"
+      }
+    }
+  }
+}

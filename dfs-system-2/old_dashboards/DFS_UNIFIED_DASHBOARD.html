@@ -1,591 +1,702 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DFS Professional Unified Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <style>
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.3s; }
-        .fade-enter-from, .fade-leave-to { opacity: 0; }
-        .slide-enter-active, .slide-leave-active { transition: transform 0.3s; }
-        .slide-enter-from { transform: translateX(-100%); }
-        .slide-leave-to { transform: translateX(100%); }
-        .glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
-        .ai-insight { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .fade-enter-active,
+      .fade-leave-active {
+        transition: opacity 0.3s;
+      }
+      .fade-enter-from,
+      .fade-leave-to {
+        opacity: 0;
+      }
+      .slide-enter-active,
+      .slide-leave-active {
+        transition: transform 0.3s;
+      }
+      .slide-enter-from {
+        transform: translateX(-100%);
+      }
+      .slide-leave-to {
+        transform: translateX(100%);
+      }
+      .glow {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+      }
+      .ai-insight {
+        animation: fadeIn 0.5s ease-in;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
-</head>
-<body class="bg-gray-900 text-white min-h-screen">
+  </head>
+  <body class="bg-gray-900 text-white min-h-screen">
     <div id="app" class="min-h-screen">
-        <!-- Header -->
-        <header class="bg-gray-800 border-b border-gray-700 p-4">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <i class="fas fa-trophy text-yellow-400 text-2xl"></i>
-                    <h1 class="text-2xl font-bold text-white">DFS Professional Dashboard</h1>
-                    <span class="bg-green-600 text-xs px-2 py-1 rounded-full">LIVE</span>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="text-sm text-gray-400">
-                        <i class="fas fa-server text-green-400"></i>
-                        API: <span class="text-green-400">{{ apiStatus }}</span>
-                    </div>
-                    <div class="text-sm text-gray-400">
-                        <i class="fas fa-brain text-blue-400"></i>
-                        AI: <span class="text-blue-400">{{ aiStatus }}</span>
-                    </div>
-                </div>
+      <!-- Header -->
+      <header class="bg-gray-800 border-b border-gray-700 p-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center space-x-4">
+            <i class="fas fa-trophy text-yellow-400 text-2xl"></i>
+            <h1 class="text-2xl font-bold text-white">DFS Professional Dashboard</h1>
+            <span class="bg-green-600 text-xs px-2 py-1 rounded-full">LIVE</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="text-sm text-gray-400">
+              <i class="fas fa-server text-green-400"></i>
+              API: <span class="text-green-400">{{ apiStatus }}</span>
             </div>
-        </header>
-
-        <!-- Main Content -->
-        <div class="flex h-screen">
-            <!-- Sidebar -->
-            <nav class="w-64 bg-gray-800 border-r border-gray-700 p-4">
-                <div class="space-y-2">
-                    <button @click="activeTab = 'overview'"
-                            :class="activeTab === 'overview' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'"
-                            class="w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Overview</span>
-                    </button>
-
-                    <button @click="activeTab = 'slates'"
-                            :class="activeTab === 'slates' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'"
-                            class="w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Available Slates</span>
-                        <span class="bg-green-600 text-xs px-2 py-1 rounded-full ml-auto">{{ totalSlates }}</span>
-                    </button>
-
-                    <button @click="activeTab = 'optimizer'"
-                            :class="activeTab === 'optimizer' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'"
-                            class="w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3">
-                        <i class="fas fa-cogs"></i>
-                        <span>AI Optimizer</span>
-                    </button>
-
-                    <button @click="activeTab = 'analysis'"
-                            :class="activeTab === 'analysis' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'"
-                            class="w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3">
-                        <i class="fas fa-brain"></i>
-                        <span>AI Analysis</span>
-                    </button>
-
-                    <button @click="activeTab = 'sources'"
-                            :class="activeTab === 'sources' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'"
-                            class="w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3">
-                        <i class="fas fa-database"></i>
-                        <span>Data Sources</span>
-                    </button>
-                </div>
-            </nav>
-
-            <!-- Main Panel -->
-            <main class="flex-1 p-6 overflow-auto">
-                <!-- Overview Tab -->
-                <div v-if="activeTab === 'overview'" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- System Status -->
-                        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                            <h3 class="text-lg font-semibold mb-4 flex items-center">
-                                <i class="fas fa-server text-green-400 mr-2"></i>
-                                System Status
-                            </h3>
-                            <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <span>API Server</span>
-                                    <span :class="apiStatus === 'Online' ? 'text-green-400' : 'text-red-400'">
-                                        {{ apiStatus }}
-                                    </span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Data Sources</span>
-                                    <span class="text-blue-400">{{ workingSources }}/5</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>AI Engine</span>
-                                    <span :class="aiStatus === 'Active' ? 'text-green-400' : 'text-yellow-400'">
-                                        {{ aiStatus }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Today's Slates -->
-                        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                            <h3 class="text-lg font-semibold mb-4 flex items-center">
-                                <i class="fas fa-calendar-day text-blue-400 mr-2"></i>
-                                Today's Slates
-                            </h3>
-                            <div class="space-y-2">
-                                <div v-for="site in Object.keys(slateData)" :key="site"
-                                     class="flex justify-between text-sm">
-                                    <span>{{ site }}</span>
-                                    <span class="text-gray-400">{{ slateData[site]?.length || 0 }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- AI Insights -->
-                        <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                            <h3 class="text-lg font-semibold mb-4 flex items-center">
-                                <i class="fas fa-brain text-purple-400 mr-2"></i>
-                                AI Insights
-                            </h3>
-                            <div class="space-y-2 text-sm">
-                                <div class="text-green-400">
-                                    <i class="fas fa-check-circle mr-1"></i>
-                                    Boom/bust analysis ready
-                                </div>
-                                <div class="text-blue-400">
-                                    <i class="fas fa-check-circle mr-1"></i>
-                                    Breakout detection active
-                                </div>
-                                <div class="text-yellow-400">
-                                    <i class="fas fa-check-circle mr-1"></i>
-                                    ROI optimization enabled
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity -->
-                    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                        <h3 class="text-lg font-semibold mb-4">Recent Activity</h3>
-                        <div class="space-y-3">
-                            <div v-for="activity in recentActivity" :key="activity.id"
-                                 class="flex items-center space-x-3 p-3 bg-gray-700 rounded">
-                                <i :class="activity.icon" :style="{color: activity.color}"></i>
-                                <div class="flex-1">
-                                    <p class="text-sm">{{ activity.message }}</p>
-                                    <p class="text-xs text-gray-400">{{ activity.time }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Slates Tab -->
-                <div v-if="activeTab === 'slates'" class="space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold">Available Slates</h2>
-                        <button @click="refreshSlates"
-                                class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center space-x-2">
-                            <i class="fas fa-sync-alt"></i>
-                            <span>Refresh</span>
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div v-for="site in Object.keys(slateData)" :key="site">
-                            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                                <h3 class="text-lg font-semibold mb-4 flex items-center">
-                                    <i class="fas fa-building text-blue-400 mr-2"></i>
-                                    {{ site }}
-                                    <span class="bg-gray-600 text-xs px-2 py-1 rounded-full ml-auto">
-                                        {{ slateData[site]?.length || 0 }}
-                                    </span>
-                                </h3>
-
-                                <div class="space-y-3">
-                                    <div v-for="slate in slateData[site]" :key="slate.id"
-                                         class="p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors"
-                                         @click="selectSlate(slate)">
-                                        <div class="flex justify-between items-start">
-                                            <div>
-                                                <h4 class="font-medium">{{ slate.name }}</h4>
-                                                <p class="text-sm text-gray-400">
-                                                    ${{ slate.entry_fee }} • {{ slate.total_entries.toLocaleString() }} entries
-                                                </p>
-                                                <p class="text-xs text-gray-500">
-                                                    {{ new Date(slate.start_time).toLocaleDateString() }}
-                                                </p>
-                                            </div>
-                                            <div class="text-right">
-                                                <span class="text-xs bg-green-600 px-2 py-1 rounded">
-                                                    {{ slate.source }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Optimizer Tab -->
-                <div v-if="activeTab === 'optimizer'" class="space-y-6">
-                    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-robot text-purple-400 mr-2"></i>
-                            AI-Powered Lineup Optimization
-                        </h3>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium mb-2">Selected Slate</label>
-                                <select v-model="selectedSlateId"
-                                        class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2">
-                                    <option value="">Choose a slate...</option>
-                                    <option v-for="slate in allSlates" :key="slate.id" :value="slate.id">
-                                        {{ slate.name }} ({{ slate.site }})
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-medium mb-2">Optimization Strategy</label>
-                                <select v-model="optimizationStrategy"
-                                        class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2">
-                                    <option value="balanced">Balanced (Recommended)</option>
-                                    <option value="conservative">Conservative</option>
-                                    <option value="aggressive">Aggressive</option>
-                                    <option value="tournament">Tournament Focus</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="mt-6">
-                            <button @click="runOptimization"
-                                    :disabled="!selectedSlateId || optimizing"
-                                    class="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 px-6 py-3 rounded-lg flex items-center space-x-2">
-                                <i class="fas fa-play"></i>
-                                <span>{{ optimizing ? 'Optimizing...' : 'Run AI Optimization' }}</span>
-                            </button>
-                        </div>
-
-                        <!-- Optimization Results -->
-                        <div v-if="optimizationResults" class="mt-6 p-4 bg-gray-700 rounded-lg">
-                            <h4 class="font-semibold mb-3">Optimization Results</h4>
-                            <div class="grid grid-cols-2 gap-4 text-sm">
-                                <div>
-                                    <span class="text-gray-400">Projected Points:</span>
-                                    <span class="text-green-400 ml-2">{{ optimizationResults.projected_points }}</span>
-                                </div>
-                                <div>
-                                    <span class="text-gray-400">Salary Used:</span>
-                                    <span class="text-blue-400 ml-2">${{ optimizationResults.total_salary }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Analysis Tab -->
-                <div v-if="activeTab === 'analysis'" class="space-y-6">
-                    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-chart-bar text-green-400 mr-2"></i>
-                            AI Analysis Dashboard
-                        </h3>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                            <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <div class="text-2xl font-bold text-green-400">{{ aiStats.boomCandidates }}</div>
-                                <div class="text-sm text-gray-400">Boom Candidates</div>
-                            </div>
-                            <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <div class="text-2xl font-bold text-blue-400">{{ aiStats.breakoutPlayers }}</div>
-                                <div class="text-sm text-gray-400">Breakout Players</div>
-                            </div>
-                            <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <div class="text-2xl font-bold text-yellow-400">{{ aiStats.contrarianPlays }}</div>
-                                <div class="text-sm text-gray-400">Contrarian Plays</div>
-                            </div>
-                            <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <div class="text-2xl font-bold text-purple-400">{{ aiStats.roiProjections }}</div>
-                                <div class="text-sm text-gray-400">ROI Projections</div>
-                            </div>
-                        </div>
-
-                        <!-- AI Insights Feed -->
-                        <div class="space-y-4">
-                            <div v-for="insight in aiInsights" :key="insight.id"
-                                 class="ai-insight p-4 bg-gray-700 rounded-lg border-l-4"
-                                 :class="insight.type === 'boom' ? 'border-green-400' :
-                                         insight.type === 'breakout' ? 'border-blue-400' :
-                                         insight.type === 'contrarian' ? 'border-yellow-400' : 'border-purple-400'">
-                                <div class="flex items-start space-x-3">
-                                    <i :class="insight.icon" :style="{color: insight.color}" class="text-xl mt-1"></i>
-                                    <div class="flex-1">
-                                        <h4 class="font-medium">{{ insight.title }}</h4>
-                                        <p class="text-sm text-gray-300 mt-1">{{ insight.description }}</p>
-                                        <div class="flex items-center space-x-4 mt-2 text-xs text-gray-400">
-                                            <span><i class="fas fa-clock mr-1"></i>{{ insight.time }}</span>
-                                            <span><i class="fas fa-user mr-1"></i>{{ insight.player }}</span>
-                                            <span><i class="fas fa-chart-line mr-1"></i>{{ insight.confidence }}% confidence</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sources Tab -->
-                <div v-if="activeTab === 'sources'" class="space-y-6">
-                    <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
-                        <h3 class="text-lg font-semibold mb-4 flex items-center">
-                            <i class="fas fa-database text-orange-400 mr-2"></i>
-                            Data Source Status
-                        </h3>
-
-                        <div class="space-y-4">
-                            <div v-for="source in dataSources" :key="source.name"
-                                 class="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div :class="source.status === 'online' ? 'text-green-400' :
-                                                source.status === 'offline' ? 'text-red-400' : 'text-yellow-400'">
-                                        <i class="fas fa-circle text-sm"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-medium">{{ source.name }}</h4>
-                                        <p class="text-sm text-gray-400">{{ source.description }}</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-sm font-medium"
-                                         :class="source.status === 'online' ? 'text-green-400' : 'text-red-400'">
-                                        {{ source.status.toUpperCase() }}
-                                    </div>
-                                    <div class="text-xs text-gray-400">
-                                        {{ source.lastCheck }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 p-4 bg-blue-900/20 border border-blue-600/30 rounded-lg">
-                            <h4 class="font-medium text-blue-400 mb-2">Automatic Failover Active</h4>
-                            <p class="text-sm text-gray-300">
-                                When primary sources fail, the system automatically switches to backup sources
-                                to ensure continuous data availability.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </main>
+            <div class="text-sm text-gray-400">
+              <i class="fas fa-brain text-blue-400"></i>
+              AI: <span class="text-blue-400">{{ aiStatus }}</span>
+            </div>
+          </div>
         </div>
+      </header>
+
+      <!-- Main Content -->
+      <div class="flex h-screen">
+        <!-- Sidebar -->
+        <nav class="w-64 bg-gray-800 border-r border-gray-700 p-4">
+          <div class="space-y-2">
+            <button
+              @click="activeTab = 'overview'"
+              :class="activeTab === 'overview' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'"
+              class="w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3"
+            >
+              <i class="fas fa-chart-line"></i>
+              <span>Overview</span>
+            </button>
+
+            <button
+              @click="activeTab = 'slates'"
+              :class="activeTab === 'slates' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'"
+              class="w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3"
+            >
+              <i class="fas fa-calendar-alt"></i>
+              <span>Available Slates</span>
+              <span class="bg-green-600 text-xs px-2 py-1 rounded-full ml-auto"
+                >{{ totalSlates }}</span
+              >
+            </button>
+
+            <button
+              @click="activeTab = 'optimizer'"
+              :class="activeTab === 'optimizer' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'"
+              class="w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3"
+            >
+              <i class="fas fa-cogs"></i>
+              <span>AI Optimizer</span>
+            </button>
+
+            <button
+              @click="activeTab = 'analysis'"
+              :class="activeTab === 'analysis' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'"
+              class="w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3"
+            >
+              <i class="fas fa-brain"></i>
+              <span>AI Analysis</span>
+            </button>
+
+            <button
+              @click="activeTab = 'sources'"
+              :class="activeTab === 'sources' ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'"
+              class="w-full text-left px-4 py-3 rounded-lg flex items-center space-x-3"
+            >
+              <i class="fas fa-database"></i>
+              <span>Data Sources</span>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Main Panel -->
+        <main class="flex-1 p-6 overflow-auto">
+          <!-- Overview Tab -->
+          <div v-if="activeTab === 'overview'" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- System Status -->
+              <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                  <i class="fas fa-server text-green-400 mr-2"></i>
+                  System Status
+                </h3>
+                <div class="space-y-3">
+                  <div class="flex justify-between">
+                    <span>API Server</span>
+                    <span
+                      :class="apiStatus === 'Online' ? 'text-green-400' : 'text-red-400'"
+                    >
+                      {{ apiStatus }}
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Data Sources</span>
+                    <span class="text-blue-400">{{ workingSources }}/5</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>AI Engine</span>
+                    <span
+                      :class="aiStatus === 'Active' ? 'text-green-400' : 'text-yellow-400'"
+                    >
+                      {{ aiStatus }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Today's Slates -->
+              <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                  <i class="fas fa-calendar-day text-blue-400 mr-2"></i>
+                  Today's Slates
+                </h3>
+                <div class="space-y-2">
+                  <div
+                    v-for="site in Object.keys(slateData)"
+                    :key="site"
+                    class="flex justify-between text-sm"
+                  >
+                    <span>{{ site }}</span>
+                    <span class="text-gray-400"
+                      >{{ slateData[site]?.length || 0 }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI Insights -->
+              <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                  <i class="fas fa-brain text-purple-400 mr-2"></i>
+                  AI Insights
+                </h3>
+                <div class="space-y-2 text-sm">
+                  <div class="text-green-400">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    Boom/bust analysis ready
+                  </div>
+                  <div class="text-blue-400">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    Breakout detection active
+                  </div>
+                  <div class="text-yellow-400">
+                    <i class="fas fa-check-circle mr-1"></i>
+                    ROI optimization enabled
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+              <h3 class="text-lg font-semibold mb-4">Recent Activity</h3>
+              <div class="space-y-3">
+                <div
+                  v-for="activity in recentActivity"
+                  :key="activity.id"
+                  class="flex items-center space-x-3 p-3 bg-gray-700 rounded"
+                >
+                  <i :class="activity.icon" :style="{color: activity.color}"></i>
+                  <div class="flex-1">
+                    <p class="text-sm">{{ activity.message }}</p>
+                    <p class="text-xs text-gray-400">{{ activity.time }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slates Tab -->
+          <div v-if="activeTab === 'slates'" class="space-y-6">
+            <div class="flex justify-between items-center">
+              <h2 class="text-2xl font-bold">Available Slates</h2>
+              <button
+                @click="refreshSlates"
+                class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center space-x-2"
+              >
+                <i class="fas fa-sync-alt"></i>
+                <span>Refresh</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div v-for="site in Object.keys(slateData)" :key="site">
+                <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+                  <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fas fa-building text-blue-400 mr-2"></i>
+                    {{ site }}
+                    <span class="bg-gray-600 text-xs px-2 py-1 rounded-full ml-auto">
+                      {{ slateData[site]?.length || 0 }}
+                    </span>
+                  </h3>
+
+                  <div class="space-y-3">
+                    <div
+                      v-for="slate in slateData[site]"
+                      :key="slate.id"
+                      class="p-3 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors"
+                      @click="selectSlate(slate)"
+                    >
+                      <div class="flex justify-between items-start">
+                        <div>
+                          <h4 class="font-medium">{{ slate.name }}</h4>
+                          <p class="text-sm text-gray-400">
+                            ${{ slate.entry_fee }} • {{
+                            slate.total_entries.toLocaleString() }} entries
+                          </p>
+                          <p class="text-xs text-gray-500">
+                            {{ new Date(slate.start_time).toLocaleDateString() }}
+                          </p>
+                        </div>
+                        <div class="text-right">
+                          <span class="text-xs bg-green-600 px-2 py-1 rounded">
+                            {{ slate.source }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optimizer Tab -->
+          <div v-if="activeTab === 'optimizer'" class="space-y-6">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+              <h3 class="text-lg font-semibold mb-4 flex items-center">
+                <i class="fas fa-robot text-purple-400 mr-2"></i>
+                AI-Powered Lineup Optimization
+              </h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium mb-2">Selected Slate</label>
+                  <select
+                    v-model="selectedSlateId"
+                    class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2"
+                  >
+                    <option value="">Choose a slate...</option>
+                    <option
+                      v-for="slate in allSlates"
+                      :key="slate.id"
+                      :value="slate.id"
+                    >
+                      {{ slate.name }} ({{ slate.site }})
+                    </option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-2"
+                    >Optimization Strategy</label
+                  >
+                  <select
+                    v-model="optimizationStrategy"
+                    class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2"
+                  >
+                    <option value="balanced">Balanced (Recommended)</option>
+                    <option value="conservative">Conservative</option>
+                    <option value="aggressive">Aggressive</option>
+                    <option value="tournament">Tournament Focus</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mt-6">
+                <button
+                  @click="runOptimization"
+                  :disabled="!selectedSlateId || optimizing"
+                  class="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 px-6 py-3 rounded-lg flex items-center space-x-2"
+                >
+                  <i class="fas fa-play"></i>
+                  <span
+                    >{{ optimizing ? 'Optimizing...' : 'Run AI Optimization' }}</span
+                  >
+                </button>
+              </div>
+
+              <!-- Optimization Results -->
+              <div v-if="optimizationResults" class="mt-6 p-4 bg-gray-700 rounded-lg">
+                <h4 class="font-semibold mb-3">Optimization Results</h4>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span class="text-gray-400">Projected Points:</span>
+                    <span class="text-green-400 ml-2"
+                      >{{ optimizationResults.projected_points }}</span
+                    >
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Salary Used:</span>
+                    <span class="text-blue-400 ml-2"
+                      >${{ optimizationResults.total_salary }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analysis Tab -->
+          <div v-if="activeTab === 'analysis'" class="space-y-6">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+              <h3 class="text-lg font-semibold mb-4 flex items-center">
+                <i class="fas fa-chart-bar text-green-400 mr-2"></i>
+                AI Analysis Dashboard
+              </h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="bg-gray-700 p-4 rounded-lg text-center">
+                  <div class="text-2xl font-bold text-green-400">
+                    {{ aiStats.boomCandidates }}
+                  </div>
+                  <div class="text-sm text-gray-400">Boom Candidates</div>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg text-center">
+                  <div class="text-2xl font-bold text-blue-400">
+                    {{ aiStats.breakoutPlayers }}
+                  </div>
+                  <div class="text-sm text-gray-400">Breakout Players</div>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg text-center">
+                  <div class="text-2xl font-bold text-yellow-400">
+                    {{ aiStats.contrarianPlays }}
+                  </div>
+                  <div class="text-sm text-gray-400">Contrarian Plays</div>
+                </div>
+                <div class="bg-gray-700 p-4 rounded-lg text-center">
+                  <div class="text-2xl font-bold text-purple-400">
+                    {{ aiStats.roiProjections }}
+                  </div>
+                  <div class="text-sm text-gray-400">ROI Projections</div>
+                </div>
+              </div>
+
+              <!-- AI Insights Feed -->
+              <div class="space-y-4">
+                <div
+                  v-for="insight in aiInsights"
+                  :key="insight.id"
+                  class="ai-insight p-4 bg-gray-700 rounded-lg border-l-4"
+                  :class="insight.type === 'boom' ? 'border-green-400' :
+                                         insight.type === 'breakout' ? 'border-blue-400' :
+                                         insight.type === 'contrarian' ? 'border-yellow-400' : 'border-purple-400'"
+                >
+                  <div class="flex items-start space-x-3">
+                    <i
+                      :class="insight.icon"
+                      :style="{color: insight.color}"
+                      class="text-xl mt-1"
+                    ></i>
+                    <div class="flex-1">
+                      <h4 class="font-medium">{{ insight.title }}</h4>
+                      <p class="text-sm text-gray-300 mt-1">
+                        {{ insight.description }}
+                      </p>
+                      <div
+                        class="flex items-center space-x-4 mt-2 text-xs text-gray-400"
+                      >
+                        <span><i class="fas fa-clock mr-1"></i>{{ insight.time }}</span>
+                        <span
+                          ><i class="fas fa-user mr-1"></i>{{ insight.player }}</span
+                        >
+                        <span
+                          ><i class="fas fa-chart-line mr-1"></i>{{ insight.confidence
+                          }}% confidence</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sources Tab -->
+          <div v-if="activeTab === 'sources'" class="space-y-6">
+            <div class="bg-gray-800 rounded-lg p-6 border border-gray-700">
+              <h3 class="text-lg font-semibold mb-4 flex items-center">
+                <i class="fas fa-database text-orange-400 mr-2"></i>
+                Data Source Status
+              </h3>
+
+              <div class="space-y-4">
+                <div
+                  v-for="source in dataSources"
+                  :key="source.name"
+                  class="flex items-center justify-between p-4 bg-gray-700 rounded-lg"
+                >
+                  <div class="flex items-center space-x-3">
+                    <div
+                      :class="source.status === 'online' ? 'text-green-400' :
+                                                source.status === 'offline' ? 'text-red-400' : 'text-yellow-400'"
+                    >
+                      <i class="fas fa-circle text-sm"></i>
+                    </div>
+                    <div>
+                      <h4 class="font-medium">{{ source.name }}</h4>
+                      <p class="text-sm text-gray-400">{{ source.description }}</p>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div
+                      class="text-sm font-medium"
+                      :class="source.status === 'online' ? 'text-green-400' : 'text-red-400'"
+                    >
+                      {{ source.status.toUpperCase() }}
+                    </div>
+                    <div class="text-xs text-gray-400">{{ source.lastCheck }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6 p-4 bg-blue-900/20 border border-blue-600/30 rounded-lg">
+                <h4 class="font-medium text-blue-400 mb-2">
+                  Automatic Failover Active
+                </h4>
+                <p class="text-sm text-gray-300">
+                  When primary sources fail, the system automatically switches to backup
+                  sources to ensure continuous data availability.
+                </p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
 
     <script>
-        const { createApp } = Vue;
+      const { createApp } = Vue;
 
-        createApp({
-            data() {
-                return {
-                    activeTab: 'overview',
-                    apiStatus: 'Checking...',
-                    aiStatus: 'Checking...',
-                    workingSources: 0,
-                    totalSlates: 0,
-                    slateData: {},
-                    selectedSlateId: '',
-                    optimizationStrategy: 'balanced',
-                    optimizing: false,
-                    optimizationResults: null,
-                    aiStats: {
-                        boomCandidates: 0,
-                        breakoutPlayers: 0,
-                        contrarianPlays: 0,
-                        roiProjections: 0
-                    },
-                    aiInsights: [
-                        {
-                            id: 1,
-                            type: 'boom',
-                            icon: 'fas fa-rocket',
-                            color: '#10b981',
-                            title: 'Dalton Schultz Boom Potential',
-                            description: '93% boom probability with favorable matchup. Low 8.3% ownership makes this a high-upside contrarian play.',
-                            time: '2 min ago',
-                            player: 'Dalton Schultz',
-                            confidence: 87
-                        },
-                        {
-                            id: 2,
-                            type: 'breakout',
-                            icon: 'fas fa-star',
-                            color: '#3b82f6',
-                            title: 'Austin Ekeler Breakout Alert',
-                            description: '0.74 breakout score with improving usage trend and favorable matchup vs weak defense.',
-                            time: '5 min ago',
-                            player: 'Austin Ekeler',
-                            confidence: 82
-                        },
-                        {
-                            id: 3,
-                            type: 'contrarian',
-                            icon: 'fas fa-diamond',
-                            color: '#eab308',
-                            title: 'Low-Owned High-Upside',
-                            description: 'Stefon Diggs at 15.2% ownership with 0.8 recent form and increasing usage trend.',
-                            time: '8 min ago',
-                            player: 'Stefon Diggs',
-                            confidence: 79
-                        }
-                    ],
-                    dataSources: [
-                        {
-                            name: 'DraftKings API',
-                            description: 'Primary DFS data source',
-                            status: 'offline',
-                            lastCheck: 'Just now'
-                        },
-                        {
-                            name: 'Fantasy Nerds',
-                            description: 'Backup salary and projection data',
-                            status: 'online',
-                            lastCheck: 'Just now'
-                        },
-                        {
-                            name: 'NFL Data Py',
-                            description: 'Comprehensive NFL statistics',
-                            status: 'online',
-                            lastCheck: 'Just now'
-                        },
-                        {
-                            name: 'Scraping Sources',
-                            description: 'Multiple web scraping endpoints',
-                            status: 'online',
-                            lastCheck: 'Just now'
-                        },
-                        {
-                            name: 'AI Analysis Engine',
-                            description: 'Machine learning insights',
-                            status: 'online',
-                            lastCheck: 'Just now'
-                        }
-                    ],
-                    recentActivity: [
-                        {
-                            id: 1,
-                            icon: 'fas fa-database',
-                            color: '#10b981',
-                            message: 'Data source failover activated - switched to Fantasy Nerds',
-                            time: '2 min ago'
-                        },
-                        {
-                            id: 2,
-                            icon: 'fas fa-brain',
-                            color: '#3b82f6',
-                            message: 'AI analysis completed for NFL Thursday Night slate',
-                            time: '5 min ago'
-                        },
-                        {
-                            id: 3,
-                            icon: 'fas fa-trophy',
-                            color: '#eab308',
-                            message: 'New slate detected: NFL Weekend Main ($10 entry)',
-                            time: '8 min ago'
-                        }
-                    ]
-                }
+      createApp({
+        data() {
+          return {
+            activeTab: 'overview',
+            apiStatus: 'Checking...',
+            aiStatus: 'Checking...',
+            workingSources: 0,
+            totalSlates: 0,
+            slateData: {},
+            selectedSlateId: '',
+            optimizationStrategy: 'balanced',
+            optimizing: false,
+            optimizationResults: null,
+            aiStats: {
+              boomCandidates: 0,
+              breakoutPlayers: 0,
+              contrarianPlays: 0,
+              roiProjections: 0,
             },
+            aiInsights: [
+              {
+                id: 1,
+                type: 'boom',
+                icon: 'fas fa-rocket',
+                color: '#10b981',
+                title: 'Dalton Schultz Boom Potential',
+                description:
+                  '93% boom probability with favorable matchup. Low 8.3% ownership makes this a high-upside contrarian play.',
+                time: '2 min ago',
+                player: 'Dalton Schultz',
+                confidence: 87,
+              },
+              {
+                id: 2,
+                type: 'breakout',
+                icon: 'fas fa-star',
+                color: '#3b82f6',
+                title: 'Austin Ekeler Breakout Alert',
+                description:
+                  '0.74 breakout score with improving usage trend and favorable matchup vs weak defense.',
+                time: '5 min ago',
+                player: 'Austin Ekeler',
+                confidence: 82,
+              },
+              {
+                id: 3,
+                type: 'contrarian',
+                icon: 'fas fa-diamond',
+                color: '#eab308',
+                title: 'Low-Owned High-Upside',
+                description:
+                  'Stefon Diggs at 15.2% ownership with 0.8 recent form and increasing usage trend.',
+                time: '8 min ago',
+                player: 'Stefon Diggs',
+                confidence: 79,
+              },
+            ],
+            dataSources: [
+              {
+                name: 'DraftKings API',
+                description: 'Primary DFS data source',
+                status: 'offline',
+                lastCheck: 'Just now',
+              },
+              {
+                name: 'Fantasy Nerds',
+                description: 'Backup salary and projection data',
+                status: 'online',
+                lastCheck: 'Just now',
+              },
+              {
+                name: 'NFL Data Py',
+                description: 'Comprehensive NFL statistics',
+                status: 'online',
+                lastCheck: 'Just now',
+              },
+              {
+                name: 'Scraping Sources',
+                description: 'Multiple web scraping endpoints',
+                status: 'online',
+                lastCheck: 'Just now',
+              },
+              {
+                name: 'AI Analysis Engine',
+                description: 'Machine learning insights',
+                status: 'online',
+                lastCheck: 'Just now',
+              },
+            ],
+            recentActivity: [
+              {
+                id: 1,
+                icon: 'fas fa-database',
+                color: '#10b981',
+                message: 'Data source failover activated - switched to Fantasy Nerds',
+                time: '2 min ago',
+              },
+              {
+                id: 2,
+                icon: 'fas fa-brain',
+                color: '#3b82f6',
+                message: 'AI analysis completed for NFL Thursday Night slate',
+                time: '5 min ago',
+              },
+              {
+                id: 3,
+                icon: 'fas fa-trophy',
+                color: '#eab308',
+                message: 'New slate detected: NFL Weekend Main ($10 entry)',
+                time: '8 min ago',
+              },
+            ],
+          };
+        },
 
-            computed: {
-                allSlates() {
-                    const all = [];
-                    Object.values(this.slateData).forEach(siteSlates => {
-                        all.push(...siteSlates);
-                    });
-                    return all;
-                }
-            },
+        computed: {
+          allSlates() {
+            const all = [];
+            Object.values(this.slateData).forEach(siteSlates => {
+              all.push(...siteSlates);
+            });
+            return all;
+          },
+        },
 
-            async mounted() {
-                await this.checkSystemStatus();
-                await this.loadSlates();
-                this.updateAIStats();
-            },
+        async mounted() {
+          await this.checkSystemStatus();
+          await this.loadSlates();
+          this.updateAIStats();
+        },
 
-            methods: {
-                async checkSystemStatus() {
-                    try {
-                        const response = await axios.get('http://localhost:5002/api/health');
-                        this.apiStatus = 'Online';
-                        this.workingSources = response.data.data_sources_loaded || 0;
-                    } catch (error) {
-                        this.apiStatus = 'Offline';
-                        console.error('API check failed:', error);
-                    }
-
-                    // Check AI status
-                    this.aiStatus = 'Active'; // Assume active for demo
-                },
-
-                async loadSlates() {
-                    try {
-                        const response = await axios.get('http://localhost:5002/api/slates/nfl');
-                        this.slateData = response.data.sites || {};
-
-                        // Count total slates
-                        this.totalSlates = Object.values(this.slateData)
-                            .reduce((total, siteSlates) => total + siteSlates.length, 0);
-
-                    } catch (error) {
-                        console.error('Failed to load slates:', error);
-                        this.slateData = {};
-                        this.totalSlates = 0;
-                    }
-                },
-
-                async refreshSlates() {
-                    await this.loadSlates();
-                },
-
-                selectSlate(slate) {
-                    this.selectedSlateId = slate.id;
-                    this.activeTab = 'optimizer';
-                },
-
-                async runOptimization() {
-                    if (!this.selectedSlateId) return;
-
-                    this.optimizing = true;
-
-                    try {
-                        // Simulate optimization process
-                        await new Promise(resolve => setTimeout(resolve, 2000));
-
-                        this.optimizationResults = {
-                            projected_points: 141.1,
-                            total_salary: 64200
-                        };
-
-                        // Add to recent activity
-                        this.recentActivity.unshift({
-                            id: Date.now(),
-                            icon: 'fas fa-cogs',
-                            color: '#8b5cf6',
-                            message: `AI optimization completed for ${this.selectedSlateId}`,
-                            time: 'Just now'
-                        });
-
-                    } catch (error) {
-                        console.error('Optimization failed:', error);
-                    } finally {
-                        this.optimizing = false;
-                    }
-                },
-
-                updateAIStats() {
-                    // Update AI statistics based on current data
-                    this.aiStats = {
-                        boomCandidates: 3,
-                        breakoutPlayers: 2,
-                        contrarianPlays: 1,
-                        roiProjections: 4
-                    };
-                }
+        methods: {
+          async checkSystemStatus() {
+            try {
+              const response = await axios.get('http://localhost:5002/api/health');
+              this.apiStatus = 'Online';
+              this.workingSources = response.data.data_sources_loaded || 0;
+            } catch (error) {
+              this.apiStatus = 'Offline';
+              console.error('API check failed:', error);
             }
-        }).mount('#app');
+
+            // Check AI status
+            this.aiStatus = 'Active'; // Assume active for demo
+          },
+
+          async loadSlates() {
+            try {
+              const response = await axios.get('http://localhost:5002/api/slates/nfl');
+              this.slateData = response.data.sites || {};
+
+              // Count total slates
+              this.totalSlates = Object.values(this.slateData).reduce(
+                (total, siteSlates) => total + siteSlates.length,
+                0
+              );
+            } catch (error) {
+              console.error('Failed to load slates:', error);
+              this.slateData = {};
+              this.totalSlates = 0;
+            }
+          },
+
+          async refreshSlates() {
+            await this.loadSlates();
+          },
+
+          selectSlate(slate) {
+            this.selectedSlateId = slate.id;
+            this.activeTab = 'optimizer';
+          },
+
+          async runOptimization() {
+            if (!this.selectedSlateId) return;
+
+            this.optimizing = true;
+
+            try {
+              // Simulate optimization process
+              await new Promise(resolve => setTimeout(resolve, 2000));
+
+              this.optimizationResults = {
+                projected_points: 141.1,
+                total_salary: 64200,
+              };
+
+              // Add to recent activity
+              this.recentActivity.unshift({
+                id: Date.now(),
+                icon: 'fas fa-cogs',
+                color: '#8b5cf6',
+                message: `AI optimization completed for ${this.selectedSlateId}`,
+                time: 'Just now',
+              });
+            } catch (error) {
+              console.error('Optimization failed:', error);
+            } finally {
+              this.optimizing = false;
+            }
+          },
+
+          updateAIStats() {
+            // Update AI statistics based on current data
+            this.aiStats = {
+              boomCandidates: 3,
+              breakoutPlayers: 2,
+              contrarianPlays: 1,
+              roiProjections: 4,
+            };
+          },
+        },
+      }).mount('#app');
     </script>
-</body>
+  </body>
 </html>

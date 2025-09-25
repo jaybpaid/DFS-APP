@@ -2,83 +2,26 @@
 .git
 .gitignore
 
-# Documentation
-README.md
-docs/
-*.md
+# Docker
+Dockerfile*
+docker-compose*.yml
 
-# Development files
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Node.js
+node_modules
+npm-debug.log
+.npm
+/apps/web/dist
+/apps/web/coverage
 
 # Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
+__pycache__
+*.pyc
+*.pyo
+*.pyd
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+/apps/api-python/venv
 
-# Virtual environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS Files
+# OS / Editor
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-*.temp
-
-# Archive folder (not needed in container)
-archive/
-
-# MCP config files (not needed in container)
-mcp_config*.json
-test_*.py
-
-# Old system files
-dfs-system/
-dfs-system-1/
-
-# Development React files (until React build ready)
-dfs-optimizer-ts/node_modules/
-dfs-optimizer-ts/dist/
+.vscode
+*.swp

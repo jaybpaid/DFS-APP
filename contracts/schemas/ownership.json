@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DFS Player Ownership Data",
+  "type": "object",
+  "properties": {
+    "slate_id": {
+      "type": "string",
+      "description": "Internal slate identifier"
+    },
+    "source": {
+      "type": "string",
+      "description": "Ownership data source"
+    },
+    "contest_type": {
+      "type": "string",
+      "enum": ["GPP", "CASH", "TOURNAMENT", "SHOWDOWN", "ALL"],
+      "description": "Contest type for ownership data"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When ownership was last updated"
+    },
+    "sample_size": {
+      "type": "integer",
+      "minimum": 100,
+      "description": "Number of lineups sampled for ownership"
+    },
+    "players": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "player_id": {
+            "type": "string",
+            "description": "Player identifier matching DK data"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "ownership_percentage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Percentage owned (0.15 = 15%)"
+          },
+          "projected_ownership": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Model-projected ownership"
+          },
+          "leverage_score": {
+            "type": "number",
+            "description": "Leverage opportunity score (high projection, low ownership)"
+          },
+          "gpp_ownership": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "GPP-specific ownership"
+          },
+          "cash_ownership": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Cash game ownership"
+          },
+          "ownership_tier": {
+            "type": "string",
+            "enum": ["CHALK", "POPULAR", "MEDIUM", "LOW", "CONTRARIAN"],
+            "description": "Ownership tier categorization"
+          }
+        },
+        "required": ["player_id", "display_name", "ownership_percentage"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "slate_id",
+    "source",
+    "contest_type",
+    "last_updated",
+    "sample_size",
+    "players"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,14 @@
+# Sample hardened service configuration
+mcp-filesystem-hardened:
+  image: node:18-alpine
+  user: '1000:1000'
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  deploy:
+    resources:
+      limits:
+        cpus: '0.5'
+        memory: 256M

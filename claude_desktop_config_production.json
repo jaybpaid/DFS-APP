@@ -1,0 +1,47 @@
+{
+  "mcpServers": {
+    "filesystem-production": {
+      "command": "./shims/filesystem_mcp.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "process-production": {
+      "command": "./shims/process_mcp.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "playwright-production": {
+      "command": "./shims/playwright_mcp.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "git-production": {
+      "command": "./shims/git_mcp.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "sqlite-production": {
+      "command": "./shims/sqlite_mcp.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "memory-production": {
+      "command": "./shims/memory_mcp.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "globalShortcut": "Cmd+Shift+Space"
+}

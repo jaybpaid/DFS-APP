@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DFS Player Injury Status",
+  "type": "object",
+  "properties": {
+    "slate_id": {
+      "type": "string",
+      "description": "Internal slate identifier"
+    },
+    "source": {
+      "type": "string",
+      "description": "Injury data source (NFL API, ESPN, etc.)"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When injury data was last updated"
+    },
+    "players": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "player_id": {
+            "type": "string",
+            "description": "Player identifier matching DK data"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "OUT",
+              "DOUBTFUL",
+              "QUESTIONABLE",
+              "GTD",
+              "IR",
+              "PUP",
+              "SUSPENDED"
+            ],
+            "description": "Official injury status"
+          },
+          "injury_description": {
+            "type": "string",
+            "description": "Injury details (Knee, Ankle, etc.)"
+          },
+          "designation": {
+            "type": "string",
+            "enum": ["P", "Q", "D", "O", "IR", "PUP", "SUS"],
+            "description": "Short designation codes"
+          },
+          "game_time_decision": {
+            "type": "boolean",
+            "description": "Whether player is GTD"
+          },
+          "practice_status": {
+            "type": "string",
+            "enum": ["FULL", "LIMITED", "DNP", "UNKNOWN"],
+            "description": "Latest practice participation"
+          },
+          "expected_to_play": {
+            "type": "boolean",
+            "description": "Model expectation of playing"
+          },
+          "play_probability": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Probability player will play (0.8 = 80%)"
+          },
+          "impact_severity": {
+            "type": "string",
+            "enum": ["NONE", "MINOR", "MODERATE", "MAJOR", "OUT"],
+            "description": "Expected performance impact"
+          }
+        },
+        "required": ["player_id", "display_name", "status"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["slate_id", "source", "last_updated", "players"],
+  "additionalProperties": false
+}

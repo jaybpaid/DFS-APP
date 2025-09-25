@@ -1,0 +1,155 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Vegas Lines and Betting Data",
+  "type": "object",
+  "properties": {
+    "slate_id": {
+      "type": "string",
+      "description": "Internal slate identifier"
+    },
+    "source": {
+      "type": "string",
+      "description": "Vegas data source (DraftKings Sportsbook, FanDuel, ESPN, etc.)"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When vegas data was last updated"
+    },
+    "games": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "game_id": {
+            "type": "string",
+            "description": "Unique game identifier"
+          },
+          "home_team": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 4
+          },
+          "away_team": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 4
+          },
+          "start_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "spread": {
+            "type": "object",
+            "properties": {
+              "home_spread": {
+                "type": "number",
+                "description": "Home team point spread (negative = favorite)"
+              },
+              "away_spread": {
+                "type": "number"
+              },
+              "juice": {
+                "type": "number",
+                "description": "Betting odds juice"
+              }
+            },
+            "required": ["home_spread", "away_spread"]
+          },
+          "total": {
+            "type": "object",
+            "properties": {
+              "over_under": {
+                "type": "number",
+                "minimum": 20,
+                "maximum": 80,
+                "description": "Total points over/under"
+              },
+              "over_juice": {
+                "type": "number"
+              },
+              "under_juice": {
+                "type": "number"
+              }
+            },
+            "required": ["over_under"]
+          },
+          "moneyline": {
+            "type": "object",
+            "properties": {
+              "home_ml": {
+                "type": "number",
+                "description": "Home team moneyline"
+              },
+              "away_ml": {
+                "type": "number",
+                "description": "Away team moneyline"
+              }
+            }
+          },
+          "team_totals": {
+            "type": "object",
+            "properties": {
+              "home_total": {
+                "type": "number",
+                "minimum": 10,
+                "maximum": 50,
+                "description": "Home team implied total"
+              },
+              "away_total": {
+                "type": "number",
+                "minimum": 10,
+                "maximum": 50,
+                "description": "Away team implied total"
+              }
+            },
+            "required": ["home_total", "away_total"]
+          },
+          "weather": {
+            "type": "object",
+            "properties": {
+              "temperature": {
+                "type": "number",
+                "description": "Temperature in Fahrenheit"
+              },
+              "wind_speed": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Wind speed in MPH"
+              },
+              "wind_direction": {
+                "type": "string"
+              },
+              "precipitation": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Precipitation probability"
+              },
+              "conditions": {
+                "type": "string",
+                "enum": ["CLEAR", "CLOUDY", "RAIN", "SNOW", "DOME"]
+              },
+              "is_dome": {
+                "type": "boolean",
+                "description": "Whether game is in domed stadium"
+              }
+            }
+          }
+        },
+        "required": [
+          "game_id",
+          "home_team",
+          "away_team",
+          "start_time",
+          "spread",
+          "total",
+          "team_totals"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["slate_id", "source", "last_updated", "games"],
+  "additionalProperties": false
+}

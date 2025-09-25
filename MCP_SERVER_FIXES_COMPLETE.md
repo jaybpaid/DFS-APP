@@ -5,6 +5,7 @@
 Successfully resolved all MCP server connection issues by replacing problematic servers with working alternatives:
 
 ### Fixed Servers:
+
 1. **Apify MCP Server** (`@apify/actors-mcp-server`) - ✅ **WORKING**
    - Requires API token: `apify_api_XLmZ2o8h1qTD1txGrwJElRacEZ3kxM1PvlYy`
    - Provides web scraping and automation capabilities
@@ -14,13 +15,15 @@ Successfully resolved all MCP server connection issues by replacing problematic 
    - Provides web content extraction and processing
 
 ### Previously Working Servers:
+
 - `filesystem` - ✅ Working
-- `browser-use` - ✅ Working  
+- `browser-use` - ✅ Working
 - `calculator` - ✅ Working
 - `read-website-fast` - ✅ Working
 - `screenshot-website-fast` - ✅ Working
 
 ### Disabled Servers (404 Errors):
+
 - `@modelcontextprotocol/servers-git` - Package not found
 - `mcp-server-puppeteer` - Package not found
 - `@modelcontextprotocol/server-time` - Package not found
@@ -61,20 +64,22 @@ python3 test_all_mcp_servers.py
 ## Usage Examples
 
 ### Using Apify MCP Server:
+
 ```javascript
 // Web scraping example
 const results = await apify.scrapeWebsite({
-  url: "https://example.com",
-  extract: "text"
+  url: 'https://example.com',
+  extract: 'text',
 });
 ```
 
 ### Using Graphlit MCP Server:
+
 ```javascript
 // Content extraction example
 const content = await graphlit.extractContent({
-  url: "https://news-site.com/article",
-  format: "markdown"
+  url: 'https://news-site.com/article',
+  format: 'markdown',
 });
 ```
 
@@ -87,6 +92,7 @@ const content = await graphlit.extractContent({
 ## Troubleshooting
 
 If any server stops working:
+
 1. Run the test script: `python3 test_all_mcp_servers.py`
 2. Check npm registry for package updates
 3. Verify API tokens are still valid

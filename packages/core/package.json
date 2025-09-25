@@ -1,0 +1,65 @@
+{
+  "name": "@dfs-optimizer/core",
+  "version": "1.0.0",
+  "description": "Core utilities and shared logic for DFS Optimizer",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./csv": {
+      "import": "./dist/csv/index.js",
+      "types": "./dist/csv/index.d.ts"
+    },
+    "./optimization": {
+      "import": "./dist/optimization/index.js",
+      "types": "./dist/optimization/index.d.ts"
+    },
+    "./simulation": {
+      "import": "./dist/simulation/index.js",
+      "types": "./dist/simulation/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --ext .ts,.tsx",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "csv-parse": "^5.5.2",
+    "csv-stringify": "^6.4.4",
+    "date-fns": "^2.30.0",
+    "decimal.js": "^10.4.3",
+    "lodash": "^4.17.21",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "typescript": "^5.9.2",
+    "vitest": "^1.6.0"
+  },
+  "peerDependencies": {
+    "@dfs-optimizer/database": "workspace:*"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

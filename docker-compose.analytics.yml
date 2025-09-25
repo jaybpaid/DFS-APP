@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # PostgreSQL database for Metabase
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: metabase
+      POSTGRES_USER: dfs_analytics
+      POSTGRES_PASSWORD: analytics_password_2025
+    volumes:
+      - metabase_db:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dfs_analytics -d metabase"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Metabase Analytics Dashboard
+  metabase:
+    image: metabase/metabase:latest
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DSN: postgresql://dfs_analytics:analytics_password_2025@postgres:5432/metabase
+      MB_ENCRYPT_TIMEZONE: 'UTC'
+      MB_ADMIN_EMAIL: admin@dfs.local
+      MB_ADMIN_PASS: metabase_password_2025!
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "3001:3000"
+    volumes:
+      - metabase_plugins:/plugins
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Playwright MCP for UI testing and screenshots
+  playwright-mcp:
+    build: ./docker/mcp-servers/playwright.dockerfile
+    ports:
+      - "3007:3007"
+    environment:
+      - NODE_ENV=production
+    container_name: happy_hopper
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3007/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Visual Regression Tracker
+  visual-regression-tracker:
+    build: ./docker/mcp-servers/vrt.dockerfile
+    ports:
+      - "3008:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://dfs_analytics:analytics_password_2025@postgres:5432/visual_regression
+      - JWT_SECRET=visual_regression_secret_2025
+    depends_on:
+      - postgres
+    volumes:
+      - vrt_screenshots:/app/test-screenshots
+      - vrt_baseline:/app/test-baseline
+    container_name: visual_tracker
+    restart: unless-stopped
+
+  # Chroma Vector Database MCP
+  chroma-mcp:
+    build: ./docker/mcp-servers/chroma.dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/app/chroma_db
+    environment:
+      - PYTHONPATH=/app
+    container_name: serene_hoover
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import requests; requests.get('http://localhost:8000/health', timeout=10)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  metabase_db:
+  metabase_plugins:
+  vrt_screenshots:
+  vrt_baseline:
+  chroma_data:
+
+networks:
+  default:
+    driver: bridge

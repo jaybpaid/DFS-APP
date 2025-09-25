@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "required": ["slots", "totalSalary", "proj", "site", "mode"],
+  "properties": {
+    "site": { "enum": ["DK", "FD"] },
+    "mode": { "enum": ["classic", "showdown"] },
+    "proj": { "type": "number" },
+    "totalSalary": { "type": "integer" },
+    "slots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pos", "name", "team", "salary", "id"],
+        "properties": {
+          "pos": { "type": "string" },
+          "name": { "type": "string" },
+          "team": { "type": "string" },
+          "salary": { "type": "integer" },
+          "id": { "type": "string" }
+        }
+      }
+    }
+  }
+}

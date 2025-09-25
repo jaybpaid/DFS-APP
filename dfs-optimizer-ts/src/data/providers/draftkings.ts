@@ -15,13 +15,16 @@ export class DraftKingsProvider {
 
   async getAvailableSlates(): Promise<Slate[]> {
     try {
-      const response = await fetch(`https://www.draftkings.com/lobby/getcontests?sport=${this.sport}`);
+      const response = await fetch(
+        `https://www.draftkings.com/lobby/getcontests?sport=${this.sport}`
+      );
       const data = await response.json();
-      
+
       const slates: Slate[] = data
-        .filter((contest: any) => 
-          contest.ContestType === 'Classic' && 
-          contest.ContestStartTime > new Date().toISOString()
+        .filter(
+          (contest: any) =>
+            contest.ContestType === 'Classic' &&
+            contest.ContestStartTime > new Date().toISOString()
         )
         .map((contest: any) => ({
           id: contest.ContestKey,
@@ -29,7 +32,7 @@ export class DraftKingsProvider {
           sport: this.sport,
           startTime: contest.ContestStartTime,
           draftGroupId: contest.DraftGroupId.toString(),
-          playerCount: 0 // Will be populated later
+          playerCount: 0, // Will be populated later
         }));
 
       return slates;
@@ -43,8 +46,8 @@ export class DraftKingsProvider {
           sport: this.sport,
           startTime: '2025-09-15T20:20:00.000Z',
           draftGroupId: 'demo_001',
-          playerCount: 0
-        }
+          playerCount: 0,
+        },
       ];
     }
   }
@@ -52,7 +55,7 @@ export class DraftKingsProvider {
   async selectSlate(slateId: string): Promise<void> {
     const slates = await this.getAvailableSlates();
     const slate = slates.find(s => s.id === slateId);
-    
+
     if (!slate) {
       throw new Error(`Slate ${slateId} not found for ${this.sport}`);
     }
@@ -66,17 +69,22 @@ export class DraftKingsProvider {
     }
 
     try {
-      const response = await fetch(`${BASE_URL}/draftgroups/v1/draftgroups/${this.currentSlate.draftGroupId}/draftables`);
+      const response = await fetch(
+        `${BASE_URL}/draftgroups/v1/draftgroups/${this.currentSlate.draftGroupId}/draftables`
+      );
       const data = await response.json();
 
       const players: Player[] = data.draftables
         .filter((draftable: any) => draftable.draftableId && draftable.displayName)
         .map((draftable: any) => {
-          const gameInfo = draftable.games && draftable.games[0] ? {
-            home: draftable.games[0].homeTeam,
-            away: draftable.games[0].awayTeam,
-            start: draftable.games[0].startDate
-          } : undefined;
+          const gameInfo =
+            draftable.games && draftable.games[0]
+              ? {
+                  home: draftable.games[0].homeTeam,
+                  away: draftable.games[0].awayTeam,
+                  start: draftable.games[0].startDate,
+                }
+              : undefined;
 
           return {
             site: 'DK' as const,
@@ -89,7 +97,7 @@ export class DraftKingsProvider {
             positions: [draftable.position],
             salary: draftable.salary,
             status: draftable.status,
-            game: gameInfo
+            game: gameInfo,
           };
         });
 
@@ -99,28 +107,34 @@ export class DraftKingsProvider {
       return players;
     } catch (error) {
       log.error('Failed to fetch players:', error);
-      throw new Error(`Failed to fetch DraftKings players for slate ${this.currentSlate.id}`);
+      throw new Error(
+        `Failed to fetch DraftKings players for slate ${this.currentSlate.id}`
+      );
     }
   }
 
   private getOpponent(draftable: any): string | undefined {
     if (!draftable.games || !draftable.games[0]) return undefined;
-    
+
     const game = draftable.games[0];
     return draftable.teamAbbreviation === game.homeTeam ? game.awayTeam : game.homeTeam;
   }
 
-  async validatePlayerPool(players: Player[]): Promise<{ isValid: boolean; errors: string[] }> {
+  async validatePlayerPool(
+    players: Player[]
+  ): Promise<{ isValid: boolean; errors: string[] }> {
     const errors: string[] = [];
     const counts = {
       NFL: { DK: 250, FD: 250 },
-      NBA: { DK: 150, FD: 150 }
+      NBA: { DK: 150, FD: 150 },
     };
 
     const threshold = counts[this.sport].DK;
 
     if (players.length < threshold) {
-      errors.push(`Player count (${players.length}) below minimum threshold (${threshold}) for ${this.sport}`);
+      errors.push(
+        `Player count (${players.length}) below minimum threshold (${threshold}) for ${this.sport}`
+      );
     }
 
     // Check for unique player IDs
@@ -137,9 +151,10 @@ export class DraftKingsProvider {
 
     // Check position coverage
     const positions = new Set(players.flatMap(p => p.positions));
-    const requiredPositions = this.sport === 'NFL' 
-      ? ['QB', 'RB', 'WR', 'TE', 'DST', 'FLEX']
-      : ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL'];
+    const requiredPositions =
+      this.sport === 'NFL'
+        ? ['QB', 'RB', 'WR', 'TE', 'DST', 'FLEX']
+        : ['PG', 'SG', 'SF', 'PF', 'C', 'G', 'F', 'UTIL'];
 
     const missingPositions = requiredPositions.filter(pos => !positions.has(pos));
     if (missingPositions.length > 0) {
@@ -148,7 +163,7 @@ export class DraftKingsProvider {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 

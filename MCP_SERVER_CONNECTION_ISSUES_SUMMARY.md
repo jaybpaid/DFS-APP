@@ -7,29 +7,35 @@ Multiple MCP servers were experiencing connection failures due to non-existent n
 ## 🚫 **Failed Servers & Root Causes**
 
 ### 1. **git** - `@modelcontextprotocol/servers-git`
+
 - **Error**: `404 Not Found - GET https://registry.npmjs.org/@modelcontextprotocol%2fservers-git`
 - **Root Cause**: Package `@modelcontextprotocol/servers-git` doesn't exist in npm registry
 - **Attempted Alternative**: `@cyanheads/git-mcp-server` (also doesn't exist)
 
 ### 2. **puppeteer** - `mcp-server-puppeteer`
+
 - **Error**: `404 Not Found - GET https://registry.npmjs.org/mcp-server-puppeteer`
 - **Root Cause**: Package `mcp-server-puppeteer` doesn't exist in npm registry
 - **Attempted Alternative**: `@kirkdeam/puppeteer-mcp-server` (also doesn't exist)
 
 ### 3. **time** - `@modelcontextprotocol/server-time`
+
 - **Error**: `404 Not Found - GET https://registry.npmjs.org/@modelcontextprotocol%2fserver-time`
 - **Root Cause**: Package `@modelcontextprotocol/server-time` doesn't exist in npm registry
 
 ### 4. **fetch** - `@mokei/mcp-fetch`
+
 - **Error**: `could not determine executable to run`
 - **Root Cause**: Package `@mokei/mcp-fetch` doesn't exist or is malformed
 
 ### 5. **memory** - `@modelcontextprotocol/server-memory`
+
 - **Status**: ✅ **WORKING** - Package exists and functions correctly
 
 ## ✅ **Resolution Applied**
 
 ### **Configuration Changes Made**
+
 All problematic servers have been **disabled** in `mcp_config.json`:
 
 ```json
@@ -75,12 +81,15 @@ According to `MCP_SERVER_STATUS_FINAL.md`, the core functional servers are:
 ## 🔧 **Technical Details**
 
 ### **Process Cleanup**
+
 Terminated hanging processes:
+
 - Process ID 87473 (git server)
 - Process ID 88295 (puppeteer server)
 - Memory server process
 
 ### **Package Verification Results**
+
 - ✅ Working: `@modelcontextprotocol/server-memory`
 - ❌ Missing: `@modelcontextprotocol/server-time`
 - ❌ Missing: `@cyanheads/git-mcp-server`

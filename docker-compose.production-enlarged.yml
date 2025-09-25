@@ -1,0 +1,341 @@
+version: '3.8'
+
+services:
+  # ================================================================================================
+  # RECOMMENDED DOCKER HUB INTEGRATIONS FOR DFS PRO OPTIMIZER
+  # ================================================================================================
+
+  # --- API Gateway & Load Balancer ---
+  traefik:
+    image: traefik:v3.0
+    container_name: dfs-traefik
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080" # Dashboard
+    volumes:
+      - ./infra/traefik:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--log.level=INFO"
+    restart: unless-stopped
+    profiles:
+      - enhanced
+
+  # --- MCP Official Servers (Replacing Custom Implementations) ---
+  mcp-filesystem:
+    image: modelcontextprotocol/mcp-server-filesystem:latest
+    container_name: dfs-mcp-filesystem
+    volumes:
+      - ./data:/workspace
+    environment:
+      - MCP_SERVER__FILESYSTEM__ROOT_PATH=/workspace
+    restart: unless-stopped
+    profiles:
+      - enhanced
+
+  mcp-git:
+    image: modelcontextprotocol/mcp-server-git:latest
+    container_name: dfs-mcp-git
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace
+    restart: unless-stopped
+    profiles:
+      - enhanced
+
+  mcp-brave-search:
+    image: modelcontextprotocol/mcp-server-brave-search:latest
+    container_name: dfs-mcp-brave
+    environment:
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
+    restart: unless-stopped
+    profiles:
+      - enhanced
+
+  # --- UI Testing & Development Tools ---
+  cypress:
+    image: cypress/included:13.6.4
+    container_name: dfs-cypress
+    volumes:
+      - ./apps/web:/e2e
+      - ./cypress:/cypress
+    working_dir: /e2e
+    command: ["--spec", "**/*.cy.js"]
+    profiles:
+      - testing
+
+  storybook:
+    image: storybook/main:latest
+    container_name: dfs-storybook
+    ports:
+      - "6006:6006"
+    volumes:
+      - ./apps/web:/app
+    working_dir: /app
+    environment:
+      - STORYBOOK_PORT=6006
+    command: ["storybook", "dev", "--port", "6006", "--host", "0.0.0.0"]
+    restart: unless-stopped
+    profiles:
+      - development
+
+  # --- API Management ---
+  kong:
+    image: kong:latest
+    container_name: dfs-kong
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+      - "8001:8001" # Admin API
+      - "8444:8444" # Admin SSL
+    environment:
+      - KONG_DATABASE=off
+      - KONG_DECLARATIVE_CONFIG=/opt/kong/declarative/kong.yml
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stdout
+      - KONG_ADMIN_ERROR_LOG=/dev/stdout
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001 reuseport backlog=16384
+      - KONG_ADMIN_GUI_URL=http://localhost:8002
+      - KONG_ADMIN_GUI_LISTEN=0.0.0.0:8002
+    volumes:
+      - ./infra/kong:/opt/kong/declarative
+      - kong_data:/usr/local/kong
+    restart: unless-stopped
+    depends_on:
+      - dfs-api
+    profiles:
+      - enhanced
+
+  # --- Database Administration ---
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: dfs-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@dfs.local}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    profiles:
+      - administration
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: dfs-redis-commander
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    restart: unless-stopped
+    depends_on:
+      - redis
+    profiles:
+      - administration
+
+  # --- Logging & Monitoring ---
+  loki:
+    image: grafana/loki:3.0.0
+    container_name: dfs-loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./infra/loki:/etc/loki
+      - loki_data:/loki
+    command: -config.file=/etc/loki/loki.yml
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # --- CI/CD Platform ---
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: dfs-gitlab
+    ports:
+      - "8929:80"
+      - "2224:22"
+    environment:
+      - GITLAB_OMNIBUS_CONFIG=external_url 'http://localhost:8929'; gitlab_rails['gitlab_shell_ssh_port']=2224;
+    volumes:
+      - gitlab_config:/etc/gitlab
+      - gitlab_logs:/var/log/gitlab
+      - gitlab_data:/var/opt/gitlab
+    restart: unless-stopped
+    profiles:
+      - cicd
+
+# ================================================================================================
+# ORIGINAL DOCKER COMPOSE CONFIGURATION (your current setup)
+# ================================================================================================
+
+  # --- Application Core ---
+  dfs-gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    container_name: dfs-gateway
+    ports:
+      - "8822:8080" # Health (changed from 8080 to avoid conflict with traefik)
+      - "9090:9090" # Metrics
+    volumes:
+      - ./data:/app/data
+      - federation_evidence:/app/_federation/evidence
+    environment:
+      - LOG_LEVEL=INFO
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
+      - GITHUB_PERSONAL_ACCESS_TOKEN=${GITHUB_TOKEN}
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    profiles:
+      - core
+
+  dfs-api:
+    build: .
+    container_name: dfs-pro-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - REDIS_URL=redis://redis:6379
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  dfs-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: dfs-frontend
+    ports:
+      - "3003:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    restart: unless-stopped
+    depends_on:
+      - dfs-api
+
+  data-sync:
+    build: .
+    container_name: dfs-data-sync
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    command: ["python3", "dynamic_data_manager.py"]
+    restart: unless-stopped
+    depends_on:
+      dfs-api:
+        condition: service_healthy
+
+  # --- Infrastructure ---
+  redis:
+    image: redis:7-alpine
+    container_name: dfs-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: dfs-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Monitoring ---
+  prometheus:
+    image: prom/prometheus:v2.47.0
+    container_name: dfs-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:10.1.0
+    container_name: dfs-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    profiles:
+      - monitoring
+
+networks:
+  dfs_network:
+    driver: bridge
+
+volumes:
+  redis_data:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
+  kong_data:
+  pgadmin_data:
+  loki_data:
+  gitlab_config:
+  gitlab_logs:
+  gitlab_data:
+  federation_evidence:
+  mcp_data:

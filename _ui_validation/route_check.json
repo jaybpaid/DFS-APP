@@ -1,0 +1,38 @@
+{
+  "/": {
+    "exists": true,
+    "file": "apps/web/src/app/page.tsx"
+  },
+  "/sim": {
+    "exists": true,
+    "file": "apps/web/src/app/sim/page.tsx"
+  },
+  "/live": {
+    "exists": true,
+    "file": "apps/web/src/app/live/page.tsx"
+  },
+  "/research": {
+    "exists": true,
+    "file": "apps/web/src/app/research/page.tsx"
+  },
+  "/slates": {
+    "exists": true,
+    "file": "apps/web/src/app/slates/page.tsx"
+  },
+  "/news": {
+    "exists": true,
+    "file": "apps/web/src/app/news/page.tsx"
+  },
+  "/portfolio": {
+    "exists": true,
+    "file": "apps/web/src/app/portfolio/page.tsx"
+  },
+  "/contests": {
+    "exists": true,
+    "file": "apps/web/src/app/contests/page.tsx"
+  },
+  "/settings": {
+    "exists": true,
+    "file": "apps/web/src/app/settings/page.tsx"
+  }
+}

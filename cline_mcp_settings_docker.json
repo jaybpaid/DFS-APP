@@ -1,0 +1,156 @@
+{
+  "mcpServers": {
+    "docker-sequential-thinking": {
+      "autoApprove": ["sequentialthinking"],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3001/sse"
+    },
+    "docker-puppeteer": {
+      "autoApprove": [
+        "puppeteer_navigate",
+        "puppeteer_click",
+        "puppeteer_close",
+        "puppeteer_evaluate",
+        "puppeteer_screenshot",
+        "puppeteer_fill",
+        "puppeteer_scroll_down"
+      ],
+      "disabled": false,
+      "timeout": 120,
+      "type": "sse",
+      "url": "http://localhost:3002/sse"
+    },
+    "docker-filesystem": {
+      "autoApprove": [
+        "read_text_file",
+        "list_directory",
+        "search_files",
+        "write_file",
+        "edit_file"
+      ],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3003/sse"
+    },
+    "docker-memory": {
+      "autoApprove": [
+        "create_entities",
+        "add_observations",
+        "read_graph",
+        "search_nodes"
+      ],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3004/sse"
+    },
+    "docker-everything": {
+      "autoApprove": ["echo"],
+      "disabled": true,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3005/sse"
+    },
+    "docker-brave-search": {
+      "autoApprove": ["brave_web_search", "brave_local_search"],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3006/sse",
+      "env": {
+        "BRAVE_API_KEY": "BSAy-rn_ERP0d7uLpeiDv_tmabkSW-r"
+      }
+    },
+    "docker-github": {
+      "autoApprove": [
+        "search_code",
+        "search_repositories",
+        "get_file_contents",
+        "create_repository",
+        "push_files"
+      ],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3007/sse",
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": ""
+      }
+    },
+    "docker-aws-kb": {
+      "autoApprove": ["retrieve_from_aws_kb"],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3008/sse"
+    },
+    "docker-fetch": {
+      "autoApprove": ["fetch_markdown", "fetch_json", "fetch_html", "fetch_txt"],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3009/sse"
+    },
+    "docker-java-sdk": {
+      "autoApprove": [],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3010/sse"
+    },
+    "docker-gpt-researcher": {
+      "autoApprove": ["research_topic", "generate_report"],
+      "disabled": false,
+      "timeout": 120,
+      "type": "sse",
+      "url": "http://localhost:3011/sse"
+    },
+    "docker-serena-code": {
+      "autoApprove": ["analyze_code", "suggest_improvements"],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3012/sse"
+    },
+    "docker-claude-flow": {
+      "autoApprove": ["create_workflow", "execute_flow"],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3013/sse"
+    },
+    "docker-genai-toolbox": {
+      "autoApprove": ["generate_content", "analyze_data"],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3014/sse"
+    },
+    "docker-phoenix": {
+      "autoApprove": ["phoenix_analyze", "phoenix_optimize"],
+      "disabled": false,
+      "timeout": 60,
+      "type": "sse",
+      "url": "http://localhost:3015/sse"
+    },
+    "local-docker-gateway": {
+      "autoApprove": [
+        "docker_ps",
+        "docker_logs",
+        "docker_exec",
+        "docker_compose",
+        "docker_inspect",
+        "docker_port",
+        "docker_build"
+      ],
+      "disabled": false,
+      "timeout": 60,
+      "type": "stdio",
+      "command": "node",
+      "args": ["/Users/614759/Documents/Cline/MCP/docker-gateway/build/index.js"]
+    }
+  }
+}

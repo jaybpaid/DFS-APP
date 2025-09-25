@@ -1,0 +1,250 @@
+# PR1 INFRASTRUCTURE HARDENING - Commercial Grade DFS Optimizer
+# Hardened MCP Infrastructure with Security-First Approach
+# - Non-root containers (uid 1000)
+# - No host port exposure (STDIO shims)
+# - Security capabilities dropped
+# - Read-only filesystems with tmpfs /tmp
+# - Comprehensive health monitoring
+
+version: '3.8'
+
+services:
+  # INFRASTRUCTURE SERVICES - SECURED
+  redis-hardened:
+    image: redis:7-alpine
+    container_name: dfs-redis-hardened
+    user: "1000:1000"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /data
+    volumes:
+      - redis_hardened_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - mcp-hardened
+
+  postgres-hardened:
+    image: postgres:15-alpine
+    container_name: dfs-postgres-hardened
+    user: "1000:1000"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql
+    environment:
+      POSTGRES_USER: dfs_user
+      POSTGRES_PASSWORD: dfs_password_hardened_2024
+      POSTGRES_DB: dfs_optimizer
+    volumes:
+      - postgres_hardened_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dfs_user -d dfs_optimizer"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - mcp-hardened
+
+  # HARDENED MCP SERVERS - NO PORT EXPOSURE
+  filesystem-hardened:
+    image: mcp-filesystem-minimal:latest
+    container_name: filesystem-hardened
+    user: "1000:1000"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/data
+    # NO PORTS EXPOSED - Use STDIO shims
+    volumes:
+      - ./:/workspace:ro
+      - mcp_hardened_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - MCP_SERVER=filesystem
+      - MCP_PORT=8080
+      - HEALTH_CHECK_ENABLED=true
+    networks:
+      - mcp-hardened
+    healthcheck:
+      test: ["CMD", "node", "-e", "const http=require('http');http.request({hostname:'localhost',port:8080,path:'/health'},res=>process.exit(res.statusCode===200?0:1)).on('error',()=>process.exit(1)).end()"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  memory-hardened:
+    image: mcp-filesystem-minimal:latest
+    container_name: memory-hardened
+    user: "1000:1000"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/data
+    # NO PORTS EXPOSED - Use STDIO shims
+    volumes:
+      - mcp_hardened_data:/app/data
+    environment:
+      - NODE_ENV=production
+      - MCP_SERVER=memory
+      - MCP_PORT=8080
+      - HEALTH_CHECK_ENABLED=true
+    networks:
+      - mcp-hardened
+    healthcheck:
+      test: ["CMD", "node", "-e", "const http=require('http');http.request({hostname:'localhost',port:8080,path:'/health'},res=>process.exit(res.statusCode===200?0:1)).on('error',()=>process.exit(1)).end()"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  process-hardened:
+    image: mcp-filesystem-minimal:latest
+    container_name: process-hardened
+    user: "1000:1000"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    # NO PORTS EXPOSED - Use STDIO shims
+    volumes:
+      - ./:/workspace:ro
+    environment:
+      - NODE_ENV=production
+      - MCP_SERVER=process
+      - MCP_PORT=8080
+      - HEALTH_CHECK_ENABLED=true
+    networks:
+      - mcp-hardened
+    healthcheck:
+      test: ["CMD", "node", "-e", "const http=require('http');http.request({hostname:'localhost',port:8080,path:'/health'},res=>process.exit(res.statusCode===200?0:1)).on('error',()=>process.exit(1)).end()"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  # ADVANCED HEALTH MONITOR WITH AUTO-RESTART
+  mcp-health-monitor-hardened:
+    image: alpine:latest
+    container_name: mcp-health-monitor-hardened
+    user: "1000:1000"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: >
+      sh -c "
+      apk add --no-cache docker-cli curl &&
+      echo '🏥 PR1 HARDENED MCP Health Monitor Starting...' &&
+      while true; do
+        echo \"🔍 [$$(date '+%Y-%m-%d %H:%M:%S')] Checking MCP servers...\" &&
+
+        # Check filesystem MCP
+        if ! docker exec filesystem-hardened node -e \"const http=require('http');http.request({hostname:'localhost',port:8080,path:'/health'},res=>process.exit(res.statusCode===200?0:1)).on('error',()=>process.exit(1)).end()\" >/dev/null 2>&1; then
+          echo '⚠️ Filesystem MCP unhealthy - restarting...'
+          docker restart filesystem-hardened
+        fi
+
+        # Check memory MCP
+        if ! docker exec memory-hardened node -e \"const http=require('http');http.request({hostname:'localhost',port:8080,path:'/health'},res=>process.exit(res.statusCode===200?0:1)).on('error',()=>process.exit(1)).end()\" >/dev/null 2>&1; then
+          echo '⚠️ Memory MCP unhealthy - restarting...'
+          docker restart memory-hardened
+        fi
+
+        # Check process MCP
+        if ! docker exec process-hardened node -e \"const http=require('http');http.request({hostname:'localhost',port:8080,path:'/health'},res=>process.exit(res.statusCode===200?0:1)).on('error',()=>process.exit(1)).end()\" >/dev/null 2>&1; then
+          echo '⚠️ Process MCP unhealthy - restarting...'
+          docker restart process-hardened
+        fi
+
+        # Infrastructure health checks
+        if ! docker exec redis-hardened redis-cli ping >/dev/null 2>&1; then
+          echo '⚠️ Redis unhealthy - restarting...'
+          docker restart redis-hardened
+        fi
+
+        if ! docker exec postgres-hardened pg_isready -U dfs_user -d dfs_optimizer >/dev/null 2>&1; then
+          echo '⚠️ PostgreSQL unhealthy - restarting...'
+          docker restart postgres-hardened
+        fi
+
+        echo '✅ Health check complete - sleeping 60s'
+        sleep 60
+      done
+      "
+    depends_on:
+      - redis-hardened
+      - postgres-hardened
+      - filesystem-hardened
+      - memory-hardened
+      - process-hardened
+    networks:
+      - mcp-hardened
+
+  # SECURE API SERVER WITH RATE LIMITING
+  api-hardened:
+    build:
+      context: .
+      dockerfile: Dockerfile.api-hardened
+    container_name: dfs-api-hardened
+    user: "1000:1000"
+    restart: unless-stopped
+    ports:
+      - "8084:8080"
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    environment:
+      - NODE_ENV=production
+      - REDIS_URL=redis://redis-hardened:6379
+      - DATABASE_URL=postgresql://dfs_user:dfs_password_hardened_2024@postgres-hardened:5432/dfs_optimizer
+      - DFS_API_KEY=${DFS_API_KEY}
+      - SLOWAPI_LIMIT=100/minute
+      - SLOWAPI_BURST=200
+    networks:
+      - mcp-hardened
+    depends_on:
+      - redis-hardened
+      - postgres-hardened
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-H", "Authorization: Bearer $DFS_API_KEY", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+networks:
+  mcp-hardened:
+    driver: bridge
+    internal: true
+
+volumes:
+  redis_hardened_data:
+  postgres_hardened_data:
+  mcp_hardened_data:

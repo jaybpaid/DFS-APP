@@ -3,7 +3,7 @@
 
 echo "🚀 Starting All MCP Servers in Docker Container..."
 
-# Start each MCP server on different ports
+# Start standard MCP servers on different ports
 echo "📡 Starting Sequential Thinking MCP Server..."
 npx @modelcontextprotocol/server-sequential-thinking --port 3001 &
 
@@ -31,8 +31,9 @@ npx @modelcontextprotocol/server-aws-kb-retrieval --port 3008 &
 echo "🌐 Starting Fetch MCP Server..."
 node /app/fetch-mcp/dist/index.js --port 3009 &
 
-echo "✅ All MCP Servers Started in Docker Container"
+echo "✅ All Standard MCP Servers Started in Docker Container"
 echo "📊 Health check endpoint: http://localhost:3001/health"
+echo "🔗 Standard servers: ports 3001-3009"
 
 # Keep container running
 wait

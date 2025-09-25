@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design 1: Data-Driven DFS Optimizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .editable-cell {
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+      .editable-cell:hover {
+        background-color: #f0f9ff;
+        border-color: #0ea5e9;
+      }
+      .player-row:hover {
+        background-color: #f8fafc;
+      }
+      .lineup-card {
+        transition: all 0.2s ease;
+      }
+      .lineup-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <!-- Header: Clean and Functional -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <h1 class="text-xl font-semibold text-gray-900">DFS Optimizer</h1>
+        <div class="flex items-center space-x-4">
+          <select class="text-sm border rounded px-3 py-1">
+            <option>NFL Main Slate - Sep 15</option>
+            <option>NFL Showdown - PHI @ KC</option>
+          </select>
+          <button
+            class="bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700"
+          >
+            Generate Lineups
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex h-screen">
+      <!-- Main Content: 70% Width -->
+      <div class="flex-1 p-6">
+        <!-- Player Pool Section -->
+        <div class="bg-white rounded-lg shadow-sm mb-6">
+          <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-medium text-gray-900">Player Pool (247)</h2>
+              <div class="flex items-center space-x-2">
+                <input
+                  type="text"
+                  placeholder="Search players..."
+                  class="text-sm border rounded px-3 py-1 w-48"
+                />
+                <select class="text-sm border rounded px-2 py-1">
+                  <option>All Positions</option>
+                  <option>QB</option>
+                  <option>RB</option>
+                  <option>WR</option>
+                  <option>TE</option>
+                  <option>DST</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Player
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Pos
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Salary
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Projection
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Value
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Own%
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    AI Score
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Min%
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Max%
+                  </th>
+                  <th
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                  >
+                    Controls
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr class="player-row">
+                  <td class="px-4 py-3">
+                    <div class="flex items-center">
+                      <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                      <div>
+                        <div class="font-medium text-gray-900">Josh Allen</div>
+                        <div class="text-gray-500 text-xs">BUF vs MIA</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
+                      >QB</span
+                    >
+                  </td>
+                  <td class="px-4 py-3 font-medium">$8,400</td>
+                  <td
+                    class="px-4 py-3 editable-cell border rounded px-2"
+                    contenteditable="true"
+                  >
+                    22.5
+                  </td>
+                  <td class="px-4 py-3 font-medium text-green-600">2.68x</td>
+                  <td class="px-4 py-3">18.5%</td>
+                  <td class="px-4 py-3">
+                    <span
+                      class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-medium"
+                      >A+</span
+                    >
+                  </td>
+                  <td class="px-4 py-3">
+                    <input
+                      type="number"
+                      class="w-16 text-xs border rounded px-2 py-1"
+                      value="0"
+                      min="0"
+                      max="100"
+                    />
+                  </td>
+                  <td class="px-4 py-3">
+                    <input
+                      type="number"
+                      class="w-16 text-xs border rounded px-2 py-1"
+                      value="100"
+                      min="0"
+                      max="100"
+                    />
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="flex space-x-1">
+                      <button
+                        class="text-green-600 hover:bg-green-50 p-1 rounded text-xs"
+                      >
+                        👍
+                      </button>
+                      <button class="text-red-600 hover:bg-red-50 p-1 rounded text-xs">
+                        👎
+                      </button>
+                      <button
+                        class="text-yellow-600 hover:bg-yellow-50 p-1 rounded text-xs"
+                      >
+                        🔒
+                      </button>
+                      <button
+                        class="text-orange-600 hover:bg-orange-50 p-1 rounded text-xs"
+                      >
+                        ⚡
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="player-row">
+                  <td class="px-4 py-3">
+                    <div class="flex items-center">
+                      <div class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                      <div>
+                        <div class="font-medium text-gray-900">Christian McCaffrey</div>
+                        <div class="text-gray-500 text-xs">SF @ NYG</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded"
+                      >RB</span
+                    >
+                  </td>
+                  <td class="px-4 py-3 font-medium">$8,800</td>
+                  <td
+                    class="px-4 py-3 editable-cell border rounded px-2"
+                    contenteditable="true"
+                  >
+                    19.8
+                  </td>
+                  <td class="px-4 py-3 font-medium text-green-600">2.25x</td>
+                  <td class="px-4 py-3">22.1%</td>
+                  <td class="px-4 py-3">
+                    <span
+                      class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-medium"
+                      >B+</span
+                    >
+                  </td>
+                  <td class="px-4 py-3">
+                    <input
+                      type="number"
+                      class="w-16 text-xs border rounded px-2 py-1"
+                      value="0"
+                      min="0"
+                      max="100"
+                    />
+                  </td>
+                  <td class="px-4 py-3">
+                    <input
+                      type="number"
+                      class="w-16 text-xs border rounded px-2 py-1"
+                      value="100"
+                      min="0"
+                      max="100"
+                    />
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="flex space-x-1">
+                      <button
+                        class="text-green-600 hover:bg-green-50 p-1 rounded text-xs"
+                      >
+                        👍
+                      </button>
+                      <button class="text-red-600 hover:bg-red-50 p-1 rounded text-xs">
+                        👎
+                      </button>
+                      <button
+                        class="text-gray-400 hover:bg-gray-50 p-1 rounded text-xs"
+                      >
+                        🔒
+                      </button>
+                      <button
+                        class="text-orange-600 hover:bg-orange-50 p-1 rounded text-xs"
+                      >
+                        ⚡
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="player-row">
+                  <td class="px-4 py-3">
+                    <div class="flex items-center">
+                      <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                      <div>
+                        <div class="font-medium text-gray-900">Tyreek Hill</div>
+                        <div class="text-gray-500 text-xs">MIA @ BUF</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span
+                      class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded"
+                      >WR</span
+                    >
+                  </td>
+                  <td class="px-4 py-3 font-medium">$8,200</td>
+                  <td
+                    class="px-4 py-3 editable-cell border rounded px-2"
+                    contenteditable="true"
+                  >
+                    16.8
+                  </td>
+                  <td class="px-4 py-3 font-medium text-green-600">2.05x</td>
+                  <td class="px-4 py-3">15.3%</td>
+                  <td class="px-4 py-3">
+                    <span
+                      class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-medium"
+                      >A</span
+                    >
+                  </td>
+                  <td class="px-4 py-3">
+                    <input
+                      type="number"
+                      class="w-16 text-xs border rounded px-2 py-1"
+                      value="0"
+                      min="0"
+                      max="100"
+                    />
+                  </td>
+                  <td class="px-4 py-3">
+                    <input
+                      type="number"
+                      class="w-16 text-xs border rounded px-2 py-1"
+                      value="100"
+                      min="0"
+                      max="100"
+                    />
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="flex space-x-1">
+                      <button
+                        class="text-green-600 hover:bg-green-50 p-1 rounded text-xs bg-green-50"
+                      >
+                        👍
+                      </button>
+                      <button class="text-red-600 hover:bg-red-50 p-1 rounded text-xs">
+                        👎
+                      </button>
+                      <button
+                        class="text-gray-400 hover:bg-gray-50 p-1 rounded text-xs"
+                      >
+                        🔒
+                      </button>
+                      <button
+                        class="text-orange-600 hover:bg-orange-50 p-1 rounded text-xs bg-orange-50"
+                      >
+                        ⚡
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Optimization Controls -->
+          <div class="px-6 py-4 bg-gray-50 border-t">
+            <div class="grid grid-cols-4 gap-4">
+              <div>
+                <label class="text-xs font-medium text-gray-700">Lineups</label>
+                <input
+                  type="number"
+                  class="w-full text-sm border rounded px-2 py-1 mt-1"
+                  value="20"
+                  min="1"
+                  max="150"
+                />
+              </div>
+              <div>
+                <label class="text-xs font-medium text-gray-700">Unique Players</label>
+                <input
+                  type="number"
+                  class="w-full text-sm border rounded px-2 py-1 mt-1"
+                  value="6"
+                  min="1"
+                  max="9"
+                />
+              </div>
+              <div>
+                <label class="text-xs font-medium text-gray-700">Max Salary</label>
+                <input
+                  type="number"
+                  class="w-full text-sm border rounded px-2 py-1 mt-1"
+                  value="50000"
+                  min="40000"
+                  max="50000"
+                />
+              </div>
+              <div class="flex items-end">
+                <button
+                  class="w-full bg-blue-600 text-white py-2 px-4 text-sm rounded hover:bg-blue-700"
+                >
+                  Optimize
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar: Results & Analytics -->
+      <div class="w-96 bg-white border-l border-gray-200 p-6 overflow-y-auto">
+        <h2 class="text-lg font-medium text-gray-900 mb-4">Generated Lineups (20)</h2>
+
+        <!-- Lineup Results -->
+        <div class="space-y-3">
+          <div class="lineup-card bg-white border border-gray-200 rounded-lg p-4">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-sm font-medium text-gray-900">#1</span>
+              <div class="text-right">
+                <div class="text-sm font-bold text-green-600">ROI: 127%</div>
+                <div class="text-xs text-gray-500">Win: 14.2%</div>
+              </div>
+            </div>
+
+            <div class="space-y-1 text-xs">
+              <div class="flex justify-between">
+                <span>Josh Allen (QB)</span>
+                <span>$8,400</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Saquon Barkley (RB)</span>
+                <span>$7,200</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Aaron Jones (RB)</span>
+                <span>$6,800</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Tyreek Hill (WR)</span>
+                <span>$8,200</span>
+              </div>
+              <div class="flex justify-between">
+                <span>DeVonta Smith (WR)</span>
+                <span>$6,400</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Amari Cooper (WR)</span>
+                <span>$5,600</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Travis Kelce (TE)</span>
+                <span>$7,800</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Bills DST</span>
+                <span>$2,400</span>
+              </div>
+            </div>
+
+            <div
+              class="mt-2 pt-2 border-t border-gray-200 flex justify-between text-xs"
+            >
+              <span>Total: $49,800</span>
+              <span>Proj: 142.6</span>
+              <span class="text-yellow-600">Dup: 3.2%</span>
+            </div>
+          </div>
+
+          <div class="lineup-card bg-white border border-gray-200 rounded-lg p-4">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-sm font-medium text-gray-900">#2</span>
+              <div class="text-right">
+                <div class="text-sm font-bold text-green-600">ROI: 118%</div>
+                <div class="text-xs text-gray-500">Win: 12.8%</div>
+              </div>
+            </div>
+
+            <div class="space-y-1 text-xs">
+              <div class="flex justify-between">
+                <span>Lamar Jackson (QB)</span>
+                <span>$8,000</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Christian McCaffrey (RB)</span>
+                <span>$8,800</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Breece Hall (RB)</span>
+                <span>$7,400</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Cooper Kupp (WR)</span>
+                <span>$7,600</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Mike Evans (WR)</span>
+                <span>$6,200</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Ja'Marr Chase (WR)</span>
+                <span>$8,000</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Mark Andrews (TE)</span>
+                <span>$6,400</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Ravens DST</span>
+                <span>$2,800</span>
+              </div>
+            </div>
+
+            <div
+              class="mt-2 pt-2 border-t border-gray-200 flex justify-between text-xs"
+            >
+              <span>Total: $49,200</span>
+              <span>Proj: 138.9</span>
+              <span class="text-yellow-600">Dup: 5.7%</span>
+            </div>
+          </div>
+
+          <div class="lineup-card bg-white border border-gray-200 rounded-lg p-4">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-sm font-medium text-gray-900">#3</span>
+              <div class="text-right">
+                <div class="text-sm font-bold text-blue-600">ROI: 102%</div>
+                <div class="text-xs text-gray-500">Win: 11.1%</div>
+              </div>
+            </div>
+
+            <div class="space-y-1 text-xs">
+              <div class="flex justify-between">
+                <span>Dak Prescott (QB)</span>
+                <span>$7,600</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Derrick Henry (RB)</span>
+                <span>$7,000</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Josh Jacobs (RB)</span>
+                <span>$6,600</span>
+              </div>
+              <div class="flex justify-between">
+                <span>CeeDee Lamb (WR)</span>
+                <span>$8,600</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Stefon Diggs (WR)</span>
+                <span>$7,400</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Amon-Ra St. Brown (WR)</span>
+                <span>$6,800</span>
+              </div>
+              <div class="flex justify-between">
+                <span>George Kittle (TE)</span>
+                <span>$6,000</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Cowboys DST</span>
+                <span>$2,200</span>
+              </div>
+            </div>
+
+            <div
+              class="mt-2 pt-2 border-t border-gray-200 flex justify-between text-xs"
+            >
+              <span>Total: $49,200</span>
+              <span>Proj: 135.2</span>
+              <span class="text-green-600">Dup: 1.8%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="mt-6 bg-gray-50 rounded-lg p-4">
+          <h3 class="text-sm font-medium text-gray-900 mb-3">Portfolio Stats</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Avg ROI:</span>
+              <span class="font-medium text-green-600">115.7%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Avg Win Rate:</span>
+              <span class="font-medium">12.7%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Cash Rate:</span>
+              <span class="font-medium text-blue-600">68.2%</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Duplicate Risk:</span>
+              <span class="font-medium text-yellow-600">3.6%</span>
+            </div>
+          </div>
+
+          <button
+            class="w-full mt-4 bg-gray-600 text-white py-2 px-4 text-sm rounded hover:bg-gray-700"
+          >
+            Export to CSV
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      console.log('Design 1: Data-Driven DFS Optimizer loaded');
+
+      // Make projections editable
+      document.querySelectorAll('.editable-cell').forEach(cell => {
+        cell.addEventListener('blur', function () {
+          console.log('Projection updated:', this.textContent);
+        });
+      });
+
+      // Player controls
+      document.querySelectorAll('button').forEach(btn => {
+        if (
+          btn.textContent.includes('👍') ||
+          btn.textContent.includes('👎') ||
+          btn.textContent.includes('🔒') ||
+          btn.textContent.includes('⚡')
+        ) {
+          btn.addEventListener('click', function () {
+            console.log('Player control clicked:', this.textContent);
+            this.classList.toggle('bg-opacity-100');
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

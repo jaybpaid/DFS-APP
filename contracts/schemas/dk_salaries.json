@@ -1,0 +1,126 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DraftKings Salary Data",
+  "type": "object",
+  "properties": {
+    "site": {
+      "type": "string",
+      "enum": ["DraftKings"]
+    },
+    "sport": {
+      "type": "string",
+      "enum": ["NFL", "NBA", "MLB", "NHL", "PGA", "LOL"]
+    },
+    "slate_id": {
+      "type": "string",
+      "description": "Internal slate identifier"
+    },
+    "draft_group_id": {
+      "type": "string",
+      "description": "DraftKings draftGroupId from API"
+    },
+    "name": {
+      "type": "string",
+      "description": "Slate display name"
+    },
+    "start_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 datetime when slate starts"
+    },
+    "salary_cap": {
+      "type": "integer",
+      "minimum": 10000,
+      "description": "Total salary budget"
+    },
+    "roster_positions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required roster positions [QB, RB, RB, WR, WR, WR, TE, FLEX, DST] or [CPT, FLEX, FLEX, FLEX, FLEX, FLEX]"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this data was fetched"
+    },
+    "players": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "player_id": {
+            "type": "string",
+            "description": "DraftKings draftableId converted to string"
+          },
+          "display_name": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Multi-position eligibility"
+          },
+          "salary": {
+            "type": "integer",
+            "minimum": 1000
+          },
+          "team_abbreviation": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 4
+          },
+          "opponent": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 4
+          },
+          "game_start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ACTIVE", "OUT", "DOUBTFUL", "QUESTIONABLE", "GTD", "IR"]
+          },
+          "is_captain_eligible": {
+            "type": "boolean",
+            "description": "For showdown slates"
+          }
+        },
+        "required": [
+          "player_id",
+          "display_name",
+          "position",
+          "salary",
+          "team_abbreviation"
+        ]
+      }
+    }
+  },
+  "required": [
+    "site",
+    "sport",
+    "slate_id",
+    "draft_group_id",
+    "name",
+    "start_time",
+    "salary_cap",
+    "roster_positions",
+    "generated_at",
+    "players"
+  ],
+  "additionalProperties": false
+}

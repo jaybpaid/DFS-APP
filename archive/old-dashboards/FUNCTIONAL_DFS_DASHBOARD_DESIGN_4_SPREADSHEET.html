@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design 4: Spreadsheet-Style DFS Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .grid-cell {
+        border: 1px solid #e5e7eb;
+        padding: 4px 8px;
+        min-height: 32px;
+        display: flex;
+        align-items: center;
+      }
+      .grid-cell:focus {
+        outline: 2px solid #3b82f6;
+        background-color: #eff6ff;
+      }
+      .grid-header {
+        background-color: #f9fafb;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #374151;
+      }
+      .editable {
+        background-color: white;
+        cursor: text;
+      }
+      .readonly {
+        background-color: #f9fafb;
+        cursor: default;
+      }
+      .lineup-row {
+        transition: background-color 0.2s;
+      }
+      .lineup-row:hover {
+        background-color: #f0f9ff;
+      }
+    </style>
+  </head>
+  <body class="bg-white">
+    <!-- Minimal Header -->
+    <div class="border-b border-gray-300 p-2">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <h1 class="text-lg font-bold">DFS Spreadsheet Analyzer</h1>
+          <select class="text-sm border px-2 py-1" aria-label="Select slate">
+            <option>NFL Main Slate - 247 players</option>
+          </select>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button class="bg-green-600 text-white px-3 py-1 text-sm hover:bg-green-700">
+            Generate
+          </button>
+          <button class="bg-blue-600 text-white px-3 py-1 text-sm hover:bg-blue-700">
+            Simulate
+          </button>
+          <button class="bg-gray-600 text-white px-3 py-1 text-sm hover:bg-gray-700">
+            Export
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spreadsheet Grid -->
+    <div class="overflow-auto" style="height: calc(100vh - 60px)">
+      <table class="w-full border-collapse">
+        <thead class="sticky top-0">
+          <tr>
+            <th class="grid-cell grid-header w-4">#</th>
+            <th class="grid-cell grid-header w-40">Player</th>
+            <th class="grid-cell grid-header w-12">Pos</th>
+            <th class="grid-cell grid-header w-20">Team</th>
+            <th class="grid-cell grid-header w-20">Opp</th>
+            <th class="grid-cell grid-header w-20">Salary</th>
+            <th class="grid-cell grid-header w-20">Projection</th>
+            <th class="grid-cell grid-header w-16">Value</th>
+            <th class="grid-cell grid-header w-16">Own%</th>
+            <th class="grid-cell grid-header w-16">Floor</th>
+            <th class="grid-cell grid-header w-16">Ceiling</th>
+            <th class="grid-cell grid-header w-12">AI</th>
+            <th class="grid-cell grid-header w-16">Min%</th>
+            <th class="grid-cell grid-header w-16">Max%</th>
+            <th class="grid-cell grid-header w-12">Like</th>
+            <th class="grid-cell grid-header w-12">Lock</th>
+            <th class="grid-cell grid-header w-12">Boom</th>
+            <th class="grid-cell grid-header w-20">Lineup%</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="grid-cell readonly">1</td>
+            <td class="grid-cell readonly font-medium">Josh Allen</td>
+            <td class="grid-cell readonly">QB</td>
+            <td class="grid-cell readonly">BUF</td>
+            <td class="grid-cell readonly">MIA</td>
+            <td class="grid-cell readonly font-medium">$8,400</td>
+            <td class="grid-cell editable" contenteditable="true">22.5</td>
+            <td class="grid-cell readonly text-green-600">2.68x</td>
+            <td class="grid-cell readonly">18.5%</td>
+            <td class="grid-cell editable" contenteditable="true">14.2</td>
+            <td class="grid-cell editable" contenteditable="true">32.8</td>
+            <td class="grid-cell readonly bg-green-100 text-green-800 font-medium">
+              A+
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="0"
+                min="0"
+                max="100"
+                aria-label="Min exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="100"
+                min="0"
+                max="100"
+                aria-label="Max exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Like player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Lock player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Boom player" />
+            </td>
+            <td class="grid-cell readonly font-medium text-blue-600">75%</td>
+          </tr>
+
+          <tr>
+            <td class="grid-cell readonly">2</td>
+            <td class="grid-cell readonly font-medium">Christian McCaffrey</td>
+            <td class="grid-cell readonly">RB</td>
+            <td class="grid-cell readonly">SF</td>
+            <td class="grid-cell readonly">NYG</td>
+            <td class="grid-cell readonly font-medium">$8,800</td>
+            <td class="grid-cell editable" contenteditable="true">19.8</td>
+            <td class="grid-cell readonly text-green-600">2.25x</td>
+            <td class="grid-cell readonly">22.1%</td>
+            <td class="grid-cell editable" contenteditable="true">12.5</td>
+            <td class="grid-cell editable" contenteditable="true">28.4</td>
+            <td class="grid-cell readonly bg-yellow-100 text-yellow-800 font-medium">
+              B+
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="10"
+                min="0"
+                max="100"
+                aria-label="Min exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="25"
+                min="0"
+                max="100"
+                aria-label="Max exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" checked aria-label="Like player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Lock player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Boom player" />
+            </td>
+            <td class="grid-cell readonly font-medium text-blue-600">22%</td>
+          </tr>
+
+          <tr>
+            <td class="grid-cell readonly">3</td>
+            <td class="grid-cell readonly font-medium">Tyreek Hill</td>
+            <td class="grid-cell readonly">WR</td>
+            <td class="grid-cell readonly">MIA</td>
+            <td class="grid-cell readonly">BUF</td>
+            <td class="grid-cell readonly font-medium">$8,200</td>
+            <td class="grid-cell editable" contenteditable="true">16.8</td>
+            <td class="grid-cell readonly text-green-600">2.05x</td>
+            <td class="grid-cell readonly">15.3%</td>
+            <td class="grid-cell editable" contenteditable="true">8.2</td>
+            <td class="grid-cell editable" contenteditable="true">28.9</td>
+            <td class="grid-cell readonly bg-green-100 text-green-800 font-medium">
+              A
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="0"
+                min="0"
+                max="100"
+                aria-label="Min exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="100"
+                min="0"
+                max="100"
+                aria-label="Max exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" checked aria-label="Like player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Lock player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" checked aria-label="Boom player" />
+            </td>
+            <td class="grid-cell readonly font-medium text-blue-600">65%</td>
+          </tr>
+
+          <tr>
+            <td class="grid-cell readonly">4</td>
+            <td class="grid-cell readonly font-medium">Travis Kelce</td>
+            <td class="grid-cell readonly">TE</td>
+            <td class="grid-cell readonly">KC</td>
+            <td class="grid-cell readonly">LAC</td>
+            <td class="grid-cell readonly font-medium">$7,800</td>
+            <td class="grid-cell editable" contenteditable="true">14.5</td>
+            <td class="grid-cell readonly text-green-600">1.86x</td>
+            <td class="grid-cell readonly">31.2%</td>
+            <td class="grid-cell editable" contenteditable="true">8.1</td>
+            <td class="grid-cell editable" contenteditable="true">22.8</td>
+            <td class="grid-cell readonly bg-green-100 text-green-800 font-medium">
+              A
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="15"
+                min="0"
+                max="100"
+                aria-label="Min exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="40"
+                min="0"
+                max="100"
+                aria-label="Max exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" checked aria-label="Like player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" checked aria-label="Lock player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Boom player" />
+            </td>
+            <td class="grid-cell readonly font-medium text-blue-600">35%</td>
+          </tr>
+
+          <tr>
+            <td class="grid-cell readonly">5</td>
+            <td class="grid-cell readonly font-medium">Saquon Barkley</td>
+            <td class="grid-cell readonly">RB</td>
+            <td class="grid-cell readonly">NYG</td>
+            <td class="grid-cell readonly">SF</td>
+            <td class="grid-cell readonly font-medium">$7,200</td>
+            <td class="grid-cell editable" contenteditable="true">17.3</td>
+            <td class="grid-cell readonly text-green-600">2.40x</td>
+            <td class="grid-cell readonly">19.8%</td>
+            <td class="grid-cell editable" contenteditable="true">9.5</td>
+            <td class="grid-cell editable" contenteditable="true">26.1</td>
+            <td class="grid-cell readonly bg-green-100 text-green-800 font-medium">
+              A
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="0"
+                min="0"
+                max="100"
+                aria-label="Min exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="100"
+                min="0"
+                max="100"
+                aria-label="Max exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" checked aria-label="Like player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Lock player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" checked aria-label="Boom player" />
+            </td>
+            <td class="grid-cell readonly font-medium text-blue-600">55%</td>
+          </tr>
+
+          <tr>
+            <td class="grid-cell readonly">6</td>
+            <td class="grid-cell readonly font-medium">Breece Hall</td>
+            <td class="grid-cell readonly">RB</td>
+            <td class="grid-cell readonly">NYJ</td>
+            <td class="grid-cell readonly">DEN</td>
+            <td class="grid-cell readonly font-medium">$7,400</td>
+            <td class="grid-cell editable" contenteditable="true">16.1</td>
+            <td class="grid-cell readonly text-yellow-600">2.18x</td>
+            <td class="grid-cell readonly">14.7%</td>
+            <td class="grid-cell editable" contenteditable="true">8.9</td>
+            <td class="grid-cell editable" contenteditable="true">24.3</td>
+            <td class="grid-cell readonly bg-blue-100 text-blue-800 font-medium">B</td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="0"
+                min="0"
+                max="100"
+                aria-label="Min exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="100"
+                min="0"
+                max="100"
+                aria-label="Max exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Like player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Lock player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Boom player" />
+            </td>
+            <td class="grid-cell readonly font-medium text-gray-600">10%</td>
+          </tr>
+
+          <tr>
+            <td class="grid-cell readonly">7</td>
+            <td class="grid-cell readonly font-medium">CeeDee Lamb</td>
+            <td class="grid-cell readonly">WR</td>
+            <td class="grid-cell readonly">DAL</td>
+            <td class="grid-cell readonly">NYG</td>
+            <td class="grid-cell readonly font-medium">$8,600</td>
+            <td class="grid-cell editable" contenteditable="true">17.8</td>
+            <td class="grid-cell readonly text-green-600">2.07x</td>
+            <td class="grid-cell readonly">24.3%</td>
+            <td class="grid-cell editable" contenteditable="true">9.1</td>
+            <td class="grid-cell editable" contenteditable="true">29.2</td>
+            <td class="grid-cell readonly bg-green-100 text-green-800 font-medium">
+              A
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="0"
+                min="0"
+                max="100"
+                aria-label="Min exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="100"
+                min="0"
+                max="100"
+                aria-label="Max exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Like player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" checked aria-label="Lock player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Boom player" />
+            </td>
+            <td class="grid-cell readonly font-medium text-blue-600">80%</td>
+          </tr>
+
+          <tr>
+            <td class="grid-cell readonly">8</td>
+            <td class="grid-cell readonly font-medium">Bills DST</td>
+            <td class="grid-cell readonly">DST</td>
+            <td class="grid-cell readonly">BUF</td>
+            <td class="grid-cell readonly">MIA</td>
+            <td class="grid-cell readonly font-medium">$3,200</td>
+            <td class="grid-cell editable" contenteditable="true">8.2</td>
+            <td class="grid-cell readonly text-green-600">2.56x</td>
+            <td class="grid-cell readonly">12.8%</td>
+            <td class="grid-cell editable" contenteditable="true">3.1</td>
+            <td class="grid-cell editable" contenteditable="true">15.8</td>
+            <td class="grid-cell readonly bg-green-100 text-green-800 font-medium">
+              A
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="20"
+                min="0"
+                max="100"
+                aria-label="Min exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input
+                type="number"
+                class="w-full text-xs"
+                value="50"
+                min="0"
+                max="100"
+                aria-label="Max exposure"
+              />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" checked aria-label="Like player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" checked aria-label="Lock player" />
+            </td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Boom player" />
+            </td>
+            <td class="grid-cell readonly font-medium text-blue-600">40%</td>
+          </tr>
+
+          <!-- Lineup Results Section -->
+          <tr class="bg-blue-50">
+            <th class="grid-cell grid-header" colspan="18">
+              Generated Lineups (20) - Simulation Complete
+            </th>
+          </tr>
+
+          <tr class="bg-gray-50">
+            <th class="grid-cell grid-header">#</th>
+            <th class="grid-cell grid-header">QB</th>
+            <th class="grid-cell grid-header">RB1</th>
+            <th class="grid-cell grid-header">RB2</th>
+            <th class="grid-cell grid-header">WR1</th>
+            <th class="grid-cell grid-header">WR2</th>
+            <th class="grid-cell grid-header">WR3</th>
+            <th class="grid-cell grid-header">TE</th>
+            <th class="grid-cell grid-header">DST</th>
+            <th class="grid-cell grid-header">Salary</th>
+            <th class="grid-cell grid-header">Proj</th>
+            <th class="grid-cell grid-header">ROI%</th>
+            <th class="grid-cell grid-header">Win%</th>
+            <th class="grid-cell grid-header">Cash%</th>
+            <th class="grid-cell grid-header">Dup%</th>
+            <th class="grid-cell grid-header">Stack</th>
+            <th class="grid-cell grid-header">Rank</th>
+            <th class="grid-cell grid-header">Select</th>
+          </tr>
+
+          <tr class="lineup-row bg-green-50">
+            <td class="grid-cell font-medium">1</td>
+            <td class="grid-cell text-xs">J.Allen</td>
+            <td class="grid-cell text-xs">Barkley</td>
+            <td class="grid-cell text-xs">Jones</td>
+            <td class="grid-cell text-xs">Hill</td>
+            <td class="grid-cell text-xs">Smith</td>
+            <td class="grid-cell text-xs">Cooper</td>
+            <td class="grid-cell text-xs">Kelce</td>
+            <td class="grid-cell text-xs">Bills</td>
+            <td class="grid-cell font-medium">$49,800</td>
+            <td class="grid-cell font-medium">142.6</td>
+            <td class="grid-cell font-bold text-green-600">127%</td>
+            <td class="grid-cell font-medium">14.2%</td>
+            <td class="grid-cell font-medium">72.8%</td>
+            <td class="grid-cell text-yellow-600">3.2%</td>
+            <td class="grid-cell text-xs">QB+2</td>
+            <td class="grid-cell bg-green-100 text-green-800 font-medium">TOP</td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Select lineup" />
+            </td>
+          </tr>
+
+          <tr class="lineup-row">
+            <td class="grid-cell font-medium">2</td>
+            <td class="grid-cell text-xs">L.Jackson</td>
+            <td class="grid-cell text-xs">McCaffrey</td>
+            <td class="grid-cell text-xs">Hall</td>
+            <td class="grid-cell text-xs">Kupp</td>
+            <td class="grid-cell text-xs">Evans</td>
+            <td class="grid-cell text-xs">Chase</td>
+            <td class="grid-cell text-xs">Andrews</td>
+            <td class="grid-cell text-xs">Ravens</td>
+            <td class="grid-cell font-medium">$49,200</td>
+            <td class="grid-cell font-medium">138.9</td>
+            <td class="grid-cell font-bold text-green-600">118%</td>
+            <td class="grid-cell font-medium">12.8%</td>
+            <td class="grid-cell font-medium">68.1%</td>
+            <td class="grid-cell text-yellow-600">5.7%</td>
+            <td class="grid-cell text-xs">QB+1</td>
+            <td class="grid-cell bg-blue-100 text-blue-800 font-medium">GOOD</td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Select lineup" />
+            </td>
+          </tr>
+
+          <tr class="lineup-row">
+            <td class="grid-cell font-medium">3</td>
+            <td class="grid-cell text-xs">Prescott</td>
+            <td class="grid-cell text-xs">Henry</td>
+            <td class="grid-cell text-xs">Jacobs</td>
+            <td class="grid-cell text-xs">Lamb</td>
+            <td class="grid-cell text-xs">Diggs</td>
+            <td class="grid-cell text-xs">St.Brown</td>
+            <td class="grid-cell text-xs">Kittle</td>
+            <td class="grid-cell text-xs">Cowboys</td>
+            <td class="grid-cell font-medium">$49,200</td>
+            <td class="grid-cell font-medium">135.2</td>
+            <td class="grid-cell font-bold text-blue-600">102%</td>
+            <td class="grid-cell font-medium">11.1%</td>
+            <td class="grid-cell font-medium">64.3%</td>
+            <td class="grid-cell text-green-600">1.8%</td>
+            <td class="grid-cell text-xs">None</td>
+            <td class="grid-cell bg-gray-100 text-gray-800 font-medium">OK</td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Select lineup" />
+            </td>
+          </tr>
+
+          <tr class="lineup-row">
+            <td class="grid-cell font-medium">4</td>
+            <td class="grid-cell text-xs">Mahomes</td>
+            <td class="grid-cell text-xs">Taylor</td>
+            <td class="grid-cell text-xs">Mixon</td>
+            <td class="grid-cell text-xs">Jefferson</td>
+            <td class="grid-cell text-xs">Adams</td>
+            <td class="grid-cell text-xs">Brown</td>
+            <td class="grid-cell text-xs">Waller</td>
+            <td class="grid-cell text-xs">Chiefs</td>
+            <td class="grid-cell font-medium">$49,600</td>
+            <td class="grid-cell font-medium">133.8</td>
+            <td class="grid-cell font-bold text-blue-600">95%</td>
+            <td class="grid-cell font-medium">9.8%</td>
+            <td class="grid-cell font-medium">59.2%</td>
+            <td class="grid-cell text-red-600">8.1%</td>
+            <td class="grid-cell text-xs">QB+1</td>
+            <td class="grid-cell bg-yellow-100 text-yellow-800 font-medium">RISK</td>
+            <td class="grid-cell">
+              <input type="checkbox" aria-label="Select lineup" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 p-2">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-4 text-sm">
+          <span>Players: <strong>247</strong></span>
+          <span>Selected: <strong id="selectedCount">5</strong></span>
+          <span>Lineups: <strong>20</strong></span>
+          <span>Avg ROI: <strong class="text-green-600">110.4%</strong></span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button class="bg-blue-600 text-white px-4 py-1 text-sm hover:bg-blue-700">
+            Save Changes
+          </button>
+          <button class="bg-green-600 text-white px-4 py-1 text-sm hover:bg-green-700">
+            Re-optimize
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      console.log('Design 4: Spreadsheet-Style DFS Analyzer loaded');
+
+      // Track editable cell changes
+      document.querySelectorAll('.editable').forEach(cell => {
+        cell.addEventListener('blur', function () {
+          console.log('Cell updated:', this.textContent);
+          // Recalculate dependent values
+          updateCalculatedFields(this);
+        });
+      });
+
+      function updateCalculatedFields(cell) {
+        const row = cell.closest('tr');
+        if (row) {
+          // Update value calculation if projection changed
+          const projCell = row.querySelector('td:nth-child(7)');
+          const salaryCell = row.querySelector('td:nth-child(6)');
+          const valueCell = row.querySelector('td:nth-child(8)');
+
+          if (projCell && salaryCell && valueCell) {
+            const projection = parseFloat(projCell.textContent);
+            const salary = parseFloat(
+              salaryCell.textContent.replace('$', '').replace(',', '')
+            );
+            const value = ((projection * 1000) / salary).toFixed(2);
+            valueCell.textContent = value + 'x';
+
+            // Update color based on value
+            valueCell.className = valueCell.className.replace(/text-\w+-\d+/, '');
+            if (value >= 2.5) {
+              valueCell.classList.add('text-green-600');
+            } else if (value >= 2.0) {
+              valueCell.classList.add('text-yellow-600');
+            } else {
+              valueCell.classList.add('text-red-600');
+            }
+          }
+        }
+      }
+
+      // Checkbox state management
+      document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+          const row = this.closest('tr');
+          const playerName = row.querySelector('.font-medium').textContent;
+          const column = this.closest('td').cellIndex;
+          let action = '';
+
+          if (column === 14) action = 'Like';
+          else if (column === 15) action = 'Lock';
+          else if (column === 16) action = 'Boom';
+          else if (column === 17) action = 'Select';
+
+          console.log(`${playerName} - ${action}: ${this.checked}`);
+
+          // Update selected count
+          const selectedCount = document.querySelectorAll(
+            'input[type="checkbox"]:checked'
+          ).length;
+          document.getElementById('selectedCount').textContent = selectedCount;
+        });
+      });
+
+      // Exposure input validation
+      document.querySelectorAll('input[type="number"]').forEach(input => {
+        input.addEventListener('change', function () {
+          const row = this.closest('tr');
+          const playerName = row.querySelector('.font-medium').textContent;
+          const isMin = this.getAttribute('aria-label').includes('Min');
+          console.log(
+            `${playerName} - ${isMin ? 'Min' : 'Max'} exposure: ${this.value}%`
+          );
+        });
+      });
+
+      // Sort functionality
+      document.querySelectorAll('.grid-header').forEach(header => {
+        if (header.cellIndex > 0) {
+          // Skip row number column
+          header.style.cursor = 'pointer';
+          header.addEventListener('click', function () {
+            console.log('Sort by:', this.textContent);
+            // Add sort indicator
+            this.textContent += ' ▼';
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

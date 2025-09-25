@@ -1,0 +1,288 @@
+name: DFS Platform - Integration & Deployment
+
+on:
+  push:
+    branches: [main, develop, integration/*]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+env:
+  NODE_VERSION: '22'
+  PYTHON_VERSION: '3.11'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Security & Code Quality
+  security-scan:
+    name: '🔒 Security & Code Analysis'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep Security Analysis
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/secrets
+            p/react
+            p/typescript
+            p/python
+          generateSarif: '1'
+
+      - name: Upload Semgrep results to GitHub
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: semgrep.sarif
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'HIGH,CRITICAL'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # Frontend Build & Test
+  frontend-pipeline:
+    name: '⚛️ DFSForge Frontend Pipeline'
+    runs-on: ubuntu-latest
+    needs: security-scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.14.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run DFSForge integration quality checks
+        run: |
+          pnpm run claude:quality
+          pnpm run lint:frontend
+          pnpm run type-check:frontend
+
+      - name: Build DFSForge frontend
+        run: |
+          pnpm run build:dfsforge
+          pnpm run build:integration-layer
+
+      - name: Run frontend tests
+        run: |
+          pnpm run test:frontend
+          pnpm run test:integration
+
+      - name: Upload frontend artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dfsforge-frontend
+          path: |
+            DFSForge/client/dist/
+            apps/web/dist/
+          retention-days: 7
+
+  # Backend Build & Test
+  backend-pipeline:
+    name: '🐍 DFS-SYSTEM-2 Backend Pipeline'
+    runs-on: ubuntu-latest
+    needs: security-scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r dfs-system-2/requirements.txt
+          pip install pytest black pylint mypy
+
+      - name: Run backend quality checks
+        run: |
+          black dfs-system-2/ --check
+          pylint dfs-system-2/
+          mypy dfs-system-2/
+
+      - name: Run backend tests
+        run: |
+          cd dfs-system-2
+          pytest tests/ -v --cov=. --cov-report=xml
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./dfs-system-2/coverage.xml
+          flags: backend
+
+  # Docker Build & Push
+  docker-build:
+    name: '🐳 Docker Multi-Stage Build'
+    runs-on: ubuntu-latest
+    needs: [frontend-pipeline, backend-pipeline]
+    if: github.event_name != 'pull_request'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Download frontend artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dfsforge-frontend
+          path: ./artifacts/frontend
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push DFS Platform image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile.dfs-platform
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            NODE_VERSION=${{ env.NODE_VERSION }}
+            PYTHON_VERSION=${{ env.PYTHON_VERSION }}
+
+  # Integration Tests
+  integration-tests:
+    name: '🔗 End-to-End Integration Tests'
+    runs-on: ubuntu-latest
+    needs: docker-build
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: dfs_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install test dependencies
+        run: |
+          npm install -g pnpm
+          pnpm install
+          pip install -r requirements-test.txt
+
+      - name: Run integration tests
+        env:
+          DATABASE_URL: postgresql://postgres:testpass@localhost:5432/dfs_test
+          REDIS_URL: redis://localhost:6379
+        run: |
+          pnpm run test:integration:full
+          python -m pytest tests/integration/ -v
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: integration-test-results
+          path: |
+            test-results/
+            coverage/
+
+  # Deploy to Staging
+  deploy-staging:
+    name: '🚀 Deploy to Staging'
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    if: github.ref == 'refs/heads/develop' || github.event.inputs.environment == 'staging'
+    environment: staging
+    steps:
+      - name: Deploy to staging
+        run: |
+          echo "Deploying to staging environment..."
+          # Add your staging deployment commands here
+
+  # Deploy to Production
+  deploy-production:
+    name: '🎯 Deploy to Production'
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'production'
+    environment: production
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production environment..."
+          # Add your production deployment commands here

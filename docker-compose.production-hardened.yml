@@ -1,0 +1,324 @@
+version: '3.8'
+
+services:
+  # Hardened MCP Filesystem Server
+  mcp-filesystem-hardened:
+    image: node:18-alpine
+    container_name: mcp-filesystem-hardened
+    user: "1000:1000"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=100m
+    volumes:
+      - ./data:/app/data:ro
+      - ./contracts:/app/contracts:ro
+      - ./fixtures:/app/fixtures:ro
+      - /dev/null:/dev/null:ro
+    working_dir: /app
+    command: |
+      sh -c "
+        npm install -g @modelcontextprotocol/server-filesystem &&
+        node /usr/local/lib/node_modules/@modelcontextprotocol/server-filesystem/dist/index.js /app/data /app/contracts /app/fixtures
+      "
+    environment:
+      - NODE_ENV=production
+      - MCP_SERVER_NAME=filesystem-hardened
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Hardened MCP Memory Server
+  mcp-memory-hardened:
+    image: node:18-alpine
+    container_name: mcp-memory-hardened
+    user: "1000:1000"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=50m
+      - /app/data:rw,noexec,nosuid,size=100m
+    working_dir: /app
+    command: |
+      sh -c "
+        npm install -g @modelcontextprotocol/server-memory &&
+        node /usr/local/lib/node_modules/@modelcontextprotocol/server-memory/dist/index.js
+      "
+    environment:
+      - NODE_ENV=production
+      - MCP_SERVER_NAME=memory-hardened
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Hardened MCP Process Server  
+  mcp-process-hardened:
+    image: node:18-alpine
+    container_name: mcp-process-hardened
+    user: "1000:1000"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - SYS_PTRACE  # Required for process monitoring
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=50m
+    working_dir: /app
+    command: |
+      sh -c "
+        apk add --no-cache procps &&
+        npm install -g @modelcontextprotocol/server-process &&
+        node /usr/local/lib/node_modules/@modelcontextprotocol/server-process/dist/index.js
+      "
+    environment:
+      - NODE_ENV=production
+      - MCP_SERVER_NAME=process-hardened
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 32M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "ps", "aux"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Production PostgreSQL with Hardening
+  dfs-postgres-prod:
+    image: postgres:15-alpine
+    container_name: dfs-postgres-prod
+    user: "999:999"  # postgres user
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=100m
+      - /var/run/postgresql:rw,noexec,nosuid,size=10m
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=dfs_optimizer_prod
+      - POSTGRES_USER=dfs_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.2'
+          memory: 128M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dfs_user -d dfs_optimizer_prod"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # Production Redis with Hardening
+  dfs-redis-prod:
+    image: redis:7-alpine
+    container_name: dfs-redis-prod
+    user: "999:999"  # redis user
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=50m
+      - /data:rw,noexec,nosuid,size=200m
+    command: [
+      "redis-server",
+      "--save", "60", "1000",
+      "--loglevel", "warning",
+      "--maxmemory", "128mb",
+      "--maxmemory-policy", "allkeys-lru",
+      "--appendonly", "yes",
+      "--requirepass", "$(cat /run/secrets/redis_password)"
+    ]
+    secrets:
+      - redis_password
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+
+  # MCP Health Monitor
+  mcp-health-monitor:
+    image: alpine:3.19
+    container_name: mcp-health-monitor
+    user: "1000:1000"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=10m
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: |
+      sh -c "
+        apk add --no-cache docker-cli curl &&
+        while true; do
+          echo '[$(date)] Checking MCP server health...' &&
+          docker ps --filter 'name=mcp-' --format 'table {{.Names}}\t{{.Status}}' &&
+          sleep 30
+        done
+      "
+    environment:
+      - HEALTH_CHECK_INTERVAL=30
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 64M
+        reservations:
+          cpus: '0.05'
+          memory: 16M
+    restart: unless-stopped
+    depends_on:
+      - mcp-filesystem-hardened
+      - mcp-memory-hardened
+      - mcp-process-hardened
+
+  # DFS API Server with Rate Limiting
+  dfs-api-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.api-python
+    container_name: dfs-api-server
+    user: "1000:1000"
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=100m
+    volumes:
+      - ./api:/app/api:ro
+      - ./contracts:/app/contracts:ro
+      - ./data:/app/data:ro
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=postgresql://dfs_user:$(cat /run/secrets/postgres_password)@dfs-postgres-prod:5432/dfs_optimizer_prod
+      - REDIS_URL=redis://:$(cat /run/secrets/redis_password)@dfs-redis-prod:6379/0
+      - API_RATE_LIMIT=100/minute
+      - MCP_FILESYSTEM_HOST=mcp-filesystem-hardened
+      - MCP_MEMORY_HOST=mcp-memory-hardened
+      - MCP_PROCESS_HOST=mcp-process-hardened
+    secrets:
+      - postgres_password
+      - redis_password
+      - api_key
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      - dfs-postgres-prod
+      - dfs-redis-prod
+      - mcp-filesystem-hardened
+      - mcp-memory-hardened
+      - mcp-process-hardened
+
+volumes:
+  postgres_data_prod:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/postgres
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  redis_password:
+    file: ./secrets/redis_password.txt
+  api_key:
+    file: ./secrets/api_key.txt
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

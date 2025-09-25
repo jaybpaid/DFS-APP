@@ -1,0 +1,8 @@
+{
+  "filesystem": {
+    "has_start_script": false,
+    "has_package_json": false,
+    "executable": false,
+    "status": "no_start_script"
+  }
+}

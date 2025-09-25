@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "required": ["site", "mode", "salaryCap", "lineups", "metrics"],
+  "properties": {
+    "site": { "enum": ["DK", "FD"] },
+    "mode": { "enum": ["classic", "showdown"] },
+    "salaryCap": { "type": "integer" },
+    "lineups": {
+      "type": "array",
+      "items": { "$ref": "optimizer_lineup.json" }
+    },
+    "analytics": {
+      "type": "array",
+      "items": { "$ref": "lineup_analytics.json" }
+    },
+    "metrics": {
+      "type": "object",
+      "properties": {
+        "dupeEstimateMethod": { "type": "string" },
+        "fieldOwnershipSource": { "type": "string" },
+        "avgSalary": { "type": "number" },
+        "avgProjection": { "type": "number" },
+        "capCompliance": { "type": "number" },
+        "generationTime": { "type": "number" }
+      }
+    }
+  }
+}

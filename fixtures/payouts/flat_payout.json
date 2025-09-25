@@ -1,0 +1,407 @@
+{
+  "name": "Flat Payout",
+  "entry_fee": 10.0,
+  "total_entries": 1000,
+  "payouts": [
+    {
+      "position": 1,
+      "amount": 100.0
+    },
+    {
+      "position": 2,
+      "amount": 100.0
+    },
+    {
+      "position": 3,
+      "amount": 100.0
+    },
+    {
+      "position": 4,
+      "amount": 100.0
+    },
+    {
+      "position": 5,
+      "amount": 100.0
+    },
+    {
+      "position": 6,
+      "amount": 100.0
+    },
+    {
+      "position": 7,
+      "amount": 100.0
+    },
+    {
+      "position": 8,
+      "amount": 100.0
+    },
+    {
+      "position": 9,
+      "amount": 100.0
+    },
+    {
+      "position": 10,
+      "amount": 100.0
+    },
+    {
+      "position": 11,
+      "amount": 100.0
+    },
+    {
+      "position": 12,
+      "amount": 100.0
+    },
+    {
+      "position": 13,
+      "amount": 100.0
+    },
+    {
+      "position": 14,
+      "amount": 100.0
+    },
+    {
+      "position": 15,
+      "amount": 100.0
+    },
+    {
+      "position": 16,
+      "amount": 100.0
+    },
+    {
+      "position": 17,
+      "amount": 100.0
+    },
+    {
+      "position": 18,
+      "amount": 100.0
+    },
+    {
+      "position": 19,
+      "amount": 100.0
+    },
+    {
+      "position": 20,
+      "amount": 100.0
+    },
+    {
+      "position": 21,
+      "amount": 100.0
+    },
+    {
+      "position": 22,
+      "amount": 100.0
+    },
+    {
+      "position": 23,
+      "amount": 100.0
+    },
+    {
+      "position": 24,
+      "amount": 100.0
+    },
+    {
+      "position": 25,
+      "amount": 100.0
+    },
+    {
+      "position": 26,
+      "amount": 100.0
+    },
+    {
+      "position": 27,
+      "amount": 100.0
+    },
+    {
+      "position": 28,
+      "amount": 100.0
+    },
+    {
+      "position": 29,
+      "amount": 100.0
+    },
+    {
+      "position": 30,
+      "amount": 100.0
+    },
+    {
+      "position": 31,
+      "amount": 100.0
+    },
+    {
+      "position": 32,
+      "amount": 100.0
+    },
+    {
+      "position": 33,
+      "amount": 100.0
+    },
+    {
+      "position": 34,
+      "amount": 100.0
+    },
+    {
+      "position": 35,
+      "amount": 100.0
+    },
+    {
+      "position": 36,
+      "amount": 100.0
+    },
+    {
+      "position": 37,
+      "amount": 100.0
+    },
+    {
+      "position": 38,
+      "amount": 100.0
+    },
+    {
+      "position": 39,
+      "amount": 100.0
+    },
+    {
+      "position": 40,
+      "amount": 100.0
+    },
+    {
+      "position": 41,
+      "amount": 100.0
+    },
+    {
+      "position": 42,
+      "amount": 100.0
+    },
+    {
+      "position": 43,
+      "amount": 100.0
+    },
+    {
+      "position": 44,
+      "amount": 100.0
+    },
+    {
+      "position": 45,
+      "amount": 100.0
+    },
+    {
+      "position": 46,
+      "amount": 100.0
+    },
+    {
+      "position": 47,
+      "amount": 100.0
+    },
+    {
+      "position": 48,
+      "amount": 100.0
+    },
+    {
+      "position": 49,
+      "amount": 100.0
+    },
+    {
+      "position": 50,
+      "amount": 100.0
+    },
+    {
+      "position": 51,
+      "amount": 100.0
+    },
+    {
+      "position": 52,
+      "amount": 100.0
+    },
+    {
+      "position": 53,
+      "amount": 100.0
+    },
+    {
+      "position": 54,
+      "amount": 100.0
+    },
+    {
+      "position": 55,
+      "amount": 100.0
+    },
+    {
+      "position": 56,
+      "amount": 100.0
+    },
+    {
+      "position": 57,
+      "amount": 100.0
+    },
+    {
+      "position": 58,
+      "amount": 100.0
+    },
+    {
+      "position": 59,
+      "amount": 100.0
+    },
+    {
+      "position": 60,
+      "amount": 100.0
+    },
+    {
+      "position": 61,
+      "amount": 100.0
+    },
+    {
+      "position": 62,
+      "amount": 100.0
+    },
+    {
+      "position": 63,
+      "amount": 100.0
+    },
+    {
+      "position": 64,
+      "amount": 100.0
+    },
+    {
+      "position": 65,
+      "amount": 100.0
+    },
+    {
+      "position": 66,
+      "amount": 100.0
+    },
+    {
+      "position": 67,
+      "amount": 100.0
+    },
+    {
+      "position": 68,
+      "amount": 100.0
+    },
+    {
+      "position": 69,
+      "amount": 100.0
+    },
+    {
+      "position": 70,
+      "amount": 100.0
+    },
+    {
+      "position": 71,
+      "amount": 100.0
+    },
+    {
+      "position": 72,
+      "amount": 100.0
+    },
+    {
+      "position": 73,
+      "amount": 100.0
+    },
+    {
+      "position": 74,
+      "amount": 100.0
+    },
+    {
+      "position": 75,
+      "amount": 100.0
+    },
+    {
+      "position": 76,
+      "amount": 100.0
+    },
+    {
+      "position": 77,
+      "amount": 100.0
+    },
+    {
+      "position": 78,
+      "amount": 100.0
+    },
+    {
+      "position": 79,
+      "amount": 100.0
+    },
+    {
+      "position": 80,
+      "amount": 100.0
+    },
+    {
+      "position": 81,
+      "amount": 100.0
+    },
+    {
+      "position": 82,
+      "amount": 100.0
+    },
+    {
+      "position": 83,
+      "amount": 100.0
+    },
+    {
+      "position": 84,
+      "amount": 100.0
+    },
+    {
+      "position": 85,
+      "amount": 100.0
+    },
+    {
+      "position": 86,
+      "amount": 100.0
+    },
+    {
+      "position": 87,
+      "amount": 100.0
+    },
+    {
+      "position": 88,
+      "amount": 100.0
+    },
+    {
+      "position": 89,
+      "amount": 100.0
+    },
+    {
+      "position": 90,
+      "amount": 100.0
+    },
+    {
+      "position": 91,
+      "amount": 100.0
+    },
+    {
+      "position": 92,
+      "amount": 100.0
+    },
+    {
+      "position": 93,
+      "amount": 100.0
+    },
+    {
+      "position": 94,
+      "amount": 100.0
+    },
+    {
+      "position": 95,
+      "amount": 100.0
+    },
+    {
+      "position": 96,
+      "amount": 100.0
+    },
+    {
+      "position": 97,
+      "amount": 100.0
+    },
+    {
+      "position": 98,
+      "amount": 100.0
+    },
+    {
+      "position": 99,
+      "amount": 100.0
+    },
+    {
+      "position": 100,
+      "amount": 100.0
+    }
+  ]
+}

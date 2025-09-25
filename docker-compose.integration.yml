@@ -1,0 +1,186 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: dfs-postgres
+    environment:
+      POSTGRES_DB: dfs_optimizer
+      POSTGRES_USER: dfs_user
+      POSTGRES_PASSWORD: dfs_password_secure
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - dfs-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dfs_user -d dfs_optimizer"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: dfs-redis
+    command: redis-server --requirepass redis_password_secure
+    ports:
+      - "6379:6379"
+    networks:
+      - dfs-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # DFS-SYSTEM-2 Backend
+  dfs-system-2:
+    build:
+      context: ./dfs-system-2
+      dockerfile: Dockerfile
+    container_name: dfs-system-2
+    environment:
+      - DATABASE_URL=postgresql://dfs_user:dfs_password_secure@postgres:5432/dfs_optimizer
+      - REDIS_URL=redis://:redis_password_secure@redis:6379/0
+      - PYTHONPATH=/app
+      - ENVIRONMENT=production
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - dfs-network
+    volumes:
+      - ./dfs-system-2/data:/app/data
+      - ./dfs-system-2/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # DraftKings API Server
+  draftkings-api:
+    build:
+      context: ./dfs-system-2
+      dockerfile: Dockerfile.api
+    container_name: draftkings-api
+    environment:
+      - DATABASE_URL=postgresql://dfs_user:dfs_password_secure@postgres:5432/dfs_optimizer
+      - REDIS_URL=redis://:redis_password_secure@redis:6379/1
+      - PYTHONPATH=/app
+      - ENVIRONMENT=production
+    ports:
+      - "8765:8765"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - dfs-network
+    volumes:
+      - ./dfs-system-2/data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8765/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Unified Frontend
+  unified-frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dfs-platform
+      target: frontend
+    container_name: dfs-frontend
+    environment:
+      - NODE_ENV=production
+      - VITE_API_BASE_URL=http://dfs-system-2:8000
+      - VITE_DK_API_BASE_URL=http://draftkings-api:8765
+    ports:
+      - "3000:3000"
+    depends_on:
+      dfs-system-2:
+        condition: service_healthy
+      draftkings-api:
+        condition: service_healthy
+    networks:
+      - dfs-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: dfs-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - unified-frontend
+      - dfs-system-2
+      - draftkings-api
+    networks:
+      - dfs-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Monitoring Stack
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: dfs-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - dfs-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: dfs-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin_password_secure
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      - dfs-network
+
+networks:
+  dfs-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  prometheus_data:
+  grafana_data:

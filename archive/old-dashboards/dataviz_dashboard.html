@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DFS Data Visualization Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          'SF Pro Display',
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        color: white;
+        min-height: 100vh;
+        padding: 15px;
+      }
+
+      .viz-container {
+        max-width: 1600px;
+        margin: 0 auto;
+        display: grid;
+        gap: 20px;
+        grid-template-areas:
+          'header header header header'
+          'kpi-1 kpi-2 kpi-3 kpi-4'
+          'chart-main chart-main chart-side chart-side'
+          'table-players table-players table-lineups table-lineups';
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: auto auto 300px 400px;
+      }
+
+      .viz-header {
+        grid-area: header;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 25px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+      }
+
+      .viz-title {
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 8px;
+        background: linear-gradient(45deg, #60a5fa, #34d399);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .viz-subtitle {
+        opacity: 0.8;
+        font-size: 1.1rem;
+      }
+
+      .kpi-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #3b82f6, #10b981, #f59e0b, #ef4444);
+      }
+
+      .kpi-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateY(-2px);
+      }
+
+      #kpi-1 {
+        grid-area: kpi-1;
+      }
+      #kpi-2 {
+        grid-area: kpi-2;
+      }
+      #kpi-3 {
+        grid-area: kpi-3;
+      }
+      #kpi-4 {
+        grid-area: kpi-4;
+      }
+
+      .kpi-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: #60a5fa;
+      }
+
+      .kpi-label {
+        opacity: 0.8;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .kpi-change {
+        font-size: 0.8rem;
+        margin-top: 5px;
+      }
+
+      .kpi-up {
+        color: #10b981;
+      }
+      .kpi-down {
+        color: #ef4444;
+      }
+
+      .chart-container {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 20px;
+        position: relative;
+      }
+
+      .chart-main {
+        grid-area: chart-main;
+      }
+
+      .chart-side {
+        grid-area: chart-side;
+      }
+
+      .chart-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #60a5fa;
+      }
+
+      .table-container {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 20px;
+        overflow: hidden;
+      }
+
+      .table-players {
+        grid-area: table-players;
+      }
+
+      .table-lineups {
+        grid-area: table-lineups;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+
+      .data-table th {
+        background: rgba(96, 165, 250, 0.1);
+        padding: 12px 8px;
+        text-align: left;
+        font-weight: 600;
+        color: #60a5fa;
+        border-bottom: 2px solid rgba(96, 165, 250, 0.2);
+        position: sticky;
+        top: 0;
+      }
+
+      .data-table td {
+        padding: 10px 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        vertical-align: middle;
+      }
+
+      .data-table tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .table-scroll {
+        max-height: 320px;
+        overflow-y: auto;
+        overflow-x: auto;
+      }
+
+      .controls-overlay {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        z-index: 100;
+        min-width: 250px;
+      }
+
+      .control-group {
+        margin-bottom: 15px;
+      }
+
+      .control-label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .control-input {
+        width: 100%;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        color: white;
+      }
+
+      .control-input:focus {
+        outline: none;
+        border-color: #60a5fa;
+      }
+
+      .viz-button {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 12px 20px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+      }
+
+      .viz-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+      }
+
+      .viz-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .contest-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+
+      .contest-chip {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 8px 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.85rem;
+      }
+
+      .contest-chip:hover {
+        background: rgba(96, 165, 250, 0.2);
+      }
+
+      .contest-chip.selected {
+        background: #3b82f6;
+        border-color: #3b82f6;
+      }
+
+      .miniature-chart {
+        width: 100px;
+        height: 30px;
+      }
+
+      @media (max-width: 1200px) {
+        .viz-container {
+          grid-template-areas:
+            'header header'
+            'kpi-1 kpi-2'
+            'kpi-3 kpi-4'
+            'chart-main chart-main'
+            'chart-side chart-side'
+            'table-players table-players'
+            'table-lineups table-lineups';
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: auto auto auto 300px 300px 400px 400px;
+        }
+
+        .controls-overlay {
+          position: relative;
+          top: 0;
+          right: 0;
+          margin-bottom: 20px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .viz-container {
+          grid-template-areas:
+            'header'
+            'kpi-1'
+            'kpi-2'
+            'kpi-3'
+            'kpi-4'
+            'chart-main'
+            'chart-side'
+            'table-players'
+            'table-lineups';
+          grid-template-columns: 1fr;
+          grid-template-rows: repeat(9, auto);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="controls-overlay">
+      <div class="control-group">
+        <label class="control-label">Select Contest</label>
+        <div class="contest-selector" id="contest-selector">
+          <div class="contest-chip" onclick="loadVisualizationData('demo-1', this)">
+            NFL Main
+          </div>
+          <div class="contest-chip" onclick="loadVisualizationData('demo-2', this)">
+            TNF
+          </div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="viz-lineups">Lineups to Generate</label>
+        <input
+          type="number"
+          id="viz-lineups"
+          value="50"
+          min="10"
+          max="150"
+          class="control-input"
+        />
+      </div>
+
+      <button
+        class="viz-button"
+        id="viz-optimize"
+        onclick="runVisualizationOptimization()"
+      >
+        📊 Optimize & Visualize
+      </button>
+    </div>
+
+    <div class="viz-container">
+      <!-- Header -->
+      <div class="viz-header">
+        <div class="viz-title">📊 DFS Analytics Hub</div>
+        <div class="viz-subtitle">Advanced Data Visualization & Optimization</div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-card" id="kpi-1">
+        <div class="kpi-value" id="total-players">0</div>
+        <div class="kpi-label">Active Players</div>
+        <div class="kpi-change kpi-up">+12 from last week</div>
+      </div>
+
+      <div class="kpi-card" id="kpi-2">
+        <div class="kpi-value" id="avg-projection">0</div>
+        <div class="kpi-label">Avg Projection</div>
+        <div class="kpi-change kpi-down">-2.1 from yesterday</div>
+      </div>
+
+      <div class="kpi-card" id="kpi-3">
+        <div class="kpi-value" id="top-value">0.00x</div>
+        <div class="kpi-label">Best Value Play</div>
+        <div class="kpi-change kpi-up">+0.3x from average</div>
+      </div>
+
+      <div class="kpi-card" id="kpi-4">
+        <div class="kpi-value" id="optimization-score">0%</div>
+        <div class="kpi-label">Portfolio Efficiency</div>
+        <div class="kpi-change kpi-up">+5.2% improvement</div>
+      </div>
+
+      <!-- Main Chart -->
+      <div class="chart-container chart-main">
+        <div class="chart-title">Player Value Distribution</div>
+        <canvas id="mainChart" width="800" height="250"></canvas>
+      </div>
+
+      <!-- Side Chart -->
+      <div class="chart-container chart-side">
+        <div class="chart-title">Position Breakdown</div>
+        <canvas id="sideChart" width="400" height="250"></canvas>
+      </div>
+
+      <!-- Player Table -->
+      <div class="table-container table-players">
+        <div class="chart-title">Top Value Players</div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>Pos</th>
+                <th>Salary</th>
+                <th>Proj</th>
+                <th>Value</th>
+                <th>Trend</th>
+              </tr>
+            </thead>
+            <tbody id="players-table">
+              <tr>
+                <td colspan="6" style="text-align: center; opacity: 0.6; padding: 40px">
+                  Load contest data to see player analytics
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Lineup Table -->
+      <div class="table-container table-lineups">
+        <div class="chart-title">Generated Lineups</div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Lineup</th>
+                <th>Score</th>
+                <th>Salary</th>
+                <th>ROI</th>
+                <th>Risk</th>
+                <th>Sparkline</th>
+              </tr>
+            </thead>
+            <tbody id="lineups-table">
+              <tr>
+                <td colspan="6" style="text-align: center; opacity: 0.6; padding: 40px">
+                  Run optimization to see lineup analytics
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = 'http://localhost:8001/api';
+      const API_KEY = 'dfs-demo-key';
+      let selectedSlateId = null;
+      let currentPlayers = [];
+      let mainChart = null;
+      let sideChart = null;
+
+      async function fetchWithAuth(url, options = {}) {
+        return fetch(url, {
+          ...options,
+          headers: {
+            'X-API-Key': API_KEY,
+            'Content-Type': 'application/json',
+            ...options.headers,
+          },
+        });
+      }
+
+      function loadVisualizationData(slateId, element) {
+        // Update UI
+        document
+          .querySelectorAll('.contest-chip')
+          .forEach(chip => chip.classList.remove('selected'));
+        element.classList.add('selected');
+
+        selectedSlateId = slateId;
+        loadPlayersForVisualization(slateId);
+      }
+
+      async function loadPlayersForVisualization(slateId) {
+        try {
+          const response = await fetchWithAuth(`${API_BASE}/slates/${slateId}/players`);
+          const data = await response.json();
+
+          if (data.players && data.players.length > 0) {
+            currentPlayers = data.players;
+            updateKPIs(data.players);
+            updatePlayerTable(data.players);
+            createValueChart(data.players);
+            createPositionChart(data.players);
+          } else {
+            // Use demo data for visualization
+            const demoPlayers = generateDemoData();
+            currentPlayers = demoPlayers;
+            updateKPIs(demoPlayers);
+            updatePlayerTable(demoPlayers);
+            createValueChart(demoPlayers);
+            createPositionChart(demoPlayers);
+          }
+        } catch (error) {
+          console.error('Error loading visualization data:', error);
+          // Fallback to demo data
+          const demoPlayers = generateDemoData();
+          currentPlayers = demoPlayers;
+          updateKPIs(demoPlayers);
+          updatePlayerTable(demoPlayers);
+          createValueChart(demoPlayers);
+          createPositionChart(demoPlayers);
+        }
+      }
+
+      function generateDemoData() {
+        const positions = ['QB', 'RB', 'WR', 'TE', 'DST'];
+        const teams = ['BUF', 'MIA', 'KC', 'DEN', 'LAR', 'SF'];
+        const players = [];
+
+        for (let i = 0; i < 50; i++) {
+          const salary = 4000 + Math.random() * 7000;
+          const projection = 8 + Math.random() * 18;
+          players.push({
+            name: `Player ${i + 1}`,
+            position: positions[Math.floor(Math.random() * positions.length)],
+            team: teams[Math.floor(Math.random() * teams.length)],
+            salary: Math.floor(salary),
+            projection: Math.round(projection * 10) / 10,
+            ownership: Math.random() * 0.4,
+            value: (projection * 1000) / salary,
+          });
+        }
+
+        return players.sort((a, b) => b.value - a.value);
+      }
+
+      function updateKPIs(players) {
+        document.getElementById('total-players').textContent = players.length;
+
+        const avgProj =
+          players.reduce((sum, p) => sum + p.projection, 0) / players.length;
+        document.getElementById('avg-projection').textContent = avgProj.toFixed(1);
+
+        const topValue = Math.max(...players.map(p => p.value));
+        document.getElementById('top-value').textContent = topValue.toFixed(2) + 'x';
+
+        // Calculate portfolio efficiency (mock)
+        document.getElementById('optimization-score').textContent = '87%';
+      }
+
+      function updatePlayerTable(players) {
+        const tbody = document.getElementById('players-table');
+        tbody.innerHTML = players
+          .slice(0, 15)
+          .map(
+            (player, index) => `
+                <tr>
+                    <td style="font-weight: 500;">${player.name}</td>
+                    <td><span style="background: rgba(96,165,250,0.2); padding: 2px 8px; border-radius: 12px;">${player.position}</span></td>
+                    <td>$${player.salary.toLocaleString()}</td>
+                    <td>${player.projection.toFixed(1)}</td>
+                    <td style="color: ${player.value >= 2.5 ? '#10b981' : player.value >= 2.0 ? '#f59e0b' : '#ef4444'};">
+                        ${player.value.toFixed(2)}x
+                    </td>
+                    <td>
+                        <canvas class="miniature-chart" id="trend-${index}"></canvas>
+                    </td>
+                </tr>
+            `
+          )
+          .join('');
+
+        // Create miniature trend charts
+        players.slice(0, 15).forEach((player, index) => {
+          setTimeout(() => createTrendChart(index), 100);
+        });
+      }
+
+      function createValueChart(players) {
+        const ctx = document.getElementById('mainChart').getContext('2d');
+
+        if (mainChart) {
+          mainChart.destroy();
+        }
+
+        const valueData = players.map(p => ({
+          x: p.salary,
+          y: p.projection,
+          r: p.ownership * 100,
+        }));
+
+        mainChart = new Chart(ctx, {
+          type: 'bubble',
+          data: {
+            datasets: [
+              {
+                label: 'Player Value (Salary vs Projection)',
+                data: valueData,
+                backgroundColor: 'rgba(96, 165, 250, 0.6)',
+                borderColor: 'rgba(96, 165, 250, 1)',
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: { color: 'white' },
+              },
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Salary ($)', color: 'white' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                ticks: { color: 'white' },
+              },
+              y: {
+                title: { display: true, text: 'Projection (pts)', color: 'white' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                ticks: { color: 'white' },
+              },
+            },
+          },
+        });
+      }
+
+      function createPositionChart(players) {
+        const ctx = document.getElementById('sideChart').getContext('2d');
+
+        if (sideChart) {
+          sideChart.destroy();
+        }
+
+        const positionCounts = {};
+        players.forEach(p => {
+          positionCounts[p.position] = (positionCounts[p.position] || 0) + 1;
+        });
+
+        sideChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(positionCounts),
+            datasets: [
+              {
+                data: Object.values(positionCounts),
+                backgroundColor: [
+                  '#3b82f6',
+                  '#10b981',
+                  '#f59e0b',
+                  '#ef4444',
+                  '#8b5cf6',
+                ],
+                borderWidth: 2,
+                borderColor: '#1e293b',
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { color: 'white', padding: 15 },
+              },
+            },
+          },
+        });
+      }
+
+      function createTrendChart(index) {
+        const canvas = document.getElementById(`trend-${index}`);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const trendData = Array.from({ length: 7 }, () => Math.random() * 10 + 10);
+
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['', '', '', '', '', '', ''],
+            datasets: [
+              {
+                data: trendData,
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 1,
+                pointRadius: 0,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { display: false },
+              y: { display: false },
+            },
+          },
+        });
+      }
+
+      async function runVisualizationOptimization() {
+        if (!currentPlayers.length) {
+          alert('Please select a contest first');
+          return;
+        }
+
+        const btn = document.getElementById('viz-optimize');
+        btn.disabled = true;
+        btn.textContent = '🔄 Optimizing...';
+
+        try {
+          const optimizationRequest = {
+            slateId: selectedSlateId || 'demo-1',
+            players: currentPlayers.slice(0, 50),
+            constraints: {
+              numLineups: parseInt(document.getElementById('viz-lineups').value) || 50,
+              salaryCapMode: 'hard',
+              salaryCap: 50000,
+              uniquePlayers: 6,
+              minSalary: 49000,
+              maxSalary: 50000,
+            },
+          };
+
+          const response = await fetchWithAuth(`${API_BASE}/optimize`, {
+            method: 'POST',
+            body: JSON.stringify(optimizationRequest),
+          });
+
+          const result = await response.json();
+
+          if (result.lineups && result.lineups.length > 0) {
+            updateLineupTable(result.lineups);
+          } else {
+            // Generate demo lineup data for visualization
+            const demoLineups = generateDemoLineups();
+            updateLineupTable(demoLineups);
+          }
+        } catch (error) {
+          console.error('Optimization error:', error);
+          // Generate demo lineup data for visualization
+          const demoLineups = generateDemoLineups();
+          updateLineupTable(demoLineups);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = '📊 Optimize & Visualize';
+        }
+      }
+
+      function generateDemoLineups() {
+        const lineups = [];
+        for (let i = 0; i < 20; i++) {
+          lineups.push({
+            lineupId: `L${i + 1}`,
+            projectedScore: 130 + Math.random() * 30,
+            totalSalary: 48000 + Math.random() * 2000,
+            roi: Math.random() * 40 - 10,
+            risk: Math.random(),
+          });
+        }
+        return lineups.sort((a, b) => b.projectedScore - a.projectedScore);
+      }
+
+      function updateLineupTable(lineups) {
+        const tbody = document.getElementById('lineups-table');
+        tbody.innerHTML = lineups
+          .slice(0, 10)
+          .map(
+            (lineup, index) => `
+                <tr>
+                    <td style="font-weight: 500;">${lineup.lineupId || `Lineup ${index + 1}`}</td>
+                    <td style="color: #10b981; font-weight: 600;">${lineup.projectedScore?.toFixed(1) || '140.0'}</td>
+                    <td>$${lineup.totalSalary?.toLocaleString() || '50,000'}</td>
+                    <td style="color: ${(lineup.roi || 0) >= 0 ? '#10b981' : '#ef4444'};">
+                        ${(lineup.roi || 0).toFixed(1)}%
+                    </td>
+                    <td>
+                        <div style="width: 50px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${(lineup.risk || 0.5) * 100}%; height: 100%; background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);"></div>
+                        </div>
+                    </td>
+                    <td>
+                        <canvas class="miniature-chart" id="sparkline-${index}"></canvas>
+                    </td>
+                </tr>
+            `
+          )
+          .join('');
+
+        // Create sparkline charts
+        lineups.slice(0, 10).forEach((lineup, index) => {
+          setTimeout(() => createSparkline(index), 100);
+        });
+      }
+
+      function createSparkline(index) {
+        const canvas = document.getElementById(`sparkline-${index}`);
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const sparkData = Array.from({ length: 10 }, () => Math.random() * 20 + 120);
+
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: Array(10).fill(''),
+            datasets: [
+              {
+                data: sparkData,
+                borderColor: '#60a5fa',
+                backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                borderWidth: 1,
+                pointRadius: 0,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { display: false },
+              y: { display: false },
+            },
+          },
+        });
+      }
+
+      // Initialize visualization dashboard
+      window.addEventListener('DOMContentLoaded', () => {
+        // Auto-load demo data
+        loadVisualizationData('demo-1', document.querySelector('.contest-chip'));
+
+        // Auto-refresh every 60 seconds
+        setInterval(() => {
+          if (selectedSlateId) {
+            loadPlayersForVisualization(selectedSlateId);
+          }
+        }, 60000);
+      });
+    </script>
+  </body>
+</html>

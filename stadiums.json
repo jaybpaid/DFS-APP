@@ -1,0 +1,503 @@
+{
+  "version": "1.0",
+  "generated_at": "2025-09-19T12:34:00Z",
+  "description": "NFL Stadium data with Weather.gov grid coordinates",
+  "stadiums": {
+    "nfl_stadium_01": {
+      "id": "nfl_stadium_01",
+      "name": "Allegiant Stadium",
+      "city": "Las Vegas",
+      "state": "NV",
+      "team": "Raiders",
+      "weather_grid": {
+        "office": "VEF",
+        "gridX": 115,
+        "gridY": 95
+      },
+      "coordinates": {
+        "lat": 36.0909,
+        "lng": -115.1833
+      }
+    },
+    "nfl_stadium_02": {
+      "id": "nfl_stadium_02",
+      "name": "Arrowhead Stadium",
+      "city": "Kansas City",
+      "state": "MO",
+      "team": "Chiefs",
+      "weather_grid": {
+        "office": "EAX",
+        "gridX": 39,
+        "gridY": 102
+      },
+      "coordinates": {
+        "lat": 39.0489,
+        "lng": -94.4839
+      }
+    },
+    "nfl_stadium_03": {
+      "id": "nfl_stadium_03",
+      "name": "AT&T Stadium",
+      "city": "Arlington",
+      "state": "TX",
+      "team": "Cowboys",
+      "weather_grid": {
+        "office": "FWD",
+        "gridX": 78,
+        "gridY": 118
+      },
+      "coordinates": {
+        "lat": 32.7473,
+        "lng": -97.0945
+      }
+    },
+    "nfl_stadium_04": {
+      "id": "nfl_stadium_04",
+      "name": "Bank of America Stadium",
+      "city": "Charlotte",
+      "state": "NC",
+      "team": "Panthers",
+      "weather_grid": {
+        "office": "GSP",
+        "gridX": 68,
+        "gridY": 51
+      },
+      "coordinates": {
+        "lat": 35.2271,
+        "lng": -80.8531
+      }
+    },
+    "nfl_stadium_05": {
+      "id": "nfl_stadium_05",
+      "name": "Bills Stadium",
+      "city": "Orchard Park",
+      "state": "NY",
+      "team": "Bills",
+      "weather_grid": {
+        "office": "BUF",
+        "gridX": 61,
+        "gridY": 68
+      },
+      "coordinates": {
+        "lat": 42.7738,
+        "lng": -78.787
+      }
+    },
+    "nfl_stadium_06": {
+      "id": "nfl_stadium_06",
+      "name": "Caesars Superdome",
+      "city": "New Orleans",
+      "state": "LA",
+      "team": "Saints",
+      "weather_grid": {
+        "office": "LIX",
+        "gridX": 85,
+        "gridY": 39
+      },
+      "coordinates": {
+        "lat": 29.9511,
+        "lng": -90.0812
+      }
+    },
+    "nfl_stadium_07": {
+      "id": "nfl_stadium_07",
+      "name": "Cleveland Browns Stadium",
+      "city": "Cleveland",
+      "state": "OH",
+      "team": "Browns",
+      "weather_grid": {
+        "office": "CLE",
+        "gridX": 83,
+        "gridY": 65
+      },
+      "coordinates": {
+        "lat": 41.5061,
+        "lng": -81.6995
+      }
+    },
+    "nfl_stadium_08": {
+      "id": "nfl_stadium_08",
+      "name": "Empower Field at Mile High",
+      "city": "Denver",
+      "state": "CO",
+      "team": "Broncos",
+      "weather_grid": {
+        "office": "BOU",
+        "gridX": 62,
+        "gridY": 61
+      },
+      "coordinates": {
+        "lat": 39.7439,
+        "lng": -105.0201
+      }
+    },
+    "nfl_stadium_09": {
+      "id": "nfl_stadium_09",
+      "name": "FedExField",
+      "city": "Landover",
+      "state": "MD",
+      "team": "Commanders",
+      "weather_grid": {
+        "office": "LWX",
+        "gridX": 97,
+        "gridY": 71
+      },
+      "coordinates": {
+        "lat": 38.9076,
+        "lng": -76.8645
+      }
+    },
+    "nfl_stadium_10": {
+      "id": "nfl_stadium_10",
+      "name": "Ford Field",
+      "city": "Detroit",
+      "state": "MI",
+      "team": "Lions",
+      "weather_grid": {
+        "office": "DTX",
+        "gridX": 65,
+        "gridY": 33
+      },
+      "coordinates": {
+        "lat": 42.34,
+        "lng": -83.0456
+      }
+    },
+    "nfl_stadium_11": {
+      "id": "nfl_stadium_11",
+      "name": "Gillette Stadium",
+      "city": "Foxborough",
+      "state": "MA",
+      "team": "Patriots",
+      "weather_grid": {
+        "office": "BOX",
+        "gridX": 71,
+        "gridY": 76
+      },
+      "coordinates": {
+        "lat": 42.0909,
+        "lng": -71.2643
+      }
+    },
+    "nfl_stadium_12": {
+      "id": "nfl_stadium_12",
+      "name": "Hard Rock Stadium",
+      "city": "Miami Gardens",
+      "state": "FL",
+      "team": "Dolphins",
+      "weather_grid": {
+        "office": "MFL",
+        "gridX": 110,
+        "gridY": 50
+      },
+      "coordinates": {
+        "lat": 25.958,
+        "lng": -80.2389
+      }
+    },
+    "nfl_stadium_13": {
+      "id": "nfl_stadium_13",
+      "name": "Heinz Field",
+      "city": "Pittsburgh",
+      "state": "PA",
+      "team": "Steelers",
+      "weather_grid": {
+        "office": "PBZ",
+        "gridX": 77,
+        "gridY": 65
+      },
+      "coordinates": {
+        "lat": 40.4468,
+        "lng": -80.0158
+      }
+    },
+    "nfl_stadium_14": {
+      "id": "nfl_stadium_14",
+      "name": "GEHA Field at Arrowhead Stadium",
+      "city": "Kansas City",
+      "state": "MO",
+      "team": "Chiefs",
+      "weather_grid": {
+        "office": "EAX",
+        "gridX": 39,
+        "gridY": 102
+      },
+      "coordinates": {
+        "lat": 39.0489,
+        "lng": -94.4839
+      }
+    },
+    "nfl_stadium_15": {
+      "id": "nfl_stadium_15",
+      "name": "Lambeau Field",
+      "city": "Green Bay",
+      "state": "WI",
+      "team": "Packers",
+      "weather_grid": {
+        "office": "GRB",
+        "gridX": 86,
+        "gridY": 64
+      },
+      "coordinates": {
+        "lat": 44.5013,
+        "lng": -88.0622
+      }
+    },
+    "nfl_stadium_16": {
+      "id": "nfl_stadium_16",
+      "name": "Lincoln Financial Field",
+      "city": "Philadelphia",
+      "state": "PA",
+      "team": "Eagles",
+      "weather_grid": {
+        "office": "PHI",
+        "gridX": 49,
+        "gridY": 75
+      },
+      "coordinates": {
+        "lat": 39.9008,
+        "lng": -75.1675
+      }
+    },
+    "nfl_stadium_17": {
+      "id": "nfl_stadium_17",
+      "name": "Lumen Field",
+      "city": "Seattle",
+      "state": "WA",
+      "team": "Seahawks",
+      "weather_grid": {
+        "office": "SEW",
+        "gridX": 124,
+        "gridY": 67
+      },
+      "coordinates": {
+        "lat": 47.5951,
+        "lng": -122.3316
+      }
+    },
+    "nfl_stadium_18": {
+      "id": "nfl_stadium_18",
+      "name": "M&T Bank Stadium",
+      "city": "Baltimore",
+      "state": "MD",
+      "team": "Ravens",
+      "weather_grid": {
+        "office": "LWX",
+        "gridX": 97,
+        "gridY": 64
+      },
+      "coordinates": {
+        "lat": 39.278,
+        "lng": -76.6227
+      }
+    },
+    "nfl_stadium_19": {
+      "id": "nfl_stadium_19",
+      "name": "Mercedes-Benz Stadium",
+      "city": "Atlanta",
+      "state": "GA",
+      "team": "Falcons",
+      "weather_grid": {
+        "office": "FFC",
+        "gridX": 48,
+        "gridY": 34
+      },
+      "coordinates": {
+        "lat": 33.7553,
+        "lng": -84.4006
+      }
+    },
+    "nfl_stadium_20": {
+      "id": "nfl_stadium_20",
+      "name": "MetLife Stadium",
+      "city": "East Rutherford",
+      "state": "NJ",
+      "team": "Giants/Jets",
+      "weather_grid": {
+        "office": "OKX",
+        "gridX": 33,
+        "gridY": 37
+      },
+      "coordinates": {
+        "lat": 40.8135,
+        "lng": -74.0745
+      }
+    },
+    "nfl_stadium_21": {
+      "id": "nfl_stadium_21",
+      "name": "NRG Stadium",
+      "city": "Houston",
+      "state": "TX",
+      "team": "Texans",
+      "weather_grid": {
+        "office": "HGX",
+        "gridX": 67,
+        "gridY": 92
+      },
+      "coordinates": {
+        "lat": 29.6847,
+        "lng": -95.4107
+      }
+    },
+    "nfl_stadium_22": {
+      "id": "nfl_stadium_22",
+      "name": "Nissan Stadium",
+      "city": "Nashville",
+      "state": "TN",
+      "team": "Titans",
+      "weather_grid": {
+        "office": "OHX",
+        "gridX": 51,
+        "gridY": 67
+      },
+      "coordinates": {
+        "lat": 36.1665,
+        "lng": -86.7714
+      }
+    },
+    "nfl_stadium_23": {
+      "id": "nfl_stadium_23",
+      "name": "Paycor Stadium",
+      "city": "Cincinnati",
+      "state": "OH",
+      "team": "Bengals",
+      "weather_grid": {
+        "office": "ILN",
+        "gridX": 83,
+        "gridY": 69
+      },
+      "coordinates": {
+        "lat": 39.0955,
+        "lng": -84.516
+      }
+    },
+    "nfl_stadium_24": {
+      "id": "nfl_stadium_24",
+      "name": "Raymond James Stadium",
+      "city": "Tampa",
+      "state": "FL",
+      "team": "Buccaneers",
+      "weather_grid": {
+        "office": "TBW",
+        "gridX": 42,
+        "gridY": 67
+      },
+      "coordinates": {
+        "lat": 27.9759,
+        "lng": -82.5033
+      }
+    },
+    "nfl_stadium_25": {
+      "id": "nfl_stadium_25",
+      "name": "SoFi Stadium",
+      "city": "Los Angeles",
+      "state": "CA",
+      "team": "Rams/Chargers",
+      "weather_grid": {
+        "office": "LOX",
+        "gridX": 154,
+        "gridY": 52
+      },
+      "coordinates": {
+        "lat": 33.9535,
+        "lng": -118.3392
+      }
+    },
+    "nfl_stadium_26": {
+      "id": "nfl_stadium_26",
+      "name": "Soldier Field",
+      "city": "Chicago",
+      "state": "IL",
+      "team": "Bears",
+      "weather_grid": {
+        "office": "LOT",
+        "gridX": 70,
+        "gridY": 75
+      },
+      "coordinates": {
+        "lat": 41.8623,
+        "lng": -87.6167
+      }
+    },
+    "nfl_stadium_27": {
+      "id": "nfl_stadium_27",
+      "name": "State Farm Stadium",
+      "city": "Glendale",
+      "state": "AZ",
+      "team": "Cardinals",
+      "weather_grid": {
+        "office": "PSR",
+        "gridX": 161,
+        "gridY": 98
+      },
+      "coordinates": {
+        "lat": 33.5276,
+        "lng": -112.2626
+      }
+    },
+    "nfl_stadium_28": {
+      "id": "nfl_stadium_28",
+      "name": "TIAA Bank Field",
+      "city": "Jacksonville",
+      "state": "FL",
+      "team": "Jaguars",
+      "weather_grid": {
+        "office": "JAX",
+        "gridX": 65,
+        "gridY": 69
+      },
+      "coordinates": {
+        "lat": 30.324,
+        "lng": -81.6374
+      }
+    },
+    "nfl_stadium_29": {
+      "id": "nfl_stadium_29",
+      "name": "U.S. Bank Stadium",
+      "city": "Minneapolis",
+      "state": "MN",
+      "team": "Vikings",
+      "weather_grid": {
+        "office": "MPX",
+        "gridX": 106,
+        "gridY": 71
+      },
+      "coordinates": {
+        "lat": 44.9739,
+        "lng": -93.2581
+      }
+    },
+    "nfl_stadium_30": {
+      "id": "nfl_stadium_30",
+      "name": "Lucas Oil Stadium",
+      "city": "Indianapolis",
+      "state": "IN",
+      "team": "Colts",
+      "weather_grid": {
+        "office": "IND",
+        "gridX": 58,
+        "gridY": 44
+      },
+      "coordinates": {
+        "lat": 39.7601,
+        "lng": -86.1639
+      }
+    },
+    "nfl_stadium_31": {
+      "id": "nfl_stadium_31",
+      "name": "Acrisure Stadium",
+      "city": "Pittsburgh",
+      "state": "PA",
+      "team": "Steelers",
+      "weather_grid": {
+        "office": "PBZ",
+        "gridX": 77,
+        "gridY": 65
+      },
+      "coordinates": {
+        "lat": 40.4468,
+        "lng": -80.0158
+      }
+    }
+  }
+}

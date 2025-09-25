@@ -1,4 +1,10 @@
-import { Player, Lineup, SimulationResult, PlayerSimMetrics, LineupMetrics } from '../data/types';
+import {
+  Player,
+  Lineup,
+  SimulationResult,
+  PlayerSimMetrics,
+  LineupMetrics,
+} from '../data/types';
 
 export interface SimulationSettings {
   trials: number;
@@ -27,7 +33,7 @@ export class MonteCarloSimulator {
       trials: this.settings.trials,
       playerMetrics,
       lineupMetrics,
-      correlationApplied
+      correlationApplied,
     };
   }
 
@@ -50,31 +56,33 @@ export class MonteCarloSimulator {
         cashPercentage: 0,
         boomPercentage: 0,
         averagePoints: projection,
-        standardDeviation: stdDev
+        standardDeviation: stdDev,
       };
     });
 
     return metrics;
   }
 
-  private simulateLineups(playerMetrics: Record<string, PlayerSimMetrics>): LineupMetrics[] {
+  private simulateLineups(
+    playerMetrics: Record<string, PlayerSimMetrics>
+  ): LineupMetrics[] {
     const lineupResults: LineupMetrics[] = [];
 
     for (let i = 0; i < this.settings.trials; i++) {
       this.lineups.forEach((lineup, lineupIndex) => {
         const lineupScore = this.simulateLineupPerformance(lineup, playerMetrics);
-        
+
         if (!lineupResults[lineupIndex]) {
           lineupResults[lineupIndex] = {
             score: 0,
             optimalPercentage: 0,
             cashPercentage: 0,
-            boomPercentage: 0
+            boomPercentage: 0,
           };
         }
 
         lineupResults[lineupIndex].score += lineupScore;
-        
+
         // Update player metrics based on this simulation
         this.updatePlayerMetrics(lineup, lineupScore, playerMetrics);
       });
@@ -98,21 +106,26 @@ export class MonteCarloSimulator {
     return lineupResults;
   }
 
-  private simulateLineupPerformance(lineup: Lineup, playerMetrics: Record<string, PlayerSimMetrics>): number {
+  private simulateLineupPerformance(
+    lineup: Lineup,
+    playerMetrics: Record<string, PlayerSimMetrics>
+  ): number {
     let totalScore = 0;
-    const correlationFactor = this.settings.includeCorrelation ? this.calculateCorrelationFactor(lineup) : 1.0;
+    const correlationFactor = this.settings.includeCorrelation
+      ? this.calculateCorrelationFactor(lineup)
+      : 1.0;
 
     lineup.players.forEach(player => {
       const metrics = playerMetrics[player.playerId];
       const baseScore = metrics.averagePoints;
       const stdDev = metrics.standardDeviation;
-      
+
       // Apply normal distribution with correlation
       let playerScore = this.generateNormalRandom(baseScore, stdDev);
-      
+
       // Apply game-specific factors
       playerScore *= this.applyGameFactors(player);
-      
+
       // Apply correlation
       playerScore *= correlationFactor;
 
@@ -155,11 +168,12 @@ export class MonteCarloSimulator {
   private countQBWRStacks(lineup: Lineup): number {
     let count = 0;
     const qb = lineup.players.find(p => p.positions.includes('QB'));
-    
+
     if (qb) {
-      count = lineup.players.filter(p => 
-        p.team === qb.team && 
-        (p.positions.includes('WR') || p.positions.includes('TE'))
+      count = lineup.players.filter(
+        p =>
+          p.team === qb.team &&
+          (p.positions.includes('WR') || p.positions.includes('TE'))
       ).length;
     }
 
@@ -168,7 +182,7 @@ export class MonteCarloSimulator {
 
   private countGameStacks(lineup: Lineup): number {
     const teamPlayers: Record<string, number> = {};
-    
+
     lineup.players.forEach(player => {
       teamPlayers[player.team] = (teamPlayers[player.team] || 0) + 1;
     });
@@ -191,20 +205,24 @@ export class MonteCarloSimulator {
 
     // Matchup difficulty
     if (player.matchupDifficulty !== undefined) {
-      factor *= (1.0 - player.matchupDifficulty * 0.2);
+      factor *= 1.0 - player.matchupDifficulty * 0.2;
     }
 
     return Math.max(0.5, Math.min(1.5, factor));
   }
 
-  private updatePlayerMetrics(lineup: Lineup, lineupScore: number, playerMetrics: Record<string, PlayerSimMetrics>): void {
+  private updatePlayerMetrics(
+    lineup: Lineup,
+    lineupScore: number,
+    playerMetrics: Record<string, PlayerSimMetrics>
+  ): void {
     const optimalThreshold = this.getOptimalThreshold();
     const cashThreshold = this.getCashThreshold();
     const boomThreshold = this.getBoomThreshold();
 
     lineup.players.forEach(player => {
       const metrics = playerMetrics[player.playerId];
-      
+
       if (lineupScore >= optimalThreshold) {
         metrics.optimalPercentage++;
       }

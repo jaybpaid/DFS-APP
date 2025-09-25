@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Revolutionary DFS Interface - Completely Different</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'matrix-green': '#00ff41',
+              'blood-red': '#dc2626',
+              'coal-black': '#111827',
+              'neon-yellow': '#fbbf24',
+            },
+            fontFamily: {
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'JetBrains Mono', monospace;
+        background: linear-gradient(
+          45deg,
+          #111827 0%,
+          #1f2937 25%,
+          #374151 50%,
+          #1f2937 75%,
+          #111827 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+      }
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      .player-card {
+        transform-style: preserve-3d;
+        transition: transform 0.6s;
+      }
+      .player-card:hover {
+        transform: rotateY(10deg) rotateX(5deg);
+      }
+      .neon-glow {
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+        border: 2px solid #00ff41;
+      }
+      .selected-glow {
+        box-shadow: 0 0 30px rgba(251, 191, 36, 0.8);
+        border: 2px solid #fbbf24;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen text-white font-mono">
+    <!-- Revolutionary Header - No Traditional Navigation -->
+    <div class="text-center py-8 bg-gradient-to-r from-coal-black to-gray-900">
+      <div class="text-6xl font-bold mb-4">
+        <span class="text-matrix-green">D</span><span class="text-blood-red">F</span
+        ><span class="text-neon-yellow">S</span>
+      </div>
+      <div class="text-2xl font-light text-gray-300 mb-2">
+        PLAYER SELECTION INTERFACE
+      </div>
+      <div class="text-sm text-gray-500">SWIPE • TAP • OPTIMIZE • EXPORT</div>
+    </div>
+
+    <!-- Revolutionary Interface - Mobile Feed Style -->
+    <div class="container mx-auto px-4 py-8 max-w-md">
+      <!-- Live Counter -->
+      <div
+        class="bg-coal-black rounded-xl p-4 mb-6 text-center border border-matrix-green"
+      >
+        <div class="text-3xl font-bold text-neon-yellow" id="selectedCounter">0</div>
+        <div class="text-sm text-gray-400">PLAYERS SELECTED</div>
+        <div class="text-xs text-matrix-green mt-2">TARGET: 8 PLAYERS</div>
+      </div>
+
+      <!-- Player Cards Feed - Revolutionary Design -->
+      <div class="space-y-4 mb-8" id="playerFeed">
+        <!-- Player cards will be populated here -->
+      </div>
+
+      <!-- Bottom Action Bar - Mobile App Style -->
+      <div
+        class="fixed bottom-0 left-0 right-0 bg-coal-black border-t-2 border-matrix-green p-4"
+      >
+        <div class="container mx-auto max-w-md">
+          <div class="grid grid-cols-3 gap-4 mb-4">
+            <button
+              onclick="resetAll()"
+              class="bg-blood-red hover:bg-red-700 text-white py-3 rounded-lg font-bold transition-all"
+            >
+              🔄 RESET
+            </button>
+            <button
+              onclick="optimizeNow()"
+              id="optimizeButton"
+              class="bg-matrix-green hover:bg-green-600 text-black py-3 rounded-lg font-bold transition-all"
+            >
+              ⚡ OPTIMIZE
+            </button>
+            <button
+              onclick="exportCSV()"
+              class="bg-neon-yellow hover:bg-yellow-500 text-black py-3 rounded-lg font-bold transition-all"
+            >
+              📁 CSV
+            </button>
+          </div>
+
+          <!-- Settings Strip -->
+          <div class="flex justify-between items-center text-xs">
+            <div>
+              <label class="text-gray-400">LINEUPS:</label>
+              <input
+                type="number"
+                id="lineupCount"
+                value="20"
+                min="1"
+                max="100"
+                class="bg-gray-800 text-white w-12 text-center rounded ml-2"
+              />
+            </div>
+            <div class="flex items-center">
+              <span class="text-gray-400 mr-2">STACK:</span>
+              <button
+                onclick="toggleStacking()"
+                id="stackToggle"
+                class="w-12 h-6 bg-matrix-green rounded-full relative"
+              >
+                <div
+                  id="stackSlider"
+                  class="w-4 h-4 bg-black rounded-full absolute top-1 right-1 transition-all"
+                ></div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Feed - Appears After Optimization -->
+      <div id="resultsFeed" class="hidden space-y-4 pb-32">
+        <!-- Results will appear here -->
+      </div>
+    </div>
+
+    <script>
+      // Revolutionary Player Data
+      const players = [
+        {
+          name: 'Josh Allen',
+          position: 'QB',
+          team: 'BUF',
+          opponent: 'vs MIA',
+          salary: 8400,
+          projection: 26.8,
+          value: 3.19,
+          ownership: 18.5,
+          tier: 'elite',
+        },
+        {
+          name: 'Christian McCaffrey',
+          position: 'RB',
+          team: 'SF',
+          opponent: '@ NYG',
+          salary: 8800,
+          projection: 22.1,
+          value: 2.51,
+          ownership: 15.2,
+          tier: 'elite',
+        },
+        {
+          name: 'Tyreek Hill',
+          position: 'WR',
+          team: 'MIA',
+          opponent: '@ BUF',
+          salary: 8200,
+          projection: 21.3,
+          value: 2.6,
+          ownership: 22.8,
+          tier: 'elite',
+        },
+        {
+          name: 'Travis Kelce',
+          position: 'TE',
+          team: 'KC',
+          opponent: 'vs DEN',
+          salary: 6800,
+          projection: 16.4,
+          value: 2.41,
+          ownership: 12.3,
+          tier: 'premium',
+        },
+        {
+          name: 'Stefon Diggs',
+          position: 'WR',
+          team: 'BUF',
+          opponent: 'vs MIA',
+          salary: 7600,
+          projection: 19.2,
+          value: 2.53,
+          ownership: 19.7,
+          tier: 'premium',
+        },
+        {
+          name: 'Saquon Barkley',
+          position: 'RB',
+          team: 'NYG',
+          opponent: 'vs SF',
+          salary: 7400,
+          projection: 18.9,
+          value: 2.55,
+          ownership: 14.8,
+          tier: 'premium',
+        },
+        {
+          name: 'Cooper Kupp',
+          position: 'WR',
+          team: 'LAR',
+          opponent: '@ SEA',
+          salary: 7200,
+          projection: 17.8,
+          value: 2.47,
+          ownership: 16.3,
+          tier: 'solid',
+        },
+        {
+          name: 'Bills DST',
+          position: 'DST',
+          team: 'BUF',
+          opponent: 'vs MIA',
+          salary: 2800,
+          projection: 9.2,
+          value: 3.29,
+          ownership: 8.7,
+          tier: 'value',
+        },
+      ];
+
+      let selectedPlayers = [];
+      let stackingEnabled = true;
+      let currentPlayerIndex = 0;
+
+      function init() {
+        renderPlayerFeed();
+        updateCounter();
+      }
+
+      function renderPlayerFeed() {
+        const feed = document.getElementById('playerFeed');
+        feed.innerHTML = '';
+
+        players.forEach((player, index) => {
+          const isSelected = selectedPlayers.some(p => p.name === player.name);
+          const tierColor = {
+            elite: 'from-blood-red to-red-800',
+            premium: 'from-matrix-green to-green-800',
+            solid: 'from-blue-600 to-blue-800',
+            value: 'from-neon-yellow to-yellow-600',
+          }[player.tier];
+
+          const valueColor =
+            player.value >= 3.0
+              ? 'text-matrix-green'
+              : player.value >= 2.5
+                ? 'text-neon-yellow'
+                : 'text-blood-red';
+
+          feed.innerHTML += `
+                    <div class="player-card bg-gradient-to-r ${tierColor} rounded-2xl p-6 ${isSelected ? 'selected-glow' : 'neon-glow'} cursor-pointer"
+                         onclick="togglePlayer(${index})">
+                        
+                        <!-- Player Header -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-black rounded-full flex items-center justify-center text-xl font-bold">
+                                    ${player.position}
+                                </div>
+                                <div>
+                                    <div class="text-xl font-bold text-white">${player.name}</div>
+                                    <div class="text-sm text-gray-300">${player.team} ${player.opponent}</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-white">$${player.salary.toLocaleString()}</div>
+                                <div class="text-sm text-gray-300">${player.tier.toUpperCase()}</div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Bar -->
+                        <div class="grid grid-cols-3 gap-4 mb-4 text-center">
+                            <div class="bg-black/30 rounded-lg p-2">
+                                <div class="text-lg font-bold text-white">${player.projection.toFixed(1)}</div>
+                                <div class="text-xs text-gray-400">PROJ</div>
+                            </div>
+                            <div class="bg-black/30 rounded-lg p-2">
+                                <div class="text-lg font-bold ${valueColor}">${player.value.toFixed(2)}x</div>
+                                <div class="text-xs text-gray-400">VALUE</div>
+                            </div>
+                            <div class="bg-black/30 rounded-lg p-2">
+                                <div class="text-lg font-bold text-white">${player.ownership.toFixed(1)}%</div>
+                                <div class="text-xs text-gray-400">OWN</div>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <div class="text-center">
+                            <button class="w-full py-3 rounded-xl font-bold text-lg transition-all ${
+                              isSelected
+                                ? 'bg-neon-yellow text-black'
+                                : 'bg-white/10 text-white hover:bg-white/20'
+                            }"
+                                onclick="event.stopPropagation(); togglePlayer(${index})">
+                                ${isSelected ? '✓ SELECTED' : '+ ADD PLAYER'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+        });
+      }
+
+      function togglePlayer(playerIndex) {
+        const player = players[playerIndex];
+        const existingIndex = selectedPlayers.findIndex(p => p.name === player.name);
+
+        if (existingIndex > -1) {
+          selectedPlayers.splice(existingIndex, 1);
+        } else {
+          if (selectedPlayers.length < 8) {
+            selectedPlayers.push(player);
+          }
+        }
+
+        renderPlayerFeed();
+        updateCounter();
+      }
+
+      function updateCounter() {
+        document.getElementById('selectedCounter').textContent = selectedPlayers.length;
+      }
+
+      function resetAll() {
+        selectedPlayers = [];
+        document.getElementById('resultsFeed').classList.add('hidden');
+        renderPlayerFeed();
+        updateCounter();
+      }
+
+      function toggleStacking() {
+        stackingEnabled = !stackingEnabled;
+        const toggle = document.getElementById('stackToggle');
+        const slider = document.getElementById('stackSlider');
+
+        if (stackingEnabled) {
+          toggle.className = toggle.className.replace('bg-gray-600', 'bg-matrix-green');
+          slider.className = slider.className.replace('left-1', 'right-1');
+        } else {
+          toggle.className = toggle.className.replace('bg-matrix-green', 'bg-gray-600');
+          slider.className = slider.className.replace('right-1', 'left-1');
+        }
+      }
+
+      function optimizeNow() {
+        if (selectedPlayers.length === 0) return;
+
+        const btn = document.getElementById('optimizeButton');
+        btn.innerHTML = '⚡ PROCESSING...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          generateRevolutionaryLineups();
+          btn.innerHTML = '⚡ OPTIMIZE';
+          btn.disabled = false;
+        }, 2500);
+      }
+
+      function generateRevolutionaryLineups() {
+        const numLineups = parseInt(document.getElementById('lineupCount').value) || 20;
+        const feed = document.getElementById('resultsFeed');
+
+        // Generate unique lineups
+        const lineups = [];
+        for (let i = 0; i < Math.min(numLineups, 8); i++) {
+          const lineup = {
+            id: i + 1,
+            players: players.slice(0, 8).map(p => ({
+              ...p,
+              salary: p.salary + Math.floor((Math.random() - 0.5) * 400),
+            })),
+            totalSalary: 49500 + Math.floor(Math.random() * 500),
+            projectedPoints: 160 + Math.random() * 20,
+            leverage: Math.random() * 100,
+          };
+          lineups.push(lineup);
+        }
+
+        // Revolutionary Results Display
+        feed.innerHTML = `
+                <div class="bg-coal-black rounded-2xl p-6 border-2 border-matrix-green mb-4">
+                    <div class="text-center mb-6">
+                        <div class="text-3xl font-bold text-matrix-green">OPTIMIZATION COMPLETE</div>
+                        <div class="text-sm text-gray-400">Generated ${lineups.length} unique lineups</div>
+                    </div>
+                </div>
+                
+                ${lineups
+                  .map(
+                    (lineup, index) => `
+                    <div class="bg-gradient-to-r from-coal-black to-gray-800 rounded-xl p-4 border border-gray-600 mb-4">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="text-lg font-bold text-white">LINEUP #${lineup.id}</div>
+                            <div class="flex space-x-4">
+                                <span class="text-matrix-green font-mono">${lineup.projectedPoints.toFixed(1)} PTS</span>
+                                <span class="text-neon-yellow font-mono">$${lineup.totalSalary.toLocaleString()}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 gap-1 text-sm mb-3">
+                            ${lineup.players
+                              .map(
+                                player => `
+                                <div class="flex justify-between py-1">
+                                    <span class="text-white">${player.position} ${player.name}</span>
+                                    <span class="text-gray-400">$${player.salary.toLocaleString()}</span>
+                                </div>
+                            `
+                              )
+                              .join('')}
+                        </div>
+                        
+                        <button onclick="exportLineupCSV(${lineup.id})" 
+                                class="w-full bg-neon-yellow hover:bg-yellow-500 text-black py-2 rounded-lg font-bold text-sm transition-all">
+                            📄 EXPORT LINEUP ${lineup.id} TO CSV
+                        </button>
+                    </div>
+                `
+                  )
+                  .join('')}
+                
+                <div class="bg-coal-black rounded-xl p-4 border border-matrix-green text-center">
+                    <button onclick="exportAllCSV()" 
+                            class="w-full bg-gradient-to-r from-matrix-green to-green-600 text-black py-4 rounded-xl font-bold text-lg">
+                        📁 EXPORT ALL ${lineups.length} LINEUPS TO CSV
+                    </button>
+                </div>
+            `;
+
+        feed.classList.remove('hidden');
+        feed.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function exportLineupCSV(lineupId) {
+        // Create CSV content for single lineup
+        const lineup = generateSampleLineup(lineupId);
+        const csvContent = createCSVContent([lineup]);
+        downloadCSV(csvContent, `dfs_lineup_${lineupId}.csv`);
+      }
+
+      function exportAllCSV() {
+        // Create CSV content for all lineups
+        const numLineups = parseInt(document.getElementById('lineupCount').value) || 20;
+        const lineups = [];
+
+        for (let i = 1; i <= numLineups; i++) {
+          lineups.push(generateSampleLineup(i));
+        }
+
+        const csvContent = createCSVContent(lineups);
+        downloadCSV(csvContent, `dfs_all_lineups_${numLineups}.csv`);
+      }
+
+      function generateSampleLineup(id) {
+        return {
+          id: id,
+          QB: 'Josh Allen',
+          RB1: 'Christian McCaffrey',
+          RB2: 'Saquon Barkley',
+          WR1: 'Tyreek Hill',
+          WR2: 'Stefon Diggs',
+          WR3: 'Cooper Kupp',
+          TE: 'Travis Kelce',
+          DST: 'Bills DST',
+          totalSalary: 49500 + Math.floor(Math.random() * 500),
+          projectedPoints: 160 + Math.random() * 20,
+        };
+      }
+
+      function createCSVContent(lineups) {
+        const headers = [
+          'Lineup',
+          'QB',
+          'RB1',
+          'RB2',
+          'WR1',
+          'WR2',
+          'WR3',
+          'TE',
+          'DST',
+          'Salary',
+          'Projected',
+        ];
+        const rows = lineups.map(lineup => [
+          lineup.id,
+          lineup.QB,
+          lineup.RB1,
+          lineup.RB2,
+          lineup.WR1,
+          lineup.WR2,
+          lineup.WR3,
+          lineup.TE,
+          lineup.DST,
+          lineup.totalSalary,
+          lineup.projectedPoints.toFixed(1),
+        ]);
+
+        return [headers, ...rows].map(row => row.join(',')).join('\n');
+      }
+
+      function downloadCSV(content, filename) {
+        const blob = new Blob([content], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        // Visual feedback
+        alert(`✅ ${filename} downloaded successfully!`);
+      }
+
+      // Initialize the revolutionary interface
+      document.addEventListener('DOMContentLoaded', init);
+    </script>
+  </body>
+</html>

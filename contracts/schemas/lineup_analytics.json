@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "required": [
+    "lineupId",
+    "winProb",
+    "minCashProb",
+    "roi",
+    "dupRisk",
+    "projOwnership",
+    "leverageScore"
+  ],
+  "properties": {
+    "lineupId": { "type": "integer" },
+    "winProb": { "type": "number", "minimum": 0, "maximum": 1 },
+    "minCashProb": { "type": "number", "minimum": 0, "maximum": 1 },
+    "roi": { "type": "number" },
+    "dupRisk": { "type": "number", "minimum": 0, "maximum": 1 },
+    "projOwnership": { "type": "number", "minimum": 0, "maximum": 100 },
+    "leverageScore": { "type": "number" }
+  }
+}

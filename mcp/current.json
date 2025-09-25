@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "autoApprove": ["list_allowed_directories"],
+      "disabled": false,
+      "timeout": 60,
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/614759/Documents/MCP Workspace/DFS APP"
+      ]
+    },
+    "memory": {
+      "autoApprove": [],
+      "disabled": false,
+      "timeout": 60,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    }
+  }
+}

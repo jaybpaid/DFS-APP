@@ -1,0 +1,105 @@
+{
+  "integration_summary": {
+    "timestamp": "2025-09-15T18:52:28.359321",
+    "validated_sources": 6,
+    "active_live_sources": 3,
+    "total_sports_supported": 7,
+    "total_sites_supported": 3
+  },
+  "validated_repositories": {
+    "draftfast": {
+      "url": "https://github.com/BenBrostoff/draftfast",
+      "sports": ["NFL", "NBA", "MLB", "NHL", "PGA", "WNBA", "SOCCER"],
+      "sites": ["DraftKings", "FanDuel"],
+      "status": "validated",
+      "last_updated": null
+    },
+    "chanzer0_nfl": {
+      "url": "https://github.com/chanzer0/NFL-DFS-Tools",
+      "sports": ["NFL"],
+      "sites": ["DraftKings", "FanDuel"],
+      "status": "validated",
+      "last_updated": null
+    },
+    "chanzer0_nba": {
+      "url": "https://github.com/chanzer0/NBA-DFS-Tools",
+      "sports": ["NBA"],
+      "sites": ["DraftKings", "FanDuel"],
+      "status": "validated",
+      "last_updated": null
+    },
+    "pydfs_optimizer": {
+      "url": "https://github.com/DimaKudosh/pydfs-lineup-optimizer",
+      "sports": ["NFL", "NBA", "MLB", "NHL"],
+      "sites": ["DraftKings", "FanDuel", "Yahoo"],
+      "status": "validated",
+      "last_updated": null
+    },
+    "dfs_with_r": {
+      "url": "https://github.com/dfs-with-r/coach",
+      "sports": ["NFL", "NBA", "MLB"],
+      "sites": ["DraftKings", "FanDuel"],
+      "status": "validated",
+      "last_updated": null
+    },
+    "draftkings_api_docs": {
+      "url": "https://github.com/SeanDrum/Draft-Kings-API-Documentation",
+      "sports": ["NFL", "NBA", "MLB", "NHL", "PGA"],
+      "sites": ["DraftKings"],
+      "status": "validated",
+      "last_updated": null
+    }
+  },
+  "live_data_sources": {
+    "nflfastR": {
+      "url": "https://github.com/nflverse/nfldata/releases/latest/download/play_by_play_{year}.parquet",
+      "sport": "NFL",
+      "type": "play_by_play",
+      "enabled": true,
+      "last_updated": null,
+      "status": "inactive"
+    },
+    "theoddsapi": {
+      "url": "https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds",
+      "sport": "NFL",
+      "type": "odds",
+      "enabled": true,
+      "requires_key": true,
+      "last_updated": null,
+      "status": "active",
+      "last_tested": "2025-09-15T18:52:27.787663"
+    },
+    "openweather": {
+      "url": "https://api.openweathermap.org/data/2.5/weather",
+      "sport": "NFL",
+      "type": "weather",
+      "enabled": true,
+      "requires_key": true,
+      "last_updated": null,
+      "status": "active",
+      "last_tested": "2025-09-15T18:52:27.787680"
+    },
+    "balldontlie": {
+      "url": "https://www.balldontlie.io/api/v1/",
+      "sport": "NBA",
+      "type": "stats",
+      "enabled": true,
+      "last_updated": null,
+      "status": "inactive"
+    },
+    "nba_api": {
+      "url": "https://stats.nba.com/stats/",
+      "sport": "NBA",
+      "type": "official_stats",
+      "enabled": true,
+      "last_updated": null,
+      "status": "active",
+      "last_tested": "2025-09-15T18:52:28.173790"
+    }
+  },
+  "data_cache_status": {
+    "nfl_cached": true,
+    "nba_cached": false,
+    "cache_size": 1
+  }
+}

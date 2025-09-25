@@ -1,0 +1,239 @@
+{
+  "slate_id": "tnf_2025_09_18",
+  "name": "Thursday Night Football",
+  "date": "2025-09-18",
+  "sport": "NFL",
+  "type": "showdown",
+  "start_time": "2025-09-18T20:15:00-05:00",
+  "salary_cap": 50000,
+  "roster_positions": ["CPT", "FLEX", "FLEX", "FLEX", "FLEX", "FLEX"],
+  "teams": ["DEN", "NYJ"],
+  "game": {
+    "home_team": "NYJ",
+    "away_team": "DEN",
+    "kickoff": "2025-09-18T20:15:00-05:00",
+    "status": "upcoming"
+  },
+  "players": [
+    {
+      "id": "tnf_001",
+      "name": "Aaron Rodgers",
+      "position": "QB",
+      "team": "NYJ",
+      "opponent": "DEN",
+      "salary": 11200,
+      "projection": 18.5,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_002",
+      "name": "Bo Nix",
+      "position": "QB",
+      "team": "DEN",
+      "opponent": "NYJ",
+      "salary": 10800,
+      "projection": 16.2,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_003",
+      "name": "Breece Hall",
+      "position": "RB",
+      "team": "NYJ",
+      "opponent": "DEN",
+      "salary": 10400,
+      "projection": 15.8,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_004",
+      "name": "Javonte Williams",
+      "position": "RB",
+      "team": "DEN",
+      "opponent": "NYJ",
+      "salary": 9600,
+      "projection": 13.2,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_005",
+      "name": "Garrett Wilson",
+      "position": "WR",
+      "team": "NYJ",
+      "opponent": "DEN",
+      "salary": 10000,
+      "projection": 14.6,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_006",
+      "name": "Courtland Sutton",
+      "position": "WR",
+      "team": "DEN",
+      "opponent": "NYJ",
+      "salary": 9200,
+      "projection": 12.4,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_007",
+      "name": "Davante Adams",
+      "position": "WR",
+      "team": "NYJ",
+      "opponent": "DEN",
+      "salary": 8800,
+      "projection": 11.8,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_008",
+      "name": "Tyler Lockett",
+      "position": "WR",
+      "team": "DEN",
+      "opponent": "NYJ",
+      "salary": 8000,
+      "projection": 10.5,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_009",
+      "name": "Allen Lazard",
+      "position": "WR",
+      "team": "NYJ",
+      "opponent": "DEN",
+      "salary": 7200,
+      "projection": 8.9,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_010",
+      "name": "Troy Franklin",
+      "position": "WR",
+      "team": "DEN",
+      "opponent": "NYJ",
+      "salary": 6800,
+      "projection": 7.8,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_011",
+      "name": "Tyler Conklin",
+      "position": "TE",
+      "team": "NYJ",
+      "opponent": "DEN",
+      "salary": 6400,
+      "projection": 8.2,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_012",
+      "name": "Adam Trautman",
+      "position": "TE",
+      "team": "DEN",
+      "opponent": "NYJ",
+      "salary": 5600,
+      "projection": 6.5,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_013",
+      "name": "Broncos",
+      "position": "DST",
+      "team": "DEN",
+      "opponent": "NYJ",
+      "salary": 5200,
+      "projection": 8.5,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_014",
+      "name": "Jets",
+      "position": "DST",
+      "team": "NYJ",
+      "opponent": "DEN",
+      "salary": 4800,
+      "projection": 7.8,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_015",
+      "name": "Braelon Allen",
+      "position": "RB",
+      "team": "NYJ",
+      "opponent": "DEN",
+      "salary": 7800,
+      "projection": 9.1,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_016",
+      "name": "Jaleel McLaughlin",
+      "position": "RB",
+      "team": "DEN",
+      "opponent": "NYJ",
+      "salary": 6200,
+      "projection": 6.8,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_017",
+      "name": "Mike Williams",
+      "position": "WR",
+      "team": "NYJ",
+      "opponent": "DEN",
+      "salary": 7600,
+      "projection": 9.4,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_018",
+      "name": "Lil'Jordan Humphrey",
+      "position": "WR",
+      "team": "DEN",
+      "opponent": "NYJ",
+      "salary": 6000,
+      "projection": 6.1,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_019",
+      "name": "Xavier Gipson",
+      "position": "WR",
+      "team": "NYJ",
+      "opponent": "DEN",
+      "salary": 5400,
+      "projection": 5.2,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    },
+    {
+      "id": "tnf_020",
+      "name": "Marvin Mims Jr.",
+      "position": "WR",
+      "team": "DEN",
+      "opponent": "NYJ",
+      "salary": 4800,
+      "projection": 4.9,
+      "game_info": "DEN @ NYJ TNF",
+      "last_updated": "2025-09-18T12:00:00Z"
+    }
+  ]
+}

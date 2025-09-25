@@ -1,36 +1,23 @@
-# DFS Pro Optimizer - Docker Container
-FROM python:3.13-slim
+# Use official Node.js image as base with specific digest to avoid rate limits
+FROM node:22@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
 
 # Set working directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
-# Copy requirements first (for better layer caching)
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Install dependencies
+RUN npm install
 
-# Copy application files
+# Copy the rest of the application code
 COPY . .
 
-# Create data directory
-RUN mkdir -p data
+# Build the application using npm instead of pnpm to avoid workspace issues
+RUN npm run build
 
-# Expose port
-EXPOSE 8000
+# Expose the port the app runs on
+EXPOSE 5000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/api/status || exit 1
-
-# Environment variables
-ENV FLASK_APP=app.py
-ENV FLASK_ENV=production
-ENV PYTHONPATH=/app
-
-# Run the application
-CMD ["python3", "app.py"]
+# Command to run the application
+CMD ["npm", "start"]

@@ -18,6 +18,7 @@ Based on comprehensive GitHub research and industry analysis:
 ### **✅ WORKING DATA SOURCES (CSV-Based)**
 
 #### **1. Awesemo.com - INDUSTRY STANDARD**
+
 - **Status**: ✅ **PREMIUM SERVICE** - Most used by pros
 - **Data**: Player projections, ownership predictions, boom/bust analysis
 - **Format**: CSV export (requires paid subscription)
@@ -25,12 +26,14 @@ Based on comprehensive GitHub research and industry analysis:
 - **Integration**: Used by NBA-DFS-Tools and most professional optimizers
 
 #### **2. DraftKings Official Export**
+
 - **Status**: ✅ **AVAILABLE** - Player salaries and contest data
 - **Data**: Live salaries, player IDs, contest structures
 - **Format**: CSV download from DraftKings contest pages
 - **Usage**: Export from DK → Import to optimizer → Generate lineups → Import back to DK
 
 #### **3. FanDuel Official Export**
+
 - **Status**: ✅ **AVAILABLE** - Similar to DraftKings
 - **Data**: Player data, salaries, contest info
 - **Format**: CSV export/import
@@ -39,6 +42,7 @@ Based on comprehensive GitHub research and industry analysis:
 ### **❌ LIVE API REALITY CHECK**
 
 #### **Unofficial DraftKings APIs**
+
 - **jaebradley/draftkings_client**: Uses unofficial endpoints (may break anytime)
 - **Most GitHub repos**: Either outdated or use screen scraping (ToS violations)
 - **Rate limiting**: Heavy restrictions on unofficial endpoints
@@ -84,6 +88,7 @@ entry_1,NFL Main Slate,Josh Allen (10816),Saquon Barkley (11675),Travis Etienne 
 ```
 
 **Key Requirements:**
+
 - **Player Format**: `Player Name (DraftKings ID)`
 - **Positions**: QB, RB1, RB2, WR1, WR2, WR3, TE, FLEX, DST
 - **Entry ID**: Unique identifier for each lineup
@@ -99,6 +104,7 @@ entry_1,NFL Main Slate,Josh Allen (10816),Saquon Barkley (11675),Travis Etienne 
 **Root Cause**: Missing dependencies or startup failures
 
 **Solution**:
+
 ```bash
 # Check container status
 docker ps -a | grep dfs
@@ -119,20 +125,20 @@ Since live optimization may not work, implement **client-side optimization**:
 ```javascript
 // Simple client-side lineup generation
 function generateBasicLineups() {
-    const lineups = [];
-    
-    // Sort players by value
-    const sortedPlayers = currentPlayers
-        .filter(p => !bannedPlayers.has(p.name))
-        .sort((a, b) => b.value - a.value);
-    
-    // Generate lineup using greedy approach
-    for (let i = 0; i < numLineups; i++) {
-        const lineup = buildLineup(sortedPlayers, lockedPlayers);
-        lineups.push(lineup);
-    }
-    
-    return lineups;
+  const lineups = [];
+
+  // Sort players by value
+  const sortedPlayers = currentPlayers
+    .filter(p => !bannedPlayers.has(p.name))
+    .sort((a, b) => b.value - a.value);
+
+  // Generate lineup using greedy approach
+  for (let i = 0; i < numLineups; i++) {
+    const lineup = buildLineup(sortedPlayers, lockedPlayers);
+    lineups.push(lineup);
+  }
+
+  return lineups;
 }
 ```
 
@@ -143,6 +149,7 @@ function generateBasicLineups() {
 ### **✅ IMMEDIATE SOLUTIONS**
 
 #### **Option 1: Professional CSV Workflow**
+
 1. **Download from DraftKings**: Player salaries and IDs
 2. **Get Projections**: Awesemo.com premium service ($30/month)
 3. **Import to System**: CSV upload functionality
@@ -150,12 +157,14 @@ function generateBasicLineups() {
 5. **Export to DraftKings**: Proper CSV format
 
 #### **Option 2: Free Data Sources**
+
 1. **FantasyPros**: Free consensus projections
 2. **ESPN API**: Basic player stats
 3. **NFL.com**: Injury reports and news
 4. **Manual Entry**: For small slates
 
 #### **Option 3: Hybrid Approach**
+
 1. **Use current 220-player database** (already working)
 2. **Update projections manually** for key games
 3. **Focus on optimization engine** rather than data collection
@@ -166,6 +175,7 @@ function generateBasicLineups() {
 ## 🎯 **NEXT STEPS TO FIX SYSTEM**
 
 ### **Priority 1: Fix Optimizer Backend**
+
 ```bash
 # Start local Python servers
 cd dfs-system-2
@@ -175,17 +185,20 @@ python draftkings_api_server.py &
 ```
 
 ### **Priority 2: Implement Client-Side Optimization**
+
 - Add JavaScript-based lineup generation
 - Use current 220-player pool
 - Apply salary cap and position constraints
 - Generate valid DraftKings lineups
 
 ### **Priority 3: Perfect CSV Export**
+
 - Implement exact DraftKings CSV format
 - Include proper player IDs and contest names
 - Test upload back to DraftKings
 
 ### **Priority 4: Tab Validation**
+
 - Test each tab individually
 - Fix any broken functionality
 - Ensure all buttons and features work
@@ -195,6 +208,7 @@ python draftkings_api_server.py &
 ## 💡 **PROFESSIONAL INSIGHT**
 
 **The DFS industry reality:**
+
 - **No one uses live APIs** for day-to-day optimization
 - **CSV workflow is the professional standard**
 - **Awesemo.com dominates** the projection market

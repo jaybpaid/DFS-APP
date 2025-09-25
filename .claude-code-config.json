@@ -1,0 +1,28 @@
+{
+  "api": {
+    "provider": "openrouter",
+    "baseUrl": "https://openrouter.ai/api/v1",
+    "model": "microsoft/wizardlm-2-8x22b",
+    "apiKey": "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"
+  },
+  "models": {
+    "preferFree": true,
+    "freeModels": [
+      "meta-llama/llama-3.1-8b-instruct:free",
+      "mistralai/mistral-7b-instruct:free",
+      "huggingfaceh4/zephyr-7b-beta:free",
+      "openchat/openchat-7b:free",
+      "gryphe/mythomist-7b:free",
+      "undi95/toppy-m-7b:free",
+      "microsoft/wizardlm-2-8x22b",
+      "openrouter/auto"
+    ],
+    "defaultModel": "openrouter/auto"
+  },
+  "workspace": {
+    "enforceFreeTier": true,
+    "maxTokens": 4096,
+    "temperature": 0.7
+  },
+  "theme": "tokyonight"
+}

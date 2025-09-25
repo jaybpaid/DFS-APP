@@ -1,0 +1,133 @@
+{
+  "timestamp": "2025-09-20T16:22:58.882596",
+  "gateway_status": {
+    "process_running": false,
+    "containers_running": false,
+    "configuration_exists": true,
+    "start_script_exists": true,
+    "cline_configured": true
+  },
+  "child_servers": {
+    "filesystem": {
+      "package_available": false,
+      "container_test": false,
+      "error": null
+    },
+    "memory": {
+      "package_available": false,
+      "container_test": false,
+      "error": "Test timed out"
+    },
+    "sqlite": {
+      "package_available": false,
+      "container_test": false,
+      "error": null
+    },
+    "fetch": {
+      "package_available": false,
+      "container_test": false,
+      "error": null
+    },
+    "calculator": {
+      "package_available": false,
+      "container_test": false,
+      "error": "Test timed out"
+    },
+    "git": {
+      "package_available": false,
+      "container_test": false,
+      "error": null
+    }
+  },
+  "configuration_checks": {
+    "children_defined": 0,
+    "enabled_children": 0,
+    "disabled_children": 0,
+    "children_with_env": 0,
+    "missing_env_files": []
+  },
+  "connectivity_tests": {},
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "category": "Gateway",
+      "issue": "Gateway not running",
+      "solution": "Run: ~/.mcp/docker-gateway/start-gateway.sh",
+      "command": "~/.mcp/docker-gateway/start-gateway.sh"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "API Keys",
+      "issue": "Missing openai.env",
+      "solution": "Create ~/.mcp/docker-gateway/.env/openai.env with required API keys",
+      "command": "touch ~/.mcp/docker-gateway/.env/openai.env"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "API Keys",
+      "issue": "Missing anthropic.env",
+      "solution": "Create ~/.mcp/docker-gateway/.env/anthropic.env with required API keys",
+      "command": "touch ~/.mcp/docker-gateway/.env/anthropic.env"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Child Servers",
+      "issue": "filesystem server package not available",
+      "solution": "Install or verify filesystem MCP server package",
+      "command": "npx --yes @modelcontextprotocol/server-filesystem --help"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Child Servers",
+      "issue": "memory server package not available",
+      "solution": "Install or verify memory MCP server package",
+      "command": "npx --yes @modelcontextprotocol/server-memory --help"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Child Servers",
+      "issue": "sqlite server package not available",
+      "solution": "Install or verify sqlite MCP server package",
+      "command": "npx --yes @modelcontextprotocol/server-sqlite --help"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Child Servers",
+      "issue": "fetch server package not available",
+      "solution": "Install or verify fetch MCP server package",
+      "command": "npx --yes @modelcontextprotocol/server-fetch --help"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Child Servers",
+      "issue": "calculator server package not available",
+      "solution": "Install or verify calculator MCP server package",
+      "command": "npx --yes @modelcontextprotocol/server-calculator --help"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "Child Servers",
+      "issue": "git server package not available",
+      "solution": "Install or verify git MCP server package",
+      "command": "npx --yes @modelcontextprotocol/server-git --help"
+    }
+  ],
+  "api_keys_status": {
+    "env_directory_exists": true,
+    "available_keys": ["brave-search.env", "github.env"],
+    "missing_keys": ["openai.env", "anthropic.env"]
+  },
+  "gateway_start_attempt": {
+    "attempted": true,
+    "success": false,
+    "error": "Process exited: [GATEWAY] Starting in 569ms...\n[GATEWAY ERROR] Docker is not installed or not in PATH\n",
+    "process_id": null
+  },
+  "summary": {
+    "overall_status": "NEEDS_ATTENTION",
+    "gateway_health": "3/5",
+    "child_server_health": "0/6",
+    "total_issues": 9,
+    "high_priority_issues": 1
+  }
+}

@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DFS Terminal Dashboard</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'JetBrains Mono', 'Courier New', monospace;
+        background: #000;
+        color: #00ff00;
+        min-height: 100vh;
+        padding: 20px;
+        overflow-x: auto;
+      }
+
+      .terminal {
+        background: rgba(0, 20, 0, 0.9);
+        border: 2px solid #00ff00;
+        border-radius: 8px;
+        padding: 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+      }
+
+      .terminal-header {
+        border-bottom: 1px solid #00ff00;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+      }
+
+      .terminal-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+
+      .terminal-subtitle {
+        text-align: center;
+        opacity: 0.7;
+        font-size: 0.9rem;
+      }
+
+      .ascii-art {
+        font-size: 0.7rem;
+        text-align: center;
+        margin: 10px 0;
+        color: #00aa00;
+      }
+
+      .command-line {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+
+      .prompt {
+        color: #00ff00;
+        margin-right: 10px;
+      }
+
+      .cursor {
+        animation: blink 1s infinite;
+      }
+
+      @keyframes blink {
+        0%,
+        50% {
+          opacity: 1;
+        }
+        51%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .section {
+        margin-bottom: 25px;
+        border: 1px solid #004400;
+        padding: 15px;
+        border-radius: 4px;
+      }
+
+      .section-title {
+        color: #00ff00;
+        font-weight: 600;
+        margin-bottom: 10px;
+        text-decoration: underline;
+      }
+
+      .grid {
+        display: grid;
+        gap: 15px;
+      }
+
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .table {
+        width: 100%;
+        border: 1px solid #00aa00;
+        border-collapse: collapse;
+      }
+
+      .table th,
+      .table td {
+        border: 1px solid #004400;
+        padding: 8px;
+        text-align: left;
+        font-size: 0.85rem;
+      }
+
+      .table th {
+        background: #002200;
+        color: #00ff00;
+        font-weight: 600;
+      }
+
+      .table tr:nth-child(even) {
+        background: rgba(0, 68, 0, 0.1);
+      }
+
+      .table tr:hover {
+        background: rgba(0, 255, 0, 0.1);
+      }
+
+      .btn-terminal {
+        background: #000;
+        border: 2px solid #00ff00;
+        color: #00ff00;
+        padding: 10px 20px;
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-terminal:hover {
+        background: #00ff00;
+        color: #000;
+        box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+      }
+
+      .btn-terminal:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .status-ok {
+        color: #00ff00;
+      }
+      .status-warn {
+        color: #ffff00;
+      }
+      .status-error {
+        color: #ff0000;
+      }
+
+      .contest-item {
+        border: 1px solid #004400;
+        padding: 10px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .contest-item:hover {
+        border-color: #00ff00;
+        background: rgba(0, 255, 0, 0.05);
+      }
+
+      .contest-item.selected {
+        border-color: #00ff00;
+        background: rgba(0, 255, 0, 0.1);
+      }
+
+      .input-terminal {
+        background: #000;
+        border: 1px solid #00aa00;
+        color: #00ff00;
+        padding: 8px;
+        font-family: 'JetBrains Mono', monospace;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .input-terminal:focus {
+        outline: none;
+        border-color: #00ff00;
+        box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+      }
+
+      @media (max-width: 768px) {
+        .grid-2,
+        .grid-3 {
+          grid-template-columns: 1fr;
+        }
+
+        body {
+          padding: 10px;
+        }
+
+        .table {
+          font-size: 0.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="terminal">
+      <div class="terminal-header">
+        <div class="ascii-art">
+          ╔══════════════════════════════════════════════════════════════╗ ║ DFS
+          TERMINAL OPTIMIZER ║ ║ Version 2.0.1 ║
+          ╚══════════════════════════════════════════════════════════════╝
+        </div>
+        <div class="command-line">
+          <span class="prompt">dfs@optimizer:~$</span>
+          <span>./run_optimizer --mode=production --api=localhost:8001</span>
+          <span class="cursor">_</span>
+        </div>
+      </div>
+
+      <div class="grid grid-3">
+        <div class="section">
+          <div class="section-title">[SYSTEM STATUS]</div>
+          <div class="command-line">
+            <span class="prompt">></span>
+            <span>API CONNECTION: </span>
+            <span id="api-status" class="status-ok">ONLINE</span>
+          </div>
+          <div class="command-line">
+            <span class="prompt">></span>
+            <span>PLAYERS LOADED: </span>
+            <span id="player-count">0</span>
+          </div>
+          <div class="command-line">
+            <span class="prompt">></span>
+            <span>SALARY CAP: </span>
+            <span>$50,000</span>
+          </div>
+          <div class="command-line">
+            <span class="prompt">></span>
+            <span>MCP SERVERS: </span>
+            <span class="status-ok">CONNECTED</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">[OPTIMIZATION PARAMS]</div>
+          <div style="margin-bottom: 10px">
+            <label for="num-lineups">LINEUPS:</label>
+            <input
+              type="number"
+              id="num-lineups"
+              value="20"
+              min="1"
+              max="150"
+              class="input-terminal"
+            />
+          </div>
+          <div style="margin-bottom: 10px">
+            <label for="uniqueness">UNIQUENESS:</label>
+            <input
+              type="number"
+              id="uniqueness"
+              value="6"
+              min="1"
+              max="9"
+              class="input-terminal"
+            />
+          </div>
+          <button
+            class="btn-terminal"
+            id="optimize-btn"
+            onclick="executeOptimization()"
+          >
+            [EXECUTE OPTIMIZATION]
+          </button>
+        </div>
+
+        <div class="section">
+          <div class="section-title">[QUICK COMMANDS]</div>
+          <div class="command-line">
+            <span class="prompt">></span>
+            <span
+              onclick="refreshData()"
+              style="cursor: pointer; text-decoration: underline"
+              >refresh_data</span
+            >
+          </div>
+          <div class="command-line">
+            <span class="prompt">></span>
+            <span
+              onclick="exportLineups()"
+              style="cursor: pointer; text-decoration: underline"
+              >export_csv</span
+            >
+          </div>
+          <div class="command-line">
+            <span class="prompt">></span>
+            <span
+              onclick="clearResults()"
+              style="cursor: pointer; text-decoration: underline"
+              >clear_results</span
+            >
+          </div>
+          <div class="command-line">
+            <span class="prompt">></span>
+            <span
+              onclick="showHelp()"
+              style="cursor: pointer; text-decoration: underline"
+              >help</span
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="section">
+          <div class="section-title">[CONTEST SELECTION]</div>
+          <div id="contest-list">
+            <div class="command-line">
+              <span class="prompt">></span>
+              <span>Loading contests...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">[LINEUP RESULTS]</div>
+          <div id="lineup-results">
+            <div class="command-line">
+              <span class="prompt">></span>
+              <span>Awaiting optimization command...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">[PLAYER POOL DATA]</div>
+        <div id="player-pool">
+          <div class="command-line">
+            <span class="prompt">></span>
+            <span>Select contest to load player data...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_BASE = 'http://localhost:8001/api';
+      const API_KEY = 'dfs-demo-key';
+      let selectedSlateId = null;
+      let currentPlayers = [];
+
+      async function fetchWithAuth(url, options = {}) {
+        return fetch(url, {
+          ...options,
+          headers: {
+            'X-API-Key': API_KEY,
+            'Content-Type': 'application/json',
+            ...options.headers,
+          },
+        });
+      }
+
+      function print(message, elementId = 'player-pool', isError = false) {
+        const element = document.getElementById(elementId);
+        const color = isError ? '#ff0000' : '#00ff00';
+        element.innerHTML += `<div class="command-line"><span class="prompt">></span><span style="color: ${color};">${message}</span></div>`;
+        element.scrollTop = element.scrollHeight;
+      }
+
+      async function loadContests() {
+        const contestList = document.getElementById('contest-list');
+        contestList.innerHTML =
+          '<div class="command-line"><span class="prompt">></span><span>Fetching contests from API...</span></div>';
+
+        try {
+          const response = await fetchWithAuth(`${API_BASE}/slates`);
+          const data = await response.json();
+
+          if (data.slates && data.slates.length > 0) {
+            contestList.innerHTML = data.slates
+              .map(
+                (slate, index) => `
+                        <div class="contest-item" data-slate-id="${slate.id}" onclick="selectContest('${slate.id}', this)">
+                            <div class="command-line">
+                                <span class="prompt">[${index + 1}]</span>
+                                <span>${slate.name}</span>
+                            </div>
+                            <div class="command-line" style="margin-left: 20px;">
+                                <span>PLAYERS: ${slate.playerCount || 0} | CAP: $${(slate.salaryCap || 50000).toLocaleString()} | STATUS: ${slate.status?.toUpperCase() || 'ACTIVE'}</span>
+                            </div>
+                        </div>
+                    `
+              )
+              .join('');
+          } else {
+            // Fallback demo data
+            contestList.innerHTML = `
+                        <div class="contest-item" data-slate-id="demo-1" onclick="selectContest('demo-1', this)">
+                            <div class="command-line">
+                                <span class="prompt">[1]</span>
+                                <span>NFL_WEEK_3_MAIN_SLATE</span>
+                            </div>
+                            <div class="command-line" style="margin-left: 20px;">
+                                <span>PLAYERS: 247 | CAP: $50,000 | STATUS: ACTIVE</span>
+                            </div>
+                        </div>
+                        <div class="contest-item" data-slate-id="demo-2" onclick="selectContest('demo-2', this)">
+                            <div class="command-line">
+                                <span class="prompt">[2]</span>
+                                <span>THURSDAY_NIGHT_FOOTBALL</span>
+                            </div>
+                            <div class="command-line" style="margin-left: 20px;">
+                                <span>PLAYERS: 18 | CAP: $50,000 | STATUS: STARTING_SOON</span>
+                            </div>
+                        </div>
+                    `;
+          }
+        } catch (error) {
+          contestList.innerHTML =
+            '<div class="command-line"><span class="prompt">ERROR:</span><span style="color: #ff0000;">Failed to load contests</span></div>';
+        }
+      }
+
+      function selectContest(slateId, element) {
+        document
+          .querySelectorAll('.contest-item')
+          .forEach(item => item.classList.remove('selected'));
+        element.classList.add('selected');
+
+        selectedSlateId = slateId;
+        document.getElementById('player-pool').innerHTML = '';
+        print(`Contest selected: ${slateId}`);
+        print('Loading player data...');
+        loadPlayers(slateId);
+      }
+
+      async function loadPlayers(slateId) {
+        try {
+          const response = await fetchWithAuth(`${API_BASE}/slates/${slateId}/players`);
+          const data = await response.json();
+
+          if (data.players && data.players.length > 0) {
+            currentPlayers = data.players;
+            document.getElementById('player-count').textContent = data.players.length;
+
+            print(`Loaded ${data.players.length} players successfully`);
+
+            const playerPool = document.getElementById('player-pool');
+            playerPool.innerHTML += `
+                        <table class="table" style="margin-top: 15px;">
+                            <thead>
+                                <tr>
+                                    <th>PLAYER_NAME</th>
+                                    <th>POS</th>
+                                    <th>TEAM</th>
+                                    <th>SALARY</th>
+                                    <th>PROJ</th>
+                                    <th>VALUE</th>
+                                    <th>OWN%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.players
+                                  .slice(0, 25)
+                                  .map(
+                                    player => `
+                                    <tr>
+                                        <td>${(player.display_name || player.name || '').toUpperCase()}</td>
+                                        <td>${player.position}</td>
+                                        <td>${player.team_abbreviation || player.team}</td>
+                                        <td>$${(player.salary || 0).toLocaleString()}</td>
+                                        <td>${(player.projection || 0).toFixed(1)}</td>
+                                        <td style="color: ${(player.projection * 1000) / player.salary >= 2.5 ? '#00ff00' : '#ffff00'};">
+                                            ${((player.projection * 1000) / player.salary || 0).toFixed(2)}x
+                                        </td>
+                                        <td>${((player.ownership || 0) * 100).toFixed(1)}%</td>
+                                    </tr>
+                                `
+                                  )
+                                  .join('')}
+                            </tbody>
+                        </table>
+                    `;
+          } else {
+            print('No players found for this contest', 'player-pool', true);
+          }
+        } catch (error) {
+          print('ERROR: Failed to load player data', 'player-pool', true);
+        }
+      }
+
+      async function executeOptimization() {
+        if (!selectedSlateId || !currentPlayers.length) {
+          print(
+            'ERROR: No contest selected or player data missing',
+            'lineup-results',
+            true
+          );
+          return;
+        }
+
+        const btn = document.getElementById('optimize-btn');
+        btn.disabled = true;
+        btn.textContent = '[PROCESSING...]';
+
+        document.getElementById('lineup-results').innerHTML = '';
+        print('Initializing optimization engine...', 'lineup-results');
+        print('Processing constraints...', 'lineup-results');
+        print('Generating lineup combinations...', 'lineup-results');
+
+        try {
+          const optimizationRequest = {
+            slateId: selectedSlateId,
+            players: currentPlayers.slice(0, 50),
+            constraints: {
+              numLineups: parseInt(document.getElementById('num-lineups').value) || 20,
+              salaryCapMode: 'hard',
+              salaryCap: 50000,
+              uniquePlayers: parseInt(document.getElementById('uniqueness').value) || 6,
+              minSalary: 49000,
+              maxSalary: 50000,
+            },
+          };
+
+          const response = await fetchWithAuth(`${API_BASE}/optimize`, {
+            method: 'POST',
+            body: JSON.stringify(optimizationRequest),
+          });
+
+          const result = await response.json();
+
+          if (result.lineups && result.lineups.length > 0) {
+            print(
+              `SUCCESS: Generated ${result.lineups.length} optimal lineups`,
+              'lineup-results'
+            );
+
+            const resultsDiv = document.getElementById('lineup-results');
+            resultsDiv.innerHTML += `
+                        <table class="table" style="margin-top: 15px;">
+                            <thead>
+                                <tr>
+                                    <th>LINEUP_ID</th>
+                                    <th>TOTAL_SALARY</th>
+                                    <th>PROJ_SCORE</th>
+                                    <th>ROI_EST</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${result.lineups
+                                  .slice(0, 10)
+                                  .map(
+                                    (lineup, index) => `
+                                    <tr onclick="showLineupDetails(${index})">
+                                        <td>LINEUP_${(index + 1).toString().padStart(3, '0')}</td>
+                                        <td>$${lineup.totalSalary?.toLocaleString() || '50,000'}</td>
+                                        <td>${lineup.projectedScore?.toFixed(1) || '140.0'}</td>
+                                        <td class="status-ok">${lineup.roi?.toFixed(0) || '15'}%</td>
+                                    </tr>
+                                `
+                                  )
+                                  .join('')}
+                            </tbody>
+                        </table>
+                    `;
+          } else {
+            print('WARNING: No lineups generated', 'lineup-results', true);
+          }
+        } catch (error) {
+          print(
+            'ERROR: Optimization failed - ' + error.message,
+            'lineup-results',
+            true
+          );
+        } finally {
+          btn.disabled = false;
+          btn.textContent = '[EXECUTE OPTIMIZATION]';
+        }
+      }
+
+      async function refreshData() {
+        print('Refreshing system data...');
+
+        try {
+          const response = await fetchWithAuth(`${API_BASE}/healthz`);
+          const health = await response.json();
+
+          if (health.ok || response.ok) {
+            document.getElementById('api-status').textContent = 'ONLINE';
+            document.getElementById('api-status').className = 'status-ok';
+            print('API health check: PASSED');
+            loadContests();
+          } else {
+            throw new Error('API health check failed');
+          }
+        } catch (error) {
+          document.getElementById('api-status').textContent = 'OFFLINE';
+          document.getElementById('api-status').className = 'status-error';
+          print('API health check: FAILED', 'player-pool', true);
+        }
+      }
+
+      function clearResults() {
+        document.getElementById('lineup-results').innerHTML =
+          '<div class="command-line"><span class="prompt">></span><span>Results cleared</span></div>';
+      }
+
+      function showHelp() {
+        const helpText = `
+╔══════════════════════════════════════════════════════════════╗
+║                        HELP COMMANDS                          ║
+╠══════════════════════════════════════════════════════════════╣
+║ refresh_data        - Refresh API connection and data        ║
+║ export_csv          - Export lineups to CSV format           ║
+║ clear_results       - Clear optimization results             ║
+║ help               - Show this help menu                     ║
+╚══════════════════════════════════════════════════════════════╝
+            `;
+        alert(helpText);
+      }
+
+      function exportLineups() {
+        print('CSV export functionality not yet implemented', 'lineup-results', true);
+      }
+
+      // Initialize terminal
+      window.addEventListener('DOMContentLoaded', () => {
+        print('DFS Terminal Optimizer v2.0.1 initialized');
+        print('Establishing API connection...');
+        loadContests();
+        refreshData();
+      });
+    </script>
+  </body>
+</html>

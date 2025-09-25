@@ -9,88 +9,43 @@
   "validated_repositories": {
     "draftfast": {
       "url": "https://github.com/BenBrostoff/draftfast",
-      "sports": [
-        "NFL",
-        "NBA",
-        "MLB",
-        "NHL",
-        "PGA",
-        "WNBA",
-        "SOCCER"
-      ],
-      "sites": [
-        "DraftKings",
-        "FanDuel"
-      ],
+      "sports": ["NFL", "NBA", "MLB", "NHL", "PGA", "WNBA", "SOCCER"],
+      "sites": ["DraftKings", "FanDuel"],
       "status": "validated",
       "last_updated": null
     },
     "chanzer0_nfl": {
       "url": "https://github.com/chanzer0/NFL-DFS-Tools",
-      "sports": [
-        "NFL"
-      ],
-      "sites": [
-        "DraftKings",
-        "FanDuel"
-      ],
+      "sports": ["NFL"],
+      "sites": ["DraftKings", "FanDuel"],
       "status": "validated",
       "last_updated": null
     },
     "chanzer0_nba": {
       "url": "https://github.com/chanzer0/NBA-DFS-Tools",
-      "sports": [
-        "NBA"
-      ],
-      "sites": [
-        "DraftKings",
-        "FanDuel"
-      ],
+      "sports": ["NBA"],
+      "sites": ["DraftKings", "FanDuel"],
       "status": "validated",
       "last_updated": null
     },
     "pydfs_optimizer": {
       "url": "https://github.com/DimaKudosh/pydfs-lineup-optimizer",
-      "sports": [
-        "NFL",
-        "NBA",
-        "MLB",
-        "NHL"
-      ],
-      "sites": [
-        "DraftKings",
-        "FanDuel",
-        "Yahoo"
-      ],
+      "sports": ["NFL", "NBA", "MLB", "NHL"],
+      "sites": ["DraftKings", "FanDuel", "Yahoo"],
       "status": "validated",
       "last_updated": null
     },
     "dfs_with_r": {
       "url": "https://github.com/dfs-with-r/coach",
-      "sports": [
-        "NFL",
-        "NBA",
-        "MLB"
-      ],
-      "sites": [
-        "DraftKings",
-        "FanDuel"
-      ],
+      "sports": ["NFL", "NBA", "MLB"],
+      "sites": ["DraftKings", "FanDuel"],
       "status": "validated",
       "last_updated": null
     },
     "draftkings_api_docs": {
       "url": "https://github.com/SeanDrum/Draft-Kings-API-Documentation",
-      "sports": [
-        "NFL",
-        "NBA",
-        "MLB",
-        "NHL",
-        "PGA"
-      ],
-      "sites": [
-        "DraftKings"
-      ],
+      "sports": ["NFL", "NBA", "MLB", "NHL", "PGA"],
+      "sites": ["DraftKings"],
       "status": "validated",
       "last_updated": null
     }

@@ -1,0 +1,403 @@
+{
+  "discovery_session": "2025-09-16T21:39:30.544775",
+  "methods_tested": 3,
+  "total_coverage": {},
+  "dk_comprehensive": {
+    "method": "dk_api_comprehensive",
+    "timestamp": "2025-09-16T21:39:30.544803",
+    "NFL": {
+      "total_contests": 6563,
+      "unique_slates": 7,
+      "sample_slates": [
+        [
+          133903,
+          {
+            "name": "NFL $3.25M Fantasy Football Millionaire [$1M to 1s",
+            "entry": 20,
+            "prizes": 3250000.0,
+            "start": "Sun 1:00PM"
+          }
+        ],
+        [
+          134062,
+          {
+            "name": "NFL $5M Midseason Main Event [$1M to 1st]",
+            "entry": 1111,
+            "prizes": 5000000.0,
+            "start": "Sun 1:00PM"
+          }
+        ],
+        [
+          133970,
+          {
+            "name": "NFL $1.5M Thursday Night Showdown [$500K to 1st] (",
+            "entry": 15,
+            "prizes": 1500000.0,
+            "start": "Thu 8:15PM"
+          }
+        ],
+        [
+          133234,
+          {
+            "name": "NFL Showdown $2M MEGA Millionaire [$1M to 1st] (DE",
+            "entry": 4494,
+            "prizes": 2023000.0,
+            "start": "Mon 8:15PM"
+          }
+        ],
+        [
+          134038,
+          {
+            "name": "NFL $300K Early Only Rush [$100K to 1st] (Early On",
+            "entry": 18,
+            "prizes": 300000.0,
+            "start": "Sun 1:00PM"
+          }
+        ]
+      ]
+    },
+    "NBA": {
+      "total_contests": 343,
+      "unique_slates": 4,
+      "sample_slates": [
+        [
+          133782,
+          {
+            "name": "WNBA $40K Fadeaway [$10K to 1st] ",
+            "entry": 15,
+            "prizes": 40000.0,
+            "start": "Wed 8:00PM"
+          }
+        ],
+        [
+          133784,
+          {
+            "name": "WNBA Showdown $15K Fadeaway [$5K to 1st] (MIN @ GS",
+            "entry": 15,
+            "prizes": 15000.0,
+            "start": "Wed 10:00PM"
+          }
+        ],
+        [
+          133783,
+          {
+            "name": "WNBA Showdown $4K Fadeaway [$1K to 1st] (PHO @ NYL",
+            "entry": 15,
+            "prizes": 4000.0,
+            "start": "Wed 8:00PM"
+          }
+        ],
+        [
+          133785,
+          {
+            "name": "WNBA Single Stat $1 Winner Take All [$100 to 1st] ",
+            "entry": 1,
+            "prizes": 100.0,
+            "start": "Wed 8:00PM"
+          }
+        ]
+      ]
+    },
+    "MLB": {
+      "total_contests": 1831,
+      "unique_slates": 12,
+      "sample_slates": [
+        [
+          133902,
+          {
+            "name": "MLB $300K Mega 8's [$100K to 1st]",
+            "entry": 888,
+            "prizes": 300000.0,
+            "start": "Wed 7:05PM"
+          }
+        ],
+        [
+          133901,
+          {
+            "name": "MLB $120K Perfect Game [$20K to 1st] (Early)",
+            "entry": 333,
+            "prizes": 120000.0,
+            "start": "Wed 12:35PM"
+          }
+        ],
+        [
+          133962,
+          {
+            "name": "MLB Showdown $30K Relay Throw [$10K to 1st] (PHI @",
+            "entry": 15,
+            "prizes": 30000.0,
+            "start": "Wed 10:10PM"
+          }
+        ],
+        [
+          133952,
+          {
+            "name": "MLB $8K Extra Inning [$2K to 1st] (Afternoon)",
+            "entry": 10,
+            "prizes": 8000.0,
+            "start": "Wed 3:40PM"
+          }
+        ],
+        [
+          133954,
+          {
+            "name": "MLB $8K Extra Inning [$2K to 1st] (Turbo)",
+            "entry": 10,
+            "prizes": 8000.0,
+            "start": "Wed 6:40PM"
+          }
+        ]
+      ]
+    },
+    "NHL": {
+      "total_contests": 0,
+      "unique_slates": 0,
+      "sample_slates": []
+    },
+    "PGA": {
+      "total_contests": 0,
+      "unique_slates": 0,
+      "sample_slates": []
+    },
+    "WNBA": {
+      "total_contests": 1917,
+      "unique_slates": 22,
+      "sample_slates": [
+        [
+          133903,
+          {
+            "name": "NFL $3.25M Fantasy Football Millionaire [$1M to 1s",
+            "entry": 20,
+            "prizes": 3250000.0,
+            "start": "Sun 1:00PM"
+          }
+        ],
+        [
+          134062,
+          {
+            "name": "NFL $5M Midseason Main Event [$1M to 1st]",
+            "entry": 1111,
+            "prizes": 5000000.0,
+            "start": "Sun 1:00PM"
+          }
+        ],
+        [
+          133970,
+          {
+            "name": "NFL $1.5M Thursday Night Showdown [$500K to 1st] (",
+            "entry": 15,
+            "prizes": 1500000.0,
+            "start": "Thu 8:15PM"
+          }
+        ],
+        [
+          133234,
+          {
+            "name": "NFL Showdown $2M MEGA Millionaire [$1M to 1st] (DE",
+            "entry": 4494,
+            "prizes": 2023000.0,
+            "start": "Mon 8:15PM"
+          }
+        ],
+        [
+          134052,
+          {
+            "name": "TEN $15K Line Painter [$5K to 1st]",
+            "entry": 15,
+            "prizes": 15000.0,
+            "start": "Wed 1:00AM"
+          }
+        ]
+      ]
+    },
+    "SOCCER": {
+      "total_contests": 1917,
+      "unique_slates": 22,
+      "sample_slates": [
+        [
+          133903,
+          {
+            "name": "NFL $3.25M Fantasy Football Millionaire [$1M to 1s",
+            "entry": 20,
+            "prizes": 3250000.0,
+            "start": "Sun 1:00PM"
+          }
+        ],
+        [
+          134062,
+          {
+            "name": "NFL $5M Midseason Main Event [$1M to 1st]",
+            "entry": 1111,
+            "prizes": 5000000.0,
+            "start": "Sun 1:00PM"
+          }
+        ],
+        [
+          133970,
+          {
+            "name": "NFL $1.5M Thursday Night Showdown [$500K to 1st] (",
+            "entry": 15,
+            "prizes": 1500000.0,
+            "start": "Thu 8:15PM"
+          }
+        ],
+        [
+          133234,
+          {
+            "name": "NFL Showdown $2M MEGA Millionaire [$1M to 1st] (DE",
+            "entry": 4494,
+            "prizes": 2023000.0,
+            "start": "Mon 8:15PM"
+          }
+        ],
+        [
+          134052,
+          {
+            "name": "TEN $15K Line Painter [$5K to 1st]",
+            "entry": 15,
+            "prizes": 15000.0,
+            "start": "Wed 1:00AM"
+          }
+        ]
+      ]
+    }
+  },
+  "multi_site": {
+    "method": "multi_site_comprehensive",
+    "timestamp": "2025-09-16T21:39:36.051664",
+    "DraftKings": {
+      "status": "SUCCESS",
+      "contest_count": 6563,
+      "data_structure": [
+        "SelectedSport",
+        "SelectedSportId",
+        "Contests",
+        "Tournaments",
+        "UserPrizes",
+        "DraftGroups",
+        "GameSets",
+        "GameTypes",
+        "DirectChallengeModal",
+        "DepositTransaction",
+        "ShowRafLink",
+        "PrizeRedemptionModel",
+        "PrizeRedemptionPop",
+        "UseRaptorHeadToHead",
+        "UseJSWebLobbyModals",
+        "SportMenuItems",
+        "UserGeoLocation",
+        "ShowAds",
+        "IsVip",
+        "AdsEnabled"
+      ]
+    },
+    "FanDuel": {
+      "status": "HTTP_404"
+    },
+    "SuperDraft": {
+      "status": "JSON_ERROR",
+      "response_length": 58089
+    }
+  },
+  "comprehensive_aggregator": {
+    "method": "comprehensive_aggregator",
+    "timestamp": "2025-09-16T21:39:40.974824",
+    "aggregated_data": {
+      "total_contests_analyzed": 12571,
+      "unique_slates_found": 24,
+      "sources_integrated": ["DraftKings"],
+      "sample_slates": [
+        {
+          "slate_id": "dk_133903",
+          "source": "DraftKings",
+          "sport": "NFL",
+          "name": "NFL $3.25M Fantasy Football Millionaire [$1M to 1s",
+          "entry_fee": 20,
+          "total_prizes": 3250000.0,
+          "start_time": "Sun 1:00PM"
+        },
+        {
+          "slate_id": "dk_134062",
+          "source": "DraftKings",
+          "sport": "NFL",
+          "name": "NFL $5M Midseason Main Event [$1M to 1st]",
+          "entry_fee": 1111,
+          "total_prizes": 5000000.0,
+          "start_time": "Sun 1:00PM"
+        },
+        {
+          "slate_id": "dk_133970",
+          "source": "DraftKings",
+          "sport": "NFL",
+          "name": "NFL $1.5M Thursday Night Showdown [$500K to 1st] (",
+          "entry_fee": 15,
+          "total_prizes": 1500000.0,
+          "start_time": "Thu 8:15PM"
+        },
+        {
+          "slate_id": "dk_133234",
+          "source": "DraftKings",
+          "sport": "NFL",
+          "name": "NFL Showdown $2M MEGA Millionaire [$1M to 1st] (DE",
+          "entry_fee": 4494,
+          "total_prizes": 2023000.0,
+          "start_time": "Mon 8:15PM"
+        },
+        {
+          "slate_id": "dk_134038",
+          "source": "DraftKings",
+          "sport": "NFL",
+          "name": "NFL $300K Early Only Rush [$100K to 1st] (Early On",
+          "entry_fee": 18,
+          "total_prizes": 300000.0,
+          "start_time": "Sun 1:00PM"
+        },
+        {
+          "slate_id": "dk_133782",
+          "source": "DraftKings",
+          "sport": "NBA",
+          "name": "WNBA $40K Fadeaway [$10K to 1st] ",
+          "entry_fee": 15,
+          "total_prizes": 40000.0,
+          "start_time": "Wed 8:00PM"
+        },
+        {
+          "slate_id": "dk_133784",
+          "source": "DraftKings",
+          "sport": "NBA",
+          "name": "WNBA Showdown $15K Fadeaway [$5K to 1st] (MIN @ GS",
+          "entry_fee": 15,
+          "total_prizes": 15000.0,
+          "start_time": "Wed 10:00PM"
+        },
+        {
+          "slate_id": "dk_133783",
+          "source": "DraftKings",
+          "sport": "NBA",
+          "name": "WNBA Showdown $4K Fadeaway [$1K to 1st] (PHO @ NYL",
+          "entry_fee": 15,
+          "total_prizes": 4000.0,
+          "start_time": "Wed 8:00PM"
+        },
+        {
+          "slate_id": "dk_133785",
+          "source": "DraftKings",
+          "sport": "NBA",
+          "name": "WNBA Single Stat $1 Winner Take All [$100 to 1st] ",
+          "entry_fee": 1,
+          "total_prizes": 100.0,
+          "start_time": "Wed 8:00PM"
+        },
+        {
+          "slate_id": "dk_133902",
+          "source": "DraftKings",
+          "sport": "MLB",
+          "name": "MLB $300K Mega 8's [$100K to 1st]",
+          "entry_fee": 888,
+          "total_prizes": 300000.0,
+          "start_time": "Wed 7:05PM"
+        }
+      ]
+    }
+  }
+}

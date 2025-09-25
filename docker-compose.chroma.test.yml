@@ -1,0 +1,33 @@
+services:
+  chromadb-server:
+    container_name: serene_hoover
+    build:
+      context: .
+      dockerfile: docker/mcp-servers/chroma.dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_HTTP_PORT=8000
+    networks:
+      - test-network
+
+  gateway-test:
+    container_name: gateway-test
+    build:
+      context: .
+      dockerfile: docker/mcp-servers/Dockerfile
+    depends_on:
+      - chromadb-server
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge

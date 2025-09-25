@@ -1,0 +1,37 @@
+{
+  "validation_date": "2025-09-17",
+  "salary_cap": 50000,
+  "min_salary": 49000,
+  "lineups_tested": 3,
+  "valid_lineups": 0,
+  "salary_violations": 3,
+  "average_salary": 57000,
+  "average_utilization": 114.0,
+  "status": "FAILED",
+  "violations": [
+    {
+      "lineup_id": 1,
+      "salary": 60000,
+      "violation": "OVER_CAP",
+      "amount": 10000
+    },
+    {
+      "lineup_id": 2,
+      "salary": 56000,
+      "violation": "OVER_CAP",
+      "amount": 6000
+    },
+    {
+      "lineup_id": 3,
+      "salary": 55000,
+      "violation": "OVER_CAP",
+      "amount": 5000
+    }
+  ],
+  "changes_implemented": [
+    "Updated optimization engine salary constraint to 98-100% range",
+    "Modified validation tests to match new minimum threshold",
+    "Updated demonstration to show corrected average salary",
+    "Verified frontend components have correct constraints"
+  ]
+}

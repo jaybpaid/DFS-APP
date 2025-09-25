@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DFS Glassmorphism Dashboard</title>
+    <style>
+      /* Existing styles */
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Enhanced Header -->
+      <div class="header">
+        <h1>DFS Glassmorphism</h1>
+        <p>Advanced Daily Fantasy Sports Optimization</p>
+        <div class="status-indicator">
+          <div class="status-dot"></div>
+          <span>Live Data Connection</span>
+        </div>
+      </div>
+
+      <!-- Enhanced Contest Selection -->
+      <div class="grid grid-3">
+        <div class="glass card">
+          <div class="card-title">Select Contest</div>
+          <div id="contest-list">
+            <div class="loading">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title">Optimization Settings</div>
+          <div style="margin-bottom: 15px">
+            <label style="display: block; margin-bottom: 5px; opacity: 0.9"
+              >Number of Lineups</label
+            >
+            <input
+              type="number"
+              value="20"
+              min="1"
+              max="150"
+              style="
+                width: 100%;
+                padding: 12px;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 10px;
+                color: white;
+              "
+            />
+          </div>
+          <div style="margin-bottom: 15px">
+            <label style="display: block; margin-bottom: 5px; opacity: 0.9"
+              >Uniqueness</label
+            >
+            <input
+              type="range"
+              value="6"
+              min="1"
+              max="9"
+              style="width: 100%; margin-bottom: 5px"
+            />
+            <span style="opacity: 0.7">6 unique players</span>
+          </div>
+          <button class="btn" id="optimize-btn" onclick="optimize()">
+            🚀 Generate Lineups
+          </button>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title">Quick Stats</div>
+          <div style="display: flex; flex-direction: column; gap: 15px">
+            <div style="display: flex; justify-content: space-between">
+              <span style="opacity: 0.8">API Status:</span>
+              <span class="badge badge-success" id="api-status">Healthy</span>
+            </div>
+            <div style="display: flex; justify-content: space-between">
+              <span style="opacity: 0.8">Players Loaded:</span>
+              <span id="player-count">-</span>
+            </div>
+            <div style="display: flex; justify-content: space-between">
+              <span style="opacity: 0.8">Salary Cap:</span>
+              <span id="salary-cap">$50,000</span>
+            </div>
+            <div style="display: flex; justify-content: space-between">
+              <span style="opacity: 0.8">Contest Type:</span>
+              <span id="contest-type">Classic</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Enhanced Main Content -->
+      <div class="grid grid-2">
+        <div class="glass card">
+          <div class="card-title">Player Pool</div>
+          <div id="player-pool" style="max-height: 500px; overflow-y: auto">
+            <div class="loading">
+              <div class="spinner"></div>
+              <span style="margin-left: 15px">Loading players...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass card">
+          <div class="card-title">Generated Lineups</div>
+          <div id="lineup-results" style="max-height: 500px; overflow-y: auto">
+            <div style="text-align: center; opacity: 0.7; padding: 40px">
+              Select a contest and click "Generate Lineups" to start
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="floating-action" onclick="refreshData()" title="Refresh Data">
+      ⟳
+    </button>
+
+    <script>
+      // Enhanced JavaScript functionality
+    </script>
+  </body>
+</html>

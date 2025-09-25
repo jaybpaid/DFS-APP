@@ -1,0 +1,24 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install dependencies
+RUN apk add --no-cache curl bash
+
+# Copy server files
+COPY filesystem-server.js ./server.js
+
+# Create simple health check
+RUN echo 'const http = require("http");' > health-check.js && \
+    echo 'const req = http.request({ hostname: "localhost", port: 8080, path: "/health", timeout: 5000 }, (res) => {' >> health-check.js && \
+    echo '  process.exit(res.statusCode === 200 ? 0 : 1);' >> health-check.js && \
+    echo '});' >> health-check.js && \
+    echo 'req.on("error", () => process.exit(1));' >> health-check.js && \
+    echo 'req.end();' >> health-check.js
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=5 \
+  CMD node health-check.js
+
+CMD ["node", "server.js"]

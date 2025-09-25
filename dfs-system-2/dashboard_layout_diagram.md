@@ -118,6 +118,7 @@
 ## 🎨 **Component Breakdown**
 
 ### **Header Section**
+
 - **Title**: DFS Ultimate Optimizer with live data status
 - **Sport Selector**: NFL/NBA toggle buttons
 - **Live Status**: Connection indicator, last update time, data sources count
@@ -126,6 +127,7 @@
 ### **Main Content Areas**
 
 #### **1. Slate Selector**
+
 ```
 ┌─────────────────────────────────────┐
 │ Date Picker | Site Dropdown         │
@@ -140,6 +142,7 @@
 ```
 
 #### **2. CSV Upload & Late-Swap**
+
 ```
 ┌─────────────────────────────────────┐
 │ Workflow Steps Visual (4 steps)     │
@@ -153,6 +156,7 @@
 ```
 
 #### **3. Multi-Source Intelligence**
+
 ```
 ┌─────────────────────────────────────┐
 │ Source Tabs (6 sources)             │
@@ -165,6 +169,7 @@
 ```
 
 #### **4. Advanced Controls Grid**
+
 ```
 ┌───┬───┬───┬───┐
 │   │   │   │   │
@@ -186,6 +191,7 @@ D: AI Strategy Analysis
 ```
 
 #### **5. Players Database**
+
 ```
 ┌─────────────────────────────────────┐
 │ Section Header with Stats           │
@@ -203,6 +209,7 @@ D: AI Strategy Analysis
 ```
 
 ### **Tab Navigation**
+
 - **Players**: Active by default, main player database
 - **Lineups**: Lineup generation and optimization
 - **Contests**: Live contest data and opportunities
@@ -212,12 +219,14 @@ D: AI Strategy Analysis
 ## 🔄 **Workflow Integration**
 
 ### **Late-Swap Workflow**
+
 1. **Step 1**: Upload DK contest CSV → Status: ✅ Complete
 2. **Step 2**: Build field pool → Status: ✅ Complete
 3. **Step 3**: Generate swap variants → Status: ⏳ Running
 4. **Step 4**: Export optimized CSV → Status: ⏸️ Waiting
 
 ### **Data Flow**
+
 ```
 User Input → Slate Selection → Data Loading → AI Validation → Player Scoring → Lineup Generation → Export
      ↓             ↓              ↓            ↓              ↓              ↓              ↓

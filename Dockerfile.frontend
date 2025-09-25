@@ -1,0 +1,32 @@
+# Stage 1: Build the React/Vite application
+# Use a full Node.js image to build the project
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy workspace files and install dependencies
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/web/package.json ./apps/web/package.json
+RUN npm install -g pnpm && pnpm install --no-frozen-lockfile
+
+# Copy the web application source code
+COPY apps/web ./apps/web
+
+# Build the production-ready static assets
+RUN cd apps/web && pnpm build
+
+# Stage 2: Serve the static files with a lightweight Nginx server
+# Use a slim Nginx image for the final production image
+FROM nginx:1.25-alpine
+
+# Copy the built assets from the 'builder' stage
+COPY --from=builder /app/apps/web/dist /usr/share/nginx/html
+
+# If you have a custom nginx configuration, uncomment the next line
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80 for the Nginx server
+EXPOSE 80
+
+# The default Nginx command starts the server
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,187 +1,210 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Layout Option 2: SaberSim-Style Dark Correlation Dashboard</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
-            background: #0a0a0a;
-            color: #e2e8f0;
-            min-height: 100vh;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        .header {
-            background: linear-gradient(90deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
-            padding: 1rem 2rem;
-            border-bottom: 1px solid #334155;
-        }
+      body {
+        font-family: 'JetBrains Mono', 'Courier New', monospace;
+        background: #0a0a0a;
+        color: #e2e8f0;
+        min-height: 100vh;
+      }
 
-        .logo {
-            color: #00d2ff;
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
+      .header {
+        background: linear-gradient(90deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+        padding: 1rem 2rem;
+        border-bottom: 1px solid #334155;
+      }
 
-        .dashboard-grid {
-            display: grid;
-            grid-template-areas: 
-                "correlations main-optimizer simulations"
-                "projections main-optimizer ownership";
-            grid-template-columns: 350px 1fr 300px;
-            grid-template-rows: 1fr 1fr;
-            gap: 1rem;
-            padding: 1rem;
-            height: calc(100vh - 80px);
-        }
+      .logo {
+        color: #00d2ff;
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
 
-        .correlation-panel {
-            grid-area: correlations;
-            background: #1a1a2e;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
+      .dashboard-grid {
+        display: grid;
+        grid-template-areas:
+          'correlations main-optimizer simulations'
+          'projections main-optimizer ownership';
+        grid-template-columns: 350px 1fr 300px;
+        grid-template-rows: 1fr 1fr;
+        gap: 1rem;
+        padding: 1rem;
+        height: calc(100vh - 80px);
+      }
 
-        .main-optimizer {
-            grid-area: main-optimizer;
-            background: #1a1a2e; 
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 2rem;
-        }
+      .correlation-panel {
+        grid-area: correlations;
+        background: #1a1a2e;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 1.5rem;
+      }
 
-        .simulations-panel {
-            grid-area: simulations;
-            background: #1a1a2e;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
+      .main-optimizer {
+        grid-area: main-optimizer;
+        background: #1a1a2e;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 2rem;
+      }
 
-        .projections-panel {
-            grid-area: projections;
-            background: #1a1a2e;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
+      .simulations-panel {
+        grid-area: simulations;
+        background: #1a1a2e;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 1.5rem;
+      }
 
-        .ownership-panel {
-            grid-area: ownership;
-            background: #1a1a2e;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
+      .projections-panel {
+        grid-area: projections;
+        background: #1a1a2e;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 1.5rem;
+      }
 
-        .panel-header {
-            color: #00d2ff;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 0.5rem;
-        }
+      .ownership-panel {
+        grid-area: ownership;
+        background: #1a1a2e;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 1.5rem;
+      }
 
-        .correlation-matrix {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
+      .panel-header {
+        color: #00d2ff;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 0.5rem;
+      }
 
-        .correlation-cell {
-            background: #0f0f23;
-            padding: 0.5rem;
-            text-align: center;
-            border-radius: 4px;
-            font-size: 0.8rem;
-        }
+      .correlation-matrix {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
 
-        .high-correlation { background: #059669; }
-        .medium-correlation { background: #f59e0b; }
-        .low-correlation { background: #ef4444; }
+      .correlation-cell {
+        background: #0f0f23;
+        padding: 0.5rem;
+        text-align: center;
+        border-radius: 4px;
+        font-size: 0.8rem;
+      }
 
-        .simulation-result {
-            background: #0f0f23;
-            border-left: 3px solid #00d2ff;
-            padding: 1rem;
-            margin-bottom: 0.5rem;
-        }
+      .high-correlation {
+        background: #059669;
+      }
+      .medium-correlation {
+        background: #f59e0b;
+      }
+      .low-correlation {
+        background: #ef4444;
+      }
 
-        .monte-carlo-display {
-            font-family: 'JetBrains Mono', monospace;
-            background: #000;
-            color: #00ff00;
-            padding: 1rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
+      .simulation-result {
+        background: #0f0f23;
+        border-left: 3px solid #00d2ff;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .monte-carlo-display {
+        font-family: 'JetBrains Mono', monospace;
+        background: #000;
+        color: #00ff00;
+        padding: 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="header">
-        <div class="logo">🧠 SaberSim-Style Correlation Dashboard</div>
+      <div class="logo">🧠 SaberSim-Style Correlation Dashboard</div>
     </div>
 
     <div class="dashboard-grid">
-        <div class="correlation-panel">
-            <div class="panel-header">🔗 Player Correlations</div>
-            <div class="correlation-matrix">
-                <div class="correlation-cell high-correlation">Hurts-Brown<br>0.85</div>
-                <div class="correlation-cell medium-correlation">Mahomes-Hill<br>0.72</div>
-                <div class="correlation-cell low-correlation">Allen-Henry<br>-0.15</div>
-            </div>
-            <div style="font-size: 0.9rem; color: #94a3b8;">🎯 Stacking Recommendations:<br>• PHI stack: 9.1/10<br>• KC stack: 8.7/10<br>• Bring-back: 7.2/10</div>
+      <div class="correlation-panel">
+        <div class="panel-header">🔗 Player Correlations</div>
+        <div class="correlation-matrix">
+          <div class="correlation-cell high-correlation">Hurts-Brown<br />0.85</div>
+          <div class="correlation-cell medium-correlation">Mahomes-Hill<br />0.72</div>
+          <div class="correlation-cell low-correlation">Allen-Henry<br />-0.15</div>
         </div>
-
-        <div class="main-optimizer">
-            <div class="panel-header">⚡ Monte Carlo Optimizer</div>
-            <div class="monte-carlo-display">
-Running 1,000,000 simulations...
-[████████████████████████████] 100%
-
-Top Lineup (Sim #847,293):
-QB: J. Hurts - Win Rate: 8.7%
-RB: S. Barkley - Correlation: 0.71  
-WR: A.J. Brown - Leverage: 9.6/10
-            </div>
-            <button style="background: #00d2ff; color: #0a0a0a; border: none; padding: 1rem 2rem; border-radius: 6px; font-weight: bold; margin-top: 1rem;">Run Simulation Engine</button>
+        <div style="font-size: 0.9rem; color: #94a3b8">
+          🎯 Stacking Recommendations:<br />• PHI stack: 9.1/10<br />• KC stack:
+          8.7/10<br />• Bring-back: 7.2/10
         </div>
+      </div>
 
-        <div class="simulations-panel">
-            <div class="panel-header">🎲 Live Simulations</div>
-            <div class="simulation-result">
-                <div style="font-weight: bold; color: #00d2ff;">Simulation #1</div>
-                <div style="font-size: 0.9rem;">Win Rate: 10.2%<br>ROI: 4,200%<br>Correlation Score: 9.1</div>
-            </div>
+      <div class="main-optimizer">
+        <div class="panel-header">⚡ Monte Carlo Optimizer</div>
+        <div class="monte-carlo-display">
+          Running 1,000,000 simulations... [████████████████████████████] 100% Top
+          Lineup (Sim #847,293): QB: J. Hurts - Win Rate: 8.7% RB: S. Barkley -
+          Correlation: 0.71 WR: A.J. Brown - Leverage: 9.6/10
         </div>
+        <button
+          style="
+            background: #00d2ff;
+            color: #0a0a0a;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 1rem;
+          "
+        >
+          Run Simulation Engine
+        </button>
+      </div>
 
-        <div class="projections-panel">
-            <div class="panel-header">📊 Multi-Source Edge</div>
-            <div style="font-size: 0.9rem; line-height: 1.6;">
-                <div style="color: #00d2ff; font-weight: bold;">A.J. Brown:</div>
-                <div>RotoWire: 18.9</div>
-                <div>DraftKings: 1.8</div>
-                <div style="color: #059669; font-weight: bold;">Edge: 10.5x</div>
-            </div>
+      <div class="simulations-panel">
+        <div class="panel-header">🎲 Live Simulations</div>
+        <div class="simulation-result">
+          <div style="font-weight: bold; color: #00d2ff">Simulation #1</div>
+          <div style="font-size: 0.9rem">
+            Win Rate: 10.2%<br />ROI: 4,200%<br />Correlation Score: 9.1
+          </div>
         </div>
+      </div>
 
-        <div class="ownership-panel">
-            <div class="panel-header">📈 Ownership vs Optimal</div>
-            <div style="font-size: 0.9rem;">
-                <div style="margin-bottom: 0.5rem;">
-                    <span style="color: #00d2ff;">A.J. Brown:</span><br>
-                    Ownership: 8.4%<br>
-                    Optimal: 23.7%<br>
-                    <span style="color: #059669;">Leverage: MAX</span>
-                </div>
-            </div>
+      <div class="projections-panel">
+        <div class="panel-header">📊 Multi-Source Edge</div>
+        <div style="font-size: 0.9rem; line-height: 1.6">
+          <div style="color: #00d2ff; font-weight: bold">A.J. Brown:</div>
+          <div>RotoWire: 18.9</div>
+          <div>DraftKings: 1.8</div>
+          <div style="color: #059669; font-weight: bold">Edge: 10.5x</div>
         </div>
+      </div>
+
+      <div class="ownership-panel">
+        <div class="panel-header">📈 Ownership vs Optimal</div>
+        <div style="font-size: 0.9rem">
+          <div style="margin-bottom: 0.5rem">
+            <span style="color: #00d2ff">A.J. Brown:</span><br />
+            Ownership: 8.4%<br />
+            Optimal: 23.7%<br />
+            <span style="color: #059669">Leverage: MAX</span>
+          </div>
+        </div>
+      </div>
     </div>
-</body>
+  </body>
 </html>

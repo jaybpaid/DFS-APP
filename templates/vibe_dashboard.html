@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DFS Vibe Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'vibe-purple': '#8b5cf6',
+              'vibe-pink': '#ec4899',
+              'vibe-blue': '#3b82f6',
+              'vibe-green': '#10b981',
+              'vibe-dark': '#0f172a',
+            },
+            fontFamily: {
+              inter: ['Inter', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .glass {
+        backdrop-filter: blur(16px);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .card-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 min-h-screen text-white font-inter"
+    x-data="vibeApp()"
+  >
+    <!-- Clean Header -->
+    <header class="glass sticky top-0 z-50 border-b border-white/10">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div
+              class="w-10 h-10 bg-gradient-to-r from-vibe-purple to-vibe-pink rounded-xl flex items-center justify-center"
+            >
+              <span class="text-white font-bold text-xl">⚡</span>
+            </div>
+            <div>
+              <h1 class="text-xl font-bold gradient-text">DFS Vibe</h1>
+              <p class="text-xs text-gray-400">Clean • Modern • Effective</p>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-6">
+            <div class="hidden md:flex items-center space-x-2 text-sm">
+              <div class="w-2 h-2 bg-vibe-green rounded-full animate-pulse"></div>
+              <span class="text-gray-300">Live Data</span>
+            </div>
+            <button
+              class="glass px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/20 transition-colors"
+            >
+              Settings
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="container mx-auto px-6 py-8">
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="glass rounded-2xl p-6 text-center card-hover">
+          <div class="text-3xl font-bold gradient-text">142</div>
+          <div class="text-gray-300 text-sm mt-1">Active Players</div>
+        </div>
+        <div class="glass rounded-2xl p-6 text-center card-hover">
+          <div class="text-3xl font-bold gradient-text">$2.4M</div>
+          <div class="text-gray-300 text-sm mt-1">Total Prizes</div>
+        </div>
+        <div class="glass rounded-2xl p-6 text-center card-hover">
+          <div class="text-3xl font-bold gradient-text">94%</div>
+          <div class="text-gray-300 text-sm mt-1">AI Confidence</div>
+        </div>
+        <div class="glass rounded-2xl p-6 text-center card-hover">
+          <div class="text-3xl font-bold gradient-text">15</div>
+          <div class="text-gray-300 text-sm mt-1">Slates Available</div>
+        </div>
+      </div>
+
+      <!-- Main Interface -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Player Pool - Clean and Scannable -->
+        <div class="lg:col-span-2">
+          <div class="glass rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-xl font-bold text-white">Player Pool</h2>
+              <div class="flex items-center space-x-3">
+                <input
+                  type="text"
+                  placeholder="Search players..."
+                  x-model="searchTerm"
+                  class="bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-vibe-purple focus:border-transparent transition-all"
+                />
+                <select
+                  x-model="positionFilter"
+                  class="bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-vibe-purple"
+                >
+                  <option value="">All Positions</option>
+                  <option value="QB">QB</option>
+                  <option value="RB">RB</option>
+                  <option value="WR">WR</option>
+                  <option value="TE">TE</option>
+                  <option value="DST">DST</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Clean Player Table -->
+            <div class="overflow-hidden rounded-xl">
+              <table class="w-full">
+                <thead class="bg-white/5">
+                  <tr>
+                    <th class="text-left p-4 text-gray-300 font-medium">Player</th>
+                    <th class="text-left p-4 text-gray-300 font-medium">Pos</th>
+                    <th class="text-left p-4 text-gray-300 font-medium">Salary</th>
+                    <th class="text-left p-4 text-gray-300 font-medium">Proj</th>
+                    <th class="text-left p-4 text-gray-300 font-medium">Value</th>
+                    <th class="text-left p-4 text-gray-300 font-medium">Own%</th>
+                    <th class="text-left p-4 text-gray-300 font-medium">Select</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="player in filteredPlayers" :key="player.name">
+                    <tr
+                      class="border-b border-white/10 hover:bg-white/5 transition-colors"
+                    >
+                      <td class="p-4">
+                        <div>
+                          <div
+                            class="text-white font-medium"
+                            x-text="player.name"
+                          ></div>
+                          <div
+                            class="text-sm text-gray-400"
+                            x-text="player.team + ' ' + player.opponent"
+                          ></div>
+                        </div>
+                      </td>
+                      <td class="p-4">
+                        <span
+                          class="px-2 py-1 bg-vibe-blue/20 text-vibe-blue rounded-lg text-sm font-medium"
+                          x-text="player.position"
+                        ></span>
+                      </td>
+                      <td
+                        class="p-4 text-white font-medium"
+                        x-text="'$' + player.salary.toLocaleString()"
+                      ></td>
+                      <td
+                        class="p-4 text-white"
+                        x-text="player.projection.toFixed(1)"
+                      ></td>
+                      <td class="p-4">
+                        <span
+                          class="font-medium"
+                          :class="player.value >= 3.0 ? 'text-vibe-green' : player.value >= 2.5 ? 'text-yellow-400' : 'text-red-400'"
+                          x-text="player.value.toFixed(2) + 'x'"
+                        >
+                        </span>
+                      </td>
+                      <td
+                        class="p-4 text-white"
+                        x-text="player.ownership.toFixed(1) + '%'"
+                      ></td>
+                      <td class="p-4">
+                        <button
+                          @click="togglePlayer(player)"
+                          class="px-4 py-2 rounded-lg text-sm font-medium transition-all"
+                          :class="isSelected(player) ? 'bg-vibe-green text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'"
+                          x-text="isSelected(player) ? 'Added' : 'Add'"
+                        ></button>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optimization Panel - Simple and Clean -->
+        <div class="space-y-6">
+          <!-- Selected Players -->
+          <div class="glass rounded-2xl p-6">
+            <h3 class="text-lg font-bold text-white mb-4">Selected Players</h3>
+            <div class="space-y-2 min-h-[200px]">
+              <template x-for="player in selectedPlayers" :key="player.name">
+                <div
+                  class="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                >
+                  <div>
+                    <div class="text-white font-medium" x-text="player.name"></div>
+                    <div
+                      class="text-sm text-gray-400"
+                      x-text="player.position + ' • $' + player.salary.toLocaleString()"
+                    ></div>
+                  </div>
+                  <button
+                    @click="removePlayer(player)"
+                    class="text-red-400 hover:text-red-300"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+              </template>
+              <div
+                x-show="selectedPlayers.length === 0"
+                class="text-center py-12 text-gray-400"
+              >
+                <div class="text-4xl mb-2">👆</div>
+                <div class="text-sm">Add players from the table above</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Optimization -->
+          <div class="glass rounded-2xl p-6">
+            <h3 class="text-lg font-bold text-white mb-4">Optimize</h3>
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm text-gray-300 mb-2"
+                  >Number of Lineups</label
+                >
+                <input
+                  type="number"
+                  x-model="numLineups"
+                  min="1"
+                  max="150"
+                  class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-vibe-purple"
+                />
+              </div>
+
+              <div class="flex items-center justify-between">
+                <span class="text-gray-300">Enable Stacking</span>
+                <button
+                  @click="stackingEnabled = !stackingEnabled"
+                  class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                  :class="stackingEnabled ? 'bg-vibe-purple' : 'bg-gray-600'"
+                >
+                  <span
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                    :class="stackingEnabled ? 'translate-x-6' : 'translate-x-1'"
+                  ></span>
+                </button>
+              </div>
+
+              <button
+                @click="optimize()"
+                :disabled="selectedPlayers.length === 0 || isOptimizing"
+                class="w-full bg-gradient-to-r from-vibe-purple to-vibe-pink hover:from-vibe-purple/80 hover:to-vibe-pink/80 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-4 rounded-xl text-lg transition-all shadow-lg hover:shadow-xl"
+              >
+                <span x-show="!isOptimizing">🚀 Generate Lineups</span>
+                <span x-show="isOptimizing">
+                  <svg
+                    class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Optimizing...
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div x-show="lineups.length > 0" class="mt-8" x-transition>
+        <div class="glass rounded-2xl p-6">
+          <h2 class="text-xl font-bold text-white mb-6">🏆 Optimal Lineups</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <template x-for="(lineup, index) in lineups" :key="lineup.id">
+              <div class="bg-white/5 rounded-xl p-4 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="font-semibold text-white">
+                    Lineup <span x-text="index + 1"></span>
+                  </h3>
+                  <div class="flex items-center space-x-2">
+                    <span
+                      class="text-vibe-green font-medium"
+                      x-text="'$' + lineup.total_salary.toLocaleString()"
+                    ></span>
+                    <span
+                      class="text-vibe-blue font-medium"
+                      x-text="lineup.projected_points.toFixed(1) + ' pts'"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <template x-for="player in lineup.players" :key="player.name">
+                    <div class="flex items-center justify-between text-sm">
+                      <div class="flex items-center space-x-2">
+                        <span class="text-gray-400" x-text="player.position"></span>
+                        <span
+                          class="text-white font-medium"
+                          x-text="player.name"
+                        ></span>
+                      </div>
+                      <span
+                        class="text-gray-300"
+                        x-text="'$' + player.salary.toLocaleString()"
+                      ></span>
+                    </div>
+                  </template>
+                </div>
+
+                <button
+                  class="w-full mt-4 bg-gradient-to-r from-vibe-blue to-vibe-purple text-white py-2 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity"
+                >
+                  Export Lineup
+                </button>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function vibeApp() {
+          return {
+              players: {{ players | tojson }},
+              selectedPlayers: [],
+              lineups: [],
+              searchTerm: '',
+              positionFilter: '',
+              numLineups: 20,
+              stackingEnabled: true,
+              isOptimizing: false,
+
+              get filteredPlayers() {
+                  return this.players.filter(player => {
+                      const matchesSearch = player.name.toLowerCase().includes(this.searchTerm.toLowerCase());
+                      const matchesPosition = !this.positionFilter || player.position === this.positionFilter;
+                      return matchesSearch && matchesPosition;
+                  });
+              },
+
+              togglePlayer(player) {
+                  const index = this.selectedPlayers.findIndex(p => p.name === player.name);
+                  if (index > -1) {
+                      this.selectedPlayers.splice(index, 1);
+                  } else {
+                      this.selectedPlayers.push(player);
+                  }
+              },
+
+              removePlayer(player) {
+                  const index = this.selectedPlayers.findIndex(p => p.name === player.name);
+                  if (index > -1) {
+                      this.selectedPlayers.splice(index, 1);
+                  }
+              },
+
+              isSelected(player) {
+                  return this.selectedPlayers.some(p => p.name === player.name);
+              },
+
+              async optimize() {
+                  if (this.selectedPlayers.length === 0) return;
+
+                  this.isOptimizing = true;
+                  try {
+                      const response = await fetch('/api/optimize', {
+                          method: 'POST',
+                          headers: {
+                              'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify({
+                              selected_players: this.selectedPlayers,
+                              num_lineups: this.numLineups,
+                              enable_stacking: this.stackingEnabled
+                          })
+                      });
+
+                      const result = await response.json();
+                      if (result.success) {
+                          this.lineups = result.lineups;
+                      }
+                  } catch (error) {
+                      console.error('Optimization failed:', error);
+                  } finally {
+                      this.isOptimizing = false;
+                  }
+              }
+          }
+      }
+    </script>
+  </body>
+</html>

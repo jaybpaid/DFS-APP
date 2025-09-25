@@ -1,0 +1,85 @@
+name: Claude Automation Pipeline
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  claude-quality-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install pnpm
+        run: npm install -g pnpm@10.14.0
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Python dependencies
+        run: |
+          pip install black pylint pytest httpx
+
+      - name: Code Quality Automation
+        run: |
+          # Format code automatically
+          npx prettier --write .
+          pnpm turbo run lint --fix
+          black apps/api-python/
+
+          # Type checking
+          pnpm turbo run type-check
+
+      - name: Build All Services
+        run: |
+          pnpm turbo run build
+
+      - name: Run Tests
+        run: |
+          pnpm turbo run test
+          pytest apps/api-python/tests/ -v
+
+  claude-docker-build:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: claude-quality-check
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Docker Images
+        run: |
+          docker build -f Dockerfile.frontend -t dfs-frontend:${{ github.sha }} .
+          docker build -f Dockerfile.api-python -t dfs-api:${{ github.sha }} .
+
+      - name: Test Docker Containers
+        run: |
+          docker-compose -f docker-compose.production.yml up -d --build
+          sleep 30
+          # Health checks
+          curl -f http://localhost:3000/health || exit 1
+          curl -f http://localhost:8000/health || exit 1
+          docker-compose -f docker-compose.production.yml down
+
+  claude-deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: claude-docker-build
+    steps:
+      - name: Deploy to Production
+        run: |
+          echo "Deployment automation can be configured here"
+          # Add your deployment commands

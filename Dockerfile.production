@@ -1,0 +1,86 @@
+# Multi-stage Docker build for DFS Optimizer Production
+FROM node:18-alpine AS frontend-builder
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/web/package.json ./apps/web/
+COPY apps/api/package.json ./apps/api/
+
+# Install pnpm and dependencies
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build frontend
+RUN pnpm build:web
+
+# Python backend stage
+FROM python:3.11-slim AS backend-builder
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    make \
+    libffi-dev \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy Python requirements
+COPY apps/api-python/requirements.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Production stage
+FROM node:18-alpine AS production
+
+# Install Python
+RUN apk add --no-cache python3 py3-pip
+
+# Set working directory
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -g 1001 -S dfs && \
+    adduser -S dfs -u 1001
+
+# Copy built frontend
+COPY --from=frontend-builder /app/apps/web/dist ./apps/web/dist
+COPY --from=frontend-builder /app/node_modules ./node_modules
+COPY --from=frontend-builder /app/apps/api/dist ./apps/api/dist
+
+# Copy Python backend
+COPY --from=backend-builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=backend-builder /usr/local/bin /usr/local/bin
+COPY apps/api-python ./apps/api-python
+
+# Copy configuration files
+COPY docker-compose.production.yml ./
+COPY .env.production ./.env
+
+# Copy database and data files
+COPY data ./data
+COPY contracts ./contracts
+
+# Set permissions
+RUN chown -R dfs:dfs /app
+USER dfs
+
+# Expose ports
+EXPOSE 3000 8000 5432
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3000/health || exit 1
+
+# Start command
+CMD ["sh", "-c", "node apps/api/dist/index.js & python3 apps/api-python/main.py & wait"]

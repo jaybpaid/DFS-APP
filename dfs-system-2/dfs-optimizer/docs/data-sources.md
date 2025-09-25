@@ -1,4 +1,5 @@
 # Data Sources Registry
+
 ## Comprehensive Directory of DFS Data Feeds and APIs
 
 ---
@@ -12,8 +13,9 @@ This registry documents all available data sources for DFS optimization, includi
 ## 1. Official DFS Platform APIs
 
 ### DraftKings (Unofficial Endpoints)
+
 - **Status**: Unofficial, volatile, may change without notice
-- **Endpoints**: 
+- **Endpoints**:
   - DraftGroups → `/draftgroups/v1/draftgroups`
   - Draftables → `/draftgroups/v1/draftgroups/{draftGroupId}/draftables`
 - **Auth**: None required (public endpoints)
@@ -23,6 +25,7 @@ This registry documents all available data sources for DFS optimization, includi
 - **Integration Status**: Partial implementation
 
 ### FanDuel
+
 - **Status**: No stable public endpoints
 - **Approach**: Use paid feeds or user-owned logged-in access
 - **Alternative**: FantasyNerds/SportsDataIO FD feeds
@@ -33,6 +36,7 @@ This registry documents all available data sources for DFS optimization, includi
 ## 2. Commercial DFS Data Providers
 
 ### FantasyNerds
+
 - **API**: https://api.fantasynerds.com/docs/nfl
 - **Status**: Paid service with free trial
 - **Coverage**: NFL, NBA, MLB projections and salaries
@@ -42,6 +46,7 @@ This registry documents all available data sources for DFS optimization, includi
 - **Integration Status**: Ready for implementation
 
 ### SportsDataIO
+
 - **API**: https://sportsdata.io/fantasy-sports-api
 - **Status**: Paid service with free trial
 - **Coverage**: Comprehensive across major sports
@@ -55,6 +60,7 @@ This registry documents all available data sources for DFS optimization, includi
 ## 3. Vegas Odds & Betting Data
 
 ### The Odds API
+
 - **API**: https://the-odds-api.com/
 - **Status**: Free tier available, paid plans
 - **Coverage**: NFL, NBA, MLB, NHL, international sports
@@ -64,6 +70,7 @@ This registry documents all available data sources for DFS optimization, includi
 - **Integration Status**: Ready for implementation
 
 ### SportsDataIO Odds
+
 - **API**: https://sportsdata.io/live-odds-api
 - **Status**: Paid service
 - **Coverage**: Comprehensive odds data
@@ -73,6 +80,7 @@ This registry documents all available data sources for DFS optimization, includi
 - **Integration Status**: Requires paid subscription
 
 ### Sportradar (Enterprise)
+
 - **API**: https://developer.sportradar.com/odds
 - **Status**: Enterprise-grade, expensive
 - **Coverage**: Global sports coverage
@@ -85,6 +93,7 @@ This registry documents all available data sources for DFS optimization, includi
 ## 4. Weather Data APIs
 
 ### OpenWeatherMap
+
 - **API**: https://openweathermap.org/api
 - **Status**: Free tier available, paid plans
 - **Coverage**: Global weather data
@@ -94,6 +103,7 @@ This registry documents all available data sources for DFS optimization, includi
 - **Integration Status**: Ready for implementation
 
 ### WeatherAPI
+
 - **API**: https://www.weatherapi.com/
 - **Status**: Free tier available
 - **Coverage**: Global weather data
@@ -103,6 +113,7 @@ This registry documents all available data sources for DFS optimization, includi
 - **Integration Status**: Ready for implementation
 
 ### Weather.gov (NOAA)
+
 - **API**: https://www.weather.gov/documentation/services-web-api
 - **Status**: Free, no API key required
 - **Coverage**: US only
@@ -116,6 +127,7 @@ This registry documents all available data sources for DFS optimization, includi
 ## 5. Injury & News Sources
 
 ### RotoWire
+
 - **Web**: https://www.rotowire.com/
 - **Status**: Web scraping required (respect ToS)
 - **Coverage**: Comprehensive injury reports, depth charts
@@ -123,12 +135,14 @@ This registry documents all available data sources for DFS optimization, includi
 - **Integration Status**: Requires careful ToS compliance
 
 ### Sleeper API (Community References)
+
 - **Status**: Unofficial public endpoints
 - **Coverage**: News alerts, player updates
 - **Features**: Real-time notifications
 - **Integration Status**: Community references only
 
 ### Team Websites
+
 - **Status**: Official sources, scraping required
 - **Coverage**: Team-specific injury reports
 - **Integration Status**: Manual monitoring recommended
@@ -138,6 +152,7 @@ This registry documents all available data sources for DFS optimization, includi
 ## 6. Open Source Tools & References
 
 ### jaebradley/draftkings_client
+
 - **GitHub**: https://github.com/jaebradley/draftkings_client
 - **Status**: Active Python client
 - **Features**: DraftKings API wrapper
@@ -145,6 +160,7 @@ This registry documents all available data sources for DFS optimization, includi
 - **Integration Status**: Reference implementation
 
 ### pydfs-lineup-optimizer
+
 - **GitHub**: https://github.com/DimaKudosh/pydfs-lineup-optimizer
 - **Status**: Active multi-site optimizer
 - **Features**: ILP optimization with constraints
@@ -152,6 +168,7 @@ This registry documents all available data sources for DFS optimization, includi
 - **Integration Status**: Reference for optimization techniques
 
 ### draftfast
+
 - **GitHub**: https://github.com/BenBrostoff/draftfast
 - **Status**: Lineup automation tool
 - **Features**: DK/FD lineup optimization
@@ -159,6 +176,7 @@ This registry documents all available data sources for DFS optimization, includi
 - **Integration Status**: Reference implementation
 
 ### GitHub daily-fantasy-sports topic
+
 - **URL**: https://github.com/topics/daily-fantasy-sports
 - **Status**: Active community projects
 - **Features**: Various DFS tools and libraries
@@ -169,18 +187,21 @@ This registry documents all available data sources for DFS optimization, includi
 ## 7. Community & Forum Resources
 
 ### Reddit r/dfsports
+
 - **URL**: https://www.reddit.com/r/dfsports/
 - **Status**: Active community discussion
 - **Features**: Strategy discussions, data source recommendations
 - **Integration Status**: Research only
 
 ### RotoGrinders
+
 - **URL**: https://rotogrinders.com/
 - **Status**: Professional DFS community
 - **Features**: Projections, tools, educational content
 - **Integration Status**: Research and reference
 
 ### FantasyLabs
+
 - **URL**: https://www.fantasylabs.com/
 - **Status**: Premium DFS tools
 - **Features**: Advanced analytics, ownership projections
@@ -191,6 +212,7 @@ This registry documents all available data sources for DFS optimization, includi
 ## 8. Implementation Status Tracking
 
 ### Integrated Sources
+
 - [ ] DraftKings unofficial endpoints
 - [ ] FantasyNerds API
 - [ ] SportsDataIO API
@@ -200,12 +222,14 @@ This registry documents all available data sources for DFS optimization, includi
 - [ ] Weather.gov
 
 ### Planned Integration
+
 - [ ] FanDuel via paid feeds
 - [ ] Sportradar (enterprise clients)
 - [ ] RotoWire web scraping
 - [ ] Sleeper API endpoints
 
 ### Research Phase
+
 - [ ] Additional bookmaker APIs
 - [ ] Alternative projection sources
 - [ ] Real-time ownership feeds
@@ -216,11 +240,12 @@ This registry documents all available data sources for DFS optimization, includi
 ## 9. Rate Limit Management
 
 ### Recommended Limits
+
 ```yaml
 draftkings:
   requests_per_minute: 30
   retry_delay: 2000ms
-  
+
 fantasynerds:
   requests_per_minute: 60
   retry_delay: 1000ms
@@ -235,6 +260,7 @@ weather_apis:
 ```
 
 ### Circuit Breaker Patterns
+
 ```typescript
 interface CircuitBreakerConfig {
   failureThreshold: number;
@@ -248,12 +274,14 @@ interface CircuitBreakerConfig {
 ## 10. Data Quality Metrics
 
 ### Completeness Scores
+
 - **Salary Data**: 98% target
 - **Projections**: 95% target
 - **Ownership**: 90% target
 - **Injury Data**: 85% target
 
 ### Freshness Requirements
+
 - **Live Data**: < 5 minutes old
 - **Projections**: < 30 minutes old
 - **Historical**: < 24 hours old
@@ -264,11 +292,13 @@ interface CircuitBreakerConfig {
 ## 11. Error Handling Strategy
 
 ### Graceful Degradation
+
 - Primary source failure → fallback to cached data
 - Multiple source failures → use last known good data
 - Complete failure → informative error messages
 
 ### Monitoring
+
 - **Uptime monitoring**: All data feeds
 - **Quality alerts**: Data validation failures
 - **Performance metrics**: Response times, success rates
@@ -278,6 +308,7 @@ interface CircuitBreakerConfig {
 ## 12. Environment Configuration
 
 ### Required API Keys
+
 ```bash
 # Commercial APIs
 SPORTSDATAIO_API_KEY=
@@ -294,6 +325,7 @@ FANDUEL_API_KEY=
 ```
 
 ### Rate Limit Configuration
+
 ```bash
 MAX_REQUESTS_PER_MINUTE=60
 REQUEST_TIMEOUT_MS=30000
@@ -306,6 +338,7 @@ CIRCUIT_BREAKER_THRESHOLD=5
 ## 13. Implementation Checklist
 
 ### Phase 1: Core Data Feeds
+
 - [x] DraftKings salary data integration
 - [ ] FantasyNerds projections integration
 - [ ] The Odds API integration
@@ -313,6 +346,7 @@ CIRCUIT_BREAKER_THRESHOLD=5
 - [ ] Basic caching implementation
 
 ### Phase 2: Enhanced Features
+
 - [ ] Multi-source projection blending
 - [ ] Ownership projection engine
 - [ ] Injury data integration
@@ -320,6 +354,7 @@ CIRCUIT_BREAKER_THRESHOLD=5
 - [ ] Data quality monitoring
 
 ### Phase 3: Premium Features
+
 - [ ] SportsDataIO comprehensive integration
 - [ ] Real-time data streams
 - [ ] Advanced correlation modeling
@@ -331,4 +366,4 @@ CIRCUIT_BREAKER_THRESHOLD=5
 **Last Updated**: 2025-09-13  
 **Next Review**: 2025-10-13
 
-**__CLINE_DONE__ DATA_SOURCES_REGISTRY**
+\***\*CLINE_DONE** DATA_SOURCES_REGISTRY\*\*

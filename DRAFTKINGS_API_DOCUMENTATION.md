@@ -3,6 +3,7 @@
 ## Validated Endpoints (Working as of September 2025)
 
 ### Contest Information Endpoints
+
 - **Contests (NFL)**: `https://www.draftkings.com/lobby/getcontests?sport=NFL`
 - **Contests (NBA)**: `https://www.draftkings.com/lobby/getcontests?sport=NBA`
 - **Contests (MLB)**: `https://www.draftkings.com/lobby/getcontests?sport=MLB`
@@ -11,16 +12,19 @@
 - **Contests (LOL)**: `https://www.draftkings.com/lobby/getcontests?sport=LOL`
 
 ### Player/Salary Data Endpoints
+
 - **Draftables by Group**: `https://api.draftkings.com/draftgroups/v1/draftgroups/{draftGroupId}/draftables`
 - **Example**: `https://api.draftkings.com/draftgroups/v1/draftgroups/46589/draftables`
 
 ### Game Type/Rules Endpoints
+
 - **Game Type Rules**: `https://api.draftkings.com/lineups/v1/gametypes/{gameTypeId}/rules`
 - **Example**: `https://api.draftkings.com/lineups/v1/gametypes/1/rules`
 
 ## Response Structure
 
 ### Contest Response (`/lobby/getcontests`)
+
 ```json
 {
   "SelectedSport": "NFL",
@@ -42,6 +46,7 @@
 ```
 
 ### Draftables Response (`/draftgroups/v1/draftgroups/{id}/draftables`)
+
 ```json
 {
   "draftables": [
@@ -69,6 +74,7 @@
 ## Implementation Examples
 
 ### Python Implementation
+
 ```python
 import requests
 
@@ -84,14 +90,19 @@ def get_draftkings_players(draft_group_id):
 ```
 
 ### JavaScript Implementation
+
 ```javascript
 const getDraftKingsContests = async (sport = 'NFL') => {
-  const response = await fetch(`https://www.draftkings.com/lobby/getcontests?sport=${sport}`);
+  const response = await fetch(
+    `https://www.draftkings.com/lobby/getcontests?sport=${sport}`
+  );
   return await response.json();
 };
 
-const getDraftKingsPlayers = async (draftGroupId) => {
-  const response = await fetch(`https://api.draftkings.com/draftgroups/v1/draftgroups/${draftGroupId}/draftables`);
+const getDraftKingsPlayers = async draftGroupId => {
+  const response = await fetch(
+    `https://api.draftkings.com/draftgroups/v1/draftgroups/${draftGroupId}/draftables`
+  );
   return await response.json();
 };
 ```
@@ -116,13 +127,15 @@ const getDraftKingsPlayers = async (draftGroupId) => {
 ## MCP Server Status
 
 Based on testing, the following MCP servers are working:
+
 - ✅ `brave-search` (@brave/brave-search-mcp-server)
-- ✅ `browser-use` (@agent-infra/mcp-server-browser) 
+- ✅ `browser-use` (@agent-infra/mcp-server-browser)
 - ✅ `github` (github-mcp-server)
 - ✅ `apify` (@apify/actors-mcp-server)
 - ✅ `slack` (slack-mcp-server)
 
 Servers requiring API keys/configuration:
+
 - ⚠️ `filesystem` - May require permissions
 - ⚠️ `git` - May require Git configuration
 - ⚠️ `firecrawl` - Requires FIRECRAWL_API_KEY
@@ -134,12 +147,14 @@ Servers requiring API keys/configuration:
 ## Troubleshooting
 
 ### Common Issues:
+
 1. **CORS Errors**: Use a proxy server or backend API calls
 2. **Rate Limiting**: Implement proper caching and retry logic
 3. **JSON Parsing Errors**: Validate responses before parsing
 4. **Network Timeouts**: Increase timeout values and implement retries
 
 ### Debugging Tips:
+
 - Use the test script: `python test_dk_api.py`
 - Check network tab in browser developer tools
 - Verify endpoint URLs with recent examples
@@ -148,8 +163,9 @@ Servers requiring API keys/configuration:
 ## Legal Considerations
 
 ⚠️ **Important**: DraftKings does not officially support or document these APIs. Use them responsibly:
+
 - Don't overload their servers
-- Respect their terms of service  
+- Respect their terms of service
 - Use for personal/educational purposes only
 - Consider using official APIs if available
 
@@ -161,4 +177,4 @@ Servers requiring API keys/configuration:
 
 ---
 
-*This documentation is based on unofficial reverse engineering and may become outdated. Always test endpoints before relying on them in production.*
+_This documentation is based on unofficial reverse engineering and may become outdated. Always test endpoints before relying on them in production._

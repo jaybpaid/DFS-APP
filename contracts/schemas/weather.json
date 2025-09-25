@@ -1,0 +1,144 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Weather Schema",
+  "description": "Schema for weather data affecting games and player performance",
+  "type": "object",
+  "required": ["slateId", "asOf", "byGame"],
+  "properties": {
+    "slateId": {
+      "type": "string",
+      "description": "Unique identifier for the slate"
+    },
+    "asOf": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when weather data was last updated"
+    },
+    "provenance": {
+      "type": "array",
+      "description": "Data sources used for weather information",
+      "items": {
+        "type": "string"
+      }
+    },
+    "byGame": {
+      "type": "array",
+      "description": "Weather conditions for each game",
+      "items": {
+        "type": "object",
+        "required": [
+          "gameId",
+          "tempF",
+          "windMph",
+          "precip",
+          "impact",
+          "summary",
+          "isDome"
+        ],
+        "properties": {
+          "gameId": {
+            "type": "string",
+            "description": "Unique identifier matching the game"
+          },
+          "tempF": {
+            "type": "number",
+            "description": "Temperature in Fahrenheit"
+          },
+          "windMph": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Wind speed in miles per hour"
+          },
+          "precip": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Precipitation probability (0.0 to 1.0)"
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["NONE", "MINOR", "MODERATE", "MAJOR"],
+            "description": "Overall weather impact level on gameplay"
+          },
+          "summary": {
+            "type": "string",
+            "description": "Human-readable weather summary (e.g., '15mph crosswind, light rain')"
+          },
+          "isDome": {
+            "type": "boolean",
+            "description": "Whether the game is played in a dome/covered stadium"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional weather details",
+            "properties": {
+              "humidity": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Humidity percentage"
+              },
+              "windDirection": {
+                "type": "string",
+                "description": "Wind direction (N, NE, E, SE, S, SW, W, NW)"
+              },
+              "visibility": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Visibility in miles"
+              },
+              "conditions": {
+                "type": "array",
+                "description": "Weather conditions",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "CLEAR",
+                    "CLOUDY",
+                    "OVERCAST",
+                    "LIGHT_RAIN",
+                    "RAIN",
+                    "HEAVY_RAIN",
+                    "SNOW",
+                    "FOG",
+                    "MIST"
+                  ]
+                }
+              }
+            }
+          },
+          "forecast": {
+            "type": "object",
+            "description": "Forecast changes during game time",
+            "properties": {
+              "kickoff": {
+                "type": "object",
+                "properties": {
+                  "tempF": { "type": "number" },
+                  "windMph": { "type": "number" },
+                  "precip": { "type": "number" }
+                }
+              },
+              "halftime": {
+                "type": "object",
+                "properties": {
+                  "tempF": { "type": "number" },
+                  "windMph": { "type": "number" },
+                  "precip": { "type": "number" }
+                }
+              },
+              "fourthQuarter": {
+                "type": "object",
+                "properties": {
+                  "tempF": { "type": "number" },
+                  "windMph": { "type": "number" },
+                  "precip": { "type": "number" }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

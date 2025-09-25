@@ -2,7 +2,13 @@
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/614759/Documents/MCP Workspace/DFS APP", "/Users/614759/Documents/Cline/MCP", "/Users/614759/Desktop"],
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/614759/Documents/MCP Workspace/DFS APP",
+        "/Users/614759/Documents/Cline/MCP",
+        "/Users/614759/Desktop"
+      ],
       "enabled": true
     },
     "fetch": {

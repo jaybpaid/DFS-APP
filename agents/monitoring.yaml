@@ -1,0 +1,89 @@
+performance_tracking:
+  enabled: true
+  metrics:
+    - task_completion_rate
+    - average_response_time
+    - delegation_accuracy
+    - user_satisfaction_score
+    - error_rate
+    - resource_utilization
+
+  reporting:
+    interval: 30m
+    format: json
+    destination: /logs/agent_performance.json
+
+agent_teams:
+  dfs-analysis-team:
+    performance_targets:
+      task_completion_rate: 0.95
+      average_response_time: 300s
+      user_satisfaction_score: 4.5
+
+  dfs-frontend-team:
+    performance_targets:
+      task_completion_rate: 0.90
+      average_response_time: 600s
+      user_satisfaction_score: 4.2
+
+  dfs-backend-team:
+    performance_targets:
+      task_completion_rate: 0.95
+      average_response_time: 900s
+      user_satisfaction_score: 4.5
+
+  dfs-data-team:
+    performance_targets:
+      task_completion_rate: 0.98
+      average_response_time: 1200s
+      user_satisfaction_score: 4.7
+
+  dfs-security-team:
+    performance_targets:
+      task_completion_rate: 0.99
+      average_response_time: 1800s
+      user_satisfaction_score: 4.8
+
+  dfs-performance-team:
+    performance_targets:
+      task_completion_rate: 0.95
+      average_response_time: 900s
+      user_satisfaction_score: 4.5
+
+alerts:
+  critical:
+    - task_completion_rate: '< 0.80'
+    - average_response_time: '> 3600s'
+    - error_rate: '> 0.10'
+    - user_satisfaction_score: '< 3.0'
+
+  warning:
+    - task_completion_rate: '< 0.90'
+    - average_response_time: '> 1800s'
+    - error_rate: '> 0.05'
+    - user_satisfaction_score: '< 4.0'
+
+  info:
+    - task_completion_rate: '< 0.95'
+    - average_response_time: '> 900s'
+    - user_satisfaction_score: '< 4.5'
+
+optimization:
+  auto_scaling:
+    enabled: true
+    thresholds:
+      high_load: 0.8
+      low_load: 0.3
+
+  load_balancing:
+    enabled: true
+    algorithm: round_robin
+    health_check_interval: 60s
+
+  model_selection:
+    enabled: true
+    strategy: performance_optimized
+    fallback_models:
+      - claude-3-opus-20240229
+      - claude-3-sonnet-20240229
+      - claude-3-haiku-20240307

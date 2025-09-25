@@ -1,0 +1,625 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Enhanced DFS Optimizer Schema",
+  "description": "Comprehensive schema for professional DFS optimizer with 26 player controls",
+
+  "definitions": {
+    "PlayerControls": {
+      "type": "object",
+      "properties": {
+        "locked": { "type": "boolean", "default": false },
+        "banned": { "type": "boolean", "default": false },
+        "minExposure": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 0
+        },
+        "maxExposure": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 100
+        },
+        "customProjection": { "type": ["number", "null"], "minimum": 0 },
+        "projectionBoost": {
+          "type": "number",
+          "minimum": -100,
+          "maximum": 200,
+          "default": 0
+        },
+        "ownershipOverride": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "ownershipFadeBoost": { "type": "boolean", "default": false },
+        "randomnessDeviation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 10
+        },
+        "ceilingFloorToggle": {
+          "type": "string",
+          "enum": ["ceiling", "floor", "projection"],
+          "default": "projection"
+        },
+        "multiPosEligibility": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "salaryOverride": { "type": ["integer", "null"], "minimum": 0 },
+        "groupMemberships": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "stackRole": {
+          "type": "string",
+          "enum": ["qb_stack", "bring_back", "punt", "contrarian", "none"],
+          "default": "none"
+        },
+        "injuryTag": {
+          "type": "string",
+          "enum": ["ACTIVE", "Q", "D", "O", "NIR"],
+          "default": "ACTIVE"
+        },
+        "newsSignalBadge": { "type": ["string", "null"] },
+        "boomPercentage": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "bustPercentage": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+        "leverageScore": { "type": ["number", "null"] },
+        "matchupScore": { "type": ["number", "null"] },
+        "depthChartRole": {
+          "type": "string",
+          "enum": ["starter", "backup", "rotation", "injury_fill"],
+          "default": "starter"
+        },
+        "hypeScore": { "type": ["number", "null"] },
+        "lateSwapEligible": { "type": "boolean", "default": false },
+        "priorityTag": {
+          "type": "string",
+          "enum": ["core", "contrarian", "gpp_only", "cash_only", "none"],
+          "default": "none"
+        },
+        "advancedNotes": { "type": "string", "default": "" },
+        "duplicationRisk": { "type": ["number", "null"], "minimum": 0, "maximum": 100 }
+      },
+      "required": ["locked", "banned", "minExposure", "maxExposure"],
+      "additionalProperties": false
+    },
+
+    "MCPSignals": {
+      "type": "object",
+      "properties": {
+        "leverage": { "type": "number" },
+        "boom": { "type": "number", "minimum": 0, "maximum": 100 },
+        "bust": { "type": "number", "minimum": 0, "maximum": 100 },
+        "matchup": { "type": "number" },
+        "hype": { "type": "number" },
+        "injury": { "type": "string" },
+        "news": { "type": "string" },
+        "weather": { "type": "number" },
+        "vegas": { "type": "number" },
+        "asOf": { "type": "string", "format": "date-time" },
+        "provenance": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["leverage", "boom", "bust", "asOf", "provenance"],
+      "additionalProperties": false
+    },
+
+    "EnhancedPlayer": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "position": {
+          "type": "string",
+          "enum": ["QB", "RB", "WR", "TE", "DST", "K"]
+        },
+        "team": { "type": "string", "minLength": 2, "maxLength": 4 },
+        "salary": { "type": "integer", "minimum": 0 },
+        "projectedPoints": { "type": "number", "minimum": 0 },
+        "ownership": { "type": "number", "minimum": 0, "maximum": 1 },
+        "controls": { "$ref": "#/definitions/PlayerControls" },
+        "mcpSignals": { "$ref": "#/definitions/MCPSignals" }
+      },
+      "required": [
+        "id",
+        "name",
+        "position",
+        "team",
+        "salary",
+        "projectedPoints",
+        "ownership",
+        "controls"
+      ],
+      "additionalProperties": false
+    },
+
+    "PlayerGroup": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "playerIds": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "minFromGroup": { "type": "integer", "minimum": 0 },
+        "maxFromGroup": { "type": "integer", "minimum": 0 },
+        "enabled": { "type": "boolean", "default": true }
+      },
+      "required": ["id", "name", "playerIds", "minFromGroup", "maxFromGroup"],
+      "additionalProperties": false
+    },
+
+    "StackConfiguration": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["QB+2", "QB+3", "RB+DST", "custom"]
+        },
+        "team": { "type": "string" },
+        "positions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 2
+        },
+        "bringBack": { "type": "integer", "minimum": 0, "default": 0 },
+        "minFromStack": { "type": "integer", "minimum": 2, "default": 2 },
+        "maxFromStack": { "type": "integer", "minimum": 2, "default": 4 },
+        "enabled": { "type": "boolean", "default": true }
+      },
+      "required": ["id", "type", "team", "positions"],
+      "additionalProperties": false
+    },
+
+    "Constraints": {
+      "type": "object",
+      "properties": {
+        "salaryCap": { "type": "integer", "minimum": 0, "default": 50000 },
+        "maxFromTeam": { "type": "integer", "minimum": 1, "maximum": 9, "default": 4 },
+        "minGames": { "type": "integer", "minimum": 1, "default": 2 },
+        "uniquePlayers": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12,
+          "default": 9
+        },
+        "qbMin": { "type": "integer", "minimum": 0, "default": 1 },
+        "qbMax": { "type": "integer", "minimum": 0, "default": 1 },
+        "rbMin": { "type": "integer", "minimum": 0, "default": 2 },
+        "rbMax": { "type": "integer", "minimum": 0, "default": 3 },
+        "wrMin": { "type": "integer", "minimum": 0, "default": 3 },
+        "wrMax": { "type": "integer", "minimum": 0, "default": 4 },
+        "teMin": { "type": "integer", "minimum": 0, "default": 1 },
+        "teMax": { "type": "integer", "minimum": 0, "default": 2 },
+        "dstMin": { "type": "integer", "minimum": 0, "default": 1 },
+        "dstMax": { "type": "integer", "minimum": 0, "default": 1 },
+        "flexPositions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["RB", "WR", "TE"]
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "VarianceSettings": {
+      "type": "object",
+      "properties": {
+        "enableRandomness": { "type": "boolean", "default": false },
+        "randomnessPercentage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 10
+        },
+        "distributionMode": {
+          "type": "string",
+          "enum": ["normal", "lognormal", "empirical"],
+          "default": "normal"
+        },
+        "ceilingMode": { "type": "boolean", "default": false },
+        "floorMode": { "type": "boolean", "default": false },
+        "weatherAdjustments": { "type": "boolean", "default": true },
+        "injuryAdjustments": { "type": "boolean", "default": true }
+      },
+      "additionalProperties": false
+    },
+
+    "CorrelationSettings": {
+      "type": "object",
+      "properties": {
+        "enableCorrelations": { "type": "boolean", "default": true },
+        "stackCorrelation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.8
+        },
+        "gameCorrelation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.6
+        },
+        "negativeCorrelation": {
+          "type": "number",
+          "minimum": -1,
+          "maximum": 0,
+          "default": -0.4
+        },
+        "weatherImpact": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.3
+        },
+        "paceImpact": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.2 }
+      },
+      "additionalProperties": false
+    },
+
+    "OwnershipSettings": {
+      "type": "object",
+      "properties": {
+        "globalFade": {
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100,
+          "default": 0
+        },
+        "globalBoost": {
+          "type": "number",
+          "minimum": -100,
+          "maximum": 100,
+          "default": 0
+        },
+        "contrarian": { "type": "boolean", "default": false },
+        "leverageThreshold": { "type": "number", "minimum": 0, "default": 1.5 },
+        "ownershipCap": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 40
+        },
+        "chalkAvoidance": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+
+    "OptimizationRequest": {
+      "type": "object",
+      "properties": {
+        "slateId": { "type": "string" },
+        "players": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/EnhancedPlayer" },
+          "minItems": 9
+        },
+        "constraints": { "$ref": "#/definitions/Constraints" },
+        "stacks": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/StackConfiguration" }
+        },
+        "groups": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlayerGroup" }
+        },
+        "varianceSettings": { "$ref": "#/definitions/VarianceSettings" },
+        "correlationSettings": { "$ref": "#/definitions/CorrelationSettings" },
+        "ownershipSettings": { "$ref": "#/definitions/OwnershipSettings" },
+        "numLineups": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 300,
+          "default": 150
+        }
+      },
+      "required": ["slateId", "players", "constraints"],
+      "additionalProperties": false
+    },
+
+    "LineupPlayer": {
+      "type": "object",
+      "properties": {
+        "playerId": { "type": "string" },
+        "playerName": { "type": "string" },
+        "position": { "type": "string" },
+        "team": { "type": "string" },
+        "salary": { "type": "integer", "minimum": 0 },
+        "projectedPoints": { "type": "number", "minimum": 0 },
+        "ownership": { "type": "number", "minimum": 0, "maximum": 1 }
+      },
+      "required": [
+        "playerId",
+        "playerName",
+        "position",
+        "team",
+        "salary",
+        "projectedPoints",
+        "ownership"
+      ],
+      "additionalProperties": false
+    },
+
+    "OptimizedLineup": {
+      "type": "object",
+      "properties": {
+        "lineupId": { "type": "string" },
+        "players": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/LineupPlayer" },
+          "minItems": 9,
+          "maxItems": 9
+        },
+        "totalSalary": { "type": "integer", "minimum": 0 },
+        "projectedScore": { "type": "number", "minimum": 0 },
+        "ownership": { "type": "number", "minimum": 0, "maximum": 1 },
+        "leverage": { "type": "number" },
+        "stackInfo": { "type": "string" },
+        "uniqueness": { "type": "number", "minimum": 0, "maximum": 100 },
+        "roi": { "type": ["number", "null"] },
+        "percentile": { "type": ["number", "null"], "minimum": 0, "maximum": 100 }
+      },
+      "required": [
+        "lineupId",
+        "players",
+        "totalSalary",
+        "projectedScore",
+        "ownership",
+        "leverage",
+        "stackInfo",
+        "uniqueness"
+      ],
+      "additionalProperties": false
+    },
+
+    "ExposureData": {
+      "type": "object",
+      "properties": {
+        "playerId": { "type": "string" },
+        "playerName": { "type": "string" },
+        "position": { "type": "string" },
+        "team": { "type": "string" },
+        "exposure": { "type": "number", "minimum": 0, "maximum": 100 },
+        "targetMin": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "targetMax": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "actualCount": { "type": "integer", "minimum": 0 },
+        "status": {
+          "type": "string",
+          "enum": ["within", "over", "under"]
+        }
+      },
+      "required": [
+        "playerId",
+        "playerName",
+        "position",
+        "team",
+        "exposure",
+        "targetMin",
+        "targetMax",
+        "actualCount",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+
+    "OptimizationResponse": {
+      "type": "object",
+      "properties": {
+        "success": { "type": "boolean" },
+        "lineups": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/OptimizedLineup" }
+        },
+        "exposures": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/ExposureData" }
+        },
+        "stackAudit": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stackType": { "type": "string" },
+              "count": { "type": "integer", "minimum": 0 },
+              "percentage": { "type": "number", "minimum": 0, "maximum": 100 }
+            },
+            "required": ["stackType", "count", "percentage"]
+          }
+        },
+        "totalGenerated": { "type": "integer", "minimum": 0 },
+        "message": { "type": "string" }
+      },
+      "required": [
+        "success",
+        "lineups",
+        "exposures",
+        "stackAudit",
+        "totalGenerated",
+        "message"
+      ],
+      "additionalProperties": false
+    },
+
+    "SimulationRequest": {
+      "type": "object",
+      "properties": {
+        "slateId": { "type": "string" },
+        "players": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/EnhancedPlayer" }
+        },
+        "lineups": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/OptimizedLineup" }
+        },
+        "numSimulations": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 100000,
+          "default": 10000
+        },
+        "seed": { "type": "integer", "default": 42 },
+        "useMcpSignals": { "type": "boolean", "default": true },
+        "distributionType": {
+          "type": "string",
+          "enum": ["normal", "lognormal", "empirical"],
+          "default": "normal"
+        },
+        "correlationStrength": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0.7
+        },
+        "weatherAdjustments": { "type": "boolean", "default": true },
+        "injuryAdjustments": { "type": "boolean", "default": true }
+      },
+      "required": ["slateId", "players", "lineups"],
+      "additionalProperties": false
+    },
+
+    "PlayerOutcome": {
+      "type": "object",
+      "properties": {
+        "playerId": { "type": "string" },
+        "playerName": { "type": "string" },
+        "position": { "type": "string" },
+        "projectedPoints": { "type": "number", "minimum": 0 },
+        "meanOutcome": { "type": "number", "minimum": 0 },
+        "p5": { "type": "number", "minimum": 0 },
+        "p25": { "type": "number", "minimum": 0 },
+        "p50": { "type": "number", "minimum": 0 },
+        "p75": { "type": "number", "minimum": 0 },
+        "p95": { "type": "number", "minimum": 0 },
+        "boomRate": { "type": "number", "minimum": 0, "maximum": 100 },
+        "bustRate": { "type": "number", "minimum": 0, "maximum": 100 },
+        "variance": { "type": "number", "minimum": 0 }
+      },
+      "required": [
+        "playerId",
+        "playerName",
+        "position",
+        "projectedPoints",
+        "meanOutcome",
+        "p5",
+        "p25",
+        "p50",
+        "p75",
+        "p95",
+        "boomRate",
+        "bustRate",
+        "variance"
+      ],
+      "additionalProperties": false
+    },
+
+    "LineupResult": {
+      "type": "object",
+      "properties": {
+        "lineupId": { "type": "string" },
+        "projectedScore": { "type": "number", "minimum": 0 },
+        "actualScore": { "type": "number", "minimum": 0 },
+        "roi": { "type": "number" },
+        "percentile": { "type": "number", "minimum": 0, "maximum": 100 },
+        "boomRate": { "type": "number", "minimum": 0, "maximum": 100 },
+        "bustRate": { "type": "number", "minimum": 0, "maximum": 100 }
+      },
+      "required": [
+        "lineupId",
+        "projectedScore",
+        "actualScore",
+        "roi",
+        "percentile",
+        "boomRate",
+        "bustRate"
+      ],
+      "additionalProperties": false
+    },
+
+    "SimulationResponse": {
+      "type": "object",
+      "properties": {
+        "success": { "type": "boolean" },
+        "playerOutcomes": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/PlayerOutcome" }
+        },
+        "lineupResults": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/LineupResult" }
+        },
+        "roiDistribution": {
+          "type": "object",
+          "properties": {
+            "meanRoi": { "type": "number" },
+            "medianRoi": { "type": "number" },
+            "stdRoi": { "type": "number" },
+            "minRoi": { "type": "number" },
+            "maxRoi": { "type": "number" },
+            "positiveRoiRate": { "type": "number", "minimum": 0, "maximum": 100 },
+            "percentiles": {
+              "type": "object",
+              "properties": {
+                "p10": { "type": "number" },
+                "p25": { "type": "number" },
+                "p75": { "type": "number" },
+                "p90": { "type": "number" }
+              },
+              "required": ["p10", "p25", "p75", "p90"]
+            }
+          },
+          "required": [
+            "meanRoi",
+            "medianRoi",
+            "stdRoi",
+            "minRoi",
+            "maxRoi",
+            "positiveRoiRate",
+            "percentiles"
+          ]
+        },
+        "simulationStats": {
+          "type": "object",
+          "properties": {
+            "numSimulations": { "type": "integer" },
+            "seed": { "type": "integer" },
+            "distributionType": { "type": "string" },
+            "correlationStrength": { "type": "number" }
+          },
+          "required": [
+            "numSimulations",
+            "seed",
+            "distributionType",
+            "correlationStrength"
+          ]
+        },
+        "message": { "type": "string" }
+      },
+      "required": [
+        "success",
+        "playerOutcomes",
+        "lineupResults",
+        "roiDistribution",
+        "simulationStats",
+        "message"
+      ],
+      "additionalProperties": false
+    }
+  },
+
+  "type": "object",
+  "properties": {
+    "optimizationRequest": { "$ref": "#/definitions/OptimizationRequest" },
+    "optimizationResponse": { "$ref": "#/definitions/OptimizationResponse" },
+    "simulationRequest": { "$ref": "#/definitions/SimulationRequest" },
+    "simulationResponse": { "$ref": "#/definitions/SimulationResponse" }
+  }
+}

@@ -1,540 +1,597 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DFS Optimizer Pro - Modern Dark Layout</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --primary: #8b5cf6;
-            --secondary: #06b6d4;
-            --accent: #f59e0b;
-            --success: #10b981;
-            --danger: #ef4444;
-            --dark: #0f172a;
-            --darker: #020617;
-            --light: #f8fafc;
-        }
+      :root {
+        --primary: #8b5cf6;
+        --secondary: #06b6d4;
+        --accent: #f59e0b;
+        --success: #10b981;
+        --danger: #ef4444;
+        --dark: #0f172a;
+        --darker: #020617;
+        --light: #f8fafc;
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            background: var(--dark);
-            color: white;
-            font-family: 'Inter', system-ui, sans-serif;
-            overflow-x: hidden;
-        }
+      body {
+        background: var(--dark);
+        color: white;
+        font-family: 'Inter', system-ui, sans-serif;
+        overflow-x: hidden;
+      }
 
-        /* Header */
-        .top-header {
-            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
-        }
+      /* Header */
+      .top-header {
+        background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+      }
 
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
 
-        .logo h2 {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
+      .logo h2 {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: 800;
+      }
 
-        .sport-selector {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
+      .sport-selector {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
 
-        .sport-tab {
-            background: rgba(139, 92, 246, 0.2);
-            border: 1px solid var(--primary);
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+      .sport-tab {
+        background: rgba(139, 92, 246, 0.2);
+        border: 1px solid var(--primary);
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
 
-        .sport-tab.active {
-            background: var(--primary);
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
-        }
+      .sport-tab.active {
+        background: var(--primary);
+        box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+      }
 
-        .sport-tab:hover {
-            background: var(--primary);
-            transform: translateY(-2px);
-        }
+      .sport-tab:hover {
+        background: var(--primary);
+        transform: translateY(-2px);
+      }
 
-        /* Main Grid Layout */
+      /* Main Grid Layout */
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-rows: auto 1fr;
+        gap: 2rem;
+        padding: 2rem;
+        height: calc(100vh - 80px);
+      }
+
+      .controls-panel {
+        grid-column: 1;
+        grid-row: 1 / span 2;
+      }
+
+      .player-pool {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+      }
+
+      .lineups-panel {
+        grid-column: 3;
+        grid-row: 1 / span 2;
+      }
+
+      /* Card Styles */
+      .panel {
+        background: rgba(30, 41, 59, 0.8);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        overflow: hidden;
+      }
+
+      .panel-header {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        padding: 1.5rem;
+        color: white;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .panel-content {
+        padding: 1.5rem;
+        height: calc(100% - 80px);
+        overflow-y: auto;
+      }
+
+      /* AI Chat Integration */
+      .ai-section {
+        background: linear-gradient(135deg, var(--darker), var(--dark));
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(139, 92, 246, 0.3);
+      }
+
+      .ai-provider-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .ai-tab {
+        background: rgba(139, 92, 246, 0.2);
+        color: var(--primary);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border: 1px solid var(--primary);
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .ai-tab.active {
+        background: var(--primary);
+        color: white;
+      }
+
+      .ai-chat-window {
+        background: var(--darker);
+        border-radius: 12px;
+        padding: 1rem;
+        height: 200px;
+        overflow-y: auto;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+      }
+
+      .ai-message {
+        background: rgba(139, 92, 246, 0.2);
+        border-radius: 8px;
+        padding: 0.8rem;
+        margin-bottom: 0.5rem;
+        border-left: 3px solid var(--primary);
+      }
+
+      /* Player Cards */
+      .player-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s;
+      }
+
+      .player-card:hover {
+        border-color: var(--primary);
+        transform: translateX(4px);
+      }
+
+      .player-card.locked {
+        border-color: var(--success);
+        background: rgba(16, 185, 129, 0.1);
+      }
+
+      .player-card.banned {
+        border-color: var(--danger);
+        background: rgba(239, 68, 68, 0.1);
+      }
+
+      /* Lineup Cards */
+      .lineup-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      /* Form Elements */
+      .form-control,
+      .form-select {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        color: white;
+        border-radius: 8px;
+      }
+
+      .form-control:focus,
+      .form-select:focus {
+        background: rgba(30, 41, 59, 0.9);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.25);
+        color: white;
+      }
+
+      .btn {
+        border-radius: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), #a855f7);
+        border: none;
+      }
+
+      .btn-success {
+        background: linear-gradient(135deg, var(--success), #059669);
+        border: none;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--darker);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 4px;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 1200px) {
         .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: auto 1fr;
-            gap: 2rem;
-            padding: 2rem;
-            height: calc(100vh - 80px);
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto auto;
+          height: auto;
         }
 
-        .controls-panel {
-            grid-column: 1;
-            grid-row: 1 / span 2;
-        }
-
-        .player-pool {
-            grid-column: 2;
-            grid-row: 1 / span 2;
-        }
-
+        .controls-panel,
+        .player-pool,
         .lineups-panel {
-            grid-column: 3;
-            grid-row: 1 / span 2;
+          grid-column: 1;
+          grid-row: auto;
         }
-
-        /* Card Styles */
-        .panel {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            overflow: hidden;
-        }
-
-        .panel-header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            padding: 1.5rem;
-            color: white;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .panel-content {
-            padding: 1.5rem;
-            height: calc(100% - 80px);
-            overflow-y: auto;
-        }
-
-        /* AI Chat Integration */
-        .ai-section {
-            background: linear-gradient(135deg, var(--darker), var(--dark));
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(139, 92, 246, 0.3);
-        }
-
-        .ai-provider-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .ai-tab {
-            background: rgba(139, 92, 246, 0.2);
-            color: var(--primary);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--primary);
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .ai-tab.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .ai-chat-window {
-            background: var(--darker);
-            border-radius: 12px;
-            padding: 1rem;
-            height: 200px;
-            overflow-y: auto;
-            border: 1px solid rgba(139, 92, 246, 0.2);
-        }
-
-        .ai-message {
-            background: rgba(139, 92, 246, 0.2);
-            border-radius: 8px;
-            padding: 0.8rem;
-            margin-bottom: 0.5rem;
-            border-left: 3px solid var(--primary);
-        }
-
-        /* Player Cards */
-        .player-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s;
-        }
-
-        .player-card:hover {
-            border-color: var(--primary);
-            transform: translateX(4px);
-        }
-
-        .player-card.locked {
-            border-color: var(--success);
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .player-card.banned {
-            border-color: var(--danger);
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        /* Lineup Cards */
-        .lineup-card {
-            background: rgba(15, 23, 42, 0.6);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        /* Form Elements */
-        .form-control, .form-select {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: white;
-            border-radius: 8px;
-        }
-
-        .form-control:focus, .form-select:focus {
-            background: rgba(30, 41, 59, 0.9);
-            border-color: var(--primary);
-            box-shadow: 0 0 0 0.25rem rgba(139, 92, 246, 0.25);
-            color: white;
-        }
-
-        .btn {
-            border-radius: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.3s;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), #a855f7);
-            border: none;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #059669);
-            border: none;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--darker);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 1200px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto auto;
-                height: auto;
-            }
-            
-            .controls-panel,
-            .player-pool,
-            .lineups-panel {
-                grid-column: 1;
-                grid-row: auto;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Top Header -->
     <div class="top-header">
-        <div class="logo">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-rocket fa-2x me-3" style="color: var(--primary);"></i>
-                <div>
-                    <h2 class="mb-0">DFS Optimizer Pro</h2>
-                    <small class="text-muted">Advanced AI-Powered Platform</small>
-                </div>
-            </div>
+      <div class="logo">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-rocket fa-2x me-3" style="color: var(--primary)"></i>
+          <div>
+            <h2 class="mb-0">DFS Optimizer Pro</h2>
+            <small class="text-muted">Advanced AI-Powered Platform</small>
+          </div>
         </div>
-        
-        <div class="sport-selector">
-            <div class="sport-tab active" data-sport="NFL">🏈 NFL</div>
-            <div class="sport-tab" data-sport="NBA">🏀 NBA</div>
-            <select class="form-select form-select-sm ms-3" id="siteSelect" style="width: 150px;">
-                <option value="DraftKings">DraftKings</option>
-                <option value="FanDuel">FanDuel</option>
-            </select>
-        </div>
+      </div>
+
+      <div class="sport-selector">
+        <div class="sport-tab active" data-sport="NFL">🏈 NFL</div>
+        <div class="sport-tab" data-sport="NBA">🏀 NBA</div>
+        <select
+          class="form-select form-select-sm ms-3"
+          id="siteSelect"
+          style="width: 150px"
+        >
+          <option value="DraftKings">DraftKings</option>
+          <option value="FanDuel">FanDuel</option>
+        </select>
+      </div>
     </div>
 
     <!-- Main Dashboard Grid -->
     <div class="dashboard-grid">
-        <!-- Controls Panel -->
-        <div class="panel controls-panel">
-            <div class="panel-header">
-                <i class="fas fa-cogs me-2"></i>Controls & AI
+      <!-- Controls Panel -->
+      <div class="panel controls-panel">
+        <div class="panel-header"><i class="fas fa-cogs me-2"></i>Controls & AI</div>
+        <div class="panel-content">
+          <!-- AI Section -->
+          <div class="ai-section">
+            <h6
+              class="text-uppercase mb-3"
+              style="color: var(--accent); letter-spacing: 1px"
+            >
+              <i class="fas fa-brain me-2"></i>AI Assistant
+            </h6>
+            <div class="ai-provider-tabs">
+              <div class="ai-tab active" data-provider="chatgpt">GPT-4</div>
+              <div class="ai-tab" data-provider="gemini">Gemini</div>
+              <div class="ai-tab" data-provider="deepseek">DeepSeek</div>
             </div>
-            <div class="panel-content">
-                <!-- AI Section -->
-                <div class="ai-section">
-                    <h6 class="text-uppercase mb-3" style="color: var(--accent); letter-spacing: 1px;">
-                        <i class="fas fa-brain me-2"></i>AI Assistant
-                    </h6>
-                    <div class="ai-provider-tabs">
-                        <div class="ai-tab active" data-provider="chatgpt">GPT-4</div>
-                        <div class="ai-tab" data-provider="gemini">Gemini</div>
-                        <div class="ai-tab" data-provider="deepseek">DeepSeek</div>
-                    </div>
-                    <div class="ai-chat-window" id="aiChatWindow">
-                        <div class="ai-message">
-                            <strong>🤖 AI Ready</strong><br>
-                            <small>Load players for AI analysis</small>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary btn-sm w-100 mt-2" id="askAIBtn">
-                        <i class="fas fa-comment"></i> Ask AI
-                    </button>
-                </div>
-
-                <!-- Optimization Settings -->
-                <div class="mb-4">
-                    <h6 class="text-uppercase mb-3" style="color: var(--accent); letter-spacing: 1px;">Optimization</h6>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Number of Lineups</label>
-                        <input type="number" id="numLineups" class="form-control" value="5" min="1" max="150">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Objective</label>
-                        <select id="objective" class="form-select">
-                            <option value="projection">Max Points</option>
-                            <option value="ev">Max EV</option>
-                            <option value="ceiling">Max Ceiling</option>
-                        </select>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Diversity <span id="diversityValue">70%</span></label>
-                        <input type="range" id="diversity" class="form-range" min="0" max="100" value="70">
-                    </div>
-
-                    <button class="btn btn-success w-100 btn-lg" id="optimizeBtn">
-                        <i class="fas fa-magic"></i> Generate Lineups
-                    </button>
-                </div>
-
-                <!-- Quick Actions -->
-                <div>
-                    <h6 class="text-uppercase mb-3" style="color: var(--accent); letter-spacing: 1px;">Quick Actions</h6>
-                    <button class="btn btn-primary w-100 mb-2" id="loadSampleBtn">
-                        <i class="fas fa-download"></i> Load Sample Data
-                    </button>
-                    <button class="btn btn-warning w-100 mb-2" id="updateProjectionsBtn">
-                        <i class="fas fa-sync-alt"></i> Update Projections
-                    </button>
-                    <button class="btn btn-info w-100" id="exportBtn">
-                        <i class="fas fa-file-export"></i> Export CSV
-                    </button>
-                </div>
+            <div class="ai-chat-window" id="aiChatWindow">
+              <div class="ai-message">
+                <strong>🤖 AI Ready</strong><br />
+                <small>Load players for AI analysis</small>
+              </div>
             </div>
+            <button class="btn btn-primary btn-sm w-100 mt-2" id="askAIBtn">
+              <i class="fas fa-comment"></i> Ask AI
+            </button>
+          </div>
+
+          <!-- Optimization Settings -->
+          <div class="mb-4">
+            <h6
+              class="text-uppercase mb-3"
+              style="color: var(--accent); letter-spacing: 1px"
+            >
+              Optimization
+            </h6>
+
+            <div class="mb-3">
+              <label class="form-label">Number of Lineups</label>
+              <input
+                type="number"
+                id="numLineups"
+                class="form-control"
+                value="5"
+                min="1"
+                max="150"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Objective</label>
+              <select id="objective" class="form-select">
+                <option value="projection">Max Points</option>
+                <option value="ev">Max EV</option>
+                <option value="ceiling">Max Ceiling</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label"
+                >Diversity <span id="diversityValue">70%</span></label
+              >
+              <input
+                type="range"
+                id="diversity"
+                class="form-range"
+                min="0"
+                max="100"
+                value="70"
+              />
+            </div>
+
+            <button class="btn btn-success w-100 btn-lg" id="optimizeBtn">
+              <i class="fas fa-magic"></i> Generate Lineups
+            </button>
+          </div>
+
+          <!-- Quick Actions -->
+          <div>
+            <h6
+              class="text-uppercase mb-3"
+              style="color: var(--accent); letter-spacing: 1px"
+            >
+              Quick Actions
+            </h6>
+            <button class="btn btn-primary w-100 mb-2" id="loadSampleBtn">
+              <i class="fas fa-download"></i> Load Sample Data
+            </button>
+            <button class="btn btn-warning w-100 mb-2" id="updateProjectionsBtn">
+              <i class="fas fa-sync-alt"></i> Update Projections
+            </button>
+            <button class="btn btn-info w-100" id="exportBtn">
+              <i class="fas fa-file-export"></i> Export CSV
+            </button>
+          </div>
         </div>
+      </div>
 
-        <!-- Player Pool -->
-        <div class="panel player-pool">
-            <div class="panel-header">
-                <i class="fas fa-users me-2"></i>Player Pool (<span id="playerCount">0</span>)
-            </div>
-            <div class="panel-content">
-                <div id="playersContainer">
-                    <div class="text-center py-5">
-                        <i class="fas fa-users fa-4x mb-4" style="color: var(--primary);"></i>
-                        <h4 style="color: var(--primary);">Select Sport to Load Players</h4>
-                        <p class="text-muted">Choose NFL or NBA from the top header</p>
-                    </div>
-                </div>
-            </div>
+      <!-- Player Pool -->
+      <div class="panel player-pool">
+        <div class="panel-header">
+          <i class="fas fa-users me-2"></i>Player Pool (<span id="playerCount">0</span>)
         </div>
+        <div class="panel-content">
+          <div id="playersContainer">
+            <div class="text-center py-5">
+              <i class="fas fa-users fa-4x mb-4" style="color: var(--primary)"></i>
+              <h4 style="color: var(--primary)">Select Sport to Load Players</h4>
+              <p class="text-muted">Choose NFL or NBA from the top header</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <!-- Lineups Panel -->
-        <div class="panel lineups-panel">
-            <div class="panel-header">
-                <i class="fas fa-trophy me-2"></i>Generated Lineups (<span id="lineupCount">0</span>)
-            </div>
-            <div class="panel-content">
-                <div id="lineupsContainer">
-                    <div class="text-center py-5">
-                        <i class="fas fa-trophy fa-4x mb-4" style="color: var(--secondary);"></i>
-                        <h4 style="color: var(--secondary);">Optimized Lineups</h4>
-                        <p class="text-muted">Generate lineups to see them here</p>
-                    </div>
-                </div>
-            </div>
+      <!-- Lineups Panel -->
+      <div class="panel lineups-panel">
+        <div class="panel-header">
+          <i class="fas fa-trophy me-2"></i>Generated Lineups (<span id="lineupCount"
+            >0</span
+          >)
         </div>
+        <div class="panel-content">
+          <div id="lineupsContainer">
+            <div class="text-center py-5">
+              <i class="fas fa-trophy fa-4x mb-4" style="color: var(--secondary)"></i>
+              <h4 style="color: var(--secondary)">Optimized Lineups</h4>
+              <p class="text-muted">Generate lineups to see them here</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Alert Container -->
-    <div id="alertArea" style="position: fixed; top: 100px; right: 2rem; z-index: 2000; width: 300px;"></div>
+    <div
+      id="alertArea"
+      style="position: fixed; top: 100px; right: 2rem; z-index: 2000; width: 300px"
+    ></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    
-    <script>
-        let dashboardState = {
-            sport: 'NFL',
-            site: 'DraftKings',
-            players: [],
-            lineups: [],
-            aiProvider: 'chatgpt'
-        };
 
-        $(document).ready(function() {
-            setupEventListeners();
-            showAlert('info', '🌙 Layout 2: Modern Dark Theme - AI Integrated');
+    <script>
+      let dashboardState = {
+        sport: 'NFL',
+        site: 'DraftKings',
+        players: [],
+        lineups: [],
+        aiProvider: 'chatgpt',
+      };
+
+      $(document).ready(function () {
+        setupEventListeners();
+        showAlert('info', '🌙 Layout 2: Modern Dark Theme - AI Integrated');
+      });
+
+      function setupEventListeners() {
+        // Sport tabs
+        $('.sport-tab').click(function () {
+          $('.sport-tab').removeClass('active');
+          $(this).addClass('active');
+          const sport = $(this).data('sport');
+          switchSport(sport);
         });
 
-        function setupEventListeners() {
-            // Sport tabs
-            $('.sport-tab').click(function() {
-                $('.sport-tab').removeClass('active');
-                $(this).addClass('active');
-                const sport = $(this).data('sport');
-                switchSport(sport);
-            });
+        // AI provider tabs
+        $('.ai-tab').click(function () {
+          $('.ai-tab').removeClass('active');
+          $(this).addClass('active');
+          dashboardState.aiProvider = $(this).data('provider');
+          showAlert('info', `Switched to ${$(this).text()} AI`);
+        });
 
-            // AI provider tabs
-            $('.ai-tab').click(function() {
-                $('.ai-tab').removeClass('active');
-                $(this).addClass('active');
-                dashboardState.aiProvider = $(this).data('provider');
-                showAlert('info', `Switched to ${$(this).text()} AI`);
-            });
+        // Buttons
+        $('#loadSampleBtn').click(loadSampleData);
+        $('#optimizeBtn').click(optimizeLineups);
+        $('#askAIBtn').click(getAIAnalysis);
+        $('#updateProjectionsBtn').click(updateProjections);
+        $('#exportBtn').click(exportLineups);
 
-            // Buttons
-            $('#loadSampleBtn').click(loadSampleData);
-            $('#optimizeBtn').click(optimizeLineups);
-            $('#askAIBtn').click(getAIAnalysis);
-            $('#updateProjectionsBtn').click(updateProjections);
-            $('#exportBtn').click(exportLineups);
+        // Range slider
+        $('#diversity').on('input', function () {
+          $('#diversityValue').text($(this).val() + '%');
+        });
 
-            // Range slider
-            $('#diversity').on('input', function() {
-                $('#diversityValue').text($(this).val() + '%');
-            });
+        // Auto-load NFL data on start
+        setTimeout(() => {
+          loadSampleData();
+        }, 1000);
+      }
 
-            // Auto-load NFL data on start
-            setTimeout(() => {
-                loadSampleData();
-            }, 1000);
+      function switchSport(sport) {
+        dashboardState.sport = sport;
+        dashboardState.site = sport === 'NBA' ? 'FanDuel' : 'DraftKings';
+        $('#siteSelect').val(dashboardState.site);
+
+        // Auto-load data for new sport
+        loadSampleData();
+      }
+
+      function loadSampleData() {
+        const sport = dashboardState.sport;
+        showLoading(`Loading ${sport} players...`);
+
+        let samplePlayers = [];
+
+        if (sport === 'NFL') {
+          samplePlayers = [
+            { name: 'Josh Allen', position: 'QB', team: 'BUF', salary: 8900 },
+            { name: 'Lamar Jackson', position: 'QB', team: 'BAL', salary: 8700 },
+            { name: 'Christian McCaffrey', position: 'RB', team: 'SF', salary: 9200 },
+            { name: 'Saquon Barkley', position: 'RB', team: 'PHI', salary: 8800 },
+            { name: 'Tyreek Hill', position: 'WR', team: 'MIA', salary: 8200 },
+            { name: 'Davante Adams', position: 'WR', team: 'LVR', salary: 8400 },
+            { name: 'Travis Kelce', position: 'TE', team: 'KC', salary: 7400 },
+            { name: 'Buffalo Bills', position: 'DST', team: 'BUF', salary: 3200 },
+          ];
+        } else {
+          samplePlayers = [
+            { name: 'Luka Doncic', position: 'PG', team: 'DAL', salary: 11500 },
+            { name: 'Nikola Jokic', position: 'C', team: 'DEN', salary: 11000 },
+            {
+              name: 'Giannis Antetokounmpo',
+              position: 'PF',
+              team: 'MIL',
+              salary: 10800,
+            },
+            { name: 'Stephen Curry', position: 'PG', team: 'GSW', salary: 9800 },
+            { name: 'Anthony Davis', position: 'PF', team: 'LAL', salary: 8800 },
+            { name: 'Jimmy Butler', position: 'SF', team: 'MIA', salary: 8400 },
+          ];
         }
 
-        function switchSport(sport) {
-            dashboardState.sport = sport;
-            dashboardState.site = sport === 'NBA' ? 'FanDuel' : 'DraftKings';
-            $('#siteSelect').val(dashboardState.site);
-            
-            // Auto-load data for new sport
-            loadSampleData();
-        }
+        // Add calculated fields
+        const players = samplePlayers.map(p => ({
+          ...p,
+          id: `${p.name.replace(/\s+/g, '').toLowerCase()}_${p.team}`,
+          projection: Math.round(Math.random() * 20 + (sport === 'NBA' ? 15 : 10)),
+          ownership: Math.round(Math.random() * 30 + 5),
+          value:
+            Math.round(((Math.random() * 15 + 10) / (p.salary / 1000)) * 100) / 100,
+          locked: false,
+          banned: false,
+        }));
 
-        function loadSampleData() {
-            const sport = dashboardState.sport;
-            showLoading(`Loading ${sport} players...`);
+        dashboardState.players = players;
+        displayPlayers(players);
 
-            let samplePlayers = [];
-            
-            if (sport === 'NFL') {
-                samplePlayers = [
-                    { name: 'Josh Allen', position: 'QB', team: 'BUF', salary: 8900 },
-                    { name: 'Lamar Jackson', position: 'QB', team: 'BAL', salary: 8700 },
-                    { name: 'Christian McCaffrey', position: 'RB', team: 'SF', salary: 9200 },
-                    { name: 'Saquon Barkley', position: 'RB', team: 'PHI', salary: 8800 },
-                    { name: 'Tyreek Hill', position: 'WR', team: 'MIA', salary: 8200 },
-                    { name: 'Davante Adams', position: 'WR', team: 'LVR', salary: 8400 },
-                    { name: 'Travis Kelce', position: 'TE', team: 'KC', salary: 7400 },
-                    { name: 'Buffalo Bills', position: 'DST', team: 'BUF', salary: 3200 }
-                ];
-            } else {
-                samplePlayers = [
-                    { name: 'Luka Doncic', position: 'PG', team: 'DAL', salary: 11500 },
-                    { name: 'Nikola Jokic', position: 'C', team: 'DEN', salary: 11000 },
-                    { name: 'Giannis Antetokounmpo', position: 'PF', team: 'MIL', salary: 10800 },
-                    { name: 'Stephen Curry', position: 'PG', team: 'GSW', salary: 9800 },
-                    { name: 'Anthony Davis', position: 'PF', team: 'LAL', salary: 8800 },
-                    { name: 'Jimmy Butler', position: 'SF', team: 'MIA', salary: 8400 }
-                ];
-            }
+        setTimeout(() => {
+          hideLoading();
+          showAlert('success', `Loaded ${players.length} ${sport} players!`);
+          updateCounts();
+        }, 800);
+      }
 
-            // Add calculated fields
-            const players = samplePlayers.map(p => ({
-                ...p,
-                id: `${p.name.replace(/\s+/g, '').toLowerCase()}_${p.team}`,
-                projection: Math.round(Math.random() * 20 + (sport === 'NBA' ? 15 : 10)),
-                ownership: Math.round(Math.random() * 30 + 5),
-                value: Math.round((Math.random() * 15 + 10) / (p.salary / 1000) * 100) / 100,
-                locked: false,
-                banned: false
-            }));
+      function displayPlayers(players) {
+        const container = $('#playersContainer');
+        container.empty();
 
-            dashboardState.players = players;
-            displayPlayers(players);
-            
-            setTimeout(() => {
-                hideLoading();
-                showAlert('success', `Loaded ${players.length} ${sport} players!`);
-                updateCounts();
-            }, 800);
-        }
+        players.forEach(player => {
+          const valueColor =
+            player.value >= 4.5
+              ? 'var(--success)'
+              : player.value >= 3.5
+                ? 'var(--accent)'
+                : 'var(--danger)';
 
-        function displayPlayers(players) {
-            const container = $('#playersContainer');
-            container.empty();
+          const cardClass = player.locked
+            ? 'player-card locked'
+            : player.banned
+              ? 'player-card banned'
+              : 'player-card';
 
-            players.forEach(player => {
-                const valueColor = player.value >= 4.5 ? 'var(--success)' : 
-                                 player.value >= 3.5 ? 'var(--accent)' : 'var(--danger)';
-                
-                const cardClass = player.locked ? 'player-card locked' : 
-                                 player.banned ? 'player-card banned' : 'player-card';
-
-                const playerCard = $(`
+          const playerCard = $(`
                     <div class="${cardClass}" data-player-id="${player.id}">
                         <div class="d-flex justify-content-between align-items-start mb-2">
                             <div>
@@ -566,81 +623,92 @@
                         </div>
                     </div>
                 `);
-                
-                container.append(playerCard);
-            });
 
-            // Add click handlers
-            $('.lock-btn').click(function() {
-                const playerId = $(this).data('player-id');
-                togglePlayerLock(playerId);
-            });
+          container.append(playerCard);
+        });
 
-            $('.ban-btn').click(function() {
-                const playerId = $(this).data('player-id');
-                togglePlayerBan(playerId);
-            });
+        // Add click handlers
+        $('.lock-btn').click(function () {
+          const playerId = $(this).data('player-id');
+          togglePlayerLock(playerId);
+        });
+
+        $('.ban-btn').click(function () {
+          const playerId = $(this).data('player-id');
+          togglePlayerBan(playerId);
+        });
+      }
+
+      function optimizeLineups() {
+        if (dashboardState.players.length === 0) {
+          showAlert('warning', 'Load players first');
+          return;
         }
 
-        function optimizeLineups() {
-            if (dashboardState.players.length === 0) {
-                showAlert('warning', 'Load players first');
-                return;
-            }
+        const numLineups = parseInt($('#numLineups').val());
+        showLoading(`Optimizing ${numLineups} lineup${numLineups > 1 ? 's' : ''}...`);
 
-            const numLineups = parseInt($('#numLineups').val());
-            showLoading(`Optimizing ${numLineups} lineup${numLineups > 1 ? 's' : ''}...`);
+        setTimeout(() => {
+          generateLineups(numLineups);
+        }, 1500);
+      }
 
-            setTimeout(() => {
-                generateLineups(numLineups);
-            }, 1500);
+      function generateLineups(count) {
+        const lineups = [];
+
+        for (let i = 0; i < count; i++) {
+          const availablePlayers = dashboardState.players.filter(p => !p.banned);
+          const selectedPlayers = [];
+
+          // Add locked players first
+          dashboardState.players
+            .filter(p => p.locked)
+            .forEach(p => selectedPlayers.push(p));
+
+          // Fill remaining spots with high-value players
+          const remaining = availablePlayers
+            .filter(p => !p.locked)
+            .sort((a, b) => b.value - a.value)
+            .slice(
+              0,
+              (dashboardState.sport === 'NFL' ? 9 : 8) - selectedPlayers.length
+            );
+
+          selectedPlayers.push(...remaining);
+
+          const totalSalary = selectedPlayers.reduce((sum, p) => sum + p.salary, 0);
+          const totalProjection = selectedPlayers.reduce(
+            (sum, p) => sum + p.projection,
+            0
+          );
+          const salaryCap = dashboardState.site === 'DraftKings' ? 50000 : 60000;
+
+          lineups.push({
+            id: `lineup_${i + 1}`,
+            players: selectedPlayers,
+            total_salary: totalSalary,
+            total_projection: Math.round(totalProjection * 10) / 10,
+            salary_remaining: salaryCap - totalSalary,
+          });
         }
 
-        function generateLineups(count) {
-            const lineups = [];
-            
-            for (let i = 0; i < count; i++) {
-                const availablePlayers = dashboardState.players.filter(p => !p.banned);
-                const selectedPlayers = [];
-                
-                // Add locked players first
-                dashboardState.players.filter(p => p.locked).forEach(p => selectedPlayers.push(p));
-                
-                // Fill remaining spots with high-value players
-                const remaining = availablePlayers
-                    .filter(p => !p.locked)
-                    .sort((a, b) => b.value - a.value)
-                    .slice(0, (dashboardState.sport === 'NFL' ? 9 : 8) - selectedPlayers.length);
-                
-                selectedPlayers.push(...remaining);
+        dashboardState.lineups = lineups;
+        displayLineups(lineups);
+        updateCounts();
 
-                const totalSalary = selectedPlayers.reduce((sum, p) => sum + p.salary, 0);
-                const totalProjection = selectedPlayers.reduce((sum, p) => sum + p.projection, 0);
-                const salaryCap = dashboardState.site === 'DraftKings' ? 50000 : 60000;
+        hideLoading();
+        showAlert(
+          'success',
+          `Generated ${lineups.length} optimized lineup${lineups.length > 1 ? 's' : ''}!`
+        );
+      }
 
-                lineups.push({
-                    id: `lineup_${i + 1}`,
-                    players: selectedPlayers,
-                    total_salary: totalSalary,
-                    total_projection: Math.round(totalProjection * 10) / 10,
-                    salary_remaining: salaryCap - totalSalary
-                });
-            }
+      function displayLineups(lineups) {
+        const container = $('#lineupsContainer');
+        container.empty();
 
-            dashboardState.lineups = lineups;
-            displayLineups(lineups);
-            updateCounts();
-            
-            hideLoading();
-            showAlert('success', `Generated ${lineups.length} optimized lineup${lineups.length > 1 ? 's' : ''}!`);
-        }
-
-        function displayLineups(lineups) {
-            const container = $('#lineupsContainer');
-            container.empty();
-
-            lineups.forEach((lineup, index) => {
-                const lineupCard = $(`
+        lineups.forEach((lineup, index) => {
+          const lineupCard = $(`
                     <div class="lineup-card">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="text-white mb-0">Lineup ${index + 1}</h6>
@@ -651,113 +719,122 @@
                         </div>
                         
                         <div class="lineup-players">
-                            ${lineup.players.slice(0, 6).map(player => `
+                            ${lineup.players
+                              .slice(0, 6)
+                              .map(
+                                player => `
                                 <div class="d-flex justify-content-between align-items-center py-1">
                                     <div class="d-flex align-items-center">
                                         <span class="position-badge me-2">${player.position}</span>
                                         <span class="text-white">${player.name}</span>
                                     </div>
                                     <div class="text-end">
-                                        <div class="salary-badge">$${(player.salary/1000).toFixed(0)}K</div>
+                                        <div class="salary-badge">$${(player.salary / 1000).toFixed(0)}K</div>
                                     </div>
                                 </div>
-                            `).join('')}
+                            `
+                              )
+                              .join('')}
                             ${lineup.players.length > 6 ? `<small class="text-muted">+${lineup.players.length - 6} more players</small>` : ''}
                         </div>
                     </div>
                 `);
-                
-                container.append(lineupCard);
-            });
+
+          container.append(lineupCard);
+        });
+      }
+
+      function getAIAnalysis() {
+        if (dashboardState.players.length === 0) {
+          showAlert('warning', 'Load players first');
+          return;
         }
 
-        function getAIAnalysis() {
-            if (dashboardState.players.length === 0) {
-                showAlert('warning', 'Load players first');
-                return;
-            }
+        const aiWindow = $('#aiChatWindow');
+        const provider = dashboardState.aiProvider;
+        const sport = dashboardState.sport;
 
-            const aiWindow = $('#aiChatWindow');
-            const provider = dashboardState.aiProvider;
-            const sport = dashboardState.sport;
-            
-            // Simulate AI analysis
-            const analyses = {
-                chatgpt: `🧠 <strong>ChatGPT Analysis:</strong><br>Top value plays: Focus on mid-tier RBs with volume. Stack ${sport === 'NFL' ? 'QB-WR combos from high-total games' : 'pace-up spots with usage'}.`,
-                gemini: `🌟 <strong>Gemini Analysis:</strong><br>Contrarian approach recommended. Target low-owned studs in favorable matchups. Consider bring-back stacks.`,
-                deepseek: `🔮 <strong>DeepSeek Analysis:</strong><br>Leverage ownership discrepancies. High-value plays with 60%+ floor projections offer optimal risk/reward.`
-            };
+        // Simulate AI analysis
+        const analyses = {
+          chatgpt: `🧠 <strong>ChatGPT Analysis:</strong><br>Top value plays: Focus on mid-tier RBs with volume. Stack ${sport === 'NFL' ? 'QB-WR combos from high-total games' : 'pace-up spots with usage'}.`,
+          gemini: `🌟 <strong>Gemini Analysis:</strong><br>Contrarian approach recommended. Target low-owned studs in favorable matchups. Consider bring-back stacks.`,
+          deepseek: `🔮 <strong>DeepSeek Analysis:</strong><br>Leverage ownership discrepancies. High-value plays with 60%+ floor projections offer optimal risk/reward.`,
+        };
 
-            aiWindow.append(`<div class="ai-message">${analyses[provider]}</div>`);
-            aiWindow.scrollTop(aiWindow[0].scrollHeight);
-            
-            showAlert('success', `${provider.toUpperCase()} AI analysis complete!`);
+        aiWindow.append(`<div class="ai-message">${analyses[provider]}</div>`);
+        aiWindow.scrollTop(aiWindow[0].scrollHeight);
+
+        showAlert('success', `${provider.toUpperCase()} AI analysis complete!`);
+      }
+
+      function togglePlayerLock(playerId) {
+        const player = dashboardState.players.find(p => p.id === playerId);
+        if (player) {
+          player.locked = !player.locked;
+          if (player.locked) player.banned = false;
+          displayPlayers(dashboardState.players);
+          updateCounts();
+        }
+      }
+
+      function togglePlayerBan(playerId) {
+        const player = dashboardState.players.find(p => p.id === playerId);
+        if (player) {
+          player.banned = !player.banned;
+          if (player.banned) player.locked = false;
+          displayPlayers(dashboardState.players);
+          updateCounts();
+        }
+      }
+
+      function updateProjections() {
+        if (dashboardState.players.length === 0) {
+          showAlert('warning', 'No players loaded');
+          return;
         }
 
-        function togglePlayerLock(playerId) {
-            const player = dashboardState.players.find(p => p.id === playerId);
-            if (player) {
-                player.locked = !player.locked;
-                if (player.locked) player.banned = false;
-                displayPlayers(dashboardState.players);
-                updateCounts();
-            }
+        showLoading('Updating AI projections...');
+
+        setTimeout(() => {
+          dashboardState.players.forEach(player => {
+            player.projection = Math.round(Math.random() * 20 + 8);
+            player.ownership = Math.round(Math.random() * 35 + 5);
+            player.value =
+              Math.round((player.projection / (player.salary / 1000)) * 100) / 100;
+          });
+
+          displayPlayers(dashboardState.players);
+          hideLoading();
+          showAlert('success', 'AI projections updated!');
+        }, 1200);
+      }
+
+      function exportLineups() {
+        if (dashboardState.lineups.length === 0) {
+          showAlert('warning', 'No lineups to export');
+          return;
         }
 
-        function togglePlayerBan(playerId) {
-            const player = dashboardState.players.find(p => p.id === playerId);
-            if (player) {
-                player.banned = !player.banned;
-                if (player.banned) player.locked = false;
-                displayPlayers(dashboardState.players);
-                updateCounts();
-            }
-        }
+        showAlert(
+          'success',
+          `Exported ${dashboardState.lineups.length} lineups to CSV!`
+        );
+      }
 
-        function updateProjections() {
-            if (dashboardState.players.length === 0) {
-                showAlert('warning', 'No players loaded');
-                return;
-            }
+      function updateCounts() {
+        $('#playerCount').text(dashboardState.players.length);
+        $('#lineupCount').text(dashboardState.lineups.length);
+      }
 
-            showLoading('Updating AI projections...');
-            
-            setTimeout(() => {
-                dashboardState.players.forEach(player => {
-                    player.projection = Math.round(Math.random() * 20 + 8);
-                    player.ownership = Math.round(Math.random() * 35 + 5);
-                    player.value = Math.round((player.projection / (player.salary / 1000)) * 100) / 100;
-                });
-                
-                displayPlayers(dashboardState.players);
-                hideLoading();
-                showAlert('success', 'AI projections updated!');
-            }, 1200);
-        }
+      function showAlert(type, message) {
+        const colors = {
+          success: 'var(--success)',
+          warning: 'var(--accent)',
+          danger: 'var(--danger)',
+          info: 'var(--secondary)',
+        };
 
-        function exportLineups() {
-            if (dashboardState.lineups.length === 0) {
-                showAlert('warning', 'No lineups to export');
-                return;
-            }
-
-            showAlert('success', `Exported ${dashboardState.lineups.length} lineups to CSV!`);
-        }
-
-        function updateCounts() {
-            $('#playerCount').text(dashboardState.players.length);
-            $('#lineupCount').text(dashboardState.lineups.length);
-        }
-
-        function showAlert(type, message) {
-            const colors = {
-                success: 'var(--success)',
-                warning: 'var(--accent)', 
-                danger: 'var(--danger)',
-                info: 'var(--secondary)'
-            };
-
-            const alertHtml = `
+        const alertHtml = `
                 <div class="alert alert-${type} alert-dismissible fade show" role="alert" 
                      style="background: ${colors[type]}; color: white; border: none; border-radius: 12px;">
                     <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
@@ -765,12 +842,12 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
                 </div>
             `;
-            $('#alertArea').html(alertHtml);
-            setTimeout(() => $('.alert').alert('close'), 6000);
-        }
+        $('#alertArea').html(alertHtml);
+        setTimeout(() => $('.alert').alert('close'), 6000);
+      }
 
-        function showLoading(message) {
-            const loadingHtml = `
+      function showLoading(message) {
+        const loadingHtml = `
                 <div class="alert alert-info d-flex align-items-center" id="loadingAlert" 
                      style="background: var(--primary); color: white; border: none; border-radius: 12px;">
                     <div class="spinner-border text-white me-3" role="status" style="width: 1.5rem; height: 1.5rem;">
@@ -779,12 +856,12 @@
                     <div>${message}</div>
                 </div>
             `;
-            $('#alertArea').html(loadingHtml);
-        }
+        $('#alertArea').html(loadingHtml);
+      }
 
-        function hideLoading() {
-            $('#loadingAlert').remove();
-        }
+      function hideLoading() {
+        $('#loadingAlert').remove();
+      }
     </script>
-</body>
+  </body>
 </html>

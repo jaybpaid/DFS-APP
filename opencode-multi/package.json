@@ -1,0 +1,29 @@
+{
+  "name": "opencode-multi",
+  "version": "1.0.0",
+  "description": "OpenCode Multi-Agent Builder for frontends, backends, websites, infra, and n8n",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "axios": "^1.0.0",
+    "commander": "^12.0.0",
+    "dotenv": "^16.0.0",
+    "typescript": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.4",
+    "@types/node": "^16.18.126",
+    "ts-node": "^10.0.0",
+    "vitest": "^0.25.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "author": "",
+  "license": "ISC"
+}

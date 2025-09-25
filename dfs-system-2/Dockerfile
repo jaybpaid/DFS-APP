@@ -1,60 +1,63 @@
-# DFS Ultimate Optimizer - Docker Container
+# STAGE 1: Builder
+# Use a full Python image to build dependencies, which may require build tools.
+FROM python:3.11 as builder
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies needed for building Python packages
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install poetry for dependency management
+RUN pip install poetry
+
+# Copy only the files necessary for dependency installation to leverage Docker cache
+COPY poetry.lock pyproject.toml ./
+
+# Install dependencies using poetry
+# --no-interaction: Do not ask any interactive questions
+# --no-ansi: Disable ANSI output
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-interaction --no-ansi --no-root
+
+
+# STAGE 2: Final Image
+# Use a slim Python image for the final application to reduce size.
 FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    curl \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# Set non-root user for security
+RUN useradd --create-home appuser
+USER appuser
+WORKDIR /home/appuser/app
 
-# Copy requirements first for better caching
-COPY requirements.txt .
+# Copy installed dependencies from the builder stage
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /app ./
 
-# Install core Python dependencies first
-RUN pip install --no-cache-dir --upgrade pip
+# Copy the application source code
+COPY --chown=appuser:appuser . .
 
-# Install dependencies with retries for stability
-RUN pip install --no-cache-dir \
-    fastapi==0.104.1 \
-    uvicorn[standard]==0.24.0 \
-    aiohttp==3.9.1 \
-    aiohttp-cors==0.7.0 \
-    pydantic==2.5.0 \
-    pandas==2.1.4 \
-    numpy==1.24.4 \
-    requests==2.31.0 \
-    python-multipart==0.0.6 \
-    python-dotenv==1.0.0
+# Create data directory
+RUN mkdir -p data
 
-# Try to install optional optimization packages
-RUN pip install --no-cache-dir pulp==2.7.0 || echo "PuLP installation failed, will use fallback"
-RUN pip install --no-cache-dir ortools==9.8.3296 || echo "OR-Tools installation failed, will use PuLP fallback"
+# Expose port
+EXPOSE 8000
 
-# Install remaining requirements
-RUN pip install --no-cache-dir -r requirements.txt || echo "Some optional dependencies failed to install"
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:8000/api/healthz || exit 1
 
-# Copy application code
-COPY . .
+# Environment variables
+ENV PYTHONPATH=/home/appuser/app
+ENV FIXTURES_DIR=/home/appuser/app/apps/api-python/fixtures
 
-# Create necessary directories
-RUN mkdir -p public/data logs
-
-# Set environment variables
-ENV PYTHONPATH=/app
-ENV PYTHONUNBUFFERED=1
-ENV DFS_ENV=production
-
-# Expose ports for both services
-EXPOSE 8000 8765
-
-# Health check (simplified)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
-
-# Default command to start both services using Python directly
-CMD ["python", "start_live_system.py"]
+# Run the application
+WORKDIR /home/appuser/app/apps/api-python
+CMD ["python3", "simple_main.py"]

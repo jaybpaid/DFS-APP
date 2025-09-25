@@ -1,0 +1,60 @@
+{
+  "timestamp": "2025-09-18T19:45:36.847782",
+  "validation_status": "FAILED",
+  "server_status": {
+    "vite_process": false
+  },
+  "component_validation": {
+    "CorrelationMatrixDisplay.tsx": {
+      "exists": true,
+      "size": 21702,
+      "path": "apps/web/src/components/CorrelationMatrixDisplay.tsx",
+      "status": "PASS"
+    },
+    "VarianceTab.tsx": {
+      "exists": true,
+      "size": 36295,
+      "path": "apps/web/src/components/optimizer/VarianceTab.tsx",
+      "status": "PASS"
+    },
+    "PortfolioManagerDashboard.tsx": {
+      "exists": true,
+      "size": 36013,
+      "path": "apps/web/src/components/PortfolioManagerDashboard.tsx",
+      "status": "PASS"
+    },
+    "ContestTracker.tsx": {
+      "exists": true,
+      "size": 26785,
+      "path": "apps/web/src/components/ContestTracker.tsx",
+      "status": "PASS"
+    },
+    "live-mcp-integration.ts": {
+      "exists": true,
+      "size": 20703,
+      "path": "apps/web/src/services/live-mcp-integration.ts",
+      "status": "PASS"
+    }
+  },
+  "mcp_integration": {
+    "claude_desktop_config.json": true,
+    "mcp_config_docker_complete.json": true,
+    "docker-compose.yml": true
+  },
+  "browser_validation": {
+    "accessibility": false
+  },
+  "errors": [
+    "Vite process not found on port 3001",
+    "Failed to connect to localhost:3001"
+  ],
+  "warnings": [],
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "issue": "Vite server not responding to HTTP requests",
+      "solution": "Restart development server: cd apps/web && npm run dev",
+      "category": "server"
+    }
+  ]
+}

@@ -16,12 +16,14 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Docker Engine 20.10+
 - Docker Compose 2.0+
 - 4GB+ RAM recommended
 - 2GB+ disk space
 
 ### Basic Deployment
+
 ```bash
 # Clone and navigate to the project
 cd dfs-system-2
@@ -39,18 +41,21 @@ open http://localhost:8000
 ## 📋 Deployment Options
 
 ### 1. Basic Development Setup
+
 ```bash
 # Start just the main application
 docker-compose up dfs-optimizer
 ```
 
 ### 2. Production Setup with Redis
+
 ```bash
 # Start with Redis caching
 docker-compose --profile with-redis up -d
 ```
 
 ### 3. Full Production with Nginx
+
 ```bash
 # Start with Nginx reverse proxy
 docker-compose --profile production up -d
@@ -59,6 +64,7 @@ docker-compose --profile production up -d
 ## 🔧 Configuration
 
 ### Environment Variables
+
 ```bash
 # Create .env file for custom configuration
 cat > .env << EOF
@@ -70,6 +76,7 @@ EOF
 ```
 
 ### Port Configuration
+
 - **8000**: Live Optimizer API
 - **8765**: DraftKings API Server
 - **8080**: Web Dashboard (optional)
@@ -79,6 +86,7 @@ EOF
 ## 📊 Monitoring & Health Checks
 
 ### Health Check Endpoints
+
 ```bash
 # Check API health
 curl http://localhost:8000/health
@@ -91,6 +99,7 @@ docker-compose ps
 ```
 
 ### Container Logs
+
 ```bash
 # View all logs
 docker-compose logs
@@ -105,12 +114,14 @@ docker-compose logs --tail=100 dfs-optimizer
 ## 💾 Data Persistence
 
 ### Volume Mounts
+
 - `./public/data`: Player data and cache files
 - `./logs`: Application logs
 - `dfs_cache`: Internal application cache
 - `redis_data`: Redis data (if using Redis)
 
 ### Backup Data
+
 ```bash
 # Backup data volumes
 docker run --rm -v dfs-system-2_dfs_cache:/data -v $(pwd):/backup alpine tar czf /backup/dfs_cache_backup.tar.gz -C /data .
@@ -122,6 +133,7 @@ docker run --rm -v dfs-system-2_dfs_cache:/data -v $(pwd):/backup alpine tar xzf
 ## 🔄 Updates & Maintenance
 
 ### Update Application
+
 ```bash
 # Pull latest changes
 git pull
@@ -133,6 +145,7 @@ docker-compose up -d
 ```
 
 ### Clean Up
+
 ```bash
 # Remove containers and networks
 docker-compose down
@@ -147,6 +160,7 @@ docker system prune -a
 ## 🏗️ Advanced Configuration
 
 ### Custom Dockerfile Modifications
+
 ```dockerfile
 # Add custom dependencies
 RUN pip install additional-package
@@ -159,6 +173,7 @@ ENV CUSTOM_SETTING=value
 ```
 
 ### Scaling Services
+
 ```bash
 # Scale to multiple instances
 docker-compose up -d --scale dfs-optimizer=3
@@ -170,6 +185,7 @@ docker-compose up -d --scale dfs-optimizer=3
 ## 🔒 Security Considerations
 
 ### Production Security
+
 1. **Use secrets management** for API keys
 2. **Enable SSL/TLS** with proper certificates
 3. **Restrict network access** with firewall rules
@@ -177,6 +193,7 @@ docker-compose up -d --scale dfs-optimizer=3
 5. **Monitor container logs** for suspicious activity
 
 ### Example Secrets Configuration
+
 ```yaml
 # docker-compose.yml
 services:
@@ -196,6 +213,7 @@ secrets:
 ### Common Issues
 
 #### Container Won't Start
+
 ```bash
 # Check logs for errors
 docker-compose logs dfs-optimizer
@@ -208,6 +226,7 @@ netstat -tulpn | grep :8000
 ```
 
 #### Memory Issues
+
 ```bash
 # Increase memory limits in docker-compose.yml
 services:
@@ -221,6 +240,7 @@ services:
 ```
 
 #### Data Not Persisting
+
 ```bash
 # Verify volume mounts
 docker-compose config
@@ -232,6 +252,7 @@ docker-compose exec dfs-optimizer ls -la /app/public/data
 ## 📈 Performance Optimization
 
 ### Resource Limits
+
 ```yaml
 # docker-compose.yml
 services:
@@ -247,6 +268,7 @@ services:
 ```
 
 ### Caching Strategy
+
 - **Redis**: For session and API response caching
 - **Volume caching**: For player data and projections
 - **Multi-stage builds**: For smaller image sizes
@@ -254,6 +276,7 @@ services:
 ## 🌐 Cloud Deployment
 
 ### AWS ECS
+
 ```bash
 # Build for ARM64 (Graviton)
 docker buildx build --platform linux/arm64 -t dfs-optimizer:arm64 .
@@ -265,6 +288,7 @@ docker push <account>.dkr.ecr.<region>.amazonaws.com/dfs-optimizer:latest
 ```
 
 ### Google Cloud Run
+
 ```bash
 # Build and deploy
 gcloud builds submit --tag gcr.io/PROJECT-ID/dfs-optimizer
@@ -272,6 +296,7 @@ gcloud run deploy --image gcr.io/PROJECT-ID/dfs-optimizer --platform managed
 ```
 
 ### Azure Container Instances
+
 ```bash
 # Create resource group and deploy
 az group create --name dfs-optimizer --location eastus
@@ -281,6 +306,7 @@ az container create --resource-group dfs-optimizer --name dfs-optimizer --image 
 ## 📞 Support
 
 For Docker-related issues:
+
 1. Check the logs: `docker-compose logs`
 2. Verify configuration: `docker-compose config`
 3. Test connectivity: `docker-compose exec dfs-optimizer curl localhost:8000/health`

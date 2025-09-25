@@ -1,0 +1,140 @@
+{
+  "timestamp": "2025-09-15T19:09:33.865410",
+  "sources_tested": 11,
+  "sources_working": 0,
+  "sources_with_2025_data": 0,
+  "detailed_results": [
+    {
+      "name": "NFL.com API",
+      "url": "https://www.nfl.com/api/roster/team-roster",
+      "expected_data": "Player rosters and stats",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": null,
+      "error": "HTTPSConnectionPool(host='www.nfl.com', port=443): Max retries exceeded with url: /api/roster/team-roster (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)')))",
+      "data_sample": null
+    },
+    {
+      "name": "ESPN NFL API",
+      "url": "https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams",
+      "expected_data": "Team and player data",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": null,
+      "error": "HTTPSConnectionPool(host='site.api.espn.com', port=443): Max retries exceeded with url: /apis/site/v2/sports/football/nfl/teams (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)')))",
+      "data_sample": null
+    },
+    {
+      "name": "NFLfastR Data (2024)",
+      "url": "https://github.com/nflverse/nfldata/releases/latest/download/players.csv",
+      "expected_data": "Player database",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": 0.63,
+      "error": "HTTP 404",
+      "data_sample": null
+    },
+    {
+      "name": "Pro Football Reference",
+      "url": "https://www.pro-football-reference.com/years/2024/opp.htm",
+      "expected_data": "Season stats",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": null,
+      "error": "HTTPSConnectionPool(host='www.pro-football-reference.com', port=443): Max retries exceeded with url: /years/2024/opp.htm (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)')))",
+      "data_sample": null
+    },
+    {
+      "name": "DraftKings Contest Info",
+      "url": "https://www.draftkings.com/lobby/getcontests?sport=NFL",
+      "expected_data": "Contest data and player pool",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": null,
+      "error": "HTTPSConnectionPool(host='www.draftkings.com', port=443): Max retries exceeded with url: /lobby/getcontests?sport=NFL (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)')))",
+      "data_sample": null
+    },
+    {
+      "name": "FanDuel Contest Data",
+      "url": "https://www.fanduel.com/api/contests",
+      "expected_data": "Contest and salary info",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": null,
+      "error": "HTTPSConnectionPool(host='www.fanduel.com', port=443): Max retries exceeded with url: /api/contests (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)')))",
+      "data_sample": null
+    },
+    {
+      "name": "SuperDraft API",
+      "url": "https://api.superdraft.com/v1/contests",
+      "expected_data": "Contest data",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": null,
+      "error": "HTTPSConnectionPool(host='api.superdraft.com', port=443): Max retries exceeded with url: /v1/contests (Caused by NameResolutionError(\"<urllib3.connection.HTTPSConnection object at 0x10319ed50>: Failed to resolve 'api.superdraft.com' ([Errno 8] nodename nor servname provided, or not known)\"))",
+      "data_sample": null
+    },
+    {
+      "name": "FantasyPros",
+      "url": "https://www.fantasypros.com/nfl/projections/qb.php",
+      "expected_data": "Player projections",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": null,
+      "error": "HTTPSConnectionPool(host='www.fantasypros.com', port=443): Max retries exceeded with url: /nfl/projections/qb.php (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)')))",
+      "data_sample": null
+    },
+    {
+      "name": "ESPN Fantasy",
+      "url": "https://fantasy.espn.com/football/players/projections",
+      "expected_data": "Fantasy projections",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": null,
+      "error": "HTTPSConnectionPool(host='fantasy.espn.com', port=443): Max retries exceeded with url: /football/players/projections (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)')))",
+      "data_sample": null
+    },
+    {
+      "name": "Yahoo Fantasy",
+      "url": "https://football.fantasysports.yahoo.com/f1/playersearch",
+      "expected_data": "Player search and data",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": null,
+      "error": "HTTPSConnectionPool(host='football.fantasysports.yahoo.com', port=443): Max retries exceeded with url: /f1/playersearch (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)')))",
+      "data_sample": null
+    },
+    {
+      "name": "Sleeper App API",
+      "url": "https://api.sleeper.app/v1/players/nfl",
+      "expected_data": "NFL player database",
+      "accessible": false,
+      "has_current_data": false,
+      "has_pricing": false,
+      "response_time": null,
+      "error": "HTTPSConnectionPool(host='api.sleeper.app', port=443): Max retries exceeded with url: /v1/players/nfl (Caused by SSLError(SSLCertVerificationError(1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1032)')))",
+      "data_sample": null
+    }
+  ],
+  "current_data_error": "[Errno 2] No such file or directory: 'public/data/nfl_players_live.json'",
+  "recommendations": [
+    "\u274c CRITICAL: No external data sources are accessible",
+    "\ud83d\udd27 FIX: Check internet connection and firewall settings",
+    "\u274c CRITICAL: No sources have verified 2025 data",
+    "\ud83d\udd27 FIX: Update to manual data entry or find current sources",
+    "\u2705 SOLUTION 1: Use manual CSV import from DraftKings exports",
+    "\u2705 SOLUTION 2: Focus on client-side optimization with current data",
+    "\u2705 SOLUTION 3: Implement proper lineup diversification algorithms",
+    "\u2705 SOLUTION 4: Add manual projection override capabilities"
+  ]
+}

@@ -289,23 +289,29 @@ async def handle_get_players(request: Request) -> Response:
                 'players': []
             }, status=400)
         
-        # Step 3: Get players from first draft group
-        draftables_data = await api_proxy.fetch_draftables(draft_group_ids[0])
+        # Step 3: Select draft group ID for current day slate dynamically
+        mnf_draft_group_id = None
+        for dg_id in draft_group_ids:
+            draftables_data = await api_proxy.fetch_draftables(dg_id)
+            if 'error' in draftables_data:
+                continue
+            players = api_proxy.process_draftables(draftables_data)
+            teams = set(p['team'] for p in players)
+            # Accept any draft group with players (non-empty)
+            if len(players) > 0:
+                mnf_draft_group_id = dg_id
+                break
         
-        if 'error' in draftables_data:
-            return web.json_response({
-                'success': False,
-                'error': draftables_data['error'],
-                'players': []
-            }, status=400)
-        
-        # Step 4: Process players
-        players = api_proxy.process_draftables(draftables_data)
+        if not mnf_draft_group_id:
+            # Fallback to first draft group if none found with players
+            mnf_draft_group_id = draft_group_ids[0]
+            draftables_data = await api_proxy.fetch_draftables(mnf_draft_group_id)
+            players = api_proxy.process_draftables(draftables_data)
         
         return web.json_response({
             'success': True,
             'sport': sport,
-            'draft_group_id': draft_group_ids[0],
+            'draft_group_id': mnf_draft_group_id,
             'total_contests': len(contests_data.get('contests', [])),
             'players': players,
             'timestamp': datetime.now().isoformat()

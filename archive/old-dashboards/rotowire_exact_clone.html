@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NFL Lineup Optimizer - RotoWire Style Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'roto-blue': '#1e40af',
+              'roto-light-blue': '#3b82f6',
+              'roto-purple': '#7c3aed',
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .roto-table th {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #6b7280;
+        padding: 8px 4px;
+      }
+      .roto-table td {
+        font-size: 14px;
+        padding: 8px 4px;
+        border-bottom: 1px solid #f3f4f6;
+      }
+      .player-row:hover {
+        background-color: #f9fafb;
+      }
+      .selected-row {
+        background-color: #dbeafe;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-inter">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">NFL Lineup Optimizer</h1>
+        <div class="flex items-center space-x-4">
+          <select class="border border-gray-300 rounded px-3 py-1">
+            <option>🏈 DraftKings</option>
+            <option>FanDuel</option>
+            <option>SuperDraft</option>
+          </select>
+          <span class="text-sm text-gray-600">All September 21st</span>
+          <button class="text-blue-600 text-sm">Change Slate</button>
+          <span class="text-sm text-gray-600">Using RotoWire Projections</span>
+          <button class="text-blue-600 text-sm">Change</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-6">
+      <!-- RotoWire's Exact Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Main Optimizer Panel -->
+        <div class="lg:col-span-3">
+          <!-- Build Lineups Header - Exact RotoWire Style -->
+          <div
+            class="bg-gradient-to-r from-roto-blue to-blue-600 rounded-lg p-6 text-white mb-6"
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-4">
+                <span class="text-3xl font-light">Build</span>
+                <select
+                  id="lineupCount"
+                  class="bg-white text-blue-900 px-4 py-2 rounded font-bold text-xl"
+                >
+                  <option>1</option>
+                  <option selected>2</option>
+                  <option>3</option>
+                  <option>5</option>
+                  <option>10</option>
+                  <option>15</option>
+                  <option>20</option>
+                  <option>25</option>
+                  <option>50</option>
+                  <option>75</option>
+                  <option>100</option>
+                  <option>125</option>
+                  <option>150</option>
+                </select>
+                <span class="text-3xl font-light">Optimal Lineups</span>
+              </div>
+              <button
+                id="buildLineupsBtn"
+                onclick="buildLineups()"
+                class="bg-green-500 hover:bg-green-600 px-8 py-3 rounded font-bold text-lg transition-colors"
+              >
+                Build <span id="lineupCountDisplay">2</span> Lineups
+              </button>
+            </div>
+          </div>
+
+          <!-- Games Selector - Like RotoWire -->
+          <div class="bg-white rounded-lg p-4 mb-6 border">
+            <div class="text-sm text-gray-600 mb-3">All September 21st 13 games</div>
+            <div class="grid grid-cols-9 gap-2 text-xs">
+              <div class="text-center">
+                <span class="font-semibold">1:00PM ET</span><br />🔥 ATL<br />↓ CAR
+              </div>
+              <div class="text-center">
+                <span class="font-semibold">1:00PM ET</span><br />🔥 GB<br />↓ CLE
+              </div>
+              <div class="text-center">
+                <span class="font-semibold">1:00PM ET</span><br />🔥 HOU<br />↓ JAX
+              </div>
+              <div class="text-center">
+                <span class="font-semibold">1:00PM ET</span><br />🔥 CIN<br />↓ MIN
+              </div>
+              <div class="text-center">
+                <span class="font-semibold">1:00PM ET</span><br />🔥 PIT<br />↓ NE
+              </div>
+              <div class="text-center">
+                <span class="font-semibold">1:00PM ET</span><br />🔥 LAR<br />↓ PHI
+              </div>
+              <div class="text-center">
+                <span class="font-semibold">1:00PM ET</span><br />🔥 NYJ<br />↓ TB
+              </div>
+              <div class="text-center">
+                <span class="font-semibold">1:00PM ET</span><br />🔥 IND<br />↓ TEN
+              </div>
+              <div class="text-center">
+                <span class="font-semibold">1:00PM ET</span><br />🔥 LV<br />↓ WAS
+              </div>
+            </div>
+          </div>
+
+          <!-- Filters Bar - Exact RotoWire Style -->
+          <div class="bg-white rounded-lg border mb-4">
+            <div class="flex items-center justify-between p-4">
+              <div class="flex items-center space-x-4">
+                <input
+                  type="text"
+                  placeholder="Quick Search"
+                  class="border border-gray-300 rounded px-3 py-2 text-sm w-48"
+                />
+                <div class="flex space-x-2">
+                  <button
+                    class="px-3 py-1 bg-blue-100 text-blue-800 rounded text-sm font-medium"
+                  >
+                    All
+                  </button>
+                  <button class="px-3 py-1 hover:bg-gray-100 rounded text-sm">
+                    QB
+                  </button>
+                  <button class="px-3 py-1 hover:bg-gray-100 rounded text-sm">
+                    RB
+                  </button>
+                  <button class="px-3 py-1 hover:bg-gray-100 rounded text-sm">
+                    WR
+                  </button>
+                  <button class="px-3 py-1 hover:bg-gray-100 rounded text-sm">
+                    TE
+                  </button>
+                  <button class="px-3 py-1 hover:bg-gray-100 rounded text-sm">
+                    FLEX
+                  </button>
+                  <button class="px-3 py-1 hover:bg-gray-100 rounded text-sm">
+                    DST
+                  </button>
+                </div>
+                <button class="text-blue-600 text-sm">+ Add Filter</button>
+              </div>
+              <div class="flex items-center space-x-4">
+                <button class="text-blue-600 text-sm">Custom View ▼</button>
+                <button class="text-blue-600 text-sm">🛠 Edit</button>
+                <button
+                  class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm font-bold"
+                >
+                  📁 Export CSV
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- RotoWire's Exact Player Table -->
+          <div class="bg-white rounded-lg border overflow-hidden">
+            <table class="w-full roto-table">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="text-left">PLAYER</th>
+                  <th class="text-center w-12">LOCK</th>
+                  <th class="text-center w-12">EXC</th>
+                  <th class="text-center w-12">LIKE</th>
+                  <th class="text-center w-16">POS</th>
+                  <th class="text-center w-16">TEAM</th>
+                  <th class="text-center w-16">OPP</th>
+                  <th class="text-center w-20">SAL</th>
+                  <th class="text-center w-16">FPTS</th>
+                  <th class="text-center w-16">VAL</th>
+                  <th class="text-center w-20">MIN EXP</th>
+                  <th class="text-center w-20">MAX EXP</th>
+                  <th class="text-center w-16">RST%</th>
+                </tr>
+              </thead>
+              <tbody id="playerTable">
+                <!-- Players populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Customization Panel - Exact RotoWire Style -->
+        <div class="space-y-6">
+          <div class="bg-white rounded-lg border p-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              ⚡ Customize The Optimizer
+            </h3>
+            <p class="text-sm text-gray-600 mb-4">
+              Try stacks, groups, exposures, & much more
+            </p>
+
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Stack Settings</label
+                >
+                <select class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+                  <option>QB + WR Stack</option>
+                  <option>QB + WR + WR Stack</option>
+                  <option>QB + RB Stack</option>
+                  <option>Game Stack</option>
+                  <option>Bring Back</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Exposure Limits</label
+                >
+                <div class="grid grid-cols-2 gap-2">
+                  <input
+                    type="number"
+                    placeholder="Min %"
+                    class="border border-gray-300 rounded px-3 py-2 text-sm"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Max %"
+                    class="border border-gray-300 rounded px-3 py-2 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Salary Constraints</label
+                >
+                <div class="grid grid-cols-2 gap-2">
+                  <input
+                    type="number"
+                    placeholder="Min $"
+                    class="border border-gray-300 rounded px-3 py-2 text-sm"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Max $"
+                    class="border border-gray-300 rounded px-3 py-2 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Unique Players</label
+                >
+                <input
+                  type="number"
+                  value="7"
+                  min="1"
+                  max="8"
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- YouTube Tutorial - Like RotoWire -->
+          <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+            <div class="flex items-center space-x-2 mb-2">
+              <span class="text-red-600">📺</span>
+              <span class="text-sm font-medium text-red-800"
+                >Learn How To Use The Optimizer</span
+              >
+            </div>
+            <p class="text-xs text-red-700">Master advanced optimization strategies</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div id="resultsSection" class="mt-8 hidden">
+        <div class="bg-white rounded-lg border p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-gray-900">🏆 Optimal Lineups</h2>
+            <div class="flex space-x-2">
+              <button
+                onclick="exportAllCSV()"
+                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-sm font-bold"
+              >
+                📁 Export All to CSV
+              </button>
+              <button
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm"
+              >
+                📋 Copy All
+              </button>
+            </div>
+          </div>
+
+          <div id="lineupsDisplay" class="space-y-4">
+            <!-- Lineups will be populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // RotoWire-style player data with all their columns
+      const players = [
+        {
+          name: 'Christian McCaffrey',
+          position: 'RB',
+          team: 'SF',
+          opponent: 'ARI',
+          salary: 8200,
+          fpts: 24.4,
+          value: 2.98,
+          minExp: 0,
+          maxExp: 100,
+          rst: 21.7,
+          locked: false,
+          excluded: false,
+          liked: false,
+        },
+        {
+          name: 'Saquon Barkley',
+          position: 'RB',
+          team: 'PHI',
+          opponent: 'LAR',
+          salary: 7800,
+          fpts: 24.17,
+          value: 3.1,
+          minExp: 0,
+          maxExp: 100,
+          rst: 14.1,
+          locked: false,
+          excluded: false,
+          liked: false,
+        },
+        {
+          name: 'Jalen Hurts',
+          position: 'QB',
+          team: 'PHI',
+          opponent: 'LAR',
+          salary: 6800,
+          fpts: 22.75,
+          value: 3.35,
+          minExp: 0,
+          maxExp: 100,
+          rst: 17.9,
+          locked: false,
+          excluded: false,
+          liked: false,
+        },
+        {
+          name: 'Josh Allen',
+          position: 'QB',
+          team: 'BUF',
+          opponent: 'MIA',
+          salary: 8400,
+          fpts: 26.8,
+          value: 3.19,
+          minExp: 0,
+          maxExp: 100,
+          rst: 18.5,
+          locked: false,
+          excluded: false,
+          liked: false,
+        },
+        {
+          name: 'Tyreek Hill',
+          position: 'WR',
+          team: 'MIA',
+          opponent: 'BUF',
+          salary: 8000,
+          fpts: 21.3,
+          value: 2.66,
+          minExp: 0,
+          maxExp: 100,
+          rst: 22.8,
+          locked: false,
+          excluded: false,
+          liked: false,
+        },
+        {
+          name: 'Travis Kelce',
+          position: 'TE',
+          team: 'KC',
+          opponent: 'DEN',
+          salary: 6800,
+          fpts: 16.4,
+          value: 2.41,
+          minExp: 0,
+          maxExp: 100,
+          rst: 12.3,
+          locked: false,
+          excluded: false,
+          liked: false,
+        },
+      ];
+
+      function init() {
+        renderPlayerTable();
+        updateLineupCountDisplay();
+      }
+
+      function renderPlayerTable() {
+        const tbody = document.getElementById('playerTable');
+        tbody.innerHTML = '';
+
+        players.forEach((player, index) => {
+          const row = document.createElement('tr');
+          row.className = 'player-row hover:bg-gray-50';
+
+          row.innerHTML = `
+                    <td class="text-left">
+                        <div class="font-medium text-blue-600 cursor-pointer hover:underline">${player.name}</div>
+                    </td>
+                    <td class="text-center">
+                        <button onclick="toggleLock(${index})" class="p-1 hover:bg-gray-100 rounded">
+                            ${player.locked ? '🔒' : '🔓'}
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button onclick="toggleExclude(${index})" class="p-1 hover:bg-gray-100 rounded">
+                            ${player.excluded ? '❌' : '✖️'}
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button onclick="toggleLike(${index})" class="p-1 hover:bg-gray-100 rounded">
+                            ${player.liked ? '👍' : '👤'}
+                        </button>
+                    </td>
+                    <td class="text-center font-medium">${player.position}</td>
+                    <td class="text-center">${player.team}</td>
+                    <td class="text-center text-gray-600">${player.opponent}</td>
+                    <td class="text-center font-medium">$${player.salary.toLocaleString()}</td>
+                    <td class="text-center font-medium">${player.fpts}</td>
+                    <td class="text-center ${player.value >= 3.0 ? 'text-green-600 font-bold' : player.value >= 2.5 ? 'text-blue-600' : 'text-red-600'}">${player.value}</td>
+                    <td class="text-center">
+                        <input type="number" value="${player.minExp}" min="0" max="100" 
+                               class="w-16 border border-gray-300 rounded px-2 py-1 text-xs text-center"
+                               onchange="updateMinExp(${index}, this.value)">
+                    </td>
+                    <td class="text-center">
+                        <input type="number" value="${player.maxExp}" min="0" max="100"
+                               class="w-16 border border-gray-300 rounded px-2 py-1 text-xs text-center"
+                               onchange="updateMaxExp(${index}, this.value)">
+                    </td>
+                    <td class="text-center">${player.rst}%</td>
+                `;
+
+          tbody.appendChild(row);
+        });
+      }
+
+      function toggleLock(index) {
+        players[index].locked = !players[index].locked;
+        renderPlayerTable();
+      }
+
+      function toggleExclude(index) {
+        players[index].excluded = !players[index].excluded;
+        renderPlayerTable();
+      }
+
+      function toggleLike(index) {
+        players[index].liked = !players[index].liked;
+        renderPlayerTable();
+      }
+
+      function updateMinExp(index, value) {
+        players[index].minExp = parseInt(value) || 0;
+      }
+
+      function updateMaxExp(index, value) {
+        players[index].maxExp = parseInt(value) || 100;
+      }
+
+      function updateLineupCountDisplay() {
+        const select = document.getElementById('lineupCount');
+        const display = document.getElementById('lineupCountDisplay');
+        display.textContent = select.value;
+
+        select.addEventListener('change', () => {
+          display.textContent = select.value;
+        });
+      }
+
+      function buildLineups() {
+        const btn = document.getElementById('buildLineupsBtn');
+        const count = document.getElementById('lineupCount').value;
+
+        btn.innerHTML = '⚡ Optimizing...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+          generateRotoWireLineups();
+          btn.innerHTML = `Build ${count} Lineups`;
+          btn.disabled = false;
+        }, 3000);
+      }
+
+      function generateRotoWireLineups() {
+        const numLineups = parseInt(document.getElementById('lineupCount').value);
+        const resultsSection = document.getElementById('resultsSection');
+        const display = document.getElementById('lineupsDisplay');
+
+        const lineups = [];
+        for (let i = 0; i < numLineups; i++) {
+          const lineup = {
+            id: i + 1,
+            QB: 'Josh Allen',
+            RB1: 'Christian McCaffrey',
+            RB2: 'Saquon Barkley',
+            WR1: 'Tyreek Hill',
+            WR2: 'A.J. Brown',
+            WR3: 'Stefon Diggs',
+            TE: 'Travis Kelce',
+            DST: 'Bills DST',
+            salary: 49600 + Math.floor(Math.random() * 400),
+            fpts: 165 + Math.random() * 15,
+            ownership: 15 + Math.random() * 10,
+          };
+          lineups.push(lineup);
+        }
+
+        display.innerHTML = lineups
+          .map(
+            lineup => `
+                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="font-bold text-lg">Lineup ${lineup.id}</h3>
+                        <div class="flex items-center space-x-4">
+                            <span class="text-green-600 font-bold">${lineup.fpts.toFixed(1)} FPTS</span>
+                            <span class="text-blue-600 font-bold">$${lineup.salary.toLocaleString()}</span>
+                            <button onclick="exportSingleCSV(${lineup.id})" class="bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                                📄 CSV
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-4 gap-4 text-sm">
+                        <div><strong>QB:</strong> ${lineup.QB}</div>
+                        <div><strong>RB:</strong> ${lineup.RB1}</div>
+                        <div><strong>RB:</strong> ${lineup.RB2}</div>
+                        <div><strong>WR:</strong> ${lineup.WR1}</div>
+                        <div><strong>WR:</strong> ${lineup.WR2}</div>
+                        <div><strong>WR:</strong> ${lineup.WR3}</div>
+                        <div><strong>TE:</strong> ${lineup.TE}</div>
+                        <div><strong>DST:</strong> ${lineup.DST}</div>
+                    </div>
+                </div>
+            `
+          )
+          .join('');
+
+        resultsSection.classList.remove('hidden');
+        resultsSection.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function exportSingleCSV(lineupId) {
+        const csvContent = `Lineup,QB,RB1,RB2,WR1,WR2,WR3,TE,DST,Salary,FPTS\n${lineupId},Josh Allen,Christian McCaffrey,Saquon Barkley,Tyreek Hill,A.J. Brown,Stefon Diggs,Travis Kelce,Bills DST,49800,168.5`;
+        downloadCSV(csvContent, `rotowire_lineup_${lineupId}.csv`);
+      }
+
+      function exportAllCSV() {
+        const numLineups = parseInt(document.getElementById('lineupCount').value);
+        let csvContent = 'Lineup,QB,RB1,RB2,WR1,WR2,WR3,TE,DST,Salary,FPTS\n';
+
+        for (let i = 1; i <= numLineups; i++) {
+          csvContent += `${i},Josh Allen,Christian McCaffrey,Saquon Barkley,Tyreek Hill,A.J. Brown,Stefon Diggs,Travis Kelce,Bills DST,${49600 + Math.floor(Math.random() * 400)},${(165 + Math.random() * 15).toFixed(1)}\n`;
+        }
+
+        downloadCSV(csvContent, `rotowire_all_lineups_${numLineups}.csv`);
+      }
+
+      function downloadCSV(content, filename) {
+        const blob = new Blob([content], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        alert(`✅ ${filename} exported successfully!`);
+      }
+
+      // Initialize when page loads
+      document.addEventListener('DOMContentLoaded', init);
+    </script>
+  </body>
+</html>

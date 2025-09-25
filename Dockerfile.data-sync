@@ -1,0 +1,43 @@
+# Data Sync Service Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    cron \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY requirements.txt ./
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy data sync scripts
+COPY dynamic_data_manager.py ./
+COPY comprehensive_slate_discovery.py ./
+COPY mcp_comprehensive_slate_discovery.py ./
+
+# Create data directory
+RUN mkdir -p /app/data
+
+# Create startup script
+RUN echo '#!/bin/bash\n\
+echo "Starting DFS Data Sync Service..."\n\
+while true; do\n\
+    echo "$(date): Running data sync..."\n\
+    python3 dynamic_data_manager.py\n\
+    echo "$(date): Data sync completed. Sleeping for ${SYNC_INTERVAL:-300} seconds..."\n\
+    sleep ${SYNC_INTERVAL:-300}\n\
+done' > /app/start-sync.sh
+
+RUN chmod +x /app/start-sync.sh
+
+# Health check
+HEALTHCHECK --interval=60s --timeout=15s --start-period=120s --retries=3 \
+  CMD python3 -c "import requests; requests.get('http://api-python:8001/api/healthz')" || exit 1
+
+# Start the sync service
+CMD ["/app/start-sync.sh"]

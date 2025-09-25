@@ -1,76 +1,16 @@
-version: '3.9'
-
 services:
-  dfs-optimizer:
+  app:
     build: .
-    container_name: dfs-pro-optimizer
     ports:
-      - "8000:8000"
-    volumes:
-      - ./data:/app/data
-      - ./dfs-system-2:/app/dfs-system-2
-    environment:
-      - FLASK_ENV=production
-      - PYTHONPATH=/app
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/status"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    depends_on:
-      - mcp-servers
-
-  data-sync:
-    build: .
-    container_name: dfs-data-sync
-    volumes:
-      - ./data:/app/data
-    environment:
-      - PYTHONPATH=/app
-    command: ["python3", "dynamic_data_manager.py"]
-    restart: unless-stopped
-    depends_on:
-      - dfs-optimizer
-
-  mcp-servers:
-    build: ./docker/mcp-servers
-    container_name: dfs-mcp-servers
-    ports:
-      - "3001:3001"
-      - "3002:3002"
-      - "3003:3003"
-      - "3004:3004"
-      - "3005:3005"
-      - "3006:3006"
-      - "3007:3007"
-      - "3008:3008"
-      - "3009:3009"
-      - "3010:3010"
-    volumes:
-      - ./data:/app/data
-      - ./dfs-system-2:/app/dfs-system-2
-      - mcp_data:/mcp-data
+      - "5000:5000"
     environment:
       - NODE_ENV=production
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-
-  redis:
-    image: redis:7-alpine
-    container_name: dfs-redis
-    ports:
-      - "6379:6379"
-    restart: unless-stopped
     volumes:
-      - redis_data:/data
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm start
+
+# Removed db service as SQLite is file-based and does not require a container
 
 volumes:
-  redis_data:
-  mcp_data:
+  sqlite_data:

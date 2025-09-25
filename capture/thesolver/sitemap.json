@@ -24,7 +24,7 @@
       "description": "Complete NFL optimizer interface with player data, controls, and advanced rules",
       "timestamp": "2025-09-15T17:09:00.000Z",
       "requiresAuth": true,
-      "htmlFile": "html_raw/01-authenticated-nfl-optimizer.html", 
+      "htmlFile": "html_raw/01-authenticated-nfl-optimizer.html",
       "domFile": "dom_trees/01-authenticated-nfl-optimizer.json",
       "screenshotFile": "screenshots/01-authenticated-nfl-optimizer.png",
       "features": [
@@ -50,19 +50,19 @@
       "ruleTypes": [
         "Games - By Start Time",
         "Boost/dock players in scenarios",
-        "Low owned player targeting", 
+        "Low owned player targeting",
         "Team stacking requirements"
       ]
     },
     {
-      "route": "https://thesolver.com/optimizer/nfl#lineup-builder", 
+      "route": "https://thesolver.com/optimizer/nfl#lineup-builder",
       "title": "Lineup Builder - NFL Optimizer",
       "type": "lineup-interface",
       "description": "Interactive lineup building with position constraints and salary management",
       "timestamp": "2025-09-15T17:11:00.000Z",
       "requiresAuth": true,
       "htmlFile": "html_raw/03-lineup-builder.html",
-      "domFile": "dom_trees/03-lineup-builder.json", 
+      "domFile": "dom_trees/03-lineup-builder.json",
       "screenshotFile": "screenshots/03-lineup-builder.png",
       "positions": ["QB", "RB", "WR", "WR", "TE", "FLEX", "DST", "UTIL"],
       "salaryCap": "$50,000",
@@ -77,7 +77,12 @@
     "exportFormats": ["CSV", "JSON", "DFS site formats"],
     "optimizationOptions": ["Single lineup", "Up to 1000 lineups", "Randomization"],
     "stackingOptions": ["QB stack", "Game stack", "Team correlations"],
-    "constraints": ["Salary cap", "Position limits", "Ownership targets", "Late swap rules"]
+    "constraints": [
+      "Salary cap",
+      "Position limits",
+      "Ownership targets",
+      "Late swap rules"
+    ]
   },
   "technicalDetails": {
     "framework": "Custom React/JavaScript SPA",

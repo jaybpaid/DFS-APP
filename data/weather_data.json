@@ -17,7 +17,7 @@
   "stadium_weather": {
     "arrowhead_stadium": {
       "city": "Kansas City",
-      "state": "MO", 
+      "state": "MO",
       "coordinates": [-94.4839, 39.0489],
       "forecast_endpoint": "https://api.weather.gov/gridpoints/EAX/47,48/forecast",
       "status": "WORKING_VIA_MCP",

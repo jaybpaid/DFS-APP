@@ -1,0 +1,116 @@
+# Hardened MCP Servers Only - Production Security + Reliability
+# Focuses on core MCP functionality to address daily crashes
+
+version: '3.8'
+
+x-secure: &secure
+  user: "1000:1000"
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  cap_drop: ["ALL"]
+  tmpfs:
+    - /tmp:rw,noexec,nosuid,nodev,size=16m
+  restart: unless-stopped
+  deploy:
+    resources:
+      limits:
+        cpus: "0.50"
+        memory: 256M
+
+networks:
+  mcp-working:
+    driver: bridge
+
+volumes:
+  mcp_working_data:
+
+services:
+  # ---------- MCP Servers (Internal Only - No Host Ports) ----------
+  filesystem-working:
+    image: mcp-filesystem-minimal
+    container_name: filesystem-working
+    <<: *secure
+    environment:
+      NODE_ENV: production
+      MCP_SERVER: filesystem
+      TZ: UTC
+    volumes:
+      - ./:/workspace:ro
+      - mcp_working_data:/app/data
+    healthcheck:
+      test: ["CMD","node","-e","const http=require('http');const r=http.request({host:'localhost',port:8080,path:'/health'},res=>process.exit(res.statusCode===200?0:1));r.on('error',()=>process.exit(1));r.end();"]
+      interval: 15s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks: [mcp-working]
+
+  memory-working:
+    image: mcp-filesystem-minimal
+    container_name: memory-working
+    <<: *secure
+    environment:
+      NODE_ENV: production
+      MCP_SERVER: memory
+      TZ: UTC
+    volumes:
+      - mcp_working_data:/app/data
+    healthcheck:
+      test: ["CMD","node","-e","const http=require('http');const r=http.request({host:'localhost',port:8080,path:'/health'},res=>process.exit(res.statusCode===200?0:1));r.on('error',()=>process.exit(1));r.end();"]
+      interval: 15s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks: [mcp-working]
+
+  process-working:
+    image: mcp-filesystem-minimal
+    container_name: process-working
+    <<: *secure
+    environment:
+      NODE_ENV: production
+      MCP_SERVER: process
+      TZ: UTC
+      NODE_OPTIONS: --max-old-space-size=256
+    volumes:
+      - ./:/workspace:ro
+    healthcheck:
+      test: ["CMD","node","-e","const http=require('http');const r=http.request({host:'localhost',port:8080,path:'/health'},res=>process.exit(res.statusCode===200?0:1));r.on('error',()=>process.exit(1));r.end();"]
+      interval: 15s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks: [mcp-working]
+
+  # ---------- Health Monitor (RW Docker Socket for Restart Authority) ----------
+  mcp-health-monitor:
+    image: alpine:3.19
+    container_name: mcp-health-monitor
+    <<: *secure
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+    command: >
+      sh -c "
+      apk add --no-cache docker-cli curl &&
+      echo '🏥 MCP Health Monitor Starting...' &&
+      while true; do
+        for svc in filesystem-working memory-working process-working; do
+          if ! curl -fsS http://$${svc}:8080/health >/dev/null 2>&1; then
+            echo \"⚠️ $${svc} unhealthy - restarting...\" >&2
+            docker restart $${svc} >/dev/null 2>&1 || true
+          else
+            echo \"✅ $${svc} healthy\"
+          fi
+        done
+        sleep 30
+      done
+      "
+    depends_on:
+      filesystem-working:
+        condition: service_started
+      memory-working:
+        condition: service_started
+      process-working:
+        condition: service_started
+    networks: [mcp-working]

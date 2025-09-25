@@ -1,1110 +1,1197 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Elite DFS Optimizer - Professional Analytics Platform</title>
-    
+
     <!-- Chart.js for Advanced Data Visualization -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
-    
+
     <!-- Material Design Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+
     <!-- Professional Typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-        :root {
-            --primary-color: #1976d2;
-            --secondary-color: #424242;
-            --accent-color: #ff5722;
-            --success-color: #4caf50;
-            --warning-color: #ff9800;
-            --error-color: #f44336;
-            --background-color: #fafafa;
-            --surface-color: #ffffff;
-            --text-primary: #212121;
-            --text-secondary: #757575;
-            --border-color: #e0e0e0;
-        }
+      :root {
+        --primary-color: #1976d2;
+        --secondary-color: #424242;
+        --accent-color: #ff5722;
+        --success-color: #4caf50;
+        --warning-color: #ff9800;
+        --error-color: #f44336;
+        --background-color: #fafafa;
+        --surface-color: #ffffff;
+        --text-primary: #212121;
+        --text-secondary: #757575;
+        --border-color: #e0e0e0;
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--background-color);
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
+      body {
+        font-family:
+          'Inter',
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+        background: var(--background-color);
+        color: var(--text-primary);
+        line-height: 1.6;
+      }
 
-        /* Professional Header */
-        .elite-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #1565c0 100%);
-            color: white;
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
+      /* Professional Header */
+      .elite-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1565c0 100%);
+        color: white;
+        padding: 1rem 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+      }
 
-        .elite-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.1) 75%, rgba(255,255,255,0.1));
-            background-size: 20px 20px;
-            animation: shimmer 20s linear infinite;
-        }
+      .elite-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.1) 25%,
+          transparent 25%,
+          transparent 75%,
+          rgba(255, 255, 255, 0.1) 75%,
+          rgba(255, 255, 255, 0.1)
+        );
+        background-size: 20px 20px;
+        animation: shimmer 20s linear infinite;
+      }
 
-        @keyframes shimmer {
-            0% { transform: translateX(-20px); }
-            100% { transform: translateX(20px); }
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-20px);
         }
-
-        .elite-logo {
-            display: flex;
-            align-items: center;
-            font-size: 1.8rem;
-            font-weight: 700;
-            z-index: 2;
+        100% {
+          transform: translateX(20px);
         }
+      }
 
-        .elite-logo .material-icons {
-            font-size: 2rem;
-            margin-right: 0.5rem;
+      .elite-logo {
+        display: flex;
+        align-items: center;
+        font-size: 1.8rem;
+        font-weight: 700;
+        z-index: 2;
+      }
+
+      .elite-logo .material-icons {
+        font-size: 2rem;
+        margin-right: 0.5rem;
+      }
+
+      .elite-status {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+        z-index: 2;
+      }
+
+      .status-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .status-value {
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .status-label {
+        font-size: 0.75rem;
+        opacity: 0.9;
+      }
+
+      .live-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background: #4caf50;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
         }
-
-        .elite-status {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-            z-index: 2;
+        50% {
+          opacity: 0.3;
         }
+      }
 
-        .status-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+      /* Advanced Tab Navigation */
+      .elite-tabs {
+        background: var(--surface-color);
+        border-bottom: 1px solid var(--border-color);
+        padding: 0 2rem;
+        overflow-x: auto;
+      }
+
+      .tab-nav {
+        display: flex;
+        gap: 0;
+      }
+
+      .elite-tab {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .elite-tab:hover {
+        color: var(--primary-color);
+        background: rgba(25, 118, 210, 0.05);
+      }
+
+      .elite-tab.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+        background: rgba(25, 118, 210, 0.05);
+      }
+
+      .elite-tab .material-icons {
+        font-size: 1.2rem;
+      }
+
+      /* Main Dashboard Layout */
+      .dashboard-container {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        min-height: calc(100vh - 140px);
+        gap: 1rem;
+        padding: 1rem 2rem;
+      }
+
+      /* Advanced Sidebar */
+      .elite-sidebar {
+        background: var(--surface-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        height: fit-content;
+      }
+
+      /* Main Content Area */
+      .elite-content {
+        background: var(--surface-color);
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Professional Cards */
+      .elite-card {
+        background: var(--surface-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+        border: 1px solid var(--border-color);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      /* Simulation Progress Display */
+      .simulation-engine {
+        background: linear-gradient(135deg, #f3e5f5 0%, #e1f5fe 100%);
+        border: 2px solid var(--primary-color);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .simulation-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .sim-count {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .sim-speed {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        border-radius: 4px;
+        transition: width 0.3s ease;
+        animation: progress-pulse 2s infinite;
+      }
+
+      @keyframes progress-pulse {
+        0%,
+        100% {
+          opacity: 1;
         }
-
-        .status-value {
-            font-size: 1.5rem;
-            font-weight: 600;
+        50% {
+          opacity: 0.7;
         }
+      }
 
-        .status-label {
-            font-size: 0.75rem;
-            opacity: 0.9;
-        }
+      /* AI Analysis Panel */
+      .ai-analysis-panel {
+        background: linear-gradient(135deg, #fff3e0 0%, #f1f8e9 100%);
+        border: 2px solid var(--success-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
 
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+      .ai-reasoning {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
 
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background: #4caf50;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
+      .leverage-card {
+        background: var(--surface-color);
+        border-radius: 8px;
+        padding: 1rem;
+        border-left: 4px solid var(--accent-color);
+      }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
+      .leverage-score {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent-color);
+      }
 
-        /* Advanced Tab Navigation */
-        .elite-tabs {
-            background: var(--surface-color);
-            border-bottom: 1px solid var(--border-color);
-            padding: 0 2rem;
-            overflow-x: auto;
-        }
+      .leverage-reasoning {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+        line-height: 1.4;
+      }
 
-        .tab-nav {
-            display: flex;
-            gap: 0;
-        }
+      /* Interactive Data Tables */
+      .elite-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        background: var(--surface-color);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
+      }
 
-        .elite-tab {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem 1.5rem;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            position: relative;
-        }
+      .elite-table th {
+        background: linear-gradient(135deg, var(--primary-color), #1565c0);
+        color: white;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
 
-        .elite-tab:hover {
-            color: var(--primary-color);
-            background: rgba(25, 118, 210, 0.05);
-        }
+      .elite-table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border-color);
+        transition: background 0.2s ease;
+      }
 
-        .elite-tab.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-            background: rgba(25, 118, 210, 0.05);
-        }
+      .elite-table tbody tr:hover {
+        background: rgba(25, 118, 210, 0.05);
+      }
 
-        .elite-tab .material-icons {
-            font-size: 1.2rem;
-        }
+      /* Advanced Control Panels */
+      .control-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
 
-        /* Main Dashboard Layout */
+      .control-group {
+        background: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+      }
+
+      .control-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+      }
+
+      .elite-select,
+      .elite-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+      }
+
+      .elite-select:focus,
+      .elite-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+      }
+
+      /* Professional Buttons */
+      .elite-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        justify-content: center;
+      }
+
+      .elite-btn-primary {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .elite-btn-primary:hover {
+        background: #1565c0;
+        box-shadow: 0 4px 15px rgba(25, 118, 210, 0.4);
+        transform: translateY(-1px);
+      }
+
+      .elite-btn-success {
+        background: var(--success-color);
+        color: white;
+      }
+
+      .elite-btn-success:hover {
+        background: #388e3c;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        transform: translateY(-1px);
+      }
+
+      /* Real-time Data Displays */
+      .realtime-feed {
+        background: linear-gradient(135deg, #e8f5e8 0%, #f3e5f5 100%);
+        border: 1px solid var(--success-color);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .feed-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .feed-item:last-child {
+        border-bottom: none;
+      }
+
+      .feed-timestamp {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .feed-content {
+        flex: 1;
+        font-size: 0.85rem;
+      }
+
+      /* Chart Containers */
+      .chart-container {
+        position: relative;
+        height: 300px;
+        margin: 1rem 0;
+        background: var(--surface-color);
+        border-radius: 8px;
+        padding: 1rem;
+      }
+
+      .small-chart {
+        height: 200px;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1200px) {
         .dashboard-container {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            min-height: calc(100vh - 140px);
-            gap: 1rem;
-            padding: 1rem 2rem;
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-container {
+          padding: 1rem;
         }
 
-        /* Advanced Sidebar */
-        .elite-sidebar {
-            background: var(--surface-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            height: fit-content;
-        }
-
-        /* Main Content Area */
-        .elite-content {
-            background: var(--surface-color);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        /* Professional Cards */
-        .elite-card {
-            background: var(--surface-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border-color);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .card-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        /* Simulation Progress Display */
-        .simulation-engine {
-            background: linear-gradient(135deg, #f3e5f5 0%, #e1f5fe 100%);
-            border: 2px solid var(--primary-color);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .simulation-status {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .sim-count {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .sim-speed {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(0,0,0,0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            border-radius: 4px;
-            transition: width 0.3s ease;
-            animation: progress-pulse 2s infinite;
-        }
-
-        @keyframes progress-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* AI Analysis Panel */
-        .ai-analysis-panel {
-            background: linear-gradient(135deg, #fff3e0 0%, #f1f8e9 100%);
-            border: 2px solid var(--success-color);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .ai-reasoning {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .leverage-card {
-            background: var(--surface-color);
-            border-radius: 8px;
-            padding: 1rem;
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .leverage-score {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent-color);
-        }
-
-        .leverage-reasoning {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-            line-height: 1.4;
-        }
-
-        /* Interactive Data Tables */
-        .elite-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            background: var(--surface-color);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.08);
-        }
-
-        .elite-table th {
-            background: linear-gradient(135deg, var(--primary-color), #1565c0);
-            color: white;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .elite-table td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--border-color);
-            transition: background 0.2s ease;
-        }
-
-        .elite-table tbody tr:hover {
-            background: rgba(25, 118, 210, 0.05);
-        }
-
-        /* Advanced Control Panels */
         .control-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
+          grid-template-columns: 1fr;
         }
+      }
 
-        .control-group {
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1rem;
+      /* Loading States */
+      .loading {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-top: 2px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
-
-        .control-label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
+        100% {
+          transform: rotate(360deg);
         }
+      }
 
-        .elite-select, .elite-input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
+      /* Professional Metrics Grid */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .metric-card {
+        background: var(--surface-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: transform 0.2s ease;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .metric-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+      }
+
+      .metric-label {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-top: 0.5rem;
+      }
+
+      .metric-change {
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+      }
+
+      .positive {
+        color: var(--success-color);
+      }
+      .negative {
+        color: var(--error-color);
+      }
+
+      /* Tab Content Areas */
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
-
-        .elite-select:focus, .elite-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
+      }
 
-        /* Professional Buttons */
-        .elite-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            justify-content: center;
-        }
+      /* Professional Alerts */
+      .elite-alert {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-weight: 500;
+      }
 
-        .elite-btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
+      .elite-alert-success {
+        background: #e8f5e8;
+        border: 1px solid var(--success-color);
+        color: #2e7d32;
+      }
 
-        .elite-btn-primary:hover {
-            background: #1565c0;
-            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.4);
-            transform: translateY(-1px);
-        }
+      .elite-alert-warning {
+        background: #fff8e1;
+        border: 1px solid var(--warning-color);
+        color: #f57c00;
+      }
 
-        .elite-btn-success {
-            background: var(--success-color);
-            color: white;
-        }
-
-        .elite-btn-success:hover {
-            background: #388e3c;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-            transform: translateY(-1px);
-        }
-
-        /* Real-time Data Displays */
-        .realtime-feed {
-            background: linear-gradient(135deg, #e8f5e8 0%, #f3e5f5 100%);
-            border: 1px solid var(--success-color);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .feed-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .feed-item:last-child {
-            border-bottom: none;
-        }
-
-        .feed-timestamp {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .feed-content {
-            flex: 1;
-            font-size: 0.85rem;
-        }
-
-        /* Chart Containers */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 1rem 0;
-            background: var(--surface-color);
-            border-radius: 8px;
-            padding: 1rem;
-        }
-
-        .small-chart {
-            height: 200px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .dashboard-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-container {
-                padding: 1rem;
-            }
-            
-            .control-panel {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Loading States */
-        .loading {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(0,0,0,0.1);
-            border-top: 2px solid var(--primary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Professional Metrics Grid */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .metric-card {
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: transform 0.2s ease;
-        }
-
-        .metric-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .metric-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .metric-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-        }
-
-        .metric-change {
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
-        }
-
-        .positive { color: var(--success-color); }
-        .negative { color: var(--error-color); }
-
-        /* Tab Content Areas */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Professional Alerts */
-        .elite-alert {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .elite-alert-success {
-            background: #e8f5e8;
-            border: 1px solid var(--success-color);
-            color: #2e7d32;
-        }
-
-        .elite-alert-warning {
-            background: #fff8e1;
-            border: 1px solid var(--warning-color);
-            color: #f57c00;
-        }
-
-        .elite-alert-info {
-            background: #e3f2fd;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-        }
+      .elite-alert-info {
+        background: #e3f2fd;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Professional Header -->
     <div class="elite-header">
-        <div class="elite-logo">
-            <span class="material-icons">analytics</span>
-            Elite DFS Optimizer Pro
+      <div class="elite-logo">
+        <span class="material-icons">analytics</span>
+        Elite DFS Optimizer Pro
+      </div>
+
+      <div class="elite-status">
+        <div class="status-item">
+          <div class="status-value" id="simulationCount">1,000,000</div>
+          <div class="status-label">Simulations/Run</div>
         </div>
-        
-        <div class="elite-status">
-            <div class="status-item">
-                <div class="status-value" id="simulationCount">1,000,000</div>
-                <div class="status-label">Simulations/Run</div>
-            </div>
-            <div class="status-item">
-                <div class="status-value" id="processingSpeed">0.28s</div>
-                <div class="status-label">Processing Time</div>
-            </div>
-            <div class="status-item">
-                <div class="status-value" id="activeOptimizers">30+</div>
-                <div class="status-label">Optimizers</div>
-            </div>
-            <div class="live-indicator">
-                <span class="pulse-dot"></span>
-                <span>Live Data</span>
-            </div>
+        <div class="status-item">
+          <div class="status-value" id="processingSpeed">0.28s</div>
+          <div class="status-label">Processing Time</div>
         </div>
+        <div class="status-item">
+          <div class="status-value" id="activeOptimizers">30+</div>
+          <div class="status-label">Optimizers</div>
+        </div>
+        <div class="live-indicator">
+          <span class="pulse-dot"></span>
+          <span>Live Data</span>
+        </div>
+      </div>
     </div>
 
     <!-- Advanced Tab Navigation -->
     <div class="elite-tabs">
-        <div class="tab-nav">
-            <button class="elite-tab active" onclick="showTab('simulation')">
-                <span class="material-icons">speed</span>
-                Simulation Engine
-            </button>
-            <button class="elite-tab" onclick="showTab('ai-analysis')">
-                <span class="material-icons">psychology</span>
-                AI Analysis
-            </button>
-            <button class="elite-tab" onclick="showTab('optimizer')">
-                <span class="material-icons">tune</span>
-                Advanced Optimizer
-            </button>
-            <button class="elite-tab" onclick="showTab('correlations')">
-                <span class="material-icons">hub</span>
-                Correlations
-            </button>
-            <button class="elite-tab" onclick="showTab('ownership')">
-                <span class="material-icons">pie_chart</span>
-                Ownership
-            </button>
-            <button class="elite-tab" onclick="showTab('live-data')">
-                <span class="material-icons">sensors</span>
-                Live Data
-            </button>
-            <button class="elite-tab" onclick="showTab('results')">
-                <span class="material-icons">assessment</span>
-                Results
-            </button>
-        </div>
+      <div class="tab-nav">
+        <button class="elite-tab active" onclick="showTab('simulation')">
+          <span class="material-icons">speed</span>
+          Simulation Engine
+        </button>
+        <button class="elite-tab" onclick="showTab('ai-analysis')">
+          <span class="material-icons">psychology</span>
+          AI Analysis
+        </button>
+        <button class="elite-tab" onclick="showTab('optimizer')">
+          <span class="material-icons">tune</span>
+          Advanced Optimizer
+        </button>
+        <button class="elite-tab" onclick="showTab('correlations')">
+          <span class="material-icons">hub</span>
+          Correlations
+        </button>
+        <button class="elite-tab" onclick="showTab('ownership')">
+          <span class="material-icons">pie_chart</span>
+          Ownership
+        </button>
+        <button class="elite-tab" onclick="showTab('live-data')">
+          <span class="material-icons">sensors</span>
+          Live Data
+        </button>
+        <button class="elite-tab" onclick="showTab('results')">
+          <span class="material-icons">assessment</span>
+          Results
+        </button>
+      </div>
     </div>
 
     <!-- Main Dashboard -->
     <div class="dashboard-container">
-        <!-- Advanced Sidebar -->
-        <div class="elite-sidebar">
-            <div class="elite-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="material-icons">settings</span>
-                        Engine Controls
-                    </div>
-                </div>
-                
-                <div class="control-group">
-                    <div class="control-label">
-                        <span class="material-icons">memory</span>
-                        Simulation Engine
-                    </div>
-                    <select class="elite-select" id="simulationEngine">
-                        <option value="advanced">Advanced (1M+ Sims + AI)</option>
-                        <option value="sabersim">SaberSim Style (1M+ Basic)</option>
-                        <option value="correlation">Correlation Enhanced</option>
-                        <option value="bayesian">Bayesian Inference</option>
-                    </select>
-                </div>
-
-                <div class="control-group">
-                    <div class="control-label">
-                        <span class="material-icons">precision_manufacturing</span>
-                        Optimizer Selection
-                    </div>
-                    <select class="elite-select" id="optimizerEngine">
-                        <option value="multi_lineup_generator">Multi-Lineup Generator (180+ lineups)</option>
-                        <option value="ai_enhanced_late_swap">AI Enhanced Late Swap</option>
-                        <option value="maximum_winrate">Maximum Win Rate Optimizer</option>
-                        <option value="late_swap_simulator">Late Swap Simulator</option>
-                        <option value="complete_slate">Complete Slate Optimizer</option>
-                        <option value="duplicate_prevention">Duplicate Prevention Engine</option>
-                        <option value="salary_cap_compliant">Salary Cap Compliance</option>
-                        <option value="leverage_focused">Leverage-Focused Optimizer</option>
-                        <option value="correlation_based">Correlation-Based Stacking</option>
-                        <option value="tournament_theory">Tournament Theory Engine</option>
-                    </select>
-                </div>
-
-                <div class="control-group">
-                    <div class="control-label">
-                        <span class="material-icons">psychology</span>
-                        AI Enhancement Level
-                    </div>
-                    <select class="elite-select" id="aiLevel">
-                        <option value="maximum">Maximum (All 4 Models)</option>
-                        <option value="high">High (Primary Models)</option>
-                        <option value="standard">Standard (Base AI)</option>
-                    </select>
-                </div>
-
-                <button class="elite-btn elite-btn-primary" onclick="runAdvancedSimulation()" style="width: 100%; margin-top: 1rem;">
-                    <span class="material-icons">rocket_launch</span>
-                    Execute Advanced Simulation
-                </button>
+      <!-- Advanced Sidebar -->
+      <div class="elite-sidebar">
+        <div class="elite-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="material-icons">settings</span>
+              Engine Controls
             </div>
+          </div>
 
-            <!-- Real-time Feed -->
-            <div class="elite-card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="material-icons">feed</span>
-                        Live Analysis Feed
-                    </div>
-                </div>
-                
-                <div class="realtime-feed" id="liveFeed">
-                    <div class="feed-item">
-                        <div class="feed-timestamp">12:28 AM</div>
-                        <div class="feed-content">
-                            <strong>AI Detection:</strong> A.J. Brown 10.5x projection edge identified
-                        </div>
-                    </div>
-                    <div class="feed-item">
-                        <div class="feed-timestamp">12:27 AM</div>
-                        <div class="feed-content">
-                            <strong>Correlation Update:</strong> Mahomes-Hollywood stack 0.72 correlation
-                        </div>
-                    </div>
-                    <div class="feed-item">
-                        <div class="feed-timestamp">12:26 AM</div>
-                        <div class="feed-content">
-                            <strong>Simulation:</strong> 1M+ sims completed in 0.28 seconds
-                        </div>
-                    </div>
-                </div>
+          <div class="control-group">
+            <div class="control-label">
+              <span class="material-icons">memory</span>
+              Simulation Engine
             </div>
+            <select class="elite-select" id="simulationEngine">
+              <option value="advanced">Advanced (1M+ Sims + AI)</option>
+              <option value="sabersim">SaberSim Style (1M+ Basic)</option>
+              <option value="correlation">Correlation Enhanced</option>
+              <option value="bayesian">Bayesian Inference</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">
+              <span class="material-icons">precision_manufacturing</span>
+              Optimizer Selection
+            </div>
+            <select class="elite-select" id="optimizerEngine">
+              <option value="multi_lineup_generator">
+                Multi-Lineup Generator (180+ lineups)
+              </option>
+              <option value="ai_enhanced_late_swap">AI Enhanced Late Swap</option>
+              <option value="maximum_winrate">Maximum Win Rate Optimizer</option>
+              <option value="late_swap_simulator">Late Swap Simulator</option>
+              <option value="complete_slate">Complete Slate Optimizer</option>
+              <option value="duplicate_prevention">Duplicate Prevention Engine</option>
+              <option value="salary_cap_compliant">Salary Cap Compliance</option>
+              <option value="leverage_focused">Leverage-Focused Optimizer</option>
+              <option value="correlation_based">Correlation-Based Stacking</option>
+              <option value="tournament_theory">Tournament Theory Engine</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">
+              <span class="material-icons">psychology</span>
+              AI Enhancement Level
+            </div>
+            <select class="elite-select" id="aiLevel">
+              <option value="maximum">Maximum (All 4 Models)</option>
+              <option value="high">High (Primary Models)</option>
+              <option value="standard">Standard (Base AI)</option>
+            </select>
+          </div>
+
+          <button
+            class="elite-btn elite-btn-primary"
+            onclick="runAdvancedSimulation()"
+            style="width: 100%; margin-top: 1rem"
+          >
+            <span class="material-icons">rocket_launch</span>
+            Execute Advanced Simulation
+          </button>
         </div>
 
-        <!-- Main Content -->
-        <div class="elite-content">
-            <!-- SIMULATION ENGINE TAB -->
-            <div id="simulation-content" class="tab-content active">
-                <div class="simulation-engine">
-                    <div class="card-title" style="margin-bottom: 1.5rem;">
-                        <span class="material-icons">speed</span>
-                        Advanced Simulation Engine - 1,000,000+ Simulations
-                    </div>
-                    
-                    <div class="simulation-status">
-                        <div>
-                            <div class="sim-count" id="currentSimCount">1,000,000</div>
-                            <div class="sim-speed">Simulations completed in 0.28 seconds</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 1.2rem; color: var(--success-color); font-weight: 600;">
-                                EXCEEDS SABERSIM CAPABILITIES
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="simProgress" style="width: 100%;"></div>
-                    </div>
-                    
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-value">100x</div>
-                            <div class="metric-label">Faster than Basic Optimizers</div>
-                            <div class="metric-change positive">+95% accuracy improvement</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value">8x8</div>
-                            <div class="metric-label">Correlation Matrix</div>
-                            <div class="metric-change positive">QB-WR: 0.68-0.81 range</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value">85%</div>
-                            <div class="metric-label">Field Composition</div>
-                            <div class="metric-change positive">100K tournament sim</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Simulation Results Visualization -->
-                <div class="elite-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="material-icons">analytics</span>
-                            Live Simulation Results
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="simulationChart"></canvas>
-                    </div>
-                </div>
+        <!-- Real-time Feed -->
+        <div class="elite-card">
+          <div class="card-header">
+            <div class="card-title">
+              <span class="material-icons">feed</span>
+              Live Analysis Feed
             </div>
+          </div>
 
-            <!-- AI ANALYSIS TAB -->
-            <div id="ai-analysis-content" class="tab-content">
-                <div class="ai-analysis-panel">
-                    <div class="card-title" style="margin-bottom: 1.5rem;">
-                        <span class="material-icons">psychology</span>
-                        Advanced AI Analysis - Multi-Model Integration
-                    </div>
-                    
-                    <div class="elite-alert elite-alert-success">
-                        <span class="material-icons">verified</span>
-                        <div>
-                            <strong>EXTREME LEVERAGE DETECTED:</strong> A.J. Brown shows 10.5x projection edge with 8.4% ownership
-                        </div>
-                    </div>
-                    
-                    <div class="ai-reasoning">
-                        <div class="leverage-card">
-                            <h4>A.J. Brown Analysis</h4>
-                            <div class="leverage-score">9.6/10</div>
-                            <div class="leverage-reasoning">
-                                <strong>Projection Edge:</strong> DraftKings: 1.8 vs RotoWire: 18.9<br>
-                                <strong>Ownership:</strong> 8.4% (EXTREMELY LOW)<br>
-                                <strong>Leverage Multiplier:</strong> 8.5x (<5% ownership)<br>
-                                <strong>AI Recommendation:</strong> MAX LEVERAGE PLAY
-                            </div>
-                        </div>
-                        
-                        <div class="leverage-card">
-                            <h4>Patrick Mahomes Analysis</h4>
-                            <div class="leverage-score" style="color: var(--warning-color);">6.0/10</div>
-                            <div class="leverage-reasoning">
-                                <strong>Consensus:</strong> 26.8 projection (solid)<br>
-                                <strong>Ownership:</strong> 22.1% (moderate)<br>
-                                <strong>Kelce Impact:</strong> +2.4 projection boost<br>
-                                <strong>AI Recommendation:</strong> SOLID QB PLAY
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Multi-Source Projection Comparison -->
-                <div class="elite-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="material-icons">compare</span>
-                            Multi-Source Projection Analysis
-                        </div>
-                    </div>
-                    
-                    <table class="elite-table">
-                        <thead>
-                            <tr>
-                                <th>Player</th>
-                                <th>RotoWire</th>
-                                <th>DraftKings</th>
-                                <th>AI Enhanced</th>
-                                <th>Edge Ratio</th>
-                                <th>Leverage Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>A.J. Brown</strong></td>
-                                <td>18.9</td>
-                                <td style="color: var(--error-color);">1.8</td>
-                                <td style="color: var(--success-color); font-weight: 600;">22.4</td>
-                                <td style="color: var(--success-color); font-weight: 600;">10.5x</td>
-                                <td style="color: var(--accent-color); font-weight: 600;">9.6/10</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Patrick Mahomes</strong></td>
-                                <td>26.8</td>
-                                <td>26.02</td>
-                                <td style="color: var(--success-color); font-weight: 600;">27.6</td>
-                                <td>1.03x</td>
-                                <td style="color: var(--warning-color); font-weight: 600;">6.0/10</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Josh Allen</strong></td>
-                                <td>28.5</td>
-                                <td>28.5</td>
-                                <td style="color: var(--success-color); font-weight: 600;">29.1</td>
-                                <td>1.02x</td>
-                                <td style="color: var(--primary-color); font-weight: 600;">7.2/10</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+          <div class="realtime-feed" id="liveFeed">
+            <div class="feed-item">
+              <div class="feed-timestamp">12:28 AM</div>
+              <div class="feed-content">
+                <strong>AI Detection:</strong> A.J. Brown 10.5x projection edge
+                identified
+              </div>
             </div>
-
-            <!-- ADVANCED OPTIMIZER TAB -->
-            <div id="optimizer-content" class="tab-content">
-                <div class="control-panel">
-                    <div class="control-group">
-                        <div class="control-label">
-                            <span class="material-icons">settings</span>
-                            Contest Type
-                        </div>
-                        <select class="elite-select" title="Select contest type">
-                            <option>GPP (Large Tournament)</option>
-                            <option>Single Entry GPP</option>
-                            <option>Cash Games</option>
-                            <option>Head-to-Head</option>
-                        </select>
-                    </div>
-
-                    <div class="control-group">
-                        <div class="control-label">
-                            <span class="material-icons">groups</span>
-                            Field Size
-                        </div>
-                        <select class="elite-select" title="Select field size">
-                            <option>100,000+ (Large GPP)</option>
-                            <option>10,000-50,000 (Medium GPP)</option>
-                            <option>1,000-10,000 (Small GPP)</option>
-                            <option>Single Entry</option>
-                        </select>
-                    </div>
-
-                    <div class="control-group">
-                        <div class="control-label">
-                            <span class="material-icons">timeline</span>
-                            Variance Focus
-                        </div>
-                        <input type="range" min="0" max="100" value="75" class="elite-input" id="varianceSlider">
-                        <div style="text-align: center; margin-top: 0.5rem; font-weight: 600;">
-                            High Ceiling Focus: <span id="varianceValue">75%</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="elite-alert elite-alert-info">
-                    <span class="material-icons">info</span>
-                    <div>Your system has 30+ specialized optimizers. Each optimized for different strategies and contest types.</div>
-                </div>
-
-                <div class="elite-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="material-icons">engineering</span>
-                            Optimization Results
-                        </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="optimizationChart"></canvas>
-                    </div>
-                </div>
+            <div class="feed-item">
+              <div class="feed-timestamp">12:27 AM</div>
+              <div class="feed-content">
+                <strong>Correlation Update:</strong> Mahomes-Hollywood stack 0.72
+                correlation
+              </div>
             </div>
-
-            <!-- CORRELATIONS TAB -->
-            <div id="correlations-content" class="tab-content">
-                <div class="elite-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="material-icons">hub</span>
-                            Player Correlation Matrix
-                        </div>
-                    </div>
-                    
-                    <div class="elite-alert elite-alert-success">
-                        <span class="material-icons">trending_up</span>
-                        <div><strong>High Correlation Detected:</strong> Mahomes + Hollywood Brown (0.72 correlation)</div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="correlationChart"></canvas>
-                    </div>
-                </div>
+            <div class="feed-item">
+              <div class="feed-timestamp">12:26 AM</div>
+              <div class="feed-content">
+                <strong>Simulation:</strong> 1M+ sims completed in 0.28 seconds
+              </div>
             </div>
-
-            <!-- OWNERSHIP TAB -->
-            <div id="ownership-content" class="tab-content">
-                <div class="elite-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="material-icons">pie_chart</span>
-                            Ownership Distribution & Leverage Analysis
-                        </div>
-                    </div>
-                    
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-value">8.4%</div>
-                            <div class="metric-label">A.J. Brown Ownership</div>
-                            <div class="metric-change positive">8.5x Leverage Multiplier</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value">22.1%</div>
-                            <div class="metric-label">Mahomes Ownership</div>
-                            <div class="metric-change">2.1x Leverage Multiplier</div>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="ownershipChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- LIVE DATA TAB -->
-            <div id="live-data-content" class="tab-content">
-                <div class="elite-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="material-icons">sensors</span>
-                            Live Data Integration Status
-                        </div>
-                    </div>
-                    
-                    <div class="metrics-grid">
-                        <div class="metric-card">
-                            <div class="metric-value">3/5</div>
-                            <div class="metric-label">Data Sources Active</div>
-                            <div class="metric-change positive">theoddsapi, openweather, nba_api</div>
-                        </div>
-                        <div class="metric-card">
-                            <div class="metric-value">210</div>
-                            <div class="metric-label">Players Updated</div>
-                            <div class="metric-change positive">17 corrections applied</div>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="liveDataChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RESULTS TAB -->
-            <div id="results-content" class="tab-content">
-                <div class="elite-card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="material-icons">assessment</span>
-                            Advanced Analytics Results
-                        </div>
-                    </div>
-                    
-                    <div class="elite-alert elite-alert-success">
-                        <span class="material-icons">check_circle</span>
-                        <div><strong>Simulation Complete:</strong> 1,000,000 simulations processed with correlation adjustments and Bayesian inference</div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <canvas id="resultsChart"></canvas>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="elite-content">
+        <!-- SIMULATION ENGINE TAB -->
+        <div id="simulation-content" class="tab-content active">
+          <div class="simulation-engine">
+            <div class="card-title" style="margin-bottom: 1.5rem">
+              <span class="material-icons">speed</span>
+              Advanced Simulation Engine - 1,000,000+ Simulations
+            </div>
+
+            <div class="simulation-status">
+              <div>
+                <div class="sim-count" id="currentSimCount">1,000,000</div>
+                <div class="sim-speed">Simulations completed in 0.28 seconds</div>
+              </div>
+              <div>
+                <div
+                  style="
+                    font-size: 1.2rem;
+                    color: var(--success-color);
+                    font-weight: 600;
+                  "
+                >
+                  EXCEEDS SABERSIM CAPABILITIES
+                </div>
+              </div>
+            </div>
+
+            <div class="progress-bar">
+              <div class="progress-fill" id="simProgress" style="width: 100%"></div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value">100x</div>
+                <div class="metric-label">Faster than Basic Optimizers</div>
+                <div class="metric-change positive">+95% accuracy improvement</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">8x8</div>
+                <div class="metric-label">Correlation Matrix</div>
+                <div class="metric-change positive">QB-WR: 0.68-0.81 range</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">85%</div>
+                <div class="metric-label">Field Composition</div>
+                <div class="metric-change positive">100K tournament sim</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Simulation Results Visualization -->
+          <div class="elite-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="material-icons">analytics</span>
+                Live Simulation Results
+              </div>
+            </div>
+            <div class="chart-container">
+              <canvas id="simulationChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI ANALYSIS TAB -->
+        <div id="ai-analysis-content" class="tab-content">
+          <div class="ai-analysis-panel">
+            <div class="card-title" style="margin-bottom: 1.5rem">
+              <span class="material-icons">psychology</span>
+              Advanced AI Analysis - Multi-Model Integration
+            </div>
+
+            <div class="elite-alert elite-alert-success">
+              <span class="material-icons">verified</span>
+              <div>
+                <strong>EXTREME LEVERAGE DETECTED:</strong> A.J. Brown shows 10.5x
+                projection edge with 8.4% ownership
+              </div>
+            </div>
+
+            <div class="ai-reasoning">
+              <div class="leverage-card">
+                <h4>A.J. Brown Analysis</h4>
+                <div class="leverage-score">9.6/10</div>
+                <div class="leverage-reasoning">
+                  <strong>Projection Edge:</strong> DraftKings: 1.8 vs RotoWire: 18.9<br />
+                  <strong>Ownership:</strong> 8.4% (EXTREMELY LOW)<br />
+                  <strong>Leverage Multiplier:</strong> 8.5x (<5% ownership)<br />
+                  <strong>AI Recommendation:</strong> MAX LEVERAGE PLAY
+                </div>
+              </div>
+
+              <div class="leverage-card">
+                <h4>Patrick Mahomes Analysis</h4>
+                <div class="leverage-score" style="color: var(--warning-color)">
+                  6.0/10
+                </div>
+                <div class="leverage-reasoning">
+                  <strong>Consensus:</strong> 26.8 projection (solid)<br />
+                  <strong>Ownership:</strong> 22.1% (moderate)<br />
+                  <strong>Kelce Impact:</strong> +2.4 projection boost<br />
+                  <strong>AI Recommendation:</strong> SOLID QB PLAY
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Multi-Source Projection Comparison -->
+          <div class="elite-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="material-icons">compare</span>
+                Multi-Source Projection Analysis
+              </div>
+            </div>
+
+            <table class="elite-table">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>RotoWire</th>
+                  <th>DraftKings</th>
+                  <th>AI Enhanced</th>
+                  <th>Edge Ratio</th>
+                  <th>Leverage Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>A.J. Brown</strong></td>
+                  <td>18.9</td>
+                  <td style="color: var(--error-color)">1.8</td>
+                  <td style="color: var(--success-color); font-weight: 600">22.4</td>
+                  <td style="color: var(--success-color); font-weight: 600">10.5x</td>
+                  <td style="color: var(--accent-color); font-weight: 600">9.6/10</td>
+                </tr>
+                <tr>
+                  <td><strong>Patrick Mahomes</strong></td>
+                  <td>26.8</td>
+                  <td>26.02</td>
+                  <td style="color: var(--success-color); font-weight: 600">27.6</td>
+                  <td>1.03x</td>
+                  <td style="color: var(--warning-color); font-weight: 600">6.0/10</td>
+                </tr>
+                <tr>
+                  <td><strong>Josh Allen</strong></td>
+                  <td>28.5</td>
+                  <td>28.5</td>
+                  <td style="color: var(--success-color); font-weight: 600">29.1</td>
+                  <td>1.02x</td>
+                  <td style="color: var(--primary-color); font-weight: 600">7.2/10</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ADVANCED OPTIMIZER TAB -->
+        <div id="optimizer-content" class="tab-content">
+          <div class="control-panel">
+            <div class="control-group">
+              <div class="control-label">
+                <span class="material-icons">settings</span>
+                Contest Type
+              </div>
+              <select class="elite-select" title="Select contest type">
+                <option>GPP (Large Tournament)</option>
+                <option>Single Entry GPP</option>
+                <option>Cash Games</option>
+                <option>Head-to-Head</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <span class="material-icons">groups</span>
+                Field Size
+              </div>
+              <select class="elite-select" title="Select field size">
+                <option>100,000+ (Large GPP)</option>
+                <option>10,000-50,000 (Medium GPP)</option>
+                <option>1,000-10,000 (Small GPP)</option>
+                <option>Single Entry</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <span class="material-icons">timeline</span>
+                Variance Focus
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value="75"
+                class="elite-input"
+                id="varianceSlider"
+              />
+              <div style="text-align: center; margin-top: 0.5rem; font-weight: 600">
+                High Ceiling Focus: <span id="varianceValue">75%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="elite-alert elite-alert-info">
+            <span class="material-icons">info</span>
+            <div>
+              Your system has 30+ specialized optimizers. Each optimized for different
+              strategies and contest types.
+            </div>
+          </div>
+
+          <div class="elite-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="material-icons">engineering</span>
+                Optimization Results
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="optimizationChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- CORRELATIONS TAB -->
+        <div id="correlations-content" class="tab-content">
+          <div class="elite-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="material-icons">hub</span>
+                Player Correlation Matrix
+              </div>
+            </div>
+
+            <div class="elite-alert elite-alert-success">
+              <span class="material-icons">trending_up</span>
+              <div>
+                <strong>High Correlation Detected:</strong> Mahomes + Hollywood Brown
+                (0.72 correlation)
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="correlationChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- OWNERSHIP TAB -->
+        <div id="ownership-content" class="tab-content">
+          <div class="elite-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="material-icons">pie_chart</span>
+                Ownership Distribution & Leverage Analysis
+              </div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value">8.4%</div>
+                <div class="metric-label">A.J. Brown Ownership</div>
+                <div class="metric-change positive">8.5x Leverage Multiplier</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">22.1%</div>
+                <div class="metric-label">Mahomes Ownership</div>
+                <div class="metric-change">2.1x Leverage Multiplier</div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="ownershipChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- LIVE DATA TAB -->
+        <div id="live-data-content" class="tab-content">
+          <div class="elite-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="material-icons">sensors</span>
+                Live Data Integration Status
+              </div>
+            </div>
+
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-value">3/5</div>
+                <div class="metric-label">Data Sources Active</div>
+                <div class="metric-change positive">
+                  theoddsapi, openweather, nba_api
+                </div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value">210</div>
+                <div class="metric-label">Players Updated</div>
+                <div class="metric-change positive">17 corrections applied</div>
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="liveDataChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESULTS TAB -->
+        <div id="results-content" class="tab-content">
+          <div class="elite-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="material-icons">assessment</span>
+                Advanced Analytics Results
+              </div>
+            </div>
+
+            <div class="elite-alert elite-alert-success">
+              <span class="material-icons">check_circle</span>
+              <div>
+                <strong>Simulation Complete:</strong> 1,000,000 simulations processed
+                with correlation adjustments and Bayesian inference
+              </div>
+            </div>
+
+            <div class="chart-container">
+              <canvas id="resultsChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        // Professional Tab Management
-        function showTab(tabName) {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Remove active class from all tabs
-            document.querySelectorAll('.elite-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected tab content
-            document.getElementById(tabName + '-content').classList.add('active');
-            
-            // Add active class to clicked tab
-            event.target.closest('.elite-tab').classList.add('active');
-            
-            // Initialize charts for the active tab
-            initializeChartsForTab(tabName);
-        }
+      // Professional Tab Management
+      function showTab(tabName) {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.remove('active');
+        });
 
-        // Advanced Simulation Function
-        function runAdvancedSimulation() {
-            const simulationEngine = document.getElementById('simulationEngine').value;
-            const optimizerEngine = document.getElementById('optimizerEngine').value;
-            const aiLevel = document.getElementById('aiLevel').value;
-            
-            // Show loading state
-            const progressBar = document.getElementById('simProgress');
-            progressBar.style.width = '0%';
-            
-            // Simulate connection to your advanced_simulation_engine_upgrade.py
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress > 100) progress = 100;
-                progressBar.style.width = progress + '%';
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    showSimulationResults();
-                }
-            }, 50);
-            
-            // Add live feed update
-            addLiveFeedUpdate('Simulation Started', `Running ${simulationEngine} with ${optimizerEngine} optimizer`);
-        }
+        // Remove active class from all tabs
+        document.querySelectorAll('.elite-tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
 
-        function showSimulationResults() {
-            // Display rich results instead of basic alerts
-            const resultsHTML = `
+        // Show selected tab content
+        document.getElementById(tabName + '-content').classList.add('active');
+
+        // Add active class to clicked tab
+        event.target.closest('.elite-tab').classList.add('active');
+
+        // Initialize charts for the active tab
+        initializeChartsForTab(tabName);
+      }
+
+      // Advanced Simulation Function
+      function runAdvancedSimulation() {
+        const simulationEngine = document.getElementById('simulationEngine').value;
+        const optimizerEngine = document.getElementById('optimizerEngine').value;
+        const aiLevel = document.getElementById('aiLevel').value;
+
+        // Show loading state
+        const progressBar = document.getElementById('simProgress');
+        progressBar.style.width = '0%';
+
+        // Simulate connection to your advanced_simulation_engine_upgrade.py
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += Math.random() * 15;
+          if (progress > 100) progress = 100;
+          progressBar.style.width = progress + '%';
+
+          if (progress >= 100) {
+            clearInterval(interval);
+            showSimulationResults();
+          }
+        }, 50);
+
+        // Add live feed update
+        addLiveFeedUpdate(
+          'Simulation Started',
+          `Running ${simulationEngine} with ${optimizerEngine} optimizer`
+        );
+      }
+
+      function showSimulationResults() {
+        // Display rich results instead of basic alerts
+        const resultsHTML = `
                 <div class="elite-alert elite-alert-success">
                     <span class="material-icons">rocket_launch</span>
                     <div>
@@ -1117,289 +1204,326 @@
                     </div>
                 </div>
             `;
-            
-            // Add to results tab
-            const resultsTab = document.getElementById('results-content');
-            resultsTab.innerHTML = resultsHTML + resultsTab.innerHTML;
-            
-            addLiveFeedUpdate('Simulation Complete', '1M+ sims finished - A.J. Brown max leverage detected');
-        }
 
-        function addLiveFeedUpdate(type, message) {
-            const liveFeed = document.getElementById('liveFeed');
-            const timestamp = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
-            const feedItem = document.createElement('div');
-            feedItem.className = 'feed-item';
-            feedItem.innerHTML = `
+        // Add to results tab
+        const resultsTab = document.getElementById('results-content');
+        resultsTab.innerHTML = resultsHTML + resultsTab.innerHTML;
+
+        addLiveFeedUpdate(
+          'Simulation Complete',
+          '1M+ sims finished - A.J. Brown max leverage detected'
+        );
+      }
+
+      function addLiveFeedUpdate(type, message) {
+        const liveFeed = document.getElementById('liveFeed');
+        const timestamp = new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        const feedItem = document.createElement('div');
+        feedItem.className = 'feed-item';
+        feedItem.innerHTML = `
                 <div class="feed-timestamp">${timestamp}</div>
                 <div class="feed-content">
                     <strong>${type}:</strong> ${message}
                 </div>
             `;
-            
-            liveFeed.insertBefore(feedItem, liveFeed.firstChild);
-            
-            // Keep only last 10 items
-            while (liveFeed.children.length > 10) {
-                liveFeed.removeChild(liveFeed.lastChild);
-            }
-        }
 
-        // Initialize Charts
-        function initializeChartsForTab(tabName) {
-            switch(tabName) {
-                case 'simulation':
-                    initSimulationChart();
-                    break;
-                case 'correlations':
-                    initCorrelationChart();
-                    break;
-                case 'ownership':
-                    initOwnershipChart();
-                    break;
-                case 'live-data':
-                    initLiveDataChart();
-                    break;
-                case 'results':
-                    initResultsChart();
-                    break;
-                case 'optimizer':
-                    initOptimizationChart();
-                    break;
-            }
-        }
+        liveFeed.insertBefore(feedItem, liveFeed.firstChild);
 
-        function initSimulationChart() {
-            const ctx = document.getElementById('simulationChart');
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['0%', '20%', '40%', '60%', '80%', '100%'],
-                    datasets: [{
-                        label: 'Simulation Progress',
-                        data: [0, 200000, 500000, 750000, 950000, 1000000],
-                        borderColor: '#1976d2',
-                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: '1,000,000+ Simulation Progress'
-                        }
-                    }
-                }
-            });
+        // Keep only last 10 items
+        while (liveFeed.children.length > 10) {
+          liveFeed.removeChild(liveFeed.lastChild);
         }
+      }
 
-        function initCorrelationChart() {
-            const ctx = document.getElementById('correlationChart');
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'scatter',
-                data: {
-                    datasets: [{
-                        label: 'QB-WR Correlations',
-                        data: [
-                            {x: 26.8, y: 18.9, label: 'Mahomes-Hollywood (0.72)'},
-                            {x: 28.5, y: 16.2, label: 'Allen-Diggs (0.78)'},
-                            {x: 24.3, y: 19.1, label: 'Hurts-AJBrown (0.81)'}
-                        ],
-                        backgroundColor: '#1976d2'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Player Correlation Analysis'
-                        }
-                    }
-                }
-            });
-        }
-
-        function initOwnershipChart() {
-            const ctx = document.getElementById('ownershipChart');
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['A.J. Brown (8.4%)', 'Mahomes (22.1%)', 'Allen (18.5%)', 'Others'],
-                    datasets: [{
-                        data: [8.4, 22.1, 18.5, 51.0],
-                        backgroundColor: ['#ff5722', '#ff9800', '#2196f3', '#9e9e9e']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Ownership Distribution'
-                        }
-                    }
-                }
-            });
-        }
-
-        function initLiveDataChart() {
-            const ctx = document.getElementById('liveDataChart');
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['theoddsapi', 'openweather', 'nba_api', 'nflfastR', 'balldontlie'],
-                    datasets: [{
-                        label: 'Data Source Status',
-                        data: [100, 100, 100, 0, 0],
-                        backgroundColor: ['#4caf50', '#4caf50', '#4caf50', '#f44336', '#f44336']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100
-                        }
-                    }
-                }
-            });
-        }
-
-        function initResultsChart() {
-            const ctx = document.getElementById('resultsChart');
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['Projection Quality', 'Leverage Score', 'Correlation Analysis', 'Field Position', 'Win Probability', 'Risk Assessment'],
-                    datasets: [{
-                        label: 'Your System',
-                        data: [95, 96, 92, 88, 91, 94],
-                        borderColor: '#1976d2',
-                        backgroundColor: 'rgba(25, 118, 210, 0.2)'
-                    }, {
-                        label: 'SaberSim',
-                        data: [80, 75, 70, 85, 82, 78],
-                        borderColor: '#ff5722',
-                        backgroundColor: 'rgba(255, 87, 34, 0.2)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            max: 100
-                        }
-                    }
-                }
-            });
-        }
-
-        function initOptimizationChart() {
-            const ctx = document.getElementById('optimizationChart');
-            if (!ctx) return;
-            
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Basic', 'Enhanced', 'AI-Powered', 'Correlation', 'Bayesian'],
-                    datasets: [{
-                        label: 'Win Rate %',
-                        data: [8.2, 9.1, 10.8, 12.3, 13.7],
-                        borderColor: '#4caf50',
-                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Optimizer Performance Comparison'
-                        }
-                    }
-                }
-            });
-        }
-
-        // Initialize variance slider
-        document.addEventListener('DOMContentLoaded', function() {
-            const varianceSlider = document.getElementById('varianceSlider');
-            const varianceValue = document.getElementById('varianceValue');
-            
-            if (varianceSlider) {
-                varianceSlider.addEventListener('input', function() {
-                    varianceValue.textContent = this.value + '%';
-                });
-            }
-            
-            // Initialize default chart
+      // Initialize Charts
+      function initializeChartsForTab(tabName) {
+        switch (tabName) {
+          case 'simulation':
             initSimulationChart();
-            
-            // Add real-time updates every 30 seconds
-            setInterval(function() {
-                addLiveFeedUpdate('System Update', 'Data feeds refreshed - all systems operational');
-            }, 30000);
-        });
+            break;
+          case 'correlations':
+            initCorrelationChart();
+            break;
+          case 'ownership':
+            initOwnershipChart();
+            break;
+          case 'live-data':
+            initLiveDataChart();
+            break;
+          case 'results':
+            initResultsChart();
+            break;
+          case 'optimizer':
+            initOptimizationChart();
+            break;
+        }
+      }
 
-        // WebSocket connection simulation (connect to your Python backends)
-        function connectToBackend() {
-            // This would connect to your live_optimizer_api.py
-            // and advanced_simulation_engine_upgrade.py
-            console.log('Connecting to sophisticated Python backends...');
-            
-            // Simulate WebSocket connection
-            const mockWebSocket = {
-                send: function(data) {
-                    console.log('Sending to Python backend:', data);
-                },
-                onmessage: function(event) {
-                    const data = JSON.parse(event.data);
-                    updateDashboard(data);
-                }
-            };
-            
-            return mockWebSocket;
+      function initSimulationChart() {
+        const ctx = document.getElementById('simulationChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['0%', '20%', '40%', '60%', '80%', '100%'],
+            datasets: [
+              {
+                label: 'Simulation Progress',
+                data: [0, 200000, 500000, 750000, 950000, 1000000],
+                borderColor: '#1976d2',
+                backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                tension: 0.4,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: '1,000,000+ Simulation Progress',
+              },
+            },
+          },
+        });
+      }
+
+      function initCorrelationChart() {
+        const ctx = document.getElementById('correlationChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+          type: 'scatter',
+          data: {
+            datasets: [
+              {
+                label: 'QB-WR Correlations',
+                data: [
+                  { x: 26.8, y: 18.9, label: 'Mahomes-Hollywood (0.72)' },
+                  { x: 28.5, y: 16.2, label: 'Allen-Diggs (0.78)' },
+                  { x: 24.3, y: 19.1, label: 'Hurts-AJBrown (0.81)' },
+                ],
+                backgroundColor: '#1976d2',
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: 'Player Correlation Analysis',
+              },
+            },
+          },
+        });
+      }
+
+      function initOwnershipChart() {
+        const ctx = document.getElementById('ownershipChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ['A.J. Brown (8.4%)', 'Mahomes (22.1%)', 'Allen (18.5%)', 'Others'],
+            datasets: [
+              {
+                data: [8.4, 22.1, 18.5, 51.0],
+                backgroundColor: ['#ff5722', '#ff9800', '#2196f3', '#9e9e9e'],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: 'Ownership Distribution',
+              },
+            },
+          },
+        });
+      }
+
+      function initLiveDataChart() {
+        const ctx = document.getElementById('liveDataChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['theoddsapi', 'openweather', 'nba_api', 'nflfastR', 'balldontlie'],
+            datasets: [
+              {
+                label: 'Data Source Status',
+                data: [100, 100, 100, 0, 0],
+                backgroundColor: [
+                  '#4caf50',
+                  '#4caf50',
+                  '#4caf50',
+                  '#f44336',
+                  '#f44336',
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+              },
+            },
+          },
+        });
+      }
+
+      function initResultsChart() {
+        const ctx = document.getElementById('resultsChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+          type: 'radar',
+          data: {
+            labels: [
+              'Projection Quality',
+              'Leverage Score',
+              'Correlation Analysis',
+              'Field Position',
+              'Win Probability',
+              'Risk Assessment',
+            ],
+            datasets: [
+              {
+                label: 'Your System',
+                data: [95, 96, 92, 88, 91, 94],
+                borderColor: '#1976d2',
+                backgroundColor: 'rgba(25, 118, 210, 0.2)',
+              },
+              {
+                label: 'SaberSim',
+                data: [80, 75, 70, 85, 82, 78],
+                borderColor: '#ff5722',
+                backgroundColor: 'rgba(255, 87, 34, 0.2)',
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                beginAtZero: true,
+                max: 100,
+              },
+            },
+          },
+        });
+      }
+
+      function initOptimizationChart() {
+        const ctx = document.getElementById('optimizationChart');
+        if (!ctx) return;
+
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Basic', 'Enhanced', 'AI-Powered', 'Correlation', 'Bayesian'],
+            datasets: [
+              {
+                label: 'Win Rate %',
+                data: [8.2, 9.1, 10.8, 12.3, 13.7],
+                borderColor: '#4caf50',
+                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                tension: 0.4,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              title: {
+                display: true,
+                text: 'Optimizer Performance Comparison',
+              },
+            },
+          },
+        });
+      }
+
+      // Initialize variance slider
+      document.addEventListener('DOMContentLoaded', function () {
+        const varianceSlider = document.getElementById('varianceSlider');
+        const varianceValue = document.getElementById('varianceValue');
+
+        if (varianceSlider) {
+          varianceSlider.addEventListener('input', function () {
+            varianceValue.textContent = this.value + '%';
+          });
         }
 
-        function updateDashboard(data) {
-            // Update live metrics from your Python systems
-            if (data.simulation_complete) {
-                document.getElementById('currentSimCount').textContent = data.simulation_count.toLocaleString();
-                document.getElementById('processingSpeed').textContent = data.processing_time + 's';
-                addLiveFeedUpdate('Backend Update', data.message);
-            }
-        }
+        // Initialize default chart
+        initSimulationChart();
 
-        // Initialize backend connection on load
-        window.addEventListener('load', function() {
-            const backend = connectToBackend();
-            console.log('Elite DFS Dashboard V2 - Connected to advanced backend systems');
-        });
+        // Add real-time updates every 30 seconds
+        setInterval(function () {
+          addLiveFeedUpdate(
+            'System Update',
+            'Data feeds refreshed - all systems operational'
+          );
+        }, 30000);
+      });
+
+      // WebSocket connection simulation (connect to your Python backends)
+      function connectToBackend() {
+        // This would connect to your live_optimizer_api.py
+        // and advanced_simulation_engine_upgrade.py
+        console.log('Connecting to sophisticated Python backends...');
+
+        // Simulate WebSocket connection
+        const mockWebSocket = {
+          send: function (data) {
+            console.log('Sending to Python backend:', data);
+          },
+          onmessage: function (event) {
+            const data = JSON.parse(event.data);
+            updateDashboard(data);
+          },
+        };
+
+        return mockWebSocket;
+      }
+
+      function updateDashboard(data) {
+        // Update live metrics from your Python systems
+        if (data.simulation_complete) {
+          document.getElementById('currentSimCount').textContent =
+            data.simulation_count.toLocaleString();
+          document.getElementById('processingSpeed').textContent =
+            data.processing_time + 's';
+          addLiveFeedUpdate('Backend Update', data.message);
+        }
+      }
+
+      // Initialize backend connection on load
+      window.addEventListener('load', function () {
+        const backend = connectToBackend();
+        console.log('Elite DFS Dashboard V2 - Connected to advanced backend systems');
+      });
     </script>
-</body>
+  </body>
 </html>

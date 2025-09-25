@@ -101,14 +101,8 @@
   },
   "optimizer_tests": {
     "tests": [
-      [
-        "Salary Cap Validation",
-        false
-      ],
-      [
-        "Position Requirements",
-        true
-      ]
+      ["Salary Cap Validation", false],
+      ["Position Requirements", true]
     ],
     "passed": 1,
     "failed": 1
@@ -118,10 +112,7 @@
       "simulations": 1000,
       "avg_score": 139.4,
       "win_rate": 21.7,
-      "score_range": [
-        96.8,
-        176.9
-      ]
+      "score_range": [96.8, 176.9]
     }
   ],
   "recommendations": [

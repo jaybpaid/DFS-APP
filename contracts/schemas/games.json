@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Games Schema",
+  "description": "Schema for game data including matchups, lines, and venue information",
+  "type": "object",
+  "required": ["slateId", "asOf", "games"],
+  "properties": {
+    "slateId": {
+      "type": "string",
+      "description": "Unique identifier for the slate"
+    },
+    "asOf": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when this data was last updated"
+    },
+    "games": {
+      "type": "array",
+      "description": "Array of games on this slate",
+      "items": {
+        "type": "object",
+        "required": [
+          "gameId",
+          "away",
+          "home",
+          "kickoff",
+          "spread",
+          "total",
+          "teamTotals",
+          "venue"
+        ],
+        "properties": {
+          "gameId": {
+            "type": "string",
+            "description": "Unique identifier for the game"
+          },
+          "away": {
+            "type": "string",
+            "description": "Away team abbreviation (e.g., 'PHI')"
+          },
+          "home": {
+            "type": "string",
+            "description": "Home team abbreviation (e.g., 'DAL')"
+          },
+          "kickoff": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Game kickoff time in ISO format"
+          },
+          "spread": {
+            "type": "number",
+            "description": "Point spread (negative if home team favored)"
+          },
+          "total": {
+            "type": "number",
+            "description": "Over/under total points"
+          },
+          "teamTotals": {
+            "type": "object",
+            "required": ["away", "home"],
+            "properties": {
+              "away": {
+                "type": "number",
+                "description": "Away team implied total"
+              },
+              "home": {
+                "type": "number",
+                "description": "Home team implied total"
+              }
+            }
+          },
+          "venue": {
+            "type": "object",
+            "required": ["stadium", "roof", "city", "tz"],
+            "properties": {
+              "stadium": {
+                "type": "string",
+                "description": "Stadium name"
+              },
+              "roof": {
+                "type": "string",
+                "enum": ["OPEN", "DOME", "RETRACTABLE_OPEN", "RETRACTABLE_CLOSED"],
+                "description": "Stadium roof type"
+              },
+              "city": {
+                "type": "string",
+                "description": "City where stadium is located"
+              },
+              "tz": {
+                "type": "string",
+                "description": "Stadium timezone (e.g., 'America/New_York')"
+              }
+            }
+          },
+          "pace": {
+            "type": "object",
+            "description": "Optional pace indicators",
+            "properties": {
+              "expectedPlays": {
+                "type": "number",
+                "description": "Expected total plays in the game"
+              },
+              "paceRank": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 32,
+                "description": "Pace ranking (1 = fastest)"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

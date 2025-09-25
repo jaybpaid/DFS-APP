@@ -1,0 +1,92 @@
+{
+  "timestamp": "2025-09-18T14:19:55.046783",
+  "phase_2_status": "COMPLETE",
+  "components": {
+    "CorrelationMatrixDisplay": {
+      "exists": true,
+      "size": 21662,
+      "features": {
+        "interactive_heatmap": true,
+        "correlation_filtering": true,
+        "live_data_integration": true,
+        "tooltip_system": true,
+        "analytics_panel": true
+      },
+      "status": "PASS"
+    },
+    "VarianceTab": {
+      "exists": true,
+      "size": 36282,
+      "features": {
+        "advanced_controls": true,
+        "game_mode_presets": true,
+        "position_variance": true,
+        "weather_integration": true,
+        "simulation_engine": true,
+        "tabbed_interface": true
+      },
+      "status": "PASS"
+    },
+    "PortfolioManagerDashboard": {
+      "exists": true,
+      "size": 35981,
+      "features": {
+        "portfolio_metrics": true,
+        "lineup_management": true,
+        "exposure_analysis": true,
+        "live_tracking": true,
+        "risk_management": true,
+        "multi_tab_interface": true
+      },
+      "status": "PASS"
+    },
+    "ContestTracker": {
+      "exists": true,
+      "size": 26763,
+      "features": {
+        "contest_management": true,
+        "weather_integration": true,
+        "live_contest_tracking": true,
+        "weather_alerts": true,
+        "multi_site_support": true,
+        "real_time_updates": true
+      },
+      "status": "PASS"
+    }
+  },
+  "services": {
+    "live-mcp-integration": {
+      "exists": true,
+      "size": 20703,
+      "methods": {
+        "LiveMCPIntegration": true,
+        "fetchNewsAndInjuries": true,
+        "fetchDFSResearchData": true,
+        "updateKnowledgeGraph": true,
+        "getMarketData": true,
+        "storeCorrelationData": true,
+        "getComprehensiveSlateAnalysis": true
+      },
+      "status": "PASS"
+    }
+  },
+  "integration": {
+    "mcp_server_config": true,
+    "component_imports": true,
+    "type_definitions": true,
+    "ui_components": true
+  },
+  "errors": [],
+  "warnings": [],
+  "summary": {
+    "total_components": 4,
+    "passed_components": 4,
+    "component_success_rate": 100.0,
+    "total_services": 1,
+    "passed_services": 1,
+    "service_success_rate": 100.0,
+    "integration_passed": true,
+    "overall_errors": 0,
+    "overall_warnings": 0
+  }
+}

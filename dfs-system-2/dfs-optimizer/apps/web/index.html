@@ -1,287 +1,425 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DFS Optimizer - RotoWire Style</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .optimizer-container { max-width: 1600px; margin: 0 auto; }
-        .player-table { font-size: 12px; }
-        .player-row:hover { background: #374151; cursor: pointer; }
-        .position-filter { background: #1f2937; border: 1px solid #374151; }
-        .position-filter.active { background: #3b82f6; color: white; }
-        .salary-filter { background: #1f2937; border: 1px solid #374151; }
-        .value-high { color: #10b981; }
-        .value-medium { color: #f59e0b; }
-        .value-low { color: #ef4444; }
-        .ownership-high { color: #ef4444; }
-        .ownership-medium { color: #f59e0b; }
-        .ownership-low { color: #10b981; }
-        .status-active { background: #10b981; }
-        .status-error { background: #ef4444; }
-        .status-loading { background: #f59e0b; }
-        .sticky-header { position: sticky; top: 0; z-index: 10; }
-        .filter-bar { background: #111827; border-bottom: 1px solid #374151; }
-        .optimize-btn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .optimize-btn:hover { background: linear-gradient(135deg, #2563eb, #1e40af); }
+      .optimizer-container {
+        max-width: 1600px;
+        margin: 0 auto;
+      }
+      .player-table {
+        font-size: 12px;
+      }
+      .player-row:hover {
+        background: #374151;
+        cursor: pointer;
+      }
+      .position-filter {
+        background: #1f2937;
+        border: 1px solid #374151;
+      }
+      .position-filter.active {
+        background: #3b82f6;
+        color: white;
+      }
+      .salary-filter {
+        background: #1f2937;
+        border: 1px solid #374151;
+      }
+      .value-high {
+        color: #10b981;
+      }
+      .value-medium {
+        color: #f59e0b;
+      }
+      .value-low {
+        color: #ef4444;
+      }
+      .ownership-high {
+        color: #ef4444;
+      }
+      .ownership-medium {
+        color: #f59e0b;
+      }
+      .ownership-low {
+        color: #10b981;
+      }
+      .status-active {
+        background: #10b981;
+      }
+      .status-error {
+        background: #ef4444;
+      }
+      .status-loading {
+        background: #f59e0b;
+      }
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .filter-bar {
+        background: #111827;
+        border-bottom: 1px solid #374151;
+      }
+      .optimize-btn {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      }
+      .optimize-btn:hover {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+      }
     </style>
-</head>
-<body class="bg-gray-900 text-white font-sans text-sm">
+  </head>
+  <body class="bg-gray-900 text-white font-sans text-sm">
     <div class="optimizer-container p-4">
-
-        <!-- Header -->
-        <header class="mb-4">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold text-blue-400 mb-1">NFL DFS Optimizer</h1>
-                    <p class="text-gray-400 text-sm">Professional lineup optimization with live data</p>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <div id="apiStatus" class="px-2 py-1 rounded text-xs status-loading">🔄 Loading...</div>
-                    <div id="lastUpdate" class="text-xs text-gray-400">--</div>
-                </div>
+      <!-- Header -->
+      <header class="mb-4">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-2xl font-bold text-blue-400 mb-1">NFL DFS Optimizer</h1>
+            <p class="text-gray-400 text-sm">
+              Professional lineup optimization with live data
+            </p>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div id="apiStatus" class="px-2 py-1 rounded text-xs status-loading">
+              🔄 Loading...
             </div>
-        </header>
+            <div id="lastUpdate" class="text-xs text-gray-400">--</div>
+          </div>
+        </div>
+      </header>
 
-        <!-- Controls Bar -->
-        <div class="bg-gray-800 rounded-lg p-3 mb-4">
-            <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
-                <div>
-                    <label class="block text-xs font-medium mb-1">Site</label>
-                    <select class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm">
-                        <option>DraftKings</option>
-                        <option>FanDuel</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium mb-1">Contest</label>
-                    <select class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm">
-                        <option>$5 Double Up</option>
-                        <option>$10 50/50</option>
-                        <option>$5 100K GPP</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium mb-1">Max Lineups</label>
-                    <input type="number" value="150" min="1" max="500"
-                           class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium mb-1">Uniques</label>
-                    <input type="number" value="3" min="1" max="6"
-                           class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium mb-1">Max/Team</label>
-                    <input type="number" value="5" min="1" max="9"
-                           class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm">
-                </div>
-                <div class="flex items-end">
-                    <button id="optimizeBtn" class="optimize-btn w-full text-white font-bold py-2 px-3 rounded text-sm">
-                        🚀 OPTIMIZE
-                    </button>
-                </div>
-            </div>
+      <!-- Controls Bar -->
+      <div class="bg-gray-800 rounded-lg p-3 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-3">
+          <div>
+            <label class="block text-xs font-medium mb-1">Site</label>
+            <select
+              class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm"
+            >
+              <option>DraftKings</option>
+              <option>FanDuel</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Contest</label>
+            <select
+              class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm"
+            >
+              <option>$5 Double Up</option>
+              <option>$10 50/50</option>
+              <option>$5 100K GPP</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Max Lineups</label>
+            <input
+              type="number"
+              value="150"
+              min="1"
+              max="500"
+              class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Uniques</label>
+            <input
+              type="number"
+              value="3"
+              min="1"
+              max="6"
+              class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Max/Team</label>
+            <input
+              type="number"
+              value="5"
+              min="1"
+              max="9"
+              class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm"
+            />
+          </div>
+          <div class="flex items-end">
+            <button
+              id="optimizeBtn"
+              class="optimize-btn w-full text-white font-bold py-2 px-3 rounded text-sm"
+            >
+              🚀 OPTIMIZE
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar rounded-lg p-3 mb-4">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="text-xs font-medium text-gray-300">Position:</span>
+          <button
+            class="position-filter px-3 py-1 rounded text-xs active"
+            data-position="ALL"
+          >
+            ALL
+          </button>
+          <button class="position-filter px-3 py-1 rounded text-xs" data-position="QB">
+            QB
+          </button>
+          <button class="position-filter px-3 py-1 rounded text-xs" data-position="RB">
+            RB
+          </button>
+          <button class="position-filter px-3 py-1 rounded text-xs" data-position="WR">
+            WR
+          </button>
+          <button class="position-filter px-3 py-1 rounded text-xs" data-position="TE">
+            TE
+          </button>
+          <button class="position-filter px-3 py-1 rounded text-xs" data-position="DST">
+            DST
+          </button>
+
+          <span class="text-xs font-medium text-gray-300 ml-4">Salary:</span>
+          <button class="salary-filter px-3 py-1 rounded text-xs" data-salary="high">
+            $7K+
+          </button>
+          <button class="salary-filter px-3 py-1 rounded text-xs" data-salary="medium">
+            $4K-$7K
+          </button>
+          <button class="salary-filter px-3 py-1 rounded text-xs" data-salary="low">
+            Under $4K
+          </button>
+
+          <span class="text-xs font-medium text-gray-300 ml-4">Value:</span>
+          <button class="salary-filter px-3 py-1 rounded text-xs" data-value="high">
+            High Value
+          </button>
+          <button class="salary-filter px-3 py-1 rounded text-xs" data-value="low">
+            Low Owned
+          </button>
         </div>
 
-        <!-- Filter Bar -->
-        <div class="filter-bar rounded-lg p-3 mb-4">
-            <div class="flex flex-wrap items-center gap-2 mb-3">
-                <span class="text-xs font-medium text-gray-300">Position:</span>
-                <button class="position-filter px-3 py-1 rounded text-xs active" data-position="ALL">ALL</button>
-                <button class="position-filter px-3 py-1 rounded text-xs" data-position="QB">QB</button>
-                <button class="position-filter px-3 py-1 rounded text-xs" data-position="RB">RB</button>
-                <button class="position-filter px-3 py-1 rounded text-xs" data-position="WR">WR</button>
-                <button class="position-filter px-3 py-1 rounded text-xs" data-position="TE">TE</button>
-                <button class="position-filter px-3 py-1 rounded text-xs" data-position="DST">DST</button>
-                
-                <span class="text-xs font-medium text-gray-300 ml-4">Salary:</span>
-                <button class="salary-filter px-3 py-1 rounded text-xs" data-salary="high">$7K+</button>
-                <button class="salary-filter px-3 py-1 rounded text-xs" data-salary="medium">$4K-$7K</button>
-                <button class="salary-filter px-3 py-1 rounded text-xs" data-salary="low">Under $4K</button>
-                
-                <span class="text-xs font-medium text-gray-300 ml-4">Value:</span>
-                <button class="salary-filter px-3 py-1 rounded text-xs" data-value="high">High Value</button>
-                <button class="salary-filter px-3 py-1 rounded text-xs" data-value="low">Low Owned</button>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="flex items-center">
-                    <input type="text" id="searchPlayer" placeholder="Search players..." 
-                           class="bg-gray-700 border border-gray-600 rounded px-3 py-1 text-sm w-48">
-                </div>
-                <div class="text-xs text-gray-400">
-                    <span id="playerCount">Loading players...</span>
-                </div>
-                <div class="ml-auto">
-                    <button id="refreshBtn" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs">
-                        🔄 Refresh
-                    </button>
-                </div>
-            </div>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center">
+            <input
+              type="text"
+              id="searchPlayer"
+              placeholder="Search players..."
+              class="bg-gray-700 border border-gray-600 rounded px-3 py-1 text-sm w-48"
+            />
+          </div>
+          <div class="text-xs text-gray-400">
+            <span id="playerCount">Loading players...</span>
+          </div>
+          <div class="ml-auto">
+            <button
+              id="refreshBtn"
+              class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs"
+            >
+              🔄 Refresh
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player Pool Table -->
+      <div class="bg-gray-800 rounded-lg overflow-hidden">
+        <div class="sticky-header bg-gray-700 px-4 py-2 border-b border-gray-600">
+          <h3 class="text-sm font-bold">Player Pool</h3>
         </div>
 
-        <!-- Player Pool Table -->
-        <div class="bg-gray-800 rounded-lg overflow-hidden">
-            <div class="sticky-header bg-gray-700 px-4 py-2 border-b border-gray-600">
-                <h3 class="text-sm font-bold">Player Pool</h3>
-            </div>
-            
-            <div class="overflow-x-auto" style="max-height: 600px;">
-                <table class="w-full player-table">
-                    <thead class="sticky-header bg-gray-700">
-                        <tr class="text-xs">
-                            <th class="px-2 py-2 text-left cursor-pointer hover:bg-gray-600" data-sort="name">
-                                Player <span class="text-gray-400">↕</span>
-                            </th>
-                            <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600" data-sort="position">
-                                Pos <span class="text-gray-400">↕</span>
-                            </th>
-                            <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600" data-sort="team">
-                                Team <span class="text-gray-400">↕</span>
-                            </th>
-                            <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600" data-sort="opponent">
-                                Opp <span class="text-gray-400">↕</span>
-                            </th>
-                            <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600" data-sort="salary_dk">
-                                DK Sal <span class="text-gray-400">↕</span>
-                            </th>
-                            <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600" data-sort="salary_fd">
-                                FD Sal <span class="text-gray-400">↕</span>
-                            </th>
-                            <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600" data-sort="projection">
-                                Proj <span class="text-gray-400">↕</span>
-                            </th>
-                            <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600" data-sort="ownership">
-                                Own% <span class="text-gray-400">↕</span>
-                            </th>
-                            <th class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600" data-sort="value">
-                                Value <span class="text-gray-400">↕</span>
-                            </th>
-                            <th class="px-2 py-2 text-center">Status</th>
-                            <th class="px-2 py-2 text-center">Weather</th>
-                        </tr>
-                    </thead>
-                    <tbody id="playerTable">
-                        <tr>
-                            <td colspan="11" class="px-4 py-8 text-center text-gray-400">
-                                <div class="text-xl mb-2">📡</div>
-                                Loading complete player pool...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="overflow-x-auto" style="max-height: 600px">
+          <table class="w-full player-table">
+            <thead class="sticky-header bg-gray-700">
+              <tr class="text-xs">
+                <th
+                  class="px-2 py-2 text-left cursor-pointer hover:bg-gray-600"
+                  data-sort="name"
+                >
+                  Player <span class="text-gray-400">↕</span>
+                </th>
+                <th
+                  class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600"
+                  data-sort="position"
+                >
+                  Pos <span class="text-gray-400">↕</span>
+                </th>
+                <th
+                  class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600"
+                  data-sort="team"
+                >
+                  Team <span class="text-gray-400">↕</span>
+                </th>
+                <th
+                  class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600"
+                  data-sort="opponent"
+                >
+                  Opp <span class="text-gray-400">↕</span>
+                </th>
+                <th
+                  class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600"
+                  data-sort="salary_dk"
+                >
+                  DK Sal <span class="text-gray-400">↕</span>
+                </th>
+                <th
+                  class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600"
+                  data-sort="salary_fd"
+                >
+                  FD Sal <span class="text-gray-400">↕</span>
+                </th>
+                <th
+                  class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600"
+                  data-sort="projection"
+                >
+                  Proj <span class="text-gray-400">↕</span>
+                </th>
+                <th
+                  class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600"
+                  data-sort="ownership"
+                >
+                  Own% <span class="text-gray-400">↕</span>
+                </th>
+                <th
+                  class="px-2 py-2 text-center cursor-pointer hover:bg-gray-600"
+                  data-sort="value"
+                >
+                  Value <span class="text-gray-400">↕</span>
+                </th>
+                <th class="px-2 py-2 text-center">Status</th>
+                <th class="px-2 py-2 text-center">Weather</th>
+              </tr>
+            </thead>
+            <tbody id="playerTable">
+              <tr>
+                <td colspan="11" class="px-4 py-8 text-center text-gray-400">
+                  <div class="text-xl mb-2">📡</div>
+                  Loading complete player pool...
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
 
-        <!-- Footer Stats -->
-        <div class="mt-4 text-center text-xs text-gray-500">
-            <p>Live data updates every 30 seconds • Professional DFS optimization system</p>
-        </div>
+      <!-- Footer Stats -->
+      <div class="mt-4 text-center text-xs text-gray-500">
+        <p>Live data updates every 30 seconds • Professional DFS optimization system</p>
+      </div>
     </div>
 
     <script>
-        // Global state
-        let allPlayers = [];
-        let filteredPlayers = [];
-        let currentSort = { field: 'projection', direction: 'desc' };
-        let currentFilters = { position: 'ALL', salary: null, value: null, search: '' };
+      // Global state
+      let allPlayers = [];
+      let filteredPlayers = [];
+      let currentSort = { field: 'projection', direction: 'desc' };
+      let currentFilters = { position: 'ALL', salary: null, value: null, search: '' };
 
-        // API Configuration
-        const API_BASE = 'http://localhost:8001';
+      // API Configuration
+      const API_BASE = 'http://localhost:8001';
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadPlayerData();
-            setupEventListeners();
-            setInterval(loadPlayerData, 30000); // Auto-refresh every 30 seconds
+      // Initialize
+      document.addEventListener('DOMContentLoaded', async () => {
+        await loadPlayerData();
+        setupEventListeners();
+        setInterval(loadPlayerData, 30000); // Auto-refresh every 30 seconds
+      });
+
+      // Load player data from API
+      async function loadPlayerData() {
+        try {
+          updateStatus('loading', '🔄 Loading...');
+
+          const response = await fetch(`${API_BASE}/api/players`);
+          const data = await response.json();
+
+          if (data.players && data.players.length > 0) {
+            allPlayers = data.players;
+            applyFilters();
+            updateStatus('active', '✅ Live');
+            document.getElementById('lastUpdate').textContent =
+              `Updated: ${new Date().toLocaleTimeString()}`;
+            document.getElementById('playerCount').textContent =
+              `${allPlayers.length} players loaded`;
+          } else {
+            updateStatus('error', '❌ No Data');
+          }
+        } catch (error) {
+          console.error('Error loading player data:', error);
+          updateStatus('error', '❌ Error');
+        }
+      }
+
+      // Apply filters and sorting
+      function applyFilters() {
+        filteredPlayers = allPlayers.filter(player => {
+          // Position filter
+          if (
+            currentFilters.position !== 'ALL' &&
+            player.position !== currentFilters.position
+          ) {
+            return false;
+          }
+
+          // Salary filter
+          if (currentFilters.salary) {
+            const salary = player.salary_dk;
+            if (currentFilters.salary === 'high' && salary < 7000) return false;
+            if (currentFilters.salary === 'medium' && (salary < 4000 || salary >= 7000))
+              return false;
+            if (currentFilters.salary === 'low' && salary >= 4000) return false;
+          }
+
+          // Value filter
+          if (currentFilters.value) {
+            if (currentFilters.value === 'high' && player.value < 2.5) return false;
+            if (currentFilters.value === 'low' && player.ownership > 10) return false;
+          }
+
+          // Search filter
+          if (
+            currentFilters.search &&
+            !player.name.toLowerCase().includes(currentFilters.search.toLowerCase())
+          ) {
+            return false;
+          }
+
+          return true;
         });
 
-        // Load player data from API
-        async function loadPlayerData() {
-            try {
-                updateStatus('loading', '🔄 Loading...');
-                
-                const response = await fetch(`${API_BASE}/api/players`);
-                const data = await response.json();
-                
-                if (data.players && data.players.length > 0) {
-                    allPlayers = data.players;
-                    applyFilters();
-                    updateStatus('active', '✅ Live');
-                    document.getElementById('lastUpdate').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
-                    document.getElementById('playerCount').textContent = `${allPlayers.length} players loaded`;
-                } else {
-                    updateStatus('error', '❌ No Data');
-                }
-                
-            } catch (error) {
-                console.error('Error loading player data:', error);
-                updateStatus('error', '❌ Error');
-            }
-        }
+        sortPlayers();
+        renderPlayerTable();
+      }
 
-        // Apply filters and sorting
-        function applyFilters() {
-            filteredPlayers = allPlayers.filter(player => {
-                // Position filter
-                if (currentFilters.position !== 'ALL' && player.position !== currentFilters.position) {
-                    return false;
-                }
-                
-                // Salary filter
-                if (currentFilters.salary) {
-                    const salary = player.salary_dk;
-                    if (currentFilters.salary === 'high' && salary < 7000) return false;
-                    if (currentFilters.salary === 'medium' && (salary < 4000 || salary >= 7000)) return false;
-                    if (currentFilters.salary === 'low' && salary >= 4000) return false;
-                }
-                
-                // Value filter
-                if (currentFilters.value) {
-                    if (currentFilters.value === 'high' && player.value < 2.5) return false;
-                    if (currentFilters.value === 'low' && player.ownership > 10) return false;
-                }
-                
-                // Search filter
-                if (currentFilters.search && !player.name.toLowerCase().includes(currentFilters.search.toLowerCase())) {
-                    return false;
-                }
-                
-                return true;
-            });
-            
-            sortPlayers();
-            renderPlayerTable();
-        }
+      // Sort players
+      function sortPlayers() {
+        filteredPlayers.sort((a, b) => {
+          let aVal = a[currentSort.field];
+          let bVal = b[currentSort.field];
 
-        // Sort players
-        function sortPlayers() {
-            filteredPlayers.sort((a, b) => {
-                let aVal = a[currentSort.field];
-                let bVal = b[currentSort.field];
-                
-                if (typeof aVal === 'string') {
-                    aVal = aVal.toLowerCase();
-                    bVal = bVal.toLowerCase();
-                }
-                
-                if (currentSort.direction === 'asc') {
-                    return aVal > bVal ? 1 : -1;
-                } else {
-                    return aVal < bVal ? 1 : -1;
-                }
-            });
-        }
+          if (typeof aVal === 'string') {
+            aVal = aVal.toLowerCase();
+            bVal = bVal.toLowerCase();
+          }
 
-        // Render player table
-        function renderPlayerTable() {
-            const tableBody = document.getElementById('playerTable');
-            tableBody.innerHTML = '';
-            
-            if (filteredPlayers.length === 0) {
-                tableBody.innerHTML = `
+          if (currentSort.direction === 'asc') {
+            return aVal > bVal ? 1 : -1;
+          } else {
+            return aVal < bVal ? 1 : -1;
+          }
+        });
+      }
+
+      // Render player table
+      function renderPlayerTable() {
+        const tableBody = document.getElementById('playerTable');
+        tableBody.innerHTML = '';
+
+        if (filteredPlayers.length === 0) {
+          tableBody.innerHTML = `
                     <tr>
                         <td colspan="11" class="px-4 py-8 text-center text-gray-400">
                             <div class="text-xl mb-2">🔍</div>
@@ -289,29 +427,45 @@
                         </td>
                     </tr>
                 `;
-                return;
-            }
-            
-            filteredPlayers.forEach(player => {
-                const row = document.createElement('tr');
-                row.className = 'border-b border-gray-700 player-row';
-                
-                // Value color coding
-                const valueClass = player.value > 2.5 ? 'value-high' : 
-                                  player.value > 2.0 ? 'value-medium' : 'value-low';
-                
-                // Ownership color coding
-                const ownershipClass = player.ownership > 20 ? 'ownership-high' :
-                                      player.ownership > 10 ? 'ownership-medium' : 'ownership-low';
-                
-                // Status icons
-                const statusIcon = player.status === 'active' ? '✅' : 
-                                  player.injury_status !== 'healthy' ? '🏥' : '⚠️';
-                
-                const weatherIcon = player.weather_impact === 'positive' ? '☀️' :
-                                   player.weather_impact === 'negative' ? '🌧️' : '⛅';
-                
-                row.innerHTML = `
+          return;
+        }
+
+        filteredPlayers.forEach(player => {
+          const row = document.createElement('tr');
+          row.className = 'border-b border-gray-700 player-row';
+
+          // Value color coding
+          const valueClass =
+            player.value > 2.5
+              ? 'value-high'
+              : player.value > 2.0
+                ? 'value-medium'
+                : 'value-low';
+
+          // Ownership color coding
+          const ownershipClass =
+            player.ownership > 20
+              ? 'ownership-high'
+              : player.ownership > 10
+                ? 'ownership-medium'
+                : 'ownership-low';
+
+          // Status icons
+          const statusIcon =
+            player.status === 'active'
+              ? '✅'
+              : player.injury_status !== 'healthy'
+                ? '🏥'
+                : '⚠️';
+
+          const weatherIcon =
+            player.weather_impact === 'positive'
+              ? '☀️'
+              : player.weather_impact === 'negative'
+                ? '🌧️'
+                : '⛅';
+
+          row.innerHTML = `
                     <td class="px-2 py-2 font-medium">${player.name}</td>
                     <td class="px-2 py-2 text-center font-bold text-blue-400">${player.position}</td>
                     <td class="px-2 py-2 text-center">${player.team}</td>
@@ -324,90 +478,96 @@
                     <td class="px-2 py-2 text-center">${statusIcon}</td>
                     <td class="px-2 py-2 text-center">${weatherIcon}</td>
                 `;
-                
-                tableBody.appendChild(row);
-            });
-        }
 
-        // Setup event listeners
-        function setupEventListeners() {
-            // Position filters
-            document.querySelectorAll('.position-filter').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.position-filter').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilters.position = btn.dataset.position;
-                    applyFilters();
-                });
-            });
+          tableBody.appendChild(row);
+        });
+      }
 
-            // Salary filters
-            document.querySelectorAll('.salary-filter').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.salary-filter').forEach(b => b.classList.remove('active'));
-                    
-                    if (btn.classList.contains('active')) {
-                        btn.classList.remove('active');
-                        currentFilters.salary = null;
-                        currentFilters.value = null;
-                    } else {
-                        btn.classList.add('active');
-                        if (btn.dataset.salary) {
-                            currentFilters.salary = btn.dataset.salary;
-                            currentFilters.value = null;
-                        } else if (btn.dataset.value) {
-                            currentFilters.value = btn.dataset.value;
-                            currentFilters.salary = null;
-                        }
-                    }
-                    applyFilters();
-                });
-            });
+      // Setup event listeners
+      function setupEventListeners() {
+        // Position filters
+        document.querySelectorAll('.position-filter').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document
+              .querySelectorAll('.position-filter')
+              .forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilters.position = btn.dataset.position;
+            applyFilters();
+          });
+        });
 
-            // Search
-            document.getElementById('searchPlayer').addEventListener('input', (e) => {
-                currentFilters.search = e.target.value;
-                applyFilters();
-            });
+        // Salary filters
+        document.querySelectorAll('.salary-filter').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document
+              .querySelectorAll('.salary-filter')
+              .forEach(b => b.classList.remove('active'));
 
-            // Column sorting
-            document.querySelectorAll('[data-sort]').forEach(th => {
-                th.addEventListener('click', () => {
-                    const field = th.dataset.sort;
-                    if (currentSort.field === field) {
-                        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
-                    } else {
-                        currentSort.field = field;
-                        currentSort.direction = 'desc';
-                    }
-                    applyFilters();
-                });
-            });
+            if (btn.classList.contains('active')) {
+              btn.classList.remove('active');
+              currentFilters.salary = null;
+              currentFilters.value = null;
+            } else {
+              btn.classList.add('active');
+              if (btn.dataset.salary) {
+                currentFilters.salary = btn.dataset.salary;
+                currentFilters.value = null;
+              } else if (btn.dataset.value) {
+                currentFilters.value = btn.dataset.value;
+                currentFilters.salary = null;
+              }
+            }
+            applyFilters();
+          });
+        });
 
-            // Refresh button
-            document.getElementById('refreshBtn').addEventListener('click', async () => {
-                const btn = document.getElementById('refreshBtn');
-                btn.textContent = '🔄 Loading...';
-                btn.disabled = true;
-                
-                await loadPlayerData();
-                
-                btn.textContent = '🔄 Refresh';
-                btn.disabled = false;
-            });
+        // Search
+        document.getElementById('searchPlayer').addEventListener('input', e => {
+          currentFilters.search = e.target.value;
+          applyFilters();
+        });
 
-            // Optimize button
-            document.getElementById('optimizeBtn').addEventListener('click', () => {
-                alert(`Optimization will generate lineups using ${filteredPlayers.length} filtered players. Integration with optimization engine coming next!`);
-            });
-        }
+        // Column sorting
+        document.querySelectorAll('[data-sort]').forEach(th => {
+          th.addEventListener('click', () => {
+            const field = th.dataset.sort;
+            if (currentSort.field === field) {
+              currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+              currentSort.field = field;
+              currentSort.direction = 'desc';
+            }
+            applyFilters();
+          });
+        });
 
-        // Update status indicator
-        function updateStatus(status, text) {
-            const element = document.getElementById('apiStatus');
-            element.className = `px-2 py-1 rounded text-xs status-${status}`;
-            element.textContent = text;
-        }
+        // Refresh button
+        document.getElementById('refreshBtn').addEventListener('click', async () => {
+          const btn = document.getElementById('refreshBtn');
+          btn.textContent = '🔄 Loading...';
+          btn.disabled = true;
+
+          await loadPlayerData();
+
+          btn.textContent = '🔄 Refresh';
+          btn.disabled = false;
+        });
+
+        // Optimize button
+        document.getElementById('optimizeBtn').addEventListener('click', () => {
+          alert(
+            `Optimization will generate lineups using ${filteredPlayers.length} filtered players. Integration with optimization engine coming next!`
+          );
+        });
+      }
+
+      // Update status indicator
+      function updateStatus(status, text) {
+        const element = document.getElementById('apiStatus');
+        element.className = `px-2 py-1 rounded text-xs status-${status}`;
+        element.textContent = text;
+      }
     </script>
-</body>
+  </body>
 </html>

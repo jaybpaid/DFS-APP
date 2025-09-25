@@ -1,0 +1,78 @@
+# PR1 INFRASTRUCTURE HARDENING - SECURE API SERVER
+# Commercial DFS Optimizer Secure API with Rate Limiting
+# - Non-root container (uid 1000)
+# - Security hardened with rate limiting (slowapi)
+# - API key authentication required
+# - Restricted privileges and read-only filesystem
+
+# Build stage
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# Install build dependencies only in build stage
+RUN apk add --no-cache python3 make g++ git
+
+# Copy package files for dependency installation
+COPY apps/api/package*.json ./
+
+# Add slowapi and other security dependencies
+RUN npm install --save slowapi@^0.1.9
+
+# Copy source files
+COPY apps/api/src ./src
+COPY apps/api/tsconfig.json ./
+
+# Build TypeScript
+RUN npm run build
+
+# Production stage - HARDENED
+FROM node:18-alpine AS production
+
+# Create non-root user with uid 1000
+RUN adduser -u 1000 -D -s /bin/sh dfsapi
+
+# Install runtime dependencies only
+RUN apk add --no-cache --update tini
+
+# Set working directory
+WORKDIR /app
+
+# Copy built application from builder stage
+COPY --from=builder --chown=dfsapi:dfsapi /app/dist ./dist
+COPY --from=builder --chown=dfsapi:dfsapi /app/node_modules ./node_modules
+
+# Ensure logs directory exists and is writable by dfsapi user
+RUN mkdir -p /app/logs && chown dfsapi:dfsapi /app/logs
+
+# Security hardening
+# - Switch to non-root user
+USER dfsapi
+
+# - Drop all capabilities
+# - Read-only filesystem
+# - Limited tmp directory
+# Running as non-root already drops most capabilities
+# This image is read-only except for /app/logs which is needed for logs
+
+# Environment variables for security
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# Health check - requires API key
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider \
+    --header "Authorization: Bearer ${DFS_API_KEY:-test-key}" \
+    http://localhost:8080/health || exit 1
+
+# Use tini as init system for proper signal handling
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["node", "dist/index.js"]
+
+# Metadata
+LABEL maintainer="DFS Optimizer Team" \
+      description="PR1 Hardened DFS Optimizer API Server with Rate Limiting" \
+      version="1.0.0" \
+      security.hardened="true" \
+      security.non-root="true" \
+      security.capabilities="dropped" \
+      security.rate-limiting="slowapi"

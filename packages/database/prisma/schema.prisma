@@ -1,0 +1,724 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// CORE DFS ENTITIES
+// ============================================================================
+
+model Sport {
+  id          String   @id @default(cuid())
+  name        String   @unique // "NFL", "NBA", "MLB", etc.
+  displayName String   // "National Football League"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  slates      Slate[]
+  players     Player[]
+  contests    Contest[]
+  teams       Team[]
+
+  @@map("sports")
+}
+
+model Team {
+  id           String  @id @default(cuid())
+  sportId      String
+  abbreviation String  // "KC", "PHI", "LAL"
+  name         String  // "Chiefs", "Eagles", "Lakers"
+  city         String  // "Kansas City", "Philadelphia", "Los Angeles"
+  conference   String? // "AFC", "NFC", "Eastern", "Western"
+  division     String? // "West", "East", "Central"
+  isActive     Boolean @default(true)
+
+  // External IDs
+  dkTeamId     Int?    @unique
+  fdTeamId     Int?    @unique
+  espnTeamId   Int?    @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sport         Sport         @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  players       Player[]
+  homeGames     Game[]        @relation("HomeTeam")
+  awayGames     Game[]        @relation("AwayTeam")
+  teamStats     TeamStat[]
+  stackBuilders StackBuilder[]
+
+  @@unique([sportId, abbreviation])
+  @@map("teams")
+}
+
+model Player {
+  id           String  @id @default(cuid())
+  sportId      String
+  teamId       String?
+  firstName    String
+  lastName     String
+  displayName  String  // "Patrick Mahomes II"
+  position     String  // "QB", "RB", "WR", "TE", "K", "DST"
+  jerseyNumber Int?
+  isActive     Boolean @default(true)
+
+  // External IDs
+  dkPlayerId   Int?    @unique
+  fdPlayerId   Int?    @unique
+  espnPlayerId Int?    @unique
+  rotowireId   String?
+
+  // Physical attributes
+  height       String?
+  weight       Int?
+  age          Int?
+  experience   Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sport            Sport              @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  team             Team?              @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  slateEntries     SlateEntry[]
+  projections      Projection[]
+  ownership        Ownership[]
+  lineupEntries    LineupEntry[]
+  playerStats      PlayerStat[]
+  injuryReports    InjuryReport[]
+  stackBuilders    StackBuilder[]
+  playerGroupItems PlayerGroupItem[]
+
+  @@unique([sportId, dkPlayerId])
+  @@index([sportId, position])
+  @@index([teamId])
+  @@map("players")
+}
+
+model Game {
+  id          String    @id @default(cuid())
+  sportId     String
+  homeTeamId  String
+  awayTeamId  String
+  gameDate    DateTime
+  gameTime    String?   // "1:00 PM ET"
+  week        Int?      // NFL week, NBA/MLB day
+  season      Int       // 2024, 2025
+  isPlayoffs  Boolean   @default(false)
+  status      GameStatus @default(SCHEDULED)
+  
+  // Weather (for outdoor sports)
+  temperature Int?
+  windSpeed   Int?
+  windDirection String?
+  precipitation String?
+  humidity    Int?
+  
+  // Vegas data
+  homeSpread  Float?
+  awaySpread  Float?
+  totalPoints Float?
+  homeMoneyline Int?
+  awayMoneyline Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sport        Sport         @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  homeTeam     Team          @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeam     Team          @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  slateGames   SlateGame[]
+  gameStats    GameStat[]
+
+  @@unique([sportId, homeTeamId, awayTeamId, gameDate])
+  @@index([gameDate])
+  @@index([sportId, week, season])
+  @@map("games")
+}
+
+enum GameStatus {
+  SCHEDULED
+  LIVE
+  FINAL
+  POSTPONED
+  CANCELLED
+}
+
+model Slate {
+  id          String     @id @default(cuid())
+  sportId     String
+  name        String     // "Main Slate", "Showdown", "Turbo"
+  displayName String     // "NFL Week 1 Main Slate"
+  slateType   SlateType  @default(CLASSIC)
+  site        DfsSite    @default(DRAFTKINGS)
+  startTime   DateTime
+  isLive      Boolean    @default(false)
+  isLocked    Boolean    @default(false)
+  
+  // Salary cap and roster construction
+  salaryCap   Int        @default(50000)
+  rosterSize  Int        @default(9)
+  
+  // Position requirements (JSON)
+  positionLimits Json     // {"QB": 1, "RB": 2, "WR": 3, "TE": 1, "FLEX": 1, "DST": 1}
+  
+  // External IDs
+  dkSlateId   String?    @unique
+  fdSlateId   String?    @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sport        Sport         @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  slateGames   SlateGame[]
+  slateEntries SlateEntry[]
+  contests     Contest[]
+  lineups      Lineup[]
+  simulations  Simulation[]
+
+  @@index([sportId, startTime])
+  @@index([site, isLive])
+  @@map("slates")
+}
+
+enum SlateType {
+  CLASSIC
+  SHOWDOWN
+  TURBO
+  EXPRESS
+  TIERS
+}
+
+enum DfsSite {
+  DRAFTKINGS
+  FANDUEL
+  SUPERDRAFT
+  YAHOO
+}
+
+model SlateGame {
+  id      String @id @default(cuid())
+  slateId String
+  gameId  String
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  slate Slate @relation(fields: [slateId], references: [id], onDelete: Cascade)
+  game  Game  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([slateId, gameId])
+  @@map("slate_games")
+}
+
+model SlateEntry {
+  id       String @id @default(cuid())
+  slateId  String
+  playerId String
+  salary   Int
+  position String // Position for this slate (may differ from player's primary)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  slate  Slate  @relation(fields: [slateId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([slateId, playerId])
+  @@index([slateId, position])
+  @@index([slateId, salary])
+  @@map("slate_entries")
+}
+
+// ============================================================================
+// PROJECTIONS & OWNERSHIP
+// ============================================================================
+
+model Projection {
+  id         String           @id @default(cuid())
+  playerId   String
+  slateId    String?
+  source     ProjectionSource @default(INTERNAL)
+  
+  // Core projections
+  points     Float
+  floor      Float?
+  ceiling    Float?
+  
+  // Sport-specific stats (JSON)
+  stats      Json             // {"passingYards": 275, "passingTDs": 2, "rushingYards": 25}
+  
+  // Confidence and adjustments
+  confidence Float            @default(1.0) // 0.0 - 1.0
+  adjustment Float            @default(0.0) // Manual adjustment
+  
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  // Relations
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  slate  Slate? @relation(fields: [slateId], references: [id], onDelete: Cascade)
+
+  @@unique([playerId, slateId, source])
+  @@index([slateId, points])
+  @@map("projections")
+}
+
+enum ProjectionSource {
+  INTERNAL
+  ROTOWIRE
+  FANTASYPROS
+  SABERSIM
+  STOKASTIC
+  AWESEMO
+  ETR
+  MANUAL
+}
+
+model Ownership {
+  id         String @id @default(cuid())
+  playerId   String
+  slateId    String
+  
+  // Ownership projections
+  projected  Float  // 0.0 - 1.0 (percentage)
+  actual     Float? // Actual ownership after slate locks
+  
+  // Ownership tiers
+  lowOwned   Boolean @default(false)  // < 5%
+  mediumOwned Boolean @default(false) // 5-15%
+  highOwned  Boolean @default(false)  // > 15%
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  slate  Slate  @relation(fields: [slateId], references: [id], onDelete: Cascade)
+
+  @@unique([playerId, slateId])
+  @@index([slateId, projected])
+  @@map("ownership")
+}
+
+// ============================================================================
+// CONTESTS & LINEUPS
+// ============================================================================
+
+model Contest {
+  id          String      @id @default(cuid())
+  sportId     String
+  slateId     String?
+  name        String
+  site        DfsSite     @default(DRAFTKINGS)
+  contestType ContestType @default(GPP)
+  
+  // Contest details
+  entryFee    Int         // In cents: $20 = 2000
+  totalPrize  Int         // In cents
+  maxEntries  Int
+  entryCount  Int         @default(0)
+  
+  // Payout structure (JSON)
+  payouts     Json        // [{"place": 1, "prize": 100000}, {"place": 2, "prize": 50000}]
+  
+  // External IDs
+  dkContestId String?     @unique
+  fdContestId String?     @unique
+  
+  startTime   DateTime
+  isLive      Boolean     @default(false)
+  isComplete  Boolean     @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  sport   Sport   @relation(fields: [sportId], references: [id], onDelete: Cascade)
+  slate   Slate?  @relation(fields: [slateId], references: [id], onDelete: SetNull)
+  lineups Lineup[]
+
+  @@index([sportId, contestType])
+  @@index([site, startTime])
+  @@map("contests")
+}
+
+enum ContestType {
+  GPP          // Guaranteed Prize Pool
+  CASH         // 50/50, Double Up
+  TOURNAMENT   // Large field tournament
+  SATELLITE    // Qualifier
+  SHOWDOWN     // Single game
+  H2H          // Head to Head
+}
+
+model Lineup {
+  id        String       @id @default(cuid())
+  slateId   String
+  contestId String?
+  name      String       @default("Lineup")
+  
+  // Lineup construction
+  totalSalary Int
+  totalPoints Float?      // Actual points scored
+  
+  // Optimization settings (JSON)
+  settings    Json?       // Exposure limits, stacks, etc.
+  
+  // Status
+  status      LineupStatus @default(DRAFT)
+  isLocked    Boolean      @default(false)
+  
+  // External submission
+  dkEntryId   String?
+  fdEntryId   String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  slate         Slate         @relation(fields: [slateId], references: [id], onDelete: Cascade)
+  contest       Contest?      @relation(fields: [contestId], references: [id], onDelete: SetNull)
+  lineupEntries LineupEntry[]
+
+  @@index([slateId, totalPoints])
+  @@index([contestId])
+  @@map("lineups")
+}
+
+enum LineupStatus {
+  DRAFT
+  OPTIMIZED
+  SUBMITTED
+  LIVE
+  FINAL
+}
+
+model LineupEntry {
+  id       String @id @default(cuid())
+  lineupId String
+  playerId String
+  position String // Position in lineup: "QB", "RB1", "RB2", "FLEX"
+  salary   Int
+  points   Float? // Actual points scored
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  lineup Lineup @relation(fields: [lineupId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([lineupId, position])
+  @@index([lineupId])
+  @@map("lineup_entries")
+}
+
+// ============================================================================
+// OPTIMIZATION & SIMULATION
+// ============================================================================
+
+model OptimizationRun {
+  id        String            @id @default(cuid())
+  slateId   String
+  name      String            @default("Optimization Run")
+  
+  // Settings (JSON)
+  settings  Json              // Complete optimization configuration
+  
+  // Results
+  status    OptimizationStatus @default(PENDING)
+  lineups   Int               @default(0)
+  runtime   Int?              // Runtime in milliseconds
+  error     String?
+  
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  // Relations
+  slate       Slate        @relation(fields: [slateId], references: [id], onDelete: Cascade)
+  simulations Simulation[]
+
+  @@index([slateId, createdAt])
+  @@map("optimization_runs")
+}
+
+enum OptimizationStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+model Simulation {
+  id                String @id @default(cuid())
+  slateId           String
+  optimizationRunId String?
+  name              String @default("Simulation")
+  
+  // Simulation parameters
+  iterations        Int    @default(10000)
+  
+  // Results (JSON)
+  results           Json   // Complete simulation results
+  
+  // Summary stats
+  avgScore          Float?
+  medianScore       Float?
+  minScore          Float?
+  maxScore          Float?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  slate            Slate             @relation(fields: [slateId], references: [id], onDelete: Cascade)
+  optimizationRun  OptimizationRun?  @relation(fields: [optimizationRunId], references: [id], onDelete: SetNull)
+
+  @@index([slateId, createdAt])
+  @@map("simulations")
+}
+
+// ============================================================================
+// STACKS & GROUPS
+// ============================================================================
+
+model StackBuilder {
+  id       String    @id @default(cuid())
+  name     String
+  teamId   String?
+  gameId   String?
+  
+  // Stack configuration
+  minPlayers Int     @default(2)
+  maxPlayers Int     @default(4)
+  positions  String[] // ["QB", "WR", "RB"]
+  
+  // Correlation settings
+  correlation Float  @default(0.0)
+  
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  team    Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  game    Game?    @relation(fields: [gameId], references: [id], onDelete: SetNull)
+  players Player[]
+
+  @@map("stack_builders")
+}
+
+model PlayerGroup {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  groupType   GroupType @default(CUSTOM)
+  
+  // Group settings
+  minExposure Float   @default(0.0)
+  maxExposure Float   @default(1.0)
+  
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  items PlayerGroupItem[]
+
+  @@map("player_groups")
+}
+
+enum GroupType {
+  CUSTOM
+  STUDS
+  VALUE
+  PUNT
+  LEVERAGE
+  CONTRARIAN
+}
+
+model PlayerGroupItem {
+  id            String @id @default(cuid())
+  playerGroupId String
+  playerId      String
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  playerGroup PlayerGroup @relation(fields: [playerGroupId], references: [id], onDelete: Cascade)
+  player      Player      @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([playerGroupId, playerId])
+  @@map("player_group_items")
+}
+
+// ============================================================================
+// STATS & INJURIES
+// ============================================================================
+
+model PlayerStat {
+  id       String @id @default(cuid())
+  playerId String
+  gameId   String?
+  week     Int?
+  season   Int
+  
+  // Generic stats (JSON)
+  stats    Json   // Sport-specific statistics
+  
+  // Fantasy points
+  dkPoints Float?
+  fdPoints Float?
+  
+  createdAt DateTime @default(now())
+
+  // Relations
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  game   Game?  @relation(fields: [gameId], references: [id], onDelete: SetNull)
+
+  @@unique([playerId, gameId])
+  @@index([playerId, season, week])
+  @@map("player_stats")
+}
+
+model TeamStat {
+  id     String @id @default(cuid())
+  teamId String
+  gameId String?
+  week   Int?
+  season Int
+  
+  // Generic stats (JSON)
+  stats  Json   // Team statistics
+  
+  createdAt DateTime @default(now())
+
+  // Relations
+  team Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  game Game? @relation(fields: [gameId], references: [id], onDelete: SetNull)
+
+  @@unique([teamId, gameId])
+  @@index([teamId, season, week])
+  @@map("team_stats")
+}
+
+model GameStat {
+  id     String @id @default(cuid())
+  gameId String
+  
+  // Game-level stats (JSON)
+  stats  Json   // Weather, pace, totals, etc.
+  
+  createdAt DateTime @default(now())
+
+  // Relations
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@unique([gameId])
+  @@map("game_stats")
+}
+
+model InjuryReport {
+  id          String       @id @default(cuid())
+  playerId    String
+  status      InjuryStatus @default(HEALTHY)
+  description String?
+  reportDate  DateTime
+  
+  // Injury details
+  bodyPart    String?      // "Knee", "Shoulder", "Ankle"
+  severity    String?      // "Minor", "Moderate", "Severe"
+  
+  // Timeline
+  expectedReturn DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@index([playerId, reportDate])
+  @@map("injury_reports")
+}
+
+enum InjuryStatus {
+  HEALTHY
+  QUESTIONABLE
+  DOUBTFUL
+  OUT
+  IR
+  PUP
+  SUSPENDED
+}
+
+// ============================================================================
+// SYSTEM & AUDIT
+// ============================================================================
+
+model DataSync {
+  id        String         @id @default(cuid())
+  source    String         // "draftkings", "rotowire", "espn"
+  dataType  String         // "slates", "projections", "ownership"
+  status    DataSyncStatus @default(PENDING)
+  
+  // Sync details
+  recordsProcessed Int      @default(0)
+  recordsUpdated   Int      @default(0)
+  recordsCreated   Int      @default(0)
+  recordsSkipped   Int      @default(0)
+  
+  // Error handling
+  error     String?
+  retryCount Int           @default(0)
+  
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime    @default(now())
+
+  @@index([source, dataType, createdAt])
+  @@map("data_syncs")
+}
+
+enum DataSyncStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  RETRYING
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String   // "CREATE", "UPDATE", "DELETE"
+  entity    String   // "Player", "Lineup", "Slate"
+  entityId  String
+  
+  // Change details (JSON)
+  changes   Json?    // Before/after values
+  
+  // Context
+  userId    String?  // Future: user who made the change
+  ipAddress String?
+  userAgent String?
+  
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

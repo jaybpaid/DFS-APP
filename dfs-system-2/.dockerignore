@@ -1,10 +1,14 @@
-# DFS Ultimate Optimizer - Docker Ignore
+# Python virtual environments
+venv/
+env/
+.venv/
+.env/
 
-# Python
+# Python cache and build files
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
 build/
 develop-eggs/
@@ -22,19 +26,14 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
-venv/
-env/
-ENV/
-
-# IDE
+# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
+# OS generated files
 .DS_Store
 .DS_Store?
 ._*
@@ -43,48 +42,26 @@ ENV/
 ehthumbs.db
 Thumbs.db
 
-# Logs
-logs/
-*.log
-
-# Cache
-cache/
-.cache/
-
 # Git
 .git/
 .gitignore
 
+# Large data files
+*.csv
+*.json
+*.log
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pytest
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
 # Docker
-Dockerfile
-docker-compose.yml
-.dockerignore
-
-# Documentation
-README*.md
-*.md
-
-# Test files
-test_*.py
-*_test.py
-tests/
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-*.temp
-
-# Node modules (if any)
-node_modules/
-
-# Environment files
-.env.local
-.env.development
-.env.test
-.env.production
-
-# Large data files (keep structure but not data)
-public/data/*.json
-public/data/*.csv
-!public/data/.gitkeep
+Dockerfile*
+docker-compose*

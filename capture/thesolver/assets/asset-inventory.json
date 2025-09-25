@@ -16,7 +16,7 @@
       "localPath": "assets/css/bootstrap.min.css"
     },
     {
-      "url": "https://thesolver.com/css/custom.css", 
+      "url": "https://thesolver.com/css/custom.css",
       "type": "custom",
       "purpose": "The Solver custom styling",
       "localPath": "assets/css/custom.css"
@@ -37,7 +37,7 @@
   "scripts": [
     {
       "url": "https://thesolver.com/js/jquery.min.js",
-      "type": "library", 
+      "type": "library",
       "purpose": "jQuery library",
       "localPath": "assets/js/jquery.min.js"
     },
@@ -56,7 +56,7 @@
     {
       "url": "https://thesolver.com/js/player-data.js",
       "type": "data",
-      "purpose": "Player data management", 
+      "purpose": "Player data management",
       "localPath": "assets/js/player-data.js"
     },
     {
@@ -81,7 +81,7 @@
       "dimensions": "20x20"
     },
     {
-      "url": "https://thesolver.com/logos/fd.png", 
+      "url": "https://thesolver.com/logos/fd.png",
       "type": "logo",
       "purpose": "FanDuel site logo",
       "localPath": "assets/images/logos/fd.png",
@@ -89,7 +89,7 @@
     },
     {
       "url": "https://thesolver.com/logos/yahoo.svg",
-      "type": "logo", 
+      "type": "logo",
       "purpose": "Yahoo site logo",
       "localPath": "assets/images/logos/yahoo.svg",
       "dimensions": "20x20"
@@ -97,7 +97,7 @@
     {
       "url": "https://thesolver.com/logos/sd.svg",
       "type": "logo",
-      "purpose": "SuperDraft site logo", 
+      "purpose": "SuperDraft site logo",
       "localPath": "assets/images/logos/sd.svg",
       "dimensions": "20x20"
     },
@@ -110,7 +110,7 @@
     },
     {
       "url": "https://thesolver.com/team-logos/buf.png",
-      "type": "team-logo", 
+      "type": "team-logo",
       "purpose": "Buffalo Bills logo",
       "localPath": "assets/images/teams/buf.png",
       "team": "BUF"
@@ -119,7 +119,7 @@
       "url": "https://thesolver.com/team-logos/hou.png",
       "type": "team-logo",
       "purpose": "Houston Texans logo",
-      "localPath": "assets/images/teams/hou.png", 
+      "localPath": "assets/images/teams/hou.png",
       "team": "HOU"
     },
     {
@@ -132,7 +132,7 @@
     {
       "url": "https://thesolver.com/team-logos/bal.png",
       "type": "team-logo",
-      "purpose": "Baltimore Ravens logo", 
+      "purpose": "Baltimore Ravens logo",
       "localPath": "assets/images/teams/bal.png",
       "team": "BAL"
     },
@@ -158,7 +158,7 @@
       "position": "QB"
     },
     {
-      "url": "https://thesolver.com/icons/position-rb.svg", 
+      "url": "https://thesolver.com/icons/position-rb.svg",
       "type": "position-icon",
       "purpose": "Running back position badge",
       "localPath": "assets/images/positions/rb.svg",
@@ -167,7 +167,7 @@
     {
       "url": "https://thesolver.com/icons/position-wr.svg",
       "type": "position-icon",
-      "purpose": "Wide receiver position badge", 
+      "purpose": "Wide receiver position badge",
       "localPath": "assets/images/positions/wr.svg",
       "position": "WR"
     },
@@ -182,7 +182,7 @@
       "url": "https://thesolver.com/icons/position-dst.svg",
       "type": "position-icon",
       "purpose": "Defense position badge",
-      "localPath": "assets/images/positions/dst.svg", 
+      "localPath": "assets/images/positions/dst.svg",
       "position": "DST"
     }
   ],
@@ -198,7 +198,7 @@
       "url": "https://thesolver.com/fonts/inter-bold.woff2",
       "type": "font",
       "purpose": "Bold text styling",
-      "localPath": "assets/fonts/inter-bold.woff2", 
+      "localPath": "assets/fonts/inter-bold.woff2",
       "fontFamily": "Inter"
     }
   ],

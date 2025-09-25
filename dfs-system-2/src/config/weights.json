@@ -3,7 +3,12 @@
     "feature_groups": {
       "historical_stats": {
         "weight": 0.25,
-        "features": ["targets_per_game", "carries_per_game", "red_zone_touches", "air_yards_share"]
+        "features": [
+          "targets_per_game",
+          "carries_per_game",
+          "red_zone_touches",
+          "air_yards_share"
+        ]
       },
       "vegas_context": {
         "weight": 0.3,

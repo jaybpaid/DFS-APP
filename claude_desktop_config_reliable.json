@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "filesystem-reliable": {
+      "command": "./shims/reliable_filesystem.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production",
+        "MCP_TYPE": "filesystem"
+      }
+    },
+    "memory-reliable": {
+      "command": "./shims/reliable_memory.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production",
+        "MCP_TYPE": "memory"
+      }
+    },
+    "process-reliable": {
+      "command": "./shims/reliable_process.sh",
+      "args": [],
+      "env": {
+        "NODE_ENV": "production",
+        "MCP_TYPE": "process"
+      }
+    }
+  },
+  "globalShortcut": "Cmd+Shift+Space"
+}

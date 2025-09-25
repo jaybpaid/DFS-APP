@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-09-15T19:09:24.928059",
+  "top_stacks": [
+    {
+      "team": "KC",
+      "qb": "Patrick Mahomes",
+      "pass_catchers": ["DeAndre Hopkins", "Travis Kelce"],
+      "projection": 54.6
+    },
+    {
+      "team": "BAL",
+      "qb": "Lamar Jackson",
+      "pass_catchers": ["Zay Flowers", "Malik Washington"],
+      "projection": 54.599999999999994
+    },
+    {
+      "team": "PHI",
+      "qb": "Jalen Hurts",
+      "pass_catchers": ["A.J. Brown", "Dallas Goedert"],
+      "projection": 54.4
+    },
+    {
+      "team": "BUF",
+      "qb": "Josh Allen",
+      "pass_catchers": ["Stefon Diggs", "Dawson Knox"],
+      "projection": 48.400000000000006
+    },
+    {
+      "team": "SF",
+      "qb": "Brock Purdy",
+      "pass_catchers": ["Deebo Samuel", "George Kittle"],
+      "projection": 45.2
+    },
+    {
+      "team": "WAS",
+      "qb": "Jayden Daniels",
+      "pass_catchers": ["Terry McLaurin", "Zach Ertz"],
+      "projection": 45.2
+    }
+  ],
+  "methodology": "QB + top 2 pass catchers by projection"
+}

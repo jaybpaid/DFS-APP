@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "required": ["site", "mode", "slateId", "nLineups"],
+  "properties": {
+    "site": { "enum": ["DK", "FD"] },
+    "mode": { "enum": ["classic", "showdown"] },
+    "slateId": { "type": "string" },
+    "nLineups": { "type": "integer", "minimum": 1 },
+    "salaryCap": { "type": "integer" },
+    "contest": {
+      "type": "object",
+      "properties": {
+        "fieldSize": { "type": "integer" },
+        "payoutCurve": {
+          "type": "string",
+          "enum": ["top-heavy", "flat", "single-entry", "double-up"]
+        },
+        "entryFee": { "type": "number" },
+        "topPrize": { "type": "number" }
+      }
+    }
+  }
+}
